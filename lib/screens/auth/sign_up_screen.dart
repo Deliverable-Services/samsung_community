@@ -1,9 +1,11 @@
-import 'dart:ui';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:samsung_community/components/custom_input_field.dart';
-import 'package:samsung_community/constants/colors.dart';
+
+import '../../constants/app_button.dart';
+import '../../constants/app_colors.dart';
+import '../../constants/app_images.dart';
+import '../../helper_widgets/custom_text_field.dart';
+import '../../services/app_routes.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -67,7 +69,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: Image.asset(
-            'asset/images/logo.png',
+            AppImages.appLogo,
             width: 84,
             height: 78,
             fit: BoxFit.cover,
@@ -151,7 +153,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     TextInputType keyboardType = TextInputType.text,
     bool obscureText = false,
   }) {
-    return CustomInputField(
+    return CustomTextField(
       label: label,
       controller: controller,
       keyboardType: keyboardType,
@@ -165,92 +167,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
       mainAxisSize: MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(
-          width: 350,
-          height: 48,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(100),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(
-                sigmaX: 7.86,
-                sigmaY: 7.86,
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      AppColors.navGradientStartActive,
-                      AppColors.navGradientEndActive,
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(100),
-                  border: Border.all(
-                    color: AppColors.navBorderActive.withOpacity(0.2),
-                    width: 1,
-                  ),
-                  boxShadow: const [
-                    BoxShadow(
-                      offset: Offset(0, 7.43),
-                      blurRadius: 16.6,
-                      color: AppColors.buttonShadow,
-                    ),
-                    BoxShadow(
-                      offset: Offset(0, 30.15),
-                      blurRadius: 30.15,
-                      color: AppColors.buttonShadowMedium,
-                    ),
-                    BoxShadow(
-                      offset: Offset(0, 68.16),
-                      blurRadius: 41.07,
-                      color: AppColors.buttonShadowLight,
-                    ),
-                    BoxShadow(
-                      offset: Offset(0, 121.02),
-                      blurRadius: 48.5,
-                      color: AppColors.buttonShadowExtraLight,
-                    ),
-                    BoxShadow(
-                      offset: Offset(0, 189.18),
-                      blurRadius: 52.87,
-                      color: AppColors.shadowTransparent,
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsetsDirectional.fromSTEB(18, 0, 18, 0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: Implement sign up logic
-                    debugPrint('Sign up pressed');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    backgroundColor: AppColors.transparent,
-                    shadowColor: AppColors.transparent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                  ),
-                  child: Text(
-                    'Sign up',
-                    style: TextStyle(
-                      fontFamily: 'Rubik',
-                      color: AppColors.white,
-                      letterSpacing: 0.0,
-                      shadows: [
-                        Shadow(
-                          color: AppColors.buttonShadow,
-                          offset: Offset(0.0, 7.43),
-                          blurRadius: 16.6,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
+        AppButton(
+          onTap: () => AppRoutes.go(AppRouteName.homeScreen),
+          text: 'Sign in',
         ),
         const SizedBox(height: 30),
         Center(
@@ -289,4 +208,3 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 }
-

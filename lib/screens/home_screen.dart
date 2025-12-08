@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:samsung_community/components/bottom_nav_bar.dart';
-import 'package:samsung_community/components/custom_header.dart';
-import 'package:samsung_community/constants/colors.dart';
+
+import '../constants/app_colors.dart';
+import '../helper_widgets/bottom_nav_bar.dart';
+import '../helper_widgets/custom_app_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: CustomHeader(
+              child: CustomAppBar(
                 totalPoints: 1200,
                 onNotificationPressed: () {
                   // TODO: Handle notifications tap
@@ -132,19 +133,11 @@ class _HomeScreenState extends State<HomeScreen> {
               label: 'Home',
             ),
             BottomNavItemData(
-              icon: const Icon(
-                Icons.explore,
-                color: AppColors.white,
-                size: 24,
-              ),
+              icon: const Icon(Icons.explore, color: AppColors.white, size: 24),
               label: 'Explore',
             ),
             BottomNavItemData(
-              icon: const Icon(
-                Icons.person,
-                color: AppColors.white,
-                size: 24,
-              ),
+              icon: const Icon(Icons.person, color: AppColors.white, size: 24),
               label: 'Profile',
             ),
           ],
@@ -158,5 +151,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-

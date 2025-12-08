@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:samsung_community/constants/colors.dart';
+import 'package:samsung_community/constants/app_colors.dart';
 
 class NavItem extends StatelessWidget {
   const NavItem({
@@ -22,7 +22,9 @@ class NavItem extends StatelessWidget {
     final decoration = BoxDecoration(
       gradient: LinearGradient(
         colors: [
-          isActive ? AppColors.navGradientStartActive : AppColors.navGradientStart,
+          isActive
+              ? AppColors.navGradientStartActive
+              : AppColors.navGradientStart,
           isActive ? AppColors.navGradientEndActive : AppColors.navGradientEnd,
         ],
         begin: Alignment.topCenter,
@@ -30,7 +32,9 @@ class NavItem extends StatelessWidget {
       ),
       borderRadius: BorderRadius.circular(16),
       border: Border.all(
-        color: isActive ? AppColors.navBorderActive : AppColors.navBorderInactive,
+        color: isActive
+            ? AppColors.navBorderActive
+            : AppColors.navBorderInactive,
         width: isActive ? 1.0 : 0.0,
       ),
       // Same multi-layer shadow stack for both active and inactive items
@@ -103,10 +107,6 @@ class NavItem extends StatelessWidget {
       ),
     );
 
-    return GestureDetector(
-      onTap: onTap,
-      child: content,
-    );
+    return GestureDetector(onTap: onTap, child: content);
   }
 }
-

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:samsung_community/constants/colors.dart';
 
-class CustomInputField extends StatelessWidget {
-  const CustomInputField({
+import '../constants/app_colors.dart';
+
+class CustomTextField extends StatelessWidget {
+  const CustomTextField({
     super.key,
     required this.label,
     required this.controller,
@@ -34,9 +35,7 @@ class CustomInputField extends StatelessWidget {
         SizedBox(
           width: 350,
           child: Container(
-            constraints: const BoxConstraints(
-              minHeight: 48,
-            ),
+            constraints: const BoxConstraints(minHeight: 48),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               gradient: const LinearGradient(
@@ -83,5 +82,3 @@ class CustomInputField extends StatelessWidget {
     );
   }
 }
-
-

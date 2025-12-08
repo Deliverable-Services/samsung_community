@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:samsung_community/components/nav_item.dart';
-import 'package:samsung_community/constants/colors.dart';
+
+import '../constants/app_colors.dart';
+import 'nav_item.dart';
 
 class BottomNavItemData {
-  const BottomNavItemData({
-    required this.icon,
-    required this.label,
-  });
+  const BottomNavItemData({required this.icon, required this.label});
 
   final Widget icon;
   final String label;
@@ -62,5 +60,3 @@ class BottomNavBar extends StatelessWidget {
     );
   }
 }
-
-

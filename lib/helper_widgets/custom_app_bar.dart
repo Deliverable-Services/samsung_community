@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:samsung_community/constants/colors.dart';
+import 'package:samsung_community/constants/app_colors.dart';
+
+import '../constants/app_images.dart';
 
 /// Custom header widget showing total points and action icons.
-class CustomHeader extends StatelessWidget {
+class CustomAppBar extends StatelessWidget {
   final int totalPoints;
   final VoidCallback? onNotificationPressed;
   final VoidCallback? onMenuPressed;
 
-  const CustomHeader({
+  const CustomAppBar({
     super.key,
     required this.totalPoints,
     this.onNotificationPressed,
@@ -22,10 +24,7 @@ class CustomHeader extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildPointsSection(context),
-          _buildActionsSection(),
-        ],
+        children: [_buildPointsSection(context), _buildActionsSection()],
       ),
     );
   }
@@ -40,7 +39,7 @@ class CustomHeader extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           child: Image.asset(
             // TODO: Replace with your actual header image asset.
-            'asset/images/logo.png',
+            AppImages.appLogo,
             width: 36,
             height: 33,
             fit: BoxFit.cover,
@@ -69,7 +68,7 @@ class CustomHeader extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   child: Image.asset(
                     // TODO: Replace with your actual points icon asset.
-                    'asset/images/logo.png',
+                    AppImages.appLogo,
                     width: 12,
                     height: 12,
                     fit: BoxFit.cover,
@@ -102,10 +101,7 @@ class CustomHeader extends StatelessWidget {
           onPressed: onNotificationPressed,
         ),
         const SizedBox(width: 12),
-        _HeaderIconButton(
-          icon: Icons.menu,
-          onPressed: onMenuPressed,
-        ),
+        _HeaderIconButton(icon: Icons.menu, onPressed: onMenuPressed),
       ],
     );
   }
@@ -115,10 +111,7 @@ class _HeaderIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback? onPressed;
 
-  const _HeaderIconButton({
-    required this.icon,
-    this.onPressed,
-  });
+  const _HeaderIconButton({required this.icon, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -134,17 +127,11 @@ class _HeaderIconButton extends StatelessWidget {
             end: AlignmentDirectional(0, -1),
           ),
           borderRadius: BorderRadius.circular(100),
-          border: Border.all(
-            color: const Color(0xFF818181),
-          ),
+          border: Border.all(color: const Color(0xFF818181)),
         ),
         child: IconButton(
           onPressed: onPressed,
-          icon: Icon(
-            icon,
-            size: 15,
-            color: AppColors.white,
-          ),
+          icon: Icon(icon, size: 15, color: AppColors.white),
           padding: EdgeInsets.zero,
           splashRadius: 20,
         ),
@@ -152,5 +139,3 @@ class _HeaderIconButton extends StatelessWidget {
     );
   }
 }
-
-
