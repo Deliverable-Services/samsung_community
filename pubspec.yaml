@@ -17,3 +17,42 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  fonts:
+    - family: Rubik
+      fonts:
+        - asset: asset/fonts/Rubik-Light.ttf
+          weight: 300
+        - asset: asset/fonts/Rubik-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: asset/fonts/Rubik-Regular.ttf
+          weight: 400
+        - asset: asset/fonts/Rubik-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: asset/fonts/Rubik-Medium.ttf
+          weight: 500
+        - asset: asset/fonts/Rubik-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: asset/fonts/Rubik-SemiBold.ttf
+          weight: 600
+        - asset: asset/fonts/Rubik-SemiBoldItalic.ttf
+          weight: 600
+          style: italic
+        - asset: asset/fonts/Rubik-Bold.ttf
+          weight: 700
+        - asset: asset/fonts/Rubik-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: asset/fonts/Rubik-ExtraBold.ttf
+          weight: 800
+        - asset: asset/fonts/Rubik-ExtraBoldItalic.ttf
+          weight: 800
+          style: italic
+        - asset: asset/fonts/Rubik-Black.ttf
+          weight: 900
+        - asset: asset/fonts/Rubik-BlackItalic.ttf
+          weight: 900
+          style: italic
