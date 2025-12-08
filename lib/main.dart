@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:samsung_community/screens/welcome_screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -13,11 +14,7 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Rubik',
       ),
-      home: const Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+      home: const WelcomeScreen(),
     );
   }
 }

@@ -38,6 +38,10 @@ class AppColors {
 
   // Shadow Colors
   static const Color shadow = Color(0x33000000);
+  static const Color buttonShadowMedium = Color(0x17000000);
+  static const Color buttonShadowLight = Color(0x0D000000);
+  static const Color buttonShadowExtraLight = Color(0x03000000);
+  static const Color shadowTransparent = Color(0x00000000);
 
   // Nav Item Colors (from existing design)
   static const Color navGradientStart = Color(0x24D6D6D6);
@@ -46,5 +50,22 @@ class AppColors {
   static const Color navGradientEndActive = Color(0x66707070);
   static const Color navBorderActive = Color(0x80F2F2F2);
   static const Color navBorderInactive = Color(0x00000000);
+  static const Color navTextActive = Color(0xFFFFFFFF); // #FFFFFF
+  static const Color navTextInactive = Color(0x66FFFFFF); // #FFFFFF66
+
+  // Input Field Colors
+  static const Color inputGradientStart = Color(0x33D6D6D6); // rgba(214,214,214,0.2)
+  static const Color inputGradientEnd = Color(0x33707070); // rgba(112,112,112,0.2)
+  static const Color inputShadow = Color(0x40000000); // #00000040
+
+  // Login Screen Colors
+  static const Color scaffoldDark = Color(0xFF181B20);
+  static const Color linkBlue = Color(0xFF68AEFF);
+  static const Color buttonGrey = Color(0xFF707070);
+  static const Color buttonShadow = Color(0x1A000000);
+  static const Color bottomNavBackground = Color(0xFF0D0D0E);
+
+  // Utility
+  static const Color transparent = Color(0x00000000);
 }
 
