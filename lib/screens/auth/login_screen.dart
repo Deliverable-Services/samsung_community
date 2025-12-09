@@ -1,11 +1,13 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:samsung_community/constants/app_button.dart';
-import 'package:samsung_community/services/app_routes.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
+import '../../constants/app_button.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_images.dart';
 import '../../helper_widgets/custom_text_field.dart';
+import '../../services/app_routes.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -36,173 +38,196 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         backgroundColor: AppColors.scaffoldDark,
         body: SafeArea(
-          top: true,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 30),
-                  Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          AppImages.appLogo,
-                          width: 84,
-                          height: 78,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      const SizedBox(height: 26),
-                      Text.rich(
-                        const TextSpan(
-                          children: [
-                            TextSpan(
-                              text: 'Welcome to our \n',
-                              style: TextStyle(
-                                fontFamily: 'Rubik',
-                                fontSize: 26,
-                                letterSpacing: 0.0,
-                                color: AppColors.white,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'S Community',
-                              style: TextStyle(
-                                fontFamily: 'Rubik',
-                                fontSize: 26,
-                                letterSpacing: 0.0,
-                                color: AppColors.white,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                        textAlign: TextAlign.center,
-                        textScaler: MediaQuery.of(context).textScaler,
-                      ),
-                      const SizedBox(height: 26),
-                      const Text(
-                        'To log in to the app, please fill in the following details.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Rubik',
-                          letterSpacing: 0.0,
-                          color: AppColors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 73),
-                  Form(
-                    key: _formKey,
-                    autovalidateMode: AutovalidateMode.disabled,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildInputField(
-                          label: 'Mobile Number',
-                          controller: _mobileController,
-                          keyboardType: TextInputType.phone,
-                        ),
-                        const SizedBox(height: 40),
-                        CustomTextField(
-                          label: 'Password',
-                          controller: _passwordController,
-                          keyboardType: TextInputType.text,
-                          obscureText: true,
-                          placeholder: 'Password',
-                        ),
-                        const SizedBox(height: 20),
-                        const Text(
-                          'I forgot my password.',
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontFamily: 'Rubik',
-                            color: AppColors.linkBlue,
-                            letterSpacing: 0.0,
+          top: false,
+          bottom: false,
+          child: Stack(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 56.h),
+                      child: Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.r),
+                          child: Image.asset(
+                            AppImages.appLogo,
+                            width: 84.w,
+                            height: 78.h,
+                            fit: BoxFit.fitHeight,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 73),
-
-                  Column(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      AppButton(
-                        onTap: () {
-                          AppRoutes.go(AppRouteName.homeScreen);
-                        },
-                        text: 'Log in',
-                        width: 200,
                       ),
-                      const SizedBox(height: 30),
-                      Align(
-                        alignment: Alignment.center,
-                        child: RichText(
-                          textScaler: MediaQuery.of(context).textScaler,
-                          text: TextSpan(
+                    ),
+                    SizedBox(height: 26.h),
+                    SizedBox(
+                      width: 304.w,
+                      height: 58.h,
+                      child: Center(
+                        child: Text.rich(
+                          TextSpan(
                             children: [
-                              const TextSpan(
-                                text: "I don't have an account ",
+                              TextSpan(
+                                text: 'welcomeToOur'.tr,
                                 style: TextStyle(
                                   fontFamily: 'Rubik',
-                                  color: AppColors.linkBlue,
-                                  letterSpacing: 0.0,
-                                  fontSize: 16,
+                                  fontSize: 26.sp,
+                                  fontWeight: FontWeight.w400,
+                                  letterSpacing: 0,
+                                  color: AppColors.white,
+                                  height: 40 / 26,
                                 ),
                               ),
                               TextSpan(
-                                text: 'Sign up',
-                                style: const TextStyle(
+                                text: 'sCommunity'.tr,
+                                style: TextStyle(
                                   fontFamily: 'Rubik',
-                                  color: AppColors.linkBlue,
-                                  fontSize: 16,
-                                  letterSpacing: 0.0,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30.sp,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0,
+                                  color: AppColors.white,
+                                  height: 40 / 30,
                                 ),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    AppRoutes.go(AppRouteName.signUpScreen);
-                                  },
                               ),
                             ],
                           ),
+                          textAlign: TextAlign.center,
+                          textScaler: const TextScaler.linear(1.0),
+                          maxLines: 2,
+                          overflow: TextOverflow.visible,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 30),
-                ],
+                    ),
+                    SizedBox(height: 30.h),
+                    SizedBox(
+                      width: 304.w,
+                      height: 32.h,
+                      child: Center(
+                        child: Text(
+                          'loginDescription'.tr,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'Rubik',
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 0,
+                            color: AppColors.white,
+                            height: 22 / 14,
+                          ),
+                          textScaler: const TextScaler.linear(1.0),
+                          maxLines: 2,
+                          overflow: TextOverflow.visible,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 73.h),
+                    Form(
+                      key: _formKey,
+                      autovalidateMode: AutovalidateMode.disabled,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomTextField(
+                            label: 'mobile_number'.tr,
+                            controller: _mobileController,
+                            keyboardType: TextInputType.phone,
+                            placeholder: 'type'.tr,
+                          ),
+                          SizedBox(height: 40.h),
+                          CustomTextField(
+                            label: 'password'.tr,
+                            controller: _passwordController,
+                            keyboardType: TextInputType.text,
+                            obscureText: true,
+                            placeholder: 'type'.tr,
+                          ),
+                          SizedBox(height: 20.h),
+                          SizedBox(
+                            width: 350.w,
+                            child: Text(
+                              'forgotPassword'.tr,
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontFamily: 'Rubik',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14.sp,
+                                letterSpacing: 0,
+                                color: AppColors.linkBlue,
+                                height: 1,
+                              ),
+                              textScaler: const TextScaler.linear(1.0),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+              Positioned(
+                top: 750.h,
+                left: 20.w,
+                child: AppButton(
+                  onTap: () {
+                    if (_formKey.currentState?.validate() ?? false) {}
+                  },
+                  text: 'logIn'.tr,
+                  width: 350.w,
+                  height: 48.h,
+                ),
+              ),
+              Positioned(
+                top: 828.h,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: SizedBox(
+                    width: 237.w,
+                    child: RichText(
+                      textScaler: const TextScaler.linear(1.0),
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'dontHaveAccount'.tr,
+                            style: TextStyle(
+                              fontFamily: 'Rubik',
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16.sp,
+                              letterSpacing: 0,
+                              color: AppColors.linkBlue,
+                              height: 24 / 16,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'signUp'.tr,
+                            style: TextStyle(
+                              fontFamily: 'Rubik',
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16.sp,
+                              letterSpacing: 0,
+                              color: AppColors.linkBlue,
+                              height: 24 / 16,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                AppRoutes.go(AppRouteName.signUpScreen);
+                              },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildInputField({
-    required String label,
-    required TextEditingController controller,
-    TextInputType keyboardType = TextInputType.text,
-    bool obscureText = false,
-  }) {
-    return CustomTextField(
-      label: label,
-      controller: controller,
-      keyboardType: keyboardType,
-      obscureText: obscureText,
-      placeholder: label,
     );
   }
 }

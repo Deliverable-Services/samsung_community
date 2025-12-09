@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../screens/auth/login_screen.dart';
+import '../screens/auth/personal_details_1.dart';
 import '../screens/auth/sign_up_screen.dart';
 import '../screens/auth/welcome_screen.dart';
 import '../screens/home_screen.dart';
@@ -27,12 +28,14 @@ class AppRouteName {
       homeScreen = '/home_screen',
       welcomeScreen = '/welcome_screen',
       loginScreen = '/login_screen',
-      signUpScreen = '/signup_screen';
+      signUpScreen = '/signup_screen',
+      personalDetails1 = '/personal_details_1';
 
   static final List<GetPage<dynamic>> routes = [
     GetPage(name: welcomeScreen, page: () => const WelcomeScreen()),
     GetPage(name: homeScreen, page: () => const HomeScreen()),
     GetPage(name: signUpScreen, page: () => const SignUpScreen()),
     GetPage(name: loginScreen, page: () => const LoginScreen()),
+    GetPage(name: personalDetails1, page: () => const PersonalDetails1Screen()),
   ];
 }

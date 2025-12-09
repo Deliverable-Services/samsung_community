@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'app_colors.dart';
 
@@ -8,70 +9,80 @@ class AppButton extends StatelessWidget {
   final VoidCallback onTap;
   final String text;
   final Color textColor;
-  final double width, height;
+  final double? width;
+  final double? height;
 
   const AppButton({
     super.key,
     required this.onTap,
     required this.text,
-    this.width = 350,
-    this.height = 48,
     this.textColor = AppColors.white,
+    this.width,
+    this.height,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: width,
-      height: height,
+      width: width ?? 350.w,
+      height: height ?? 48.h,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(100),
+        borderRadius: BorderRadius.circular(100.r),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 7.86, sigmaY: 7.86),
+          filter: ImageFilter.blur(
+            sigmaX: 7.864322662353516,
+            sigmaY: 7.864322662353516,
+          ),
           child: Container(
             decoration: BoxDecoration(
               gradient: const LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  AppColors.navGradientStartActive,
-                  AppColors.navGradientEndActive,
+                  Color.fromRGBO(214, 214, 214, 0.4),
+                  Color.fromRGBO(112, 112, 112, 0.4),
                 ],
+                stops: [0.0, 1.0],
               ),
-              borderRadius: BorderRadius.circular(100),
+              borderRadius: BorderRadius.circular(100.r),
               border: Border.all(
-                color: AppColors.navBorderActive.withOpacity(0.2),
                 width: 1,
+                color: Colors.white.withOpacity(0.2),
               ),
-              boxShadow: const [
+              boxShadow: [
                 BoxShadow(
-                  offset: Offset(0, 7.43),
-                  blurRadius: 16.6,
-                  color: AppColors.buttonShadow,
+                  offset: Offset(0, 7.43.h),
+                  blurRadius: 16.6.r,
+                  color: const Color(0x1A000000),
                 ),
                 BoxShadow(
-                  offset: Offset(0, 30.15),
-                  blurRadius: 30.15,
-                  color: AppColors.buttonShadowMedium,
+                  offset: Offset(0, 30.15.h),
+                  blurRadius: 30.15.r,
+                  color: const Color(0x17000000),
                 ),
                 BoxShadow(
-                  offset: Offset(0, 68.16),
-                  blurRadius: 41.07,
-                  color: AppColors.buttonShadowLight,
+                  offset: Offset(0, 68.16.h),
+                  blurRadius: 41.07.r,
+                  color: const Color(0x0D000000),
                 ),
                 BoxShadow(
-                  offset: Offset(0, 121.02),
-                  blurRadius: 48.5,
-                  color: AppColors.buttonShadowExtraLight,
+                  offset: Offset(0, 121.02.h),
+                  blurRadius: 48.5.r,
+                  color: const Color(0x03000000),
                 ),
                 BoxShadow(
-                  offset: Offset(0, 189.18),
-                  blurRadius: 52.87,
-                  color: AppColors.shadowTransparent,
+                  offset: Offset(0, 189.18.h),
+                  blurRadius: 52.87.r,
+                  color: const Color(0x00000000),
                 ),
               ],
             ),
-            padding: const EdgeInsetsDirectional.fromSTEB(18, 0, 18, 0),
+            padding: EdgeInsets.only(
+              top: 3.h,
+              right: 18.w,
+              bottom: 3.h,
+              left: 18.w,
+            ),
             child: ElevatedButton(
               onPressed: onTap,
               style: ElevatedButton.styleFrom(
@@ -79,22 +90,19 @@ class AppButton extends StatelessWidget {
                 backgroundColor: AppColors.transparent,
                 shadowColor: AppColors.transparent,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(100),
+                  borderRadius: BorderRadius.circular(100.r),
                 ),
               ),
-              child: Text(
-                text,
-                style: TextStyle(
-                  fontFamily: 'Rubik',
-                  color: textColor,
-                  letterSpacing: 0.0,
-                  shadows: [
-                    Shadow(
-                      color: AppColors.buttonShadow,
-                      offset: const Offset(0.0, 7.43),
-                      blurRadius: 16.6,
-                    ),
-                  ],
+              child: Center(
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    fontFamily: 'Rubik',
+                    color: textColor,
+                    letterSpacing: 0,
+                    fontSize: 14.sp,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),

@@ -54,8 +54,12 @@ class AppColors {
   static const Color navTextInactive = Color(0x66FFFFFF); // #FFFFFF66
 
   // Input Field Colors
-  static const Color inputGradientStart = Color(0x33D6D6D6); // rgba(214,214,214,0.2)
-  static const Color inputGradientEnd = Color(0x33707070); // rgba(112,112,112,0.2)
+  static const Color inputGradientStart = Color(
+    0x33D6D6D6,
+  ); // rgba(214,214,214,0.2)
+  static const Color inputGradientEnd = Color(
+    0x33707070,
+  ); // rgba(112,112,112,0.2)
   static const Color inputShadow = Color(0x40000000); // #00000040
 
   // Login Screen Colors
@@ -65,7 +69,22 @@ class AppColors {
   static const Color buttonShadow = Color(0x1A000000);
   static const Color bottomNavBackground = Color(0xFF0D0D0E);
 
+  // Welcome Screen Colors
+  static const Color welcomeGradientStart = Color.fromRGBO(214, 214, 214, 0.1);
+  static const Color welcomeGradientEnd = Color.fromRGBO(112, 112, 112, 0.1);
+  static const Color welcomeContainerShadow = Color(0x1A000000); // #0000001A
+
+  // Overlay Colors
+  static const Color overlayBackground = Color(0xC2151618); // #151618C2
+  static const Color overlayContainerBackground = Color(0xFF292E36); // #292E36
+  static const Color overlayContainerShadow = Color(0x4D000000); // #0000004D
+  static const Color optionBoxShadow = Color(0x1A000000); // #0000001A
+  static const Color optionTextGradientStart = Color(0xFFBEBEBE); // #BEBEBE
+  static const Color optionTextGradientEnd = Color(0xFFFFFFFF); // #FFFFFF
+  static const Color backButtonInsetShadow = Color(0x40000000); // #00000040
+  static const Color uploadImageBackground = Color(0xFF35383C); // #35383C
+  static const Color uploadImageShadow = Color(0x40000000); // #00000040
+
   // Utility
   static const Color transparent = Color(0x00000000);
 }
-

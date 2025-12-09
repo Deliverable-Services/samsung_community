@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../constants/app_colors.dart';
 
@@ -20,65 +21,91 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontFamily: 'Rubik',
-            color: AppColors.white,
-            fontSize: 14,
+    return SizedBox(
+      width: 350.w,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 105.w,
+            height: 14.h,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontFamily: 'Rubik',
+                fontWeight: FontWeight.w500,
+                fontSize: 14.sp,
+                letterSpacing: 0,
+                color: AppColors.white,
+                height: 22 / 22,
+              ),
+              textScaler: const TextScaler.linear(1.0),
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        SizedBox(
-          width: 350,
-          child: Container(
-            constraints: const BoxConstraints(minHeight: 48),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.inputGradientStart,
-                  AppColors.inputGradientEnd,
+          SizedBox(height: 10.h),
+          SizedBox(
+            width: 350.w,
+            height: 48.h,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16.r),
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.inputGradientStart,
+                    AppColors.inputGradientEnd,
+                  ],
+                  stops: [0.0, 1.0],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0x40000000),
+                    offset: Offset(2.w, -2.h),
+                    blurRadius: 2.r,
+                    spreadRadius: 0,
+                  ),
                 ],
               ),
-              boxShadow: const [
-                BoxShadow(
-                  color: AppColors.inputShadow,
-                  offset: Offset(2, -2),
-                  blurRadius: 2,
-                  spreadRadius: 0,
-                ),
-              ],
-            ),
-            child: TextFormField(
-              controller: controller,
-              keyboardType: keyboardType,
-              obscureText: obscureText,
-              style: const TextStyle(
-                fontFamily: 'Rubik',
-                color: AppColors.white,
-              ),
-              decoration: InputDecoration(
-                isDense: true,
-                hintText: placeholder,
-                hintStyle: const TextStyle(
+              child: TextFormField(
+                controller: controller,
+                keyboardType: keyboardType,
+                obscureText: obscureText,
+                style: TextStyle(
                   fontFamily: 'Rubik',
-                  color: AppColors.textHint,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14.sp,
+                  letterSpacing: 0,
+                  color: AppColors.white,
+                  height: 22 / 14,
                 ),
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                contentPadding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+                decoration: InputDecoration(
+                  isDense: true,
+                  hintText: placeholder,
+                  hintStyle: TextStyle(
+                    fontFamily: 'Rubik',
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14.sp,
+                    letterSpacing: 0,
+                    color: AppColors.white.withOpacity(0.3),
+                    height: 22 / 14,
+                  ),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  contentPadding: EdgeInsets.only(
+                    top: 16.h,
+                    right: 20.w,
+                    bottom: 16.h,
+                    left: 20.w,
+                  ),
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
