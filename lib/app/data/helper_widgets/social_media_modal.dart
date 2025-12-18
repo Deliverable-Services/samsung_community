@@ -28,7 +28,7 @@ class SocialMediaModal extends StatelessWidget {
           text: 'instagram'.tr,
           onTap: () {
             onInstagramTap?.call();
-            Navigator.of(context, rootNavigator: true).pop();
+            // Navigator.of(context, rootNavigator: true).pop();
           },
         ),
         SizedBox(height: 24.h),
@@ -43,7 +43,7 @@ class SocialMediaModal extends StatelessWidget {
           text: 'facebook'.tr,
           onTap: () {
             onFacebookTap?.call();
-            Navigator.of(context, rootNavigator: true).pop();
+            // Navigator.of(context, rootNavigator: true).pop();
           },
         ),
       ],
