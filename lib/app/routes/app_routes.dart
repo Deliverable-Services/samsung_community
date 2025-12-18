@@ -16,6 +16,8 @@ abstract class Routes {
   static const FEED = _Paths.FEED;
   static const EVENTS = _Paths.EVENTS;
   static const PERSONAL_DETAILS = _Paths.PERSONAL_DETAILS;
+  static const ACCOUNT_DETAIL = _Paths.ACCOUNT_DETAIL;
+  static const REQUEST_SENT = _Paths.REQUEST_SENT;
 }
 
 abstract class _Paths {
@@ -33,4 +35,6 @@ abstract class _Paths {
   static const FEED = '/feed';
   static const EVENTS = '/events';
   static const PERSONAL_DETAILS = '/personal-details';
+  static const ACCOUNT_DETAIL = '/account-detail';
+  static const REQUEST_SENT = '/request-sent';
 }

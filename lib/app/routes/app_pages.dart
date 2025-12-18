@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 
 import '../modules/academy/bindings/academy_binding.dart';
 import '../modules/academy/views/academy_view.dart';
+import '../modules/account_detail/bindings/account_detail_binding.dart';
+import '../modules/account_detail/views/account_detail_view.dart';
 import '../modules/bottom_bar/bindings/bottom_bar_binding.dart';
 import '../modules/bottom_bar/views/bottom_bar_view.dart';
 import '../modules/events/bindings/events_binding.dart';
@@ -16,6 +18,8 @@ import '../modules/on_boarding/bindings/on_boarding_binding.dart';
 import '../modules/on_boarding/views/on_boarding_view.dart';
 import '../modules/personal_details/bindings/personal_details_binding.dart';
 import '../modules/personal_details/views/personal_details_view.dart';
+import '../modules/request_sent/bindings/request_sent_binding.dart';
+import '../modules/request_sent/views/request_sent_view.dart';
 import '../modules/sign_up/bindings/sign_up_binding.dart';
 import '../modules/sign_up/views/sign_up_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
@@ -99,6 +103,16 @@ class AppPages {
       name: _Paths.PERSONAL_DETAILS,
       page: () => const PersonalDetailsView(),
       binding: PersonalDetailsBinding(),
+    ),
+    GetPage(
+      name: _Paths.ACCOUNT_DETAIL,
+      page: () => const AccountDetailView(),
+      binding: AccountDetailBinding(),
+    ),
+    GetPage(
+      name: _Paths.REQUEST_SENT,
+      page: () => const RequestSentView(),
+      binding: RequestSentBinding(),
     ),
   ];
 
