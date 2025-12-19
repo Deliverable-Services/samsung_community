@@ -31,7 +31,6 @@ class FeedActionModal extends StatelessWidget {
             Navigator.of(context, rootNavigator: true).pop();
           },
         ),
-        SizedBox(height: 24.h),
         OptionItem(
           boxTextWidget: Image.asset(AppImages.sendIcon),
           text: 'share'.tr,

@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../utils/common_snackbar.dart';
+
 /// Base controller class for all controllers
 /// Provides common functionality and lifecycle management
 abstract class BaseController extends GetxController {
@@ -28,6 +30,7 @@ abstract class BaseController extends GetxController {
   void handleError(dynamic error) {
     setError(error.toString());
     setLoading(false);
+    CommonSnackbar.error(error.toString());
   }
 
   @override

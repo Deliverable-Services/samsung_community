@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,7 +9,7 @@ import '../constants/app_colors.dart';
 import '../constants/app_images.dart';
 import '../constants/language_options.dart';
 import '../localization/language_controller.dart';
-import '../services/auth_controller.dart';
+import '../../repository/auth_repo/auth_repo.dart';
 import 'bottom_sheet_modal.dart';
 import 'option_item.dart';
 
@@ -106,11 +107,10 @@ class SideMenu extends StatelessWidget {
 
   Future<void> _performLogout() async {
     try {
-      final authController = Get.find<AuthController>();
-      await authController.signOut();
-      Get.offAllNamed(Routes.LOGIN);
+      final authRepo = Get.find<AuthRepo>();
+      await authRepo.signOut();
     } catch (e) {
-      print('Error during logout: $e');
+      debugPrint('Error during logout: $e');
       Get.offAllNamed(Routes.LOGIN);
     }
   }

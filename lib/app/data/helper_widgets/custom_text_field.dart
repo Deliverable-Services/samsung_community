@@ -34,8 +34,6 @@ class CustomTextField extends StatefulWidget {
 }
 
 class _CustomTextFieldState extends State<CustomTextField> {
-  String? _errorText;
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -98,21 +96,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         readOnly: widget.readOnly,
                         maxLines: 1,
                         minLines: 1,
-                        validator: (value) {
-                          final error = widget.validator?.call(value);
-                          setState(() {
-                            _errorText = error;
-                          });
-                          return error;
-                        },
-                        onChanged: (value) {
-                          if (_errorText != null) {
-                            setState(() {
-                              _errorText = null;
-                            });
-                          }
-                          widget.onChanged?.call(value);
-                        },
+                        validator: widget.validator,
+                        onChanged: widget.onChanged,
                         style: TextStyle(
                           fontFamily: 'Samsung Sharp Sans',
                           fontWeight: FontWeight.w500,
@@ -153,21 +138,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     readOnly: widget.readOnly,
                     maxLines: widget.maxLines,
                     minLines: widget.maxLines,
-                    validator: (value) {
-                      final error = widget.validator?.call(value);
-                      setState(() {
-                        _errorText = error;
-                      });
-                      return error;
-                    },
-                    onChanged: (value) {
-                      if (_errorText != null) {
-                        setState(() {
-                          _errorText = null;
-                        });
-                      }
-                      widget.onChanged?.call(value);
-                    },
+                    validator: widget.validator,
+                    onChanged: widget.onChanged,
                     style: TextStyle(
                       fontFamily: 'Samsung Sharp Sans',
                       fontWeight: FontWeight.w500,
@@ -199,20 +171,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         right: 20.w,
                         bottom: 12.h,
                       ),
-                    ),
-                  ),
-          ),
-          if (_errorText != null)
-            Padding(
-              padding: EdgeInsets.only(top: 4.h),
-              child: Text(
-                _errorText!,
-                style: TextStyle(
-                  fontFamily: 'Samsung Sharp Sans',
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12.sp,
-                  color: Colors.red,
-                  height: 18 / 12,
                 ),
               ),
             ),

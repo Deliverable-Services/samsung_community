@@ -1,0 +1,142 @@
+/// Event Model based on Supabase schema
+
+enum EventType {
+  workshop,
+  webinar,
+  meetup,
+  exclusive;
+
+  static EventType fromString(String value) {
+    return EventType.values.firstWhere(
+      (e) => e.name == value,
+      orElse: () => EventType.workshop,
+    );
+  }
+
+  String toJson() => name;
+}
+
+class EventModel {
+  final String id;
+  final String title;
+  final String? description;
+  final EventType eventType;
+  final DateTime eventDate;
+  final int? durationMinutes;
+  final int? costPoints;
+  final int? costCreditCents;
+  final int? maxTickets;
+  final int ticketsSold;
+  final String? zoomLink;
+  final String? zoomMeetingId;
+  final String? imageUrl;
+  final bool isPublished;
+  final String? createdBy;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  EventModel({
+    required this.id,
+    required this.title,
+    this.description,
+    required this.eventType,
+    required this.eventDate,
+    this.durationMinutes,
+    this.costPoints,
+    this.costCreditCents,
+    this.maxTickets,
+    required this.ticketsSold,
+    this.zoomLink,
+    this.zoomMeetingId,
+    this.imageUrl,
+    required this.isPublished,
+    this.createdBy,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'event_type': eventType.toJson(),
+      'event_date': eventDate.toIso8601String(),
+      'duration_minutes': durationMinutes,
+      'cost_points': costPoints,
+      'cost_credit_cents': costCreditCents,
+      'max_tickets': maxTickets,
+      'tickets_sold': ticketsSold,
+      'zoom_link': zoomLink,
+      'zoom_meeting_id': zoomMeetingId,
+      'image_url': imageUrl,
+      'is_published': isPublished,
+      'created_by': createdBy,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+    };
+  }
+
+  factory EventModel.fromJson(Map<String, dynamic> json) {
+    return EventModel(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      description: json['description'] as String?,
+      eventType: EventType.fromString(json['event_type'] as String),
+      eventDate: DateTime.parse(json['event_date'] as String),
+      durationMinutes: json['duration_minutes'] as int?,
+      costPoints: json['cost_points'] as int?,
+      costCreditCents: json['cost_credit_cents'] as int?,
+      maxTickets: json['max_tickets'] as int?,
+      ticketsSold: json['tickets_sold'] as int? ?? 0,
+      zoomLink: json['zoom_link'] as String?,
+      zoomMeetingId: json['zoom_meeting_id'] as String?,
+      imageUrl: json['image_url'] as String?,
+      isPublished: json['is_published'] as bool? ?? false,
+      createdBy: json['created_by'] as String?,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
+    );
+  }
+
+  EventModel copyWith({
+    String? id,
+    String? title,
+    String? description,
+    EventType? eventType,
+    DateTime? eventDate,
+    int? durationMinutes,
+    int? costPoints,
+    int? costCreditCents,
+    int? maxTickets,
+    int? ticketsSold,
+    String? zoomLink,
+    String? zoomMeetingId,
+    String? imageUrl,
+    bool? isPublished,
+    String? createdBy,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return EventModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      eventType: eventType ?? this.eventType,
+      eventDate: eventDate ?? this.eventDate,
+      durationMinutes: durationMinutes ?? this.durationMinutes,
+      costPoints: costPoints ?? this.costPoints,
+      costCreditCents: costCreditCents ?? this.costCreditCents,
+      maxTickets: maxTickets ?? this.maxTickets,
+      ticketsSold: ticketsSold ?? this.ticketsSold,
+      zoomLink: zoomLink ?? this.zoomLink,
+      zoomMeetingId: zoomMeetingId ?? this.zoomMeetingId,
+      imageUrl: imageUrl ?? this.imageUrl,
+      isPublished: isPublished ?? this.isPublished,
+      createdBy: createdBy ?? this.createdBy,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+}
+

@@ -146,8 +146,9 @@ class VerificationCodeByLoginView
                           ),
                           SizedBox(height: 16.h),
                           Center(
-                            child: controller.resendCountdown > 0
-                                ? Text.rich(
+                            child: Obx(() {
+                              if (controller.resendCountdown.value > 0) {
+                                return Text.rich(
                                     TextSpan(
                                       children: [
                                         TextSpan(
@@ -157,13 +158,11 @@ class VerificationCodeByLoginView
                                             fontSize: 12.sp,
                                             height: 22 / 14,
                                             letterSpacing: 0,
-                                            color: AppColors.white.withOpacity(
-                                              0.7,
-                                            ),
+                                          color: AppColors.white.withOpacity(0.7),
                                           ),
                                         ),
                                         TextSpan(
-                                          text: '${controller.resendCountdown}',
+                                        text: '${controller.resendCountdown.value}',
                                           style: TextStyle(
                                             fontWeight: FontWeight.w700,
                                             fontSize: 12.sp,
@@ -179,26 +178,22 @@ class VerificationCodeByLoginView
                                             fontSize: 12.sp,
                                             height: 22 / 14,
                                             letterSpacing: 0,
-                                            color: AppColors.white.withOpacity(
-                                              0.7,
-                                            ),
+                                          color: AppColors.white.withOpacity(0.7),
                                           ),
                                         ),
                                       ],
                                     ),
                                     textAlign: TextAlign.center,
                                     textScaler: const TextScaler.linear(1.0),
-                                  )
-                                : GestureDetector(
-                                    onTap:
-                                        (controller.isResending.value ||
-                                            controller.resendCountdown.value >
-                                                0)
+                                );
+                              } else {
+                                return Obx(() => GestureDetector(
+                                      onTap: (controller.isResending.value ||
+                                              controller.resendCountdown.value > 0)
                                         ? null
                                         : controller.handleResendCode,
                                     child: Opacity(
-                                      opacity:
-                                          (controller.isResending.value ||
+                                        opacity: (controller.isResending.value ||
                                               controller.resendCountdown.value >
                                                   0)
                                           ? 0.5
@@ -212,12 +207,13 @@ class VerificationCodeByLoginView
                                           letterSpacing: 0,
                                           color: AppColors.linkBlue,
                                         ),
-                                        textScaler: const TextScaler.linear(
-                                          1.0,
+                                          textScaler:
+                                              const TextScaler.linear(1.0),
                                         ),
                                       ),
-                                    ),
-                                  ),
+                                    ));
+                              }
+                            }),
                           ),
                           SizedBox(height: 40.h),
                         ],

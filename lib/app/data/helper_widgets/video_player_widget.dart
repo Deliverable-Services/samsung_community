@@ -272,6 +272,27 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     return 16 / 9;
   }
 
+  Widget _buildThumbnailImage(String url) {
+    if (url.startsWith('http')) {
+      return Image.network(
+        url,
+        fit: BoxFit.contain,
+        width: double.infinity,
+        height: double.infinity,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(color: const Color(0xFF2A2A2A));
+        },
+      );
+    } else {
+      return Image.asset(
+        url,
+        fit: BoxFit.contain,
+        width: double.infinity,
+        height: double.infinity,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final aspectRatio = _getAspectRatio();
@@ -329,14 +350,10 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                         decoration: BoxDecoration(
                           color: AppColors.backgroundDarkMedium,
                         ),
-                        child:
-                            (widget.thumbnailUrl != null ||
+                        child: (widget.thumbnailUrl != null ||
                                 widget.thumbnailImage != null)
-                            ? Image.asset(
+                            ? _buildThumbnailImage(
                                 widget.thumbnailUrl ?? widget.thumbnailImage!,
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
                               )
                             : Container(color: const Color(0xFF2A2A2A)),
                       ),
@@ -497,11 +514,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                     child:
                         (widget.thumbnailUrl != null ||
                             widget.thumbnailImage != null)
-                        ? Image.asset(
+                        ? _buildThumbnailImage(
                             widget.thumbnailUrl ?? widget.thumbnailImage!,
-                            fit: BoxFit.contain,
-                            width: double.infinity,
-                            height: double.infinity,
                           )
                         : Container(color: const Color(0xFF2A2A2A)),
                   ),

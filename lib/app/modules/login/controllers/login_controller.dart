@@ -3,9 +3,8 @@ import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
 import '../../../data/core/base/base_controller.dart';
-import '../../../data/core/utils/result.dart';
-import '../../../data/services/auth_controller.dart';
-import '../../../data/services/auth_service.dart';
+import '../../../data/core/utils/common_snackbar.dart';
+import '../../../repository/auth_repo/auth_repo.dart';
 
 class LoginController extends BaseController {
   final count = 0.obs;
@@ -13,12 +12,10 @@ class LoginController extends BaseController {
   final formKey = GlobalKey<FormState>();
   final mobileController = TextEditingController();
 
-  final mobileError = ''.obs;
   final isValidating = false.obs;
   final hasValidated = false.obs;
 
-  late final AuthService _authService;
-  final _authController = Get.find<AuthController>();
+  final _authRepo = Get.find<AuthRepo>();
 
   @override
   void dispose() {
@@ -26,13 +23,11 @@ class LoginController extends BaseController {
     super.dispose();
   }
 
-  /// Validate phone number format
   String? validatePhone(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'mobile_number_required'.tr;
     }
 
-    // Normalize phone number for validation
     final normalizedPhone = value.replaceAll(RegExp(r'\D'), '');
 
     if (normalizedPhone.length < 10) {
@@ -42,66 +37,45 @@ class LoginController extends BaseController {
     return null;
   }
 
-  /// Check if user exists by phone number
-  Future<bool> checkUserExists(String phoneNumber) async {
-    setLoading(true);
-    clearError();
-
-    final result = await _authService.checkUserExists(phoneNumber);
-
-    setLoading(false);
-
-    if (result.isSuccess) {
-      return result.dataOrNull ?? false;
-    } else {
-      final error = result.errorOrNull ?? 'Failed to check user';
-      print('Error in checkUserExists: $error');
-      handleError(error);
-      return false;
-    }
-  }
-
-  /// Handle login button tap
   Future<void> handleLogin() async {
-    // Mark that we've attempted validation
     hasValidated.value = true;
-    mobileError.value = '';
 
-    // Validate form first
-    if (formKey.currentState?.validate() ?? false) {
+    if (!(formKey.currentState?.validate() ?? false)) {
+      final phoneError = validatePhone(mobileController.text);
+      if (phoneError != null) {
+        CommonSnackbar.error(phoneError);
+      }
       return;
     }
 
-    // Check if user exists
     isValidating.value = true;
 
     final phoneNumber = mobileController.text.trim();
-    final userExists = await _authController.checkUserExists(phoneNumber);
-    print('userExists:::::${userExists}');
+    final normalizedPhone = phoneNumber.replaceAll(RegExp(r'\D'), '');
+    final userExists = await _authRepo.checkUserExists(normalizedPhone);
     if (!userExists) {
       isValidating.value = false;
-      mobileError.value = 'user_not_found'.tr;
-      // Trigger form validation to show error
-      formKey.currentState?.validate();
+      CommonSnackbar.error('user_not_found'.tr);
       return;
     }
 
-    // User exists, generate new OTP for login
-    final otpCode = await _authController.generateOTPForLogin(phoneNumber);
+    final otpCode = await _authRepo.generateOTPForLogin(normalizedPhone);
 
     isValidating.value = false;
 
     if (otpCode == null) {
-      // Check for specific error codes
-      final errorMessage = _authController.errorMessage.value;
-      mobileError.value = errorMessage;
-      formKey.currentState?.validate();
+      final errorMessage = _authRepo.errorMessage.value;
+      if (errorMessage.isNotEmpty) {
+        CommonSnackbar.error(errorMessage);
+      } else {
+        CommonSnackbar.error('failedToGenerateVerificationCode'.tr);
+      }
       return;
     }
 
     Get.toNamed(
       Routes.VERIFICATION_CODE_BY_LOGIN,
-      parameters: {'phoneNumber': phoneNumber},
+      parameters: {'phoneNumber': normalizedPhone},
     );
   }
 

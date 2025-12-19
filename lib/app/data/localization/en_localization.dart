@@ -24,6 +24,7 @@ class EnLocalization {
     "invalid_phone_number": "Please enter a valid phone number",
     "user_not_found": "User not found. Please sign up first.",
     "error": "Error",
+    "Success": "Success",
     "failedToGenerateVerificationCode": "Failed to generate verification code",
     "somethingWentWrong": "Something went wrong. Please try again.",
     "user_already_registered":
@@ -135,5 +136,17 @@ class EnLocalization {
     "store": "Store",
     "profile": "Profile",
     "language": "Language",
+    // Service Error Messages
+    "failedToCheckUser": "Failed to check user",
+    "userNotFound": "User not found in database",
+    "userIdNotFound": "User ID not found",
+    "failedToCreateAuthUser": "Failed to create auth user",
+    "failedToCreateOrFindAuthUser": "Failed to create or find auth user",
+    "failedToCreateSession": "Failed to create session",
+    "failedToSignInAfterEmailConfirmation": "Failed to sign in after email confirmation",
+    "failedToCreateOrSignIn": "Failed to create or sign in",
+    "otpVerificationFailed": "OTP verification failed",
+    "failedToCreatePublicUser": "Failed to create public user",
+    "failedToCreatePublicUserAfterRetries": "Failed to create public user after retries",
   };
 }

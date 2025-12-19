@@ -120,32 +120,18 @@ class SignUpView extends GetView<SignUpController> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Obx(() {
-                          controller.mobileError.value;
-                          return CustomTextField(
-                            label: 'mobile_number'.tr,
-                            controller: controller.mobileController,
-                            keyboardType: TextInputType.phone,
-                            placeholder: 'type'.tr,
-                            validator: (value) {
-                              // Only validate if button has been clicked
-                              if (!controller.hasValidated.value) return null;
+                        CustomTextField(
+                          label: 'mobile_number'.tr,
+                          controller: controller.mobileController,
+                          keyboardType: TextInputType.phone,
+                          placeholder: 'type'.tr,
+                          validator: (value) {
+                            // Only validate if button has been clicked
+                            if (!controller.hasValidated.value) return null;
 
-                              final validationError = controller.validatePhone(
-                                value,
-                              );
-                              if (validationError != null) {
-                                return validationError;
-                              }
-                              // Return custom error if user already registered
-                              return controller.mobileError.value;
-                            },
-                            onChanged: (value) {
-                              // Update button state when phone number changes
-                              controller.mobileError.value = '';
-                            },
-                          );
-                        }),
+                            return controller.validatePhone(value);
+                          },
+                        ),
                         SizedBox(height: 40.h),
                       ],
                     ),
@@ -155,26 +141,24 @@ class SignUpView extends GetView<SignUpController> {
               Positioned(
                 top: 710.h,
                 left: 20.w,
-                child: Obx(
-                  () {
-                    controller.isValidating.value;
-                   return AppButton(
-                      onTap:
-                      (controller.isValidating.value ||
-                          !controller.isFormValid)
-                          ? null
-                          : controller.handleSignUp,
-                      text: controller.isValidating.value
-                          ? 'generating_otp'.tr
-                          : 'signUp'.tr,
-                      width: 350.w,
-                      height: 48.h,
-                      isEnabled:
-                      !controller.isValidating.value &&
-                          controller.isFormValid,
-                    );
-                  },
-                ),
+                child: Obx(() {
+                  controller.isValidating.value;
+                  return AppButton(
+                    onTap:
+                        (controller.isValidating.value ||
+                            !controller.isFormValid)
+                        ? null
+                        : controller.handleSignUp,
+                    text: controller.isValidating.value
+                        ? 'generating_otp'.tr
+                        : 'signUp'.tr,
+                    width: 350.w,
+                    height: 48.h,
+                    isEnabled:
+                        !controller.isValidating.value &&
+                        controller.isFormValid,
+                  );
+                }),
               ),
               Positioned(
                 top: 788.h,

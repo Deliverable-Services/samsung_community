@@ -1,21 +1,23 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
 import '../../../data/constants/language_options.dart';
+import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/helper_widgets/bottom_sheet_modal.dart';
 import '../../../data/helper_widgets/option_item.dart';
 import '../../../data/localization/language_controller.dart';
-import '../../../data/services/auth_controller.dart';
+import '../../../repository/auth_repo/auth_repo.dart';
 
 class VerificationCodeController extends GetxController {
   final count = 0.obs;
   final formKey = GlobalKey<FormState>();
   final verificationCodeController = TextEditingController();
-  final authController = Get.find<AuthController>();
+  final authRepo = Get.find<AuthRepo>();
   final selectedLanguageId = ''.obs;
   final phoneNumber = ''.obs;
   final isResending = false.obs;
@@ -80,7 +82,7 @@ class VerificationCodeController extends GetxController {
 
     isResending.value = true;
 
-    final otpCode = await authController.generateOTP(phoneNumber.value);
+    final otpCode = await authRepo.generateOTP(phoneNumber.value);
 
     isResending.value = false;
     // Clear error message when OTP is successfully sent
@@ -93,6 +95,14 @@ class VerificationCodeController extends GetxController {
       startResendTimer();
       // Trigger form validation to clear the error display
       formKey.currentState?.validate();
+    } else {
+      // Show error if OTP generation failed
+      final errorMessage = authRepo.errorMessage.value;
+      if (errorMessage.isNotEmpty) {
+        CommonSnackbar.error(errorMessage);
+      } else {
+        CommonSnackbar.error('failedToGenerateVerificationCode'.tr);
+      }
     }
   }
 
@@ -115,7 +125,8 @@ class VerificationCodeController extends GetxController {
 
     isVerifying.value = true;
 
-    final isValid = await authController.verifyOTP(
+    // Verify OTP (for signup, we only verify, don't sign in)
+    final isValid = await authRepo.verifyOTP(
       phoneNumber: phoneNumber.value,
       otpCode: otpCode,
     );
@@ -123,19 +134,22 @@ class VerificationCodeController extends GetxController {
     isVerifying.value = false;
 
     if (!isValid) {
-      final errorMessage = authController.errorMessage.value;
+      final errorMessage = authRepo.errorMessage.value;
 
       if (errorMessage.contains('OTP_INCORRECT')) {
         otpError.value = 'otp_incorrect'.tr;
       } else if (errorMessage.contains('OTP_EXPIRED')) {
         otpError.value = 'otp_expired'.tr;
       } else {
-        otpError.value = errorMessage;
+        otpError.value = errorMessage.isNotEmpty
+            ? errorMessage
+            : 'OTP verification failed';
       }
       formKey.currentState?.validate();
       return;
     }
 
+    // OTP verified successfully, show language selector
     _showLanguageSelector();
   }
 
@@ -159,20 +173,28 @@ class VerificationCodeController extends GetxController {
                   selectedLanguageId.value = option.id;
 
                   if (phoneNumber.value.isNotEmpty) {
-                    final success = await authController.saveProfile(
+                    // Save language preference
+                    final success = await authRepo.saveProfile(
                       phoneNumber: phoneNumber.value,
                       profileData: {'languagePreference': option.id},
                     );
 
                     if (!success) {
-                      print('Failed to save language preference');
+                      debugPrint('Failed to save language preference');
+                      final errorMessage = authRepo.errorMessage.value;
+                      CommonSnackbar.error(
+                        errorMessage.isNotEmpty
+                            ? errorMessage
+                            : 'Failed to save language preference',
+                      );
+                      return;
                     }
                   }
 
                   final languageController = Get.find<LanguageController>();
                   languageController.changeLanguage(option.id);
                   Get.back();
-                  Get.toNamed(
+                  Get.offNamed(
                     Routes.PERSONAL_DETAILS,
                     parameters: {'phoneNumber': phoneNumber.value},
                   );

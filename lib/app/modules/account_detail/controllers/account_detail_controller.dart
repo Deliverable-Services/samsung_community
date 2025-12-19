@@ -1,26 +1,22 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
-import '../../../data/services/auth_controller.dart';
+import '../../../data/core/utils/common_snackbar.dart';
+import '../../../repository/auth_repo/auth_repo.dart';
 
 class AccountDetailController extends GetxController {
   final count = 0.obs;
 
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController socialMediaController = TextEditingController();
   final TextEditingController professionController = TextEditingController();
   final TextEditingController bioController = TextEditingController();
   final TextEditingController classController = TextEditingController();
   final ValueNotifier<String?> selectedCollege = ValueNotifier<String?>(null);
   final ValueNotifier<String> selectedStudent = ValueNotifier('yes');
-  final authController = Get.find<AuthController>();
+  final authRepo = Get.find<AuthRepo>();
   final phoneNumber = ''.obs;
-  final socialMediaError = ''.obs;
-  final professionError = ''.obs;
-  final bioError = ''.obs;
-  final collegeError = ''.obs;
-  final classError = ''.obs;
   final isSaving = false.obs;
 
   // Personal details from previous screen
@@ -31,24 +27,25 @@ class AccountDetailController extends GetxController {
     super.onInit();
     // Get data from route parameters (includes personal details from previous screen)
     final parameters = Get.parameters as Map<String, dynamic>?;
-    personalDetailsData = parameters;
+    if (parameters != null && parameters.isNotEmpty) {
+      personalDetailsData = parameters;
+    }
     // Get phone number from parameters or from personal details data
-    phoneNumber.value =
-        (parameters?['phoneNumber'] as String? ??
-            personalDetailsData?['phoneNumber'] as String?) ??
-        '';
+    if (phoneNumber.value.isEmpty) {
+      phoneNumber.value =
+          (parameters?['phoneNumber'] as String? ??
+              personalDetailsData?['phoneNumber'] as String?) ??
+          '';
+    }
 
     // Listen to student selection changes
     selectedStudent.addListener(onStudentSelectionChanged);
   }
 
   void onStudentSelectionChanged() {
-    // Clear college and class fields when switching from student to non-student
     if (selectedStudent.value == 'no') {
-      selectedCollege.value = null; // Set to null instead of empty string
+      selectedCollege.value = null;
       classController.clear();
-      collegeError.value = '';
-      classError.value = '';
     }
   }
 
@@ -105,57 +102,39 @@ class AccountDetailController extends GetxController {
   }
 
   Future<void> handleSubmit() async {
-    // Clear previous errors
-    socialMediaError.value = '';
-    professionError.value = '';
-    bioError.value = '';
-    collegeError.value = '';
-    classError.value = '';
+    final List<String> errors = [];
 
-    // Validate form
-    if (!(formKey.currentState?.validate() ?? false)) {
-      return;
-    }
-
-    // Validate social media (optional field - only validate if provided)
     final socialMediaUrl = socialMediaController.text.trim();
     String? platform;
 
     if (socialMediaUrl.isNotEmpty) {
       if (!isValidUrl(socialMediaUrl)) {
-        socialMediaError.value = 'Please enter a valid URL';
-        formKey.currentState?.validate();
-        return;
-      }
-
-      // Parse social media platform
-      platform = parseSocialMediaPlatform(socialMediaUrl);
-      if (platform == null) {
-        socialMediaError.value =
-            'Please enter a valid social media URL (Instagram, Facebook, etc.)';
-        formKey.currentState?.validate();
-        return;
+        errors.add('social_media'.tr + ' (invalid URL)');
+      } else {
+        platform = parseSocialMediaPlatform(socialMediaUrl);
+        if (platform == null) {
+          errors.add('social_media'.tr + ' (invalid platform)');
+        }
       }
     }
 
-    // Validate student fields if student is selected
     if (selectedStudent.value == 'yes') {
       if (selectedCollege.value == null || selectedCollege.value!.isEmpty) {
-        collegeError.value = 'choose_college'.tr + ' is required';
-        formKey.currentState?.validate();
-        return;
+        errors.add('choose_college'.tr);
       }
 
       if (classController.text.trim().isEmpty) {
-        classError.value = 'name_of_class'.tr + ' is required';
-        formKey.currentState?.validate();
-        return;
+        errors.add('name_of_class'.tr);
       }
     }
 
-    // Validate phone number
-    if (phoneNumber.value == null || phoneNumber.value!.isEmpty) {
-      print('Error: Phone number not found');
+    if (phoneNumber.value.isEmpty) {
+      errors.add('mobile_number'.tr);
+    }
+
+    if (errors.isNotEmpty) {
+      final errorMessage = '${errors.join(', ')} is required';
+      CommonSnackbar.error(errorMessage);
       return;
     }
 
@@ -189,6 +168,10 @@ class AccountDetailController extends GetxController {
           personalData['deviceModel'] != null) {
         profileData['deviceModel'] = personalData['deviceModel'];
       }
+      if (personalData.containsKey('profilePictureUrl') &&
+          personalData['profilePictureUrl'] != null) {
+        profileData['profilePictureUrl'] = personalData['profilePictureUrl'];
+      }
     }
 
     // Add account detail fields (optional)
@@ -213,17 +196,20 @@ class AccountDetailController extends GetxController {
       profileData['className'] = classController.text.trim();
     }
 
-    // Save to database
-    final success = await authController.saveProfile(
-      phoneNumber: phoneNumber.value,
-      profileData: profileData,
-    );
+    try {
+      final success = await authRepo.saveProfile(
+        phoneNumber: phoneNumber.value,
+        profileData: profileData,
+      );
 
-    isSaving.value = false;
+      isSaving.value = false;
 
-    if (success) {
-      // Navigate to next screen
-      Get.toNamed(Routes.REQUEST_SENT);
+      if (success) {
+        Get.offNamed(Routes.REQUEST_SENT);
+      }
+    } catch (e) {
+      isSaving.value = false;
+      CommonSnackbar.error('Failed to save profile. Please try again.');
     }
   }
 

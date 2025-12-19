@@ -32,8 +32,6 @@ class AccountDetailView extends GetView<AccountDetailController> {
                   end: 20.w,
                   top: 68.h,
                 ),
-                child: Form(
-                  key: controller.formKey,
                   child: ValueListenableBuilder(
                     valueListenable: controller.selectedStudent,
                     builder: (value, context, _) {
@@ -45,46 +43,12 @@ class AccountDetailView extends GetView<AccountDetailController> {
                             label: 'social_media'.tr,
                             controller: controller.socialMediaController,
                             placeholder: 'type'.tr,
-                            validator: (value) {
-                              if (controller.socialMediaError.isNotEmpty) {
-                                return controller.socialMediaError.value;
-                              }
-                              // Optional field - only validate if value is provided
-                              if (value != null && value.trim().isNotEmpty) {
-                                if (!controller.isValidUrl(value.trim())) {
-                                  return 'Please enter a valid URL';
-                                }
-                                final platform = controller
-                                    .parseSocialMediaPlatform(value.trim());
-                                if (platform == null) {
-                                  return 'Please enter a valid social media URL (Instagram, Facebook, etc.)';
-                                }
-                              }
-                              return null;
-                            },
-                            onChanged: (value) {
-                              if (controller.socialMediaError.isNotEmpty) {
-                                controller.socialMediaError.value = '';
-                              }
-                            },
                           ),
                           SizedBox(height: 30.h),
                           CustomTextField(
                             label: 'profession'.tr,
                             controller: controller.professionController,
                             placeholder: 'type'.tr,
-                            validator: (value) {
-                              if (controller.professionError.value.isNotEmpty) {
-                                return controller.professionError.value;
-                              }
-                              // Optional field - no validation needed
-                              return null;
-                            },
-                            onChanged: (value) {
-                              if (controller.professionError.value.isNotEmpty) {
-                                controller.professionError.value = '';
-                              }
-                            },
                           ),
                           SizedBox(height: 30.h),
                           CustomTextField(
@@ -92,18 +56,6 @@ class AccountDetailView extends GetView<AccountDetailController> {
                             controller: controller.bioController,
                             placeholder: 'type'.tr,
                             maxLines: 5,
-                            validator: (value) {
-                              if (controller.bioError.value.isNotEmpty) {
-                                return controller.bioError.value;
-                              }
-                              // Optional field - no validation needed
-                              return null;
-                            },
-                            onChanged: (value) {
-                              if (controller.bioError.value.isNotEmpty) {
-                                controller.bioError.value = '';
-                              }
-                            },
                           ),
                           SizedBox(height: 30.h),
                           CustomText("are_you_student".tr),
@@ -139,56 +91,17 @@ class AccountDetailView extends GetView<AccountDetailController> {
                                   hintText: 'select'.tr,
                                   onChanged: (value) {
                                     controller.selectedCollege.value = value;
-                                    if (controller
-                                        .collegeError
-                                        .value
-                                        .isNotEmpty) {
-                                      controller.collegeError.value = '';
-                                    }
-                                  },
-                                ),
-                                if (controller.collegeError.value.isNotEmpty)
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 8.h),
-                                    child: Text(
-                                      controller.collegeError.value,
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 12.sp,
-                                      ),
-                                    ),
+                                },
                                   ),
                                 SizedBox(height: 30.h),
                                 CustomTextField(
                                   label: 'name_of_class'.tr,
                                   controller: controller.classController,
                                   placeholder: 'type'.tr,
-                                  validator: (value) {
-                                    if (controller
-                                        .classError
-                                        .value
-                                        .isNotEmpty) {
-                                      return controller.classError.value;
-                                    }
-                                    if (value == null || value.trim().isEmpty) {
-                                      return 'name_of_class'.tr +
-                                          ' is required';
-                                    }
-                                    return null;
-                                  },
-                                  onChanged: (value) {
-                                    if (controller
-                                        .classError
-                                        .value
-                                        .isNotEmpty) {
-                                      controller.classError.value = '';
-                                    }
-                                  },
                                 ),
                               ],
                             )
                           else
-                            // Disable student fields when not a student
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -223,7 +136,7 @@ class AccountDetailView extends GetView<AccountDetailController> {
                                     }).toList(),
                                     valueNotifier: controller.selectedCollege,
                                     hintText: 'select'.tr,
-                                    onChanged: null, // Disabled
+                                  onChanged: null,
                                   ),
                                 ),
                                 SizedBox(height: 30.h),
@@ -252,7 +165,6 @@ class AccountDetailView extends GetView<AccountDetailController> {
                         ],
                       );
                     },
-                  ),
                 ),
               ),
             ),
