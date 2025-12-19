@@ -113,27 +113,18 @@ class LoginView extends GetView<LoginController> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Obx(() {
-                            controller.mobileError.value;
-                            return CustomTextField(
-                              label: 'mobile_number'.tr,
-                              controller: controller.mobileController,
-                              keyboardType: TextInputType.phone,
-                              placeholder: 'type'.tr,
-                              validator: (value) {
-                                // Only validate if button has been clicked
-                                if (!controller.hasValidated.value) return null;
+                          CustomTextField(
+                            label: 'mobile_number'.tr,
+                            controller: controller.mobileController,
+                            keyboardType: TextInputType.phone,
+                            placeholder: 'type'.tr,
+                            validator: (value) {
+                              // Only validate if button has been clicked
+                              if (!controller.hasValidated.value) return null;
 
-                                final validationError = controller
-                                    .validatePhone(value);
-                                if (validationError != null) {
-                                  return validationError;
-                                }
-                                // Return custom error if user doesn't exist
-                                return controller.mobileError.value;
-                              },
-                            );
-                          }),
+                              return controller.validatePhone(value);
+                            },
+                          ),
                           SizedBox(height: 40.h),
                         ],
                       ),

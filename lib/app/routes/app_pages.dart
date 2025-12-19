@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../data/middleware/auth_guard.dart';
+import '../data/middleware/guest_guard.dart';
 import '../modules/academy/bindings/academy_binding.dart';
 import '../modules/academy/views/academy_view.dart';
 import '../modules/account_detail/bindings/account_detail_binding.dart';
@@ -39,70 +41,48 @@ class AppPages {
   static const INITIAL = Routes.SPLASH;
 
   static final routes = [
+    // Protected routes - require authentication
     GetPage(
       name: _Paths.HOME,
       page: () => const HomeView(),
       binding: HomeBinding(),
-    ),
-    GetPage(
-      name: _Paths.SPLASH,
-      page: () => const SplashView(),
-      binding: SplashBinding(),
-    ),
-    GetPage(
-      name: _Paths.LOGIN,
-      page: () => const LoginView(),
-      binding: LoginBinding(),
-    ),
-    GetPage(
-      name: _Paths.SIGN_UP,
-      page: () => const SignUpView(),
-      binding: SignUpBinding(),
-    ),
-    GetPage(
-      name: _Paths.ON_BOARDING,
-      page: () => const OnBoardingView(),
-      binding: OnBoardingBinding(),
+      middlewares: [AuthGuard()],
     ),
     GetPage(
       name: _Paths.BOTTOM_BAR,
       page: () => const BottomBarView(),
       binding: BottomBarBinding(),
-    ),
-    GetPage(
-      name: _Paths.VERIFICATION_CODE,
-      page: () => const VerificationCodeView(),
-      binding: VerificationCodeBinding(),
-    ),
-    GetPage(
-      name: _Paths.VERIFICATION_CODE_BY_LOGIN,
-      page: () => const VerificationCodeByLoginView(),
-      binding: VerificationCodeByLoginBinding(),
+      middlewares: [AuthGuard()],
     ),
     GetPage(
       name: _Paths.VOD,
       page: () => const VodView(),
       binding: VodBinding(),
+      middlewares: [AuthGuard()],
     ),
     GetPage(
       name: _Paths.ACADEMY,
       page: () => const AcademyView(),
       binding: AcademyBinding(),
+      middlewares: [AuthGuard()],
     ),
     GetPage(
       name: _Paths.FEED,
       page: () => const FeedView(),
       binding: FeedBinding(),
+      middlewares: [AuthGuard()],
     ),
     GetPage(
       name: _Paths.EVENTS,
       page: () => const EventsView(),
       binding: EventsBinding(),
+      middlewares: [AuthGuard()],
     ),
     GetPage(
       name: _Paths.PERSONAL_DETAILS,
       page: () => const PersonalDetailsView(),
       binding: PersonalDetailsBinding(),
+      // No AuthGuard - accessible during signup flow
     ),
     GetPage(
       name: _Paths.ACCOUNT_DETAIL,
@@ -113,6 +93,43 @@ class AppPages {
       name: _Paths.REQUEST_SENT,
       page: () => const RequestSentView(),
       binding: RequestSentBinding(),
+    ),
+    // Public routes - no authentication required
+    GetPage(
+      name: _Paths.SPLASH,
+      page: () => const SplashView(),
+      binding: SplashBinding(),
+    ),
+    // Auth routes - only accessible when NOT authenticated
+    GetPage(
+      name: _Paths.LOGIN,
+      page: () => const LoginView(),
+      binding: LoginBinding(),
+      middlewares: [GuestGuard()],
+    ),
+    GetPage(
+      name: _Paths.SIGN_UP,
+      page: () => const SignUpView(),
+      binding: SignUpBinding(),
+      middlewares: [GuestGuard()],
+    ),
+    GetPage(
+      name: _Paths.ON_BOARDING,
+      page: () => const OnBoardingView(),
+      binding: OnBoardingBinding(),
+      middlewares: [GuestGuard()],
+    ),
+    GetPage(
+      name: _Paths.VERIFICATION_CODE,
+      page: () => const VerificationCodeView(),
+      binding: VerificationCodeBinding(),
+      middlewares: [GuestGuard()],
+    ),
+    GetPage(
+      name: _Paths.VERIFICATION_CODE_BY_LOGIN,
+      page: () => const VerificationCodeByLoginView(),
+      binding: VerificationCodeByLoginBinding(),
+      middlewares: [GuestGuard()],
     ),
   ];
 

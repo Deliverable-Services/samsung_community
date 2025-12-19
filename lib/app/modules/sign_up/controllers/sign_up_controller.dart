@@ -1,26 +1,25 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
-import '../../../data/services/auth_controller.dart';
+import '../../../data/core/utils/common_snackbar.dart';
+import '../../../repository/auth_repo/auth_repo.dart';
 
 class SignUpController extends GetxController {
   final count = 0.obs;
 
   final formKey = GlobalKey<FormState>();
   TextEditingController mobileController = TextEditingController();
-  final _authController = Get.find<AuthController>();
+  final _authRepo = Get.find<AuthRepo>();
 
-  final mobileError = ''.obs;
   final isValidating = false.obs;
   final hasValidated = false.obs;
 
-  /// Check if form is valid
   bool get isFormValid {
     final phoneNumber = mobileController.text.trim();
     if (phoneNumber.isEmpty) return false;
 
-    // Normalize phone number for validation
     final normalizedPhone = phoneNumber.replaceAll(RegExp(r'\D'), '');
     return normalizedPhone.length >= 10;
   }
@@ -31,13 +30,11 @@ class SignUpController extends GetxController {
     super.dispose();
   }
 
-  /// Validate phone number format
   String? validatePhone(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'mobile_number_required'.tr;
     }
 
-    // Normalize phone number for validation
     final normalizedPhone = value.replaceAll(RegExp(r'\D'), '');
 
     if (normalizedPhone.length < 10) {
@@ -47,46 +44,88 @@ class SignUpController extends GetxController {
     return null;
   }
 
-  /// Handle sign up button tap
   Future<void> handleSignUp() async {
-    // Mark that we've attempted validation
     hasValidated.value = true;
-    mobileError.value = '';
 
-    // Validate form first
-    if (formKey.currentState?.validate() ?? false) {
+    if (!(formKey.currentState?.validate() ?? false)) {
+      final phoneError = validatePhone(mobileController.text);
+      if (phoneError != null) {
+        CommonSnackbar.error(phoneError);
+      }
       return;
     }
 
     final phoneNumber = mobileController.text.trim();
+    final normalizedPhone = phoneNumber.replaceAll(RegExp(r'\D'), '');
 
-    // Generate OTP (this will handle all user existence and validation checks)
     isValidating.value = true;
 
-    final otpCode = await _authController.generateOTP(phoneNumber);
+    try {
+      final userDetails = await _authRepo.checkUserForSignup(normalizedPhone);
 
-    isValidating.value = false;
-
-    if (otpCode == null) {
-      // Check for specific error codes
-      final errorMessage = _authController.errorMessage.value;
-
-      if (errorMessage.contains('USER_ALREADY_SIGNED_UP')) {
-        mobileError.value = 'user_already_signed_up'.tr;
-      } else if (errorMessage.contains('WAIT_FOR_APPROVAL')) {
-        mobileError.value = 'wait_for_approval'.tr;
-      } else {
-        mobileError.value = errorMessage;
+      if (userDetails == null &&
+          _authRepo.errorMessage.value.contains('USER_ALREADY_SIGNED_UP')) {
+        isValidating.value = false;
+        CommonSnackbar.error('user_already_signed_up'.tr);
+        return;
       }
 
-      formKey.currentState?.validate();
-      return;
-    }
+      final authUserId = await _authRepo.createOrGetAuthUser(normalizedPhone);
+      if (authUserId == null) {
+        isValidating.value = false;
+        final errorMessage = _authRepo.errorMessage.value;
+        CommonSnackbar.error(
+          errorMessage.isNotEmpty
+              ? errorMessage
+              : 'failedToGenerateVerificationCode'.tr,
+        );
+        return;
+      }
 
-    Get.toNamed(
-      Routes.VERIFICATION_CODE,
-      parameters: {'phoneNumber': phoneNumber},
-    );
+      final userCreated = await _authRepo.createOrUpdatePublicUser(
+        phoneNumber: normalizedPhone,
+        authUserId: authUserId,
+        existingUserDetails: userDetails,
+      );
+
+      if (!userCreated) {
+        isValidating.value = false;
+        final errorMessage = _authRepo.errorMessage.value;
+        CommonSnackbar.error(
+          errorMessage.isNotEmpty
+              ? errorMessage
+              : 'failedToGenerateVerificationCode'.tr,
+        );
+        return;
+      }
+
+      final otpCode = await _authRepo.generateOTP(normalizedPhone);
+
+      isValidating.value = false;
+
+      if (otpCode == null) {
+        final errorMessage = _authRepo.errorMessage.value;
+
+        if (errorMessage.contains('WAIT_FOR_APPROVAL') ||
+            errorMessage.contains('wait_for_approval')) {
+          CommonSnackbar.error('wait_for_approval'.tr);
+        } else if (errorMessage.isNotEmpty) {
+          CommonSnackbar.error(errorMessage);
+        } else {
+          CommonSnackbar.error('failedToGenerateVerificationCode'.tr);
+        }
+        return;
+      }
+
+      Get.toNamed(
+        Routes.VERIFICATION_CODE,
+        parameters: {'phoneNumber': normalizedPhone},
+      );
+    } catch (e) {
+      isValidating.value = false;
+      debugPrint('Error in handleSignUp: $e');
+      CommonSnackbar.error('somethingWentWrong'.tr);
+    }
   }
 
   @override

@@ -26,83 +26,78 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedPress(
-      onTap: isEnabled ? onTap : null,
-      scaleFactor: 0.95,
-      opacityFactor: 0.7,
-      child: Opacity(
-        opacity: isEnabled ? 1.0 : 0.5,
-        child: SizedBox(
-          width: width ?? 350.w,
-          height: height ?? 48.h,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(100.r),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(
-                sigmaX: 7.864322662353516,
-                sigmaY: 7.864322662353516,
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color.fromRGBO(214, 214, 214, 0.4),
-                      Color.fromRGBO(112, 112, 112, 0.4),
-                    ],
-                    stops: [0.0, 1.0],
-                  ),
-                  borderRadius: BorderRadius.circular(100.r),
-                  border: Border.all(
-                    width: 1,
-                    color: Colors.white.withOpacity(0.2),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      offset: Offset(0, 7.43.h),
-                      blurRadius: 16.6.r,
-                      color: const Color(0x1A000000),
-                    ),
-                    BoxShadow(
-                      offset: Offset(0, 30.15.h),
-                      blurRadius: 30.15.r,
-                      color: const Color(0x17000000),
-                    ),
-                    BoxShadow(
-                      offset: Offset(0, 68.16.h),
-                      blurRadius: 41.07.r,
-                      color: const Color(0x0D000000),
-                    ),
-                    BoxShadow(
-                      offset: Offset(0, 121.02.h),
-                      blurRadius: 48.5.r,
-                      color: const Color(0x03000000),
-                    ),
-                    BoxShadow(
-                      offset: Offset(0, 189.18.h),
-                      blurRadius: 52.87.r,
-                      color: const Color(0x00000000),
-                    ),
+    final buttonContent = Opacity(
+      opacity: isEnabled ? 1.0 : 0.5,
+      child: SizedBox(
+        width: width ?? 350.w,
+        height: height ?? 48.h,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(100.r),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: 7.864322662353516,
+              sigmaY: 7.864322662353516,
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color.fromRGBO(214, 214, 214, 0.4),
+                    Color.fromRGBO(112, 112, 112, 0.4),
                   ],
+                  stops: [0.0, 1.0],
                 ),
-                padding: EdgeInsets.only(
-                  top: 3.h,
-                  right: 18.w,
-                  bottom: 3.h,
-                  left: 18.w,
+                borderRadius: BorderRadius.circular(100.r),
+                border: Border.all(
+                  width: 1,
+                  color: Colors.white.withOpacity(0.2),
                 ),
-                child: Center(
-                  child: Text(
-                    text,
-                    style: TextStyle(
-                      color: textColor,
-                      letterSpacing: 0,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14.sp,
-                    ),
-                    textAlign: TextAlign.center,
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(0, 7.43.h),
+                    blurRadius: 16.6.r,
+                    color: const Color(0x1A000000),
                   ),
+                  BoxShadow(
+                    offset: Offset(0, 30.15.h),
+                    blurRadius: 30.15.r,
+                    color: const Color(0x17000000),
+                  ),
+                  BoxShadow(
+                    offset: Offset(0, 68.16.h),
+                    blurRadius: 41.07.r,
+                    color: const Color(0x0D000000),
+                  ),
+                  BoxShadow(
+                    offset: Offset(0, 121.02.h),
+                    blurRadius: 48.5.r,
+                    color: const Color(0x03000000),
+                  ),
+                  BoxShadow(
+                    offset: Offset(0, 189.18.h),
+                    blurRadius: 52.87.r,
+                    color: const Color(0x00000000),
+                  ),
+                ],
+              ),
+              padding: EdgeInsets.only(
+                top: 3.h,
+                right: 18.w,
+                bottom: 3.h,
+                left: 18.w,
+              ),
+              child: Center(
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    color: textColor,
+                    letterSpacing: 0,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14.sp,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
@@ -110,5 +105,16 @@ class AppButton extends StatelessWidget {
         ),
       ),
     );
+
+    if (isEnabled) {
+      return AnimatedPress(
+        onTap: onTap,
+        scaleFactor: 0.95,
+        opacityFactor: 0.7,
+        child: buttonContent,
+      );
+    } else {
+      return GestureDetector(onTap: null, child: buttonContent);
+    }
   }
 }

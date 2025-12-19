@@ -23,6 +23,7 @@ class HebrewiLocalization {
     "invalid_phone_number": "אנא הזן מספר טלפון תקין",
     "user_not_found": "משתמש לא נמצא. אנא הירשם תחילה.",
     "error": "שגיאה",
+    "Success": "הצלחה",
     "failedToGenerateVerificationCode": "נכשל ביצירת קוד אימות",
     "somethingWentWrong": "משהו השתבש. אנא נסה שוב.",
     "user_already_registered": "משתמש כבר רשום. אנא התחבר במקום זאת.",

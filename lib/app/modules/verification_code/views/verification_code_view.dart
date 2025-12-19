@@ -135,7 +135,6 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                             return null;
                           },
                           onChanged: (value) {
-                            // Clear error and update button state when user types
                             if (controller.otpError.value.isNotEmpty) {
                               controller.otpError.value = '';
                             }
@@ -143,51 +142,50 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                         ),
                         SizedBox(height: 16.h),
                         Center(
-                          child: controller.resendCountdown.value > 0
-                              ? Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: 'otp_sent'.tr + ' ',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 12.sp,
-                                          height: 22 / 14,
-                                          letterSpacing: 0,
-                                          color: AppColors.white.withOpacity(
-                                            0.7,
-                                          ),
-                                        ),
+                          child: Obx(() {
+                            if (controller.resendCountdown.value > 0) {
+                              return Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: 'otp_sent'.tr + ' ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 12.sp,
+                                        height: 22 / 14,
+                                        letterSpacing: 0,
+                                        color: AppColors.white.withOpacity(0.7),
                                       ),
-                                      TextSpan(
-                                        text:
-                                            '${controller.resendCountdown.value}',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 12.sp,
-                                          height: 22 / 14,
-                                          letterSpacing: 0,
-                                          color: AppColors.linkBlue,
-                                        ),
+                                    ),
+                                    TextSpan(
+                                      text:
+                                          '${controller.resendCountdown.value}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 12.sp,
+                                        height: 22 / 14,
+                                        letterSpacing: 0,
+                                        color: AppColors.linkBlue,
                                       ),
-                                      TextSpan(
-                                        text: ' ${'seconds'.tr}',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 12.sp,
-                                          height: 22 / 14,
-                                          letterSpacing: 0,
-                                          color: AppColors.white.withOpacity(
-                                            0.7,
-                                          ),
-                                        ),
+                                    ),
+                                    TextSpan(
+                                      text: ' ${'seconds'.tr}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 12.sp,
+                                        height: 22 / 14,
+                                        letterSpacing: 0,
+                                        color: AppColors.white.withOpacity(0.7),
                                       ),
-                                    ],
-                                  ),
-                                  textAlign: TextAlign.center,
-                                  textScaler: const TextScaler.linear(1.0),
-                                )
-                              : GestureDetector(
+                                    ),
+                                  ],
+                                ),
+                                textAlign: TextAlign.center,
+                                textScaler: const TextScaler.linear(1.0),
+                              );
+                            } else {
+                              return Obx(
+                                () => GestureDetector(
                                   onTap:
                                       (controller.isResending.value ||
                                           controller.resendCountdown.value > 0)
@@ -213,6 +211,9 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                                     ),
                                   ),
                                 ),
+                              );
+                            }
+                          }),
                         ),
                         SizedBox(height: 40.h),
                       ],

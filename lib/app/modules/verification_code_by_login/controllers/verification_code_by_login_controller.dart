@@ -4,12 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
-import '../../../data/services/auth_controller.dart';
+import '../../../repository/auth_repo/auth_repo.dart';
 
 class VerificationCodeByLoginController extends GetxController {
   final formKey = GlobalKey<FormState>();
   final verificationCodeController = TextEditingController();
-  final authController = Get.find<AuthController>();
+  final authRepo = Get.find<AuthRepo>();
   final phoneNumber = ''.obs;
   final isResending = false.obs;
   final isVerifying = false.obs;
@@ -44,7 +44,7 @@ class VerificationCodeByLoginController extends GetxController {
 
     isResending.value = true;
 
-    final otpCode = await authController.generateOTPForLogin(phoneNumber.value);
+    final otpCode = await authRepo.generateOTPForLogin(phoneNumber.value);
 
     isResending.value = false;
     // Clear error message when OTP is successfully sent
@@ -80,7 +80,7 @@ class VerificationCodeByLoginController extends GetxController {
     isVerifying.value = true;
 
     // Verify OTP and sign in to get session tokens
-    final isValid = await authController.verifyOTPAndSignIn(
+    final isValid = await authRepo.verifyOTPAndSignIn(
       phoneNumber: phoneNumber.value,
       otpCode: otpCode,
     );
@@ -88,7 +88,7 @@ class VerificationCodeByLoginController extends GetxController {
     isVerifying.value = false;
 
     if (!isValid) {
-      final errorMessage = authController.errorMessage.value;
+      final errorMessage = authRepo.errorMessage.value;
 
       if (errorMessage.contains('OTP_INCORRECT')) {
         otpError.value = 'otp_incorrect'.tr;
@@ -102,9 +102,7 @@ class VerificationCodeByLoginController extends GetxController {
     }
 
     // OTP verified and signed in successfully, check user status
-    final userDetails = await authController.getUserDetailsByPhone(
-      phoneNumber.value,
-    );
+    final userDetails = await authRepo.getUserDetailsByPhone(phoneNumber.value);
 
     if (userDetails == null) {
       otpError.value = 'user_not_found'.tr;

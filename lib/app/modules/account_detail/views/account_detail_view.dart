@@ -32,92 +32,91 @@ class AccountDetailView extends GetView<AccountDetailController> {
                   end: 20.w,
                   top: 68.h,
                 ),
-                child: Form(
-                  key: controller.formKey,
-                  child: ValueListenableBuilder(
-                    valueListenable: controller.selectedStudent,
-                    builder: (value, context, _) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 10.h),
-                          CustomTextField(
-                            label: 'social_media'.tr,
-                            controller: controller.socialMediaController,
-                            placeholder: 'type'.tr,
-                            validator: (value) {
-                              if (controller.socialMediaError.isNotEmpty) {
-                                return controller.socialMediaError.value;
-                              }
-                              // Optional field - only validate if value is provided
-                              if (value != null && value.trim().isNotEmpty) {
-                                if (!controller.isValidUrl(value.trim())) {
-                                  return 'Please enter a valid URL';
-                                }
-                                final platform = controller
-                                    .parseSocialMediaPlatform(value.trim());
-                                if (platform == null) {
-                                  return 'Please enter a valid social media URL (Instagram, Facebook, etc.)';
-                                }
-                              }
-                              return null;
-                            },
-                            onChanged: (value) {
-                              if (controller.socialMediaError.isNotEmpty) {
-                                controller.socialMediaError.value = '';
-                              }
-                            },
-                          ),
-                          SizedBox(height: 30.h),
-                          CustomTextField(
-                            label: 'profession'.tr,
-                            controller: controller.professionController,
-                            placeholder: 'type'.tr,
-                            validator: (value) {
-                              if (controller.professionError.value.isNotEmpty) {
-                                return controller.professionError.value;
-                              }
-                              // Optional field - no validation needed
-                              return null;
-                            },
-                            onChanged: (value) {
-                              if (controller.professionError.value.isNotEmpty) {
-                                controller.professionError.value = '';
-                              }
-                            },
-                          ),
-                          SizedBox(height: 30.h),
-                          CustomTextField(
-                            label: 'bio'.tr,
-                            controller: controller.bioController,
-                            placeholder: 'type'.tr,
-                            maxLines: 5,
-                            validator: (value) {
-                              if (controller.bioError.value.isNotEmpty) {
-                                return controller.bioError.value;
-                              }
-                              // Optional field - no validation needed
-                              return null;
-                            },
-                            onChanged: (value) {
-                              if (controller.bioError.value.isNotEmpty) {
-                                controller.bioError.value = '';
-                              }
-                            },
-                          ),
-                          SizedBox(height: 30.h),
-                          CustomText("are_you_student".tr),
-                          SizedBox(height: 10.h),
-                          CustomRadioButton(controller.selectedStudent),
-                          if (controller.selectedStudent.value == 'yes')
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 20.h),
-                                CustomText("choose_college".tr),
-                                SizedBox(height: 10.h),
-                                CustomDropDown<String>(
-                                  items: CollegeOptions.options.map((college) {
+                child: ValueListenableBuilder(
+                  valueListenable: controller.selectedStudent,
+                  builder: (value, context, _) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 10.h),
+                        CustomTextField(
+                          label: 'social_media'.tr,
+                          controller: controller.socialMediaController,
+                          placeholder: 'type'.tr,
+                        ),
+                        SizedBox(height: 30.h),
+                        CustomTextField(
+                          label: 'profession'.tr,
+                          controller: controller.professionController,
+                          placeholder: 'type'.tr,
+                        ),
+                        SizedBox(height: 30.h),
+                        CustomTextField(
+                          label: 'bio'.tr,
+                          controller: controller.bioController,
+                          placeholder: 'type'.tr,
+                          maxLines: 5,
+                        ),
+                        SizedBox(height: 30.h),
+                        CustomText("are_you_student".tr),
+                        SizedBox(height: 10.h),
+                        CustomRadioButton(controller.selectedStudent),
+                        if (controller.selectedStudent.value == 'yes')
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 20.h),
+                              CustomText("choose_college".tr),
+                              SizedBox(height: 10.h),
+                              CustomDropDown<String>(
+                                items: CollegeOptions.options.map((college) {
+                                  return DropdownMenuItem<String>(
+                                    value: college.id,
+                                    child: Text(
+                                      college.name,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14.sp,
+                                        letterSpacing: 0,
+                                        color: AppColors.black,
+                                        height: 22 / 14,
+                                      ),
+                                      textScaler: const TextScaler.linear(
+                                        1.0,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                                valueNotifier: controller.selectedCollege,
+                                hintText: 'select'.tr,
+                                onChanged: (value) {
+                                  controller.selectedCollege.value = value;
+                                },
+                              ),
+                              SizedBox(height: 30.h),
+                              CustomTextField(
+                                label: 'name_of_class'.tr,
+                                controller: controller.classController,
+                                placeholder: 'type'.tr,
+                              ),
+                            ],
+                          )
+                        else
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 20.h),
+                              Opacity(
+                                opacity: 0.5,
+                                child: CustomText("choose_college".tr),
+                              ),
+                              SizedBox(height: 10.h),
+                              Opacity(
+                                opacity: 0.5,
+                                child: CustomDropDown<String>(
+                                  items: CollegeOptions.options.map((
+                                    college,
+                                  ) {
                                     return DropdownMenuItem<String>(
                                       value: college.id,
                                       child: Text(
@@ -137,122 +136,35 @@ class AccountDetailView extends GetView<AccountDetailController> {
                                   }).toList(),
                                   valueNotifier: controller.selectedCollege,
                                   hintText: 'select'.tr,
-                                  onChanged: (value) {
-                                    controller.selectedCollege.value = value;
-                                    if (controller
-                                        .collegeError
-                                        .value
-                                        .isNotEmpty) {
-                                      controller.collegeError.value = '';
-                                    }
-                                  },
+                                  onChanged: null,
                                 ),
-                                if (controller.collegeError.value.isNotEmpty)
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 8.h),
-                                    child: Text(
-                                      controller.collegeError.value,
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 12.sp,
-                                      ),
-                                    ),
-                                  ),
-                                SizedBox(height: 30.h),
-                                CustomTextField(
+                              ),
+                              SizedBox(height: 30.h),
+                              Opacity(
+                                opacity: 0.5,
+                                child: CustomTextField(
                                   label: 'name_of_class'.tr,
                                   controller: controller.classController,
                                   placeholder: 'type'.tr,
-                                  validator: (value) {
-                                    if (controller
-                                        .classError
-                                        .value
-                                        .isNotEmpty) {
-                                      return controller.classError.value;
-                                    }
-                                    if (value == null || value.trim().isEmpty) {
-                                      return 'name_of_class'.tr +
-                                          ' is required';
-                                    }
-                                    return null;
-                                  },
-                                  onChanged: (value) {
-                                    if (controller
-                                        .classError
-                                        .value
-                                        .isNotEmpty) {
-                                      controller.classError.value = '';
-                                    }
-                                  },
+                                  readOnly: true,
                                 ),
-                              ],
-                            )
-                          else
-                            // Disable student fields when not a student
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 20.h),
-                                Opacity(
-                                  opacity: 0.5,
-                                  child: CustomText("choose_college".tr),
-                                ),
-                                SizedBox(height: 10.h),
-                                Opacity(
-                                  opacity: 0.5,
-                                  child: CustomDropDown<String>(
-                                    items: CollegeOptions.options.map((
-                                      college,
-                                    ) {
-                                      return DropdownMenuItem<String>(
-                                        value: college.id,
-                                        child: Text(
-                                          college.name,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14.sp,
-                                            letterSpacing: 0,
-                                            color: AppColors.black,
-                                            height: 22 / 14,
-                                          ),
-                                          textScaler: const TextScaler.linear(
-                                            1.0,
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    valueNotifier: controller.selectedCollege,
-                                    hintText: 'select'.tr,
-                                    onChanged: null, // Disabled
-                                  ),
-                                ),
-                                SizedBox(height: 30.h),
-                                Opacity(
-                                  opacity: 0.5,
-                                  child: CustomTextField(
-                                    label: 'name_of_class'.tr,
-                                    controller: controller.classController,
-                                    placeholder: 'type'.tr,
-                                    readOnly: true,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          SizedBox(height: 30.h),
-                          AppButton(
-                            onTap: controller.isSaving.value
-                                ? null
-                                : controller.handleSubmit,
-                            text: controller.isSaving.value
-                                ? 'saving'.tr
-                                : 'signUp'.tr,
-                            height: 48.h,
-                            isEnabled: !controller.isSaving.value,
+                              ),
+                            ],
                           ),
-                        ],
-                      );
-                    },
-                  ),
+                        SizedBox(height: 30.h),
+                        AppButton(
+                          onTap: controller.isSaving.value
+                              ? null
+                              : controller.handleSubmit,
+                          text: controller.isSaving.value
+                              ? 'saving'.tr
+                              : 'signUp'.tr,
+                          height: 48.h,
+                          isEnabled: !controller.isSaving.value,
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),

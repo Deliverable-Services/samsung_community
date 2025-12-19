@@ -71,7 +71,6 @@ class CreatePostModal extends StatelessWidget {
         UploadFileField(
           onTap: () {
             // TODO: Implement file upload functionality
-            print('Upload file tapped');
           },
         ),
         SizedBox(height: 32.h),

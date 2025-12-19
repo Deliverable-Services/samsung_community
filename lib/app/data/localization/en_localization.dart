@@ -24,6 +24,7 @@ class EnLocalization {
     "invalid_phone_number": "Please enter a valid phone number",
     "user_not_found": "User not found. Please sign up first.",
     "error": "Error",
+    "Success": "Success",
     "failedToGenerateVerificationCode": "Failed to generate verification code",
     "somethingWentWrong": "Something went wrong. Please try again.",
     "user_already_registered":
