@@ -149,64 +149,64 @@ class VerificationCodeByLoginView
                             child: Obx(() {
                               if (controller.resendCountdown.value > 0) {
                                 return Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: 'otp_sent'.tr + ' ',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 12.sp,
-                                          height: 22 / 14,
-                                          letterSpacing: 0,
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: 'otp_sent'.tr + ' ',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 12.sp,
+                                            height: 22 / 14,
+                                            letterSpacing: 0,
                                           color: AppColors.white.withOpacity(0.7),
+                                          ),
                                         ),
-                                      ),
-                                      TextSpan(
+                                        TextSpan(
                                         text: '${controller.resendCountdown.value}',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 12.sp,
-                                          height: 22 / 14,
-                                          letterSpacing: 0,
-                                          color: AppColors.linkBlue,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 12.sp,
+                                            height: 22 / 14,
+                                            letterSpacing: 0,
+                                            color: AppColors.linkBlue,
+                                          ),
                                         ),
-                                      ),
-                                      TextSpan(
-                                        text: ' ${'seconds'.tr}',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 12.sp,
-                                          height: 22 / 14,
-                                          letterSpacing: 0,
+                                        TextSpan(
+                                          text: ' ${'seconds'.tr}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 12.sp,
+                                            height: 22 / 14,
+                                            letterSpacing: 0,
                                           color: AppColors.white.withOpacity(0.7),
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  textAlign: TextAlign.center,
-                                  textScaler: const TextScaler.linear(1.0),
+                                      ],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    textScaler: const TextScaler.linear(1.0),
                                 );
                               } else {
                                 return Obx(() => GestureDetector(
                                       onTap: (controller.isResending.value ||
                                               controller.resendCountdown.value > 0)
-                                          ? null
-                                          : controller.handleResendCode,
-                                      child: Opacity(
+                                        ? null
+                                        : controller.handleResendCode,
+                                    child: Opacity(
                                         opacity: (controller.isResending.value ||
-                                                controller.resendCountdown.value >
-                                                    0)
-                                            ? 0.5
-                                            : 1.0,
-                                        child: Text(
-                                          'resendVerificationCode'.tr,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 14.sp,
-                                            height: 22 / 14,
-                                            letterSpacing: 0,
-                                            color: AppColors.linkBlue,
-                                          ),
+                                              controller.resendCountdown.value >
+                                                  0)
+                                          ? 0.5
+                                          : 1.0,
+                                      child: Text(
+                                        'resendVerificationCode'.tr,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 14.sp,
+                                          height: 22 / 14,
+                                          letterSpacing: 0,
+                                          color: AppColors.linkBlue,
+                                        ),
                                           textScaler:
                                               const TextScaler.linear(1.0),
                                         ),

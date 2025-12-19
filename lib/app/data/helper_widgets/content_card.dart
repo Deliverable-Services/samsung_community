@@ -67,12 +67,26 @@ class ContentCard extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(6.r),
-                      child: Image.asset(
-                        imagePath!,
-                        width: 68.w,
-                        height: 86.h,
-                        fit: BoxFit.cover,
-                      ),
+                      child: imagePath!.startsWith('http')
+                          ? Image.network(
+                              imagePath!,
+                              width: 68.w,
+                              height: 86.h,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  width: 68.w,
+                                  height: 86.h,
+                                  color: AppColors.textWhiteOpacity60,
+                                );
+                              },
+                            )
+                          : Image.asset(
+                              imagePath!,
+                              width: 68.w,
+                              height: 86.h,
+                              fit: BoxFit.cover,
+                            ),
                     ),
                   ),
                 if (imagePath != null && imagePath!.isNotEmpty)
