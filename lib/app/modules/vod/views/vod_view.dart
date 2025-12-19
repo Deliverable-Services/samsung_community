@@ -7,32 +7,64 @@ import '../../../data/helper_widgets/filter_component.dart';
 import '../../../data/models/content_model.dart';
 import '../controllers/vod_controller.dart';
 
-class VodView extends GetView<VodController> {
+class VodView extends StatefulWidget {
   const VodView({super.key});
 
   @override
+  State<VodView> createState() => _VodViewState();
+}
+
+class _VodViewState extends State<VodView> {
+  late final ScrollController _scrollController;
+  late final VodController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = Get.find<VodController>();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent * 0.8) {
+      _controller.loadMoreContent();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: DefaultTextStyle(
-        style: const TextStyle(decoration: TextDecoration.none),
-        child: Padding(
-          padding: EdgeInsets.only(
-            left: 16.w,
-            right: 16.w,
-            top: 22.h,
-            bottom: 22.h,
+    return DefaultTextStyle(
+      style: const TextStyle(decoration: TextDecoration.none),
+      child: CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+          SliverPadding(
+            padding: EdgeInsets.only(
+              left: 16.w,
+              right: 16.w,
+              top: 22.h,
+              bottom: 22.h,
+            ),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                _buildHeader(),
+                SizedBox(height: 20.h),
+                _buildFilters(),
+                SizedBox(height: 30.h),
+              ]),
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildHeader(),
-              SizedBox(height: 20.h),
-              _buildFilters(),
-              SizedBox(height: 30.h),
-              _buildContentList(),
-            ],
-          ),
-        ),
+          _buildContentList(),
+        ],
       ),
     );
   }
@@ -74,22 +106,22 @@ class VodView extends GetView<VodController> {
 
   Widget _buildFilters() {
     return Obx(() {
-      final index = controller.selectedFilterIndex.value;
+      final index = _controller.selectedFilterIndex.value;
       final filterItems = [
         FilterItem(
           text: 'vodFilterAll'.tr,
           isSelected: index == 0,
-          onTap: () => controller.setFilter(0),
+          onTap: () => _controller.setFilter(0),
         ),
         FilterItem(
           text: 'vodFilterVod'.tr,
           isSelected: index == 1,
-          onTap: () => controller.setFilter(1),
+          onTap: () => _controller.setFilter(1),
         ),
         FilterItem(
           text: 'vodFilterPodcasts'.tr,
           isSelected: index == 2,
-          onTap: () => controller.setFilter(2),
+          onTap: () => _controller.setFilter(2),
         ),
       ];
 
@@ -99,49 +131,74 @@ class VodView extends GetView<VodController> {
 
   Widget _buildContentList() {
     return Obx(() {
-      if (controller.isLoadingContent.value) {
-        return const Center(
-          child: Padding(
-            padding: EdgeInsets.all(20.0),
-            child: CircularProgressIndicator(),
-          ),
-        );
-      }
-
-      final content = controller.filteredContent;
-
-      if (content.isEmpty) {
-        return Center(
-          child: Padding(
-            padding: EdgeInsets.all(20.h),
-            child: Text(
-              'No content available',
-              style: TextStyle(fontFamily: 'Samsung Sharp Sans', fontSize: 14),
+      if (_controller.isLoadingContent.value &&
+          _controller.contentList.isEmpty) {
+        return SliverFillRemaining(
+          hasScrollBody: false,
+          child: const Center(
+            child: Padding(
+              padding: EdgeInsets.all(20.0),
+              child: CircularProgressIndicator(),
             ),
           ),
         );
       }
 
-      return Column(
-        children: content.map((item) {
-          return Padding(
-            padding: EdgeInsets.only(bottom: 20.h),
-            child: _buildContentCard(item),
-          );
-        }).toList(),
+      final content = _controller.filteredContent;
+
+      if (content.isEmpty && !_controller.isLoadingContent.value) {
+        return SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.all(20.h),
+              child: Text(
+                'No content available',
+                style: TextStyle(
+                  fontFamily: 'Samsung Sharp Sans',
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+
+      return SliverPadding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        sliver: SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              if (index < content.length) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 20.h),
+                  child: _buildContentCard(content[index]),
+                );
+              }
+              if (index == content.length && _controller.isLoadingMore.value) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20.h),
+                  child: const Center(child: CircularProgressIndicator()),
+                );
+              }
+              return null;
+            },
+            childCount:
+                content.length + (_controller.isLoadingMore.value ? 1 : 0),
+          ),
+        ),
       );
     });
   }
 
   Widget _buildContentCard(ContentModel content) {
-    final isVideo = content.contentType == ContentType.vod;
+    final isVideo = content.contentType != ContentType.feed;
     final videoUrl =
         content.mediaFileUrl ??
         (content.mediaFiles != null && content.mediaFiles!.isNotEmpty
             ? content.mediaFiles!.first
             : null);
     final hasVideo = videoUrl != null && videoUrl.isNotEmpty;
-    debugPrint('videoUrl: $videoUrl');
 
     return ContentCard(
       title: content.title ?? '',

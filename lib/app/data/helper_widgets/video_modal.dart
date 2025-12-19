@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:video_player/video_player.dart';
 
 import '../constants/app_colors.dart';
-import 'video_player_widget.dart';
+import 'video_player/video_player_widget.dart';
 
 class VideoModal extends StatefulWidget {
   final String? videoUrl;

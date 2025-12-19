@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../data/constants/app_images.dart';
@@ -9,11 +8,7 @@ class FeedActionModal extends StatelessWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onShare;
 
-  const FeedActionModal({
-    super.key,
-    this.onDelete,
-    this.onShare,
-  });
+  const FeedActionModal({super.key, this.onDelete, this.onShare});
 
   @override
   Widget build(BuildContext context) {

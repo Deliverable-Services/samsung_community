@@ -12,6 +12,7 @@ class ContentService {
     ContentType? contentType,
     bool? isPublished,
     int? limit,
+    int? offset,
   }) async {
     try {
       var query = SupabaseService.client.from('content').select();
@@ -26,7 +27,9 @@ class ContentService {
 
       var transformQuery = query.order('created_at', ascending: false);
 
-      if (limit != null) {
+      if (offset != null) {
+        transformQuery = transformQuery.range(offset, offset + (limit ?? 20) - 1);
+      } else if (limit != null) {
         transformQuery = transformQuery.limit(limit);
       }
 

@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 import '../constants/app_colors.dart';
 import 'event_tablet.dart';
-import 'video_player_widget.dart';
+import 'video_player/video_player_widget.dart';
 
 class ContentCard extends StatelessWidget {
   final String? imagePath;

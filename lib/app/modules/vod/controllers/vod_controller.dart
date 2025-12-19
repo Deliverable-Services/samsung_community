@@ -11,6 +11,11 @@ class VodController extends BaseController {
   final RxInt selectedFilterIndex = 0.obs;
   final RxList<ContentModel> contentList = <ContentModel>[].obs;
   final RxBool isLoadingContent = false.obs;
+  final RxBool isLoadingMore = false.obs;
+  final RxBool hasMoreData = true.obs;
+
+  static const int _pageSize = 10;
+  int _currentOffset = 0;
 
   VodController({ContentService? contentService})
     : _contentService = contentService ?? ContentService();
@@ -23,12 +28,20 @@ class VodController extends BaseController {
 
   void setFilter(int index) {
     selectedFilterIndex.value = index;
+    _currentOffset = 0;
+    contentList.clear();
+    hasMoreData.value = true;
     loadContent();
   }
 
-  Future<void> loadContent() async {
-    isLoadingContent.value = true;
-    setLoading(true);
+  Future<void> loadContent({bool loadMore = false}) async {
+    if (loadMore) {
+      if (isLoadingMore.value || !hasMoreData.value) return;
+      isLoadingMore.value = true;
+    } else {
+      isLoadingContent.value = true;
+      setLoading(true);
+    }
 
     try {
       ContentType? filterType;
@@ -41,25 +54,44 @@ class VodController extends BaseController {
       final result = await _contentService.getContent(
         contentType: filterType,
         isPublished: true,
+        limit: _pageSize,
+        offset: loadMore ? _currentOffset : 0,
       );
 
       if (result.isSuccess) {
-        contentList.value = result.dataOrNull ?? [];
+        final newContent = result.dataOrNull ?? [];
+        
+        if (loadMore) {
+          contentList.addAll(newContent);
+        } else {
+          contentList.value = newContent;
+        }
+
+        if (newContent.length < _pageSize) {
+          hasMoreData.value = false;
+        } else {
+          _currentOffset = contentList.length;
+        }
       } else {
         handleError(result.errorOrNull ?? 'somethingWentWrong'.tr);
       }
     } catch (e) {
       handleError('somethingWentWrong'.tr);
     } finally {
-      isLoadingContent.value = false;
-      setLoading(false);
+      if (loadMore) {
+        isLoadingMore.value = false;
+      } else {
+        isLoadingContent.value = false;
+        setLoading(false);
+      }
     }
   }
 
+  Future<void> loadMoreContent() async {
+    await loadContent(loadMore: true);
+  }
+
   List<ContentModel> get filteredContent {
-    if (selectedFilterIndex.value == 0) {
-      return contentList;
-    }
     return contentList;
   }
 }
