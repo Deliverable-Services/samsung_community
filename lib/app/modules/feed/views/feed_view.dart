@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../../data/constants/app_images.dart';
-import '../../../data/constants/feed_content.dart';
-import '../../../data/helper_widgets/feed_card.dart';
 import '../../../data/helper_widgets/filter_component.dart';
-
 import '../controllers/feed_controller.dart';
+import '../widgets/feed_card.dart';
 
 class FeedView extends GetView<FeedController> {
   const FeedView({super.key});
@@ -16,40 +15,74 @@ class FeedView extends GetView<FeedController> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        SingleChildScrollView(
+      RefreshIndicator(
+      onRefresh: controller.loadContent, // 👈 correct refresh call
+      child: Obx(() {
+        return controller.isLoading.value
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(), // 👈 REQUIRED
           child: DefaultTextStyle(
             style: const TextStyle(decoration: TextDecoration.none),
             child: Padding(
-              padding: EdgeInsets.only(
-                left: 16.w,
-                right: 16.w,
-                top: 22.h,
-                bottom: 22.h,
+              padding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 22.h,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SearchWidget(placeholder: 'searchForInspiration'.tr),
+                  /// 🔍 Search
+                  SearchWidget(
+                    placeholder: 'searchForInspiration'.tr,
+                    controller: controller.searchController,
+                    onChanged: controller.onSearchChanged,
+                  ),
+
                   SizedBox(height: 20.h),
-                  ...FeedContentConstants.contentList.asMap().entries.map((
-                    entry,
-                  ) {
+
+                  /// 🟡 Empty state
+                  if (controller.filteredContentList.isEmpty)
+                    Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 40.h),
+                        child: Text(
+                          'No content found',
+                          style: TextStyle(fontSize: 16.sp),
+                        ),
+                      ),
+                    ),
+
+                  /// 📋 Feed list
+                  ...controller.filteredContentList
+                      .asMap()
+                      .entries
+                      .map((entry) {
                     final index = entry.key;
                     final content = entry.value;
+
                     return Padding(
                       padding: EdgeInsets.only(bottom: 20.h),
                       child: FeedCard(
-                        authorName: content.authorName,
-                        authorAvatar: content.authorAvatar,
-                        isVerified: content.isVerified,
-                        publishedDate: content.publishedDate,
-                        title: content.title,
-                        description: content.description,
-                        isLiked: content.isLiked,
+                        authorName:
+                        content.userModel?.fullName ?? '',
+                        authorAvatar:
+                        content.userModel?.profilePictureUrl ?? '',
+                        isVerified: content.isPublished,
+                        publishedDate: DateFormat('dd/MM/yy')
+                            .format(content.createdAt),
+                        title: content.title ?? '',
+                        description: content.description ?? '',
+                        isLiked: content.isFeatured,
                         likesCount: content.likesCount,
-                        likedByUsername: content.likedByUsername,
+                        likedByUsername: content.userId,
                         commentsCount: content.commentsCount,
-                        onMenuTap: () => controller.showFeedActionModal(index),
+                        onMenuTap: () =>
+                            controller.showFeedActionModal(content.id),
+                        onReadMore: () => controller.onReadMore(
+                          title: content.title ?? '',
+                          description: content.description ?? '',
+                        ),
                       ),
                     );
                   }),
@@ -57,8 +90,10 @@ class FeedView extends GetView<FeedController> {
               ),
             ),
           ),
-        ),
-        Positioned(
+        );
+      }),
+    ),
+    Positioned(
           bottom: -70.h,
           right: -50.w,
           child: GestureDetector(

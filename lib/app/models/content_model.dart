@@ -1,4 +1,5 @@
-import 'package:samsung_admin_main_new/app/common/constant/types.dart';
+
+import 'package:samsung_community_mobile/app/data/models/content_model.dart';
 
 /// Content Model based on Supabase schema
 /// Represents VOD, Podcast, and Feed posts

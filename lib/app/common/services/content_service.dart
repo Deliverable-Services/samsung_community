@@ -1,3 +1,4 @@
+
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
@@ -41,6 +42,76 @@ class ContentService {
       return Failure(AppException.fromError(e).message);
     }
   }
+
+  Future<Result<Map<String, dynamic>>> addContent({
+    required Map<String, dynamic> content,
+  }) async {
+    try {
+      final response = await SupabaseService.client
+          .from('content')
+          .insert(content) // ✅ DO NOT jsonEncode
+          .select()
+          .maybeSingle(); // ✅ Safe
+
+      if (response == null) {
+        return Failure('Content was not inserted. Check RLS policies.');
+      }
+
+      return Success(response);
+    } catch (e) {
+      debugPrint('Error in addContent: $e');
+      return Failure(AppException.fromError(e).message);
+    }
+  }
+
+  Future<Result<void>> deleteContent(String contentId) async {
+    try {
+      await SupabaseService.client
+          .from('content')
+          .delete()
+          .eq('id', contentId);
+
+      return const Success(null);
+    } catch (e) {
+      return Failure(e.toString());
+    }
+  }
+
+
+  Future<Result<void>> updateContent(
+      String contentId, {
+        String? title,
+        String? description,
+        bool? isPublished,
+        bool? isFeatured,
+        List? externalSharePlatforms,
+      }) async {
+    try {
+      final Map<String, dynamic> updates = {};
+
+      if (title != null) updates['title'] = title;
+      if (description != null) updates['description'] = description;
+      if (isPublished != null) updates['is_published'] = isPublished;
+      if (isFeatured != null) updates['is_featured'] = isFeatured;
+      if (externalSharePlatforms != null) updates['external_share_platforms'] = externalSharePlatforms;
+
+      if (updates.isEmpty) {
+        return const Success(null); // nothing to update
+      }
+
+      await SupabaseService.client
+          .from('content')
+          .update(updates)
+          .eq('id', contentId);
+
+      return const Success(null);
+    } catch (e) {
+      return Failure(e.toString());
+    }
+  }
+
+
+
 
   Future<Result<ContentModel?>> getContentById(String id) async {
     try {
@@ -86,4 +157,3 @@ class ContentService {
     }
   }
 }
-
