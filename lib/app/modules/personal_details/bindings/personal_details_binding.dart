@@ -6,10 +6,10 @@ class PersonalDetailsBinding extends Bindings {
   @override
   void dependencies() {
     if (!Get.isRegistered<PersonalDetailsController>()) {
-      Get.lazyPut<PersonalDetailsController>(
-        () => PersonalDetailsController(),
+    Get.lazyPut<PersonalDetailsController>(
+      () => PersonalDetailsController(),
         fenix: true,
-      );
+    );
     }
   }
 }

@@ -200,6 +200,7 @@ class PersonalDetailsController extends GetxController {
       final url = await StorageService.uploadProfilePicture(
         imageFile: selectedImagePath.value!,
         userId: userId,
+        bucketName: 'profile_pictures',
       );
 
       if (url != null) {

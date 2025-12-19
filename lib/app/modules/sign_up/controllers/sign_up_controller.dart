@@ -101,9 +101,9 @@ class SignUpController extends GetxController {
 
       final otpCode = await _authRepo.generateOTP(normalizedPhone);
 
-      isValidating.value = false;
+    isValidating.value = false;
 
-      if (otpCode == null) {
+    if (otpCode == null) {
         final errorMessage = _authRepo.errorMessage.value;
 
         if (errorMessage.contains('WAIT_FOR_APPROVAL') ||
@@ -111,16 +111,16 @@ class SignUpController extends GetxController {
           CommonSnackbar.error('wait_for_approval'.tr);
         } else if (errorMessage.isNotEmpty) {
           CommonSnackbar.error(errorMessage);
-        } else {
+      } else {
           CommonSnackbar.error('failedToGenerateVerificationCode'.tr);
-        }
-        return;
       }
+      return;
+    }
 
-      Get.toNamed(
-        Routes.VERIFICATION_CODE,
+    Get.toNamed(
+      Routes.VERIFICATION_CODE,
         parameters: {'phoneNumber': normalizedPhone},
-      );
+    );
     } catch (e) {
       isValidating.value = false;
       debugPrint('Error in handleSignUp: $e');

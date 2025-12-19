@@ -81,7 +81,7 @@ class LoginView extends GetView<LoginController> {
                           textScaler: const TextScaler.linear(1.0),
                           maxLines: 2,
                           overflow: TextOverflow.visible,
-                        ),
+      ),
                       ),
                     ),
                     SizedBox(height: 30.h),
@@ -89,7 +89,7 @@ class LoginView extends GetView<LoginController> {
                       width: 304.w,
                       height: 32.h,
                       child: Center(
-                        child: Text(
+        child: Text(
                           'loginDescription'.tr,
                           textAlign: TextAlign.center,
                           style: TextStyle(

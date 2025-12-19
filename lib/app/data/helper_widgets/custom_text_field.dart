@@ -171,9 +171,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         right: 20.w,
                         bottom: 12.h,
                       ),
-                    ),
-                  ),
-          ),
+                ),
+              ),
+            ),
         ],
       ),
     );

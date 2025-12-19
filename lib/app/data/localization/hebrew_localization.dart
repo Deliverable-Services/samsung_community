@@ -131,5 +131,17 @@ class HebrewiLocalization {
     "store": "חנות",
     "profile": "פרופיל",
     "language": "שפה",
+    // Service Error Messages
+    "failedToCheckUser": "נכשל בבדיקת משתמש",
+    "userNotFound": "משתמש לא נמצא במסד הנתונים",
+    "userIdNotFound": "מזהה משתמש לא נמצא",
+    "failedToCreateAuthUser": "נכשל ביצירת משתמש אימות",
+    "failedToCreateOrFindAuthUser": "נכשל ביצירה או מציאה של משתמש אימות",
+    "failedToCreateSession": "נכשל ביצירת סשן",
+    "failedToSignInAfterEmailConfirmation": "נכשל בהתחברות לאחר אישור אימייל",
+    "failedToCreateOrSignIn": "נכשל ביצירה או התחברות",
+    "otpVerificationFailed": "אימות OTP נכשל",
+    "failedToCreatePublicUser": "נכשל ביצירת משתמש ציבורי",
+    "failedToCreatePublicUserAfterRetries": "נכשל ביצירת משתמש ציבורי לאחר ניסיונות",
   };
 }
