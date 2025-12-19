@@ -29,20 +29,22 @@ class BottomBarView extends GetView<BottomBarController> {
             ),
             Expanded(
               child: Navigator(
-                key: Get.nestedKey(1), // Nested navigator key
+                key: Get.nestedKey(1),
                 initialRoute: Routes.HOME,
                 onGenerateRoute: (settings) {
-                  // Find matching route from nested routes
-                  final route = AppPages.nestedRoutes.firstWhere(
+                  final nestedRoute = AppPages.nestedRoutes.firstWhere(
                     (route) => route.name == settings.name,
                     orElse: () => AppPages.nestedRoutes.first,
                   );
+
                   return GetPageRoute(
-                    page: route.page,
+                    page: nestedRoute.page,
+                    binding: nestedRoute.binding,
+                    middlewares: nestedRoute.middlewares,
                     settings: settings,
-                    transition: route.transition,
+                    transition: nestedRoute.transition,
                     transitionDuration:
-                        route.transitionDuration ??
+                        nestedRoute.transitionDuration ??
                         const Duration(milliseconds: 300),
                   );
                 },

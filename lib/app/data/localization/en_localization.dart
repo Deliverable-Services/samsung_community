@@ -23,6 +23,9 @@ class EnLocalization {
     "mobile_number_required": "Mobile number is required",
     "invalid_phone_number": "Please enter a valid phone number",
     "user_not_found": "User not found. Please sign up first.",
+    "error": "Error",
+    "failedToGenerateVerificationCode": "Failed to generate verification code",
+    "somethingWentWrong": "Something went wrong. Please try again.",
     "user_already_registered":
         "User already registered. Please log in instead.",
     "user_already_signed_up":
@@ -118,6 +121,14 @@ class EnLocalization {
     "facebook": "Facebook",
     "delete": "Delete",
     "share": "Share",
+    // Feed Screen
+    "datePublished": "Date Published:",
+    "readMore": "read more",
+    "likedBy": "Liked by ",
+    "and": " and ",
+    "others": "others",
+    "viewAllComments": "View all {count} comments",
+    "addComment": "Add comment...",
     // Side Menu
     "menu": "Menu",
     "messages": "Messages",

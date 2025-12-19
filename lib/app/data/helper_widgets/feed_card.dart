@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 import '../constants/app_colors.dart';
 import '../constants/app_images.dart';
@@ -110,7 +111,7 @@ class FeedCard extends StatelessWidget {
                     ),
                     SizedBox(height: 6.h),
                     Text(
-                      'Date Published: $publishedDate',
+                      '${'datePublished'.tr} $publishedDate',
                       style: TextStyle(
                         fontFamily: 'Samsung Sharp Sans',
                         fontSize: 12.sp,
@@ -226,7 +227,7 @@ class FeedCard extends StatelessWidget {
           GestureDetector(
             onTap: onReadMore,
             child: Text(
-              'read more',
+              'readMore'.tr,
               style: TextStyle(
                 fontFamily: 'Samsung Sharp Sans',
                 fontSize: 14.sp,
@@ -294,7 +295,7 @@ class FeedCard extends StatelessWidget {
                     TextSpan(
                       children: [
                         TextSpan(
-                          text: 'Liked by ',
+                          text: 'likedBy'.tr,
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: AppColors.textWhite,
@@ -311,7 +312,7 @@ class FeedCard extends StatelessWidget {
                             ),
                           ),
                           TextSpan(
-                            text: ' and ',
+                            text: 'and'.tr,
                             style: TextStyle(
                               fontSize: 12.sp,
                               color: AppColors.textWhite,
@@ -320,7 +321,7 @@ class FeedCard extends StatelessWidget {
                           ),
                         ],
                         TextSpan(
-                          text: '$likesCount others',
+                          text: '$likesCount ${'others'.tr}',
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: AppColors.textWhite,
@@ -361,7 +362,7 @@ class FeedCard extends StatelessWidget {
           GestureDetector(
             onTap: onViewComments,
             child: Text(
-              'View all $commentsCount comments',
+              'viewAllComments'.trParams({'count': commentsCount.toString()}),
               style: TextStyle(
                 fontFamily: 'Samsung Sharp Sans',
                 fontSize: 12.sp,
@@ -391,7 +392,7 @@ class FeedCard extends StatelessWidget {
                     color: AppColors.textWhiteOpacity60,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'Add comment...',
+                    hintText: 'addComment'.tr,
                     hintStyle: TextStyle(
                       fontFamily: 'Samsung Sharp Sans',
                       fontSize: 12.sp,
