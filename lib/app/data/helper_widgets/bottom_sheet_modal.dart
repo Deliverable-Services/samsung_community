@@ -23,17 +23,21 @@ class BottomSheetModal extends StatelessWidget {
     BuildContext context, {
     required Widget content,
     VoidCallback? onClose,
+    bool? isScrollControlled,
     BottomSheetButtonType buttonType = BottomSheetButtonType.back,
   }) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
+      isScrollControlled: isScrollControlled ?? true,
       backgroundColor: Colors.transparent,
       useRootNavigator: true,
-      builder: (context) => BottomSheetModal(
-        content: content,
-        onClose: onClose,
-        buttonType: buttonType,
+      builder: (context) => Padding(
+        padding: MediaQuery.of(context).viewInsets, // 🔥 REQUIRED
+        child: BottomSheetModal(
+          content: content,
+          onClose: onClose,
+          buttonType: buttonType,
+        ),
       ),
     );
   }

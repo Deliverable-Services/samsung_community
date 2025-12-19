@@ -6,13 +6,11 @@ import '../../../data/constants/app_images.dart';
 import '../../../data/helper_widgets/option_item.dart';
 
 class FeedActionModal extends StatelessWidget {
-  final int postIndex;
   final VoidCallback? onDelete;
   final VoidCallback? onShare;
 
   const FeedActionModal({
     super.key,
-    required this.postIndex,
     this.onDelete,
     this.onShare,
   });
@@ -28,7 +26,7 @@ class FeedActionModal extends StatelessWidget {
           text: 'delete'.tr,
           onTap: () {
             onDelete?.call();
-            Navigator.of(context, rootNavigator: true).pop();
+            Get.back();
           },
         ),
         OptionItem(
@@ -36,7 +34,7 @@ class FeedActionModal extends StatelessWidget {
           text: 'share'.tr,
           onTap: () {
             onShare?.call();
-            Navigator.of(context, rootNavigator: true).pop();
+            Get.back();
           },
         ),
       ],

@@ -1,3 +1,5 @@
+import 'package:samsung_community_mobile/app/data/models/user_model%20copy.dart';
+
 /// Content Model based on Supabase schema
 /// Represents VOD, Podcast, and Feed posts
 
@@ -17,6 +19,7 @@ enum ContentType {
 }
 
 class ContentModel {
+  final UserModel? userModel;
   final String id;
   final String? title;
   final String? description;
@@ -40,6 +43,7 @@ class ContentModel {
 
   ContentModel({
     required this.id,
+    this.userModel,
     this.title,
     this.description,
     required this.contentType,
@@ -119,6 +123,7 @@ class ContentModel {
 
   ContentModel copyWith({
     String? id,
+    UserModel? userModel,
     String? title,
     String? description,
     ContentType? contentType,
@@ -141,6 +146,7 @@ class ContentModel {
   }) {
     return ContentModel(
       id: id ?? this.id,
+      userModel: userModel ?? this.userModel,
       title: title ?? this.title,
       description: description ?? this.description,
       contentType: contentType ?? this.contentType,
