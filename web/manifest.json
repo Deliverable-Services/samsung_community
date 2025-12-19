@@ -1,6 +1,6 @@
 {
-    "name": "samsung_community",
-    "short_name": "samsung_community",
+    "name": "samsung_community_mobile",
+    "short_name": "samsung_community_mobile",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

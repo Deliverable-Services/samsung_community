@@ -1,0 +1,14 @@
+<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M6.99998 7.00002C8.61081 7.00002 9.91665 5.69418 9.91665 4.08335C9.91665 2.47252 8.61081 1.16669 6.99998 1.16669C5.38915 1.16669 4.08331 2.47252 4.08331 4.08335C4.08331 5.69418 5.38915 7.00002 6.99998 7.00002Z" fill="url(#paint0_linear_1094_1418)"/>
+<path d="M7.00001 8.45831C4.07751 8.45831 1.69751 10.4183 1.69751 12.8333C1.69751 12.9966 1.82584 13.125 1.98918 13.125H12.0108C12.1742 13.125 12.3025 12.9966 12.3025 12.8333C12.3025 10.4183 9.92251 8.45831 7.00001 8.45831Z" fill="url(#paint1_linear_1094_1418)"/>
+<defs>
+<linearGradient id="paint0_linear_1094_1418" x1="6.99998" y1="1.16669" x2="6.85411" y2="8.23822" gradientUnits="userSpaceOnUse">
+<stop stop-color="#BEBEBE"/>
+<stop offset="1" stop-color="white"/>
+</linearGradient>
+<linearGradient id="paint1_linear_1094_1418" x1="7.00001" y1="8.45831" x2="6.94864" y2="14.1175" gradientUnits="userSpaceOnUse">
+<stop stop-color="#BEBEBE"/>
+<stop offset="1" stop-color="white"/>
+</linearGradient>
+</defs>
+</svg>

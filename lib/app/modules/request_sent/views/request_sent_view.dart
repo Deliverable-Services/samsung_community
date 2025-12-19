@@ -1,0 +1,65 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+
+import '../../../data/constants/app_colors.dart';
+import '../../../data/constants/app_images.dart';
+import '../controllers/request_sent_controller.dart';
+
+class RequestSentView extends GetView<RequestSentController> {
+  const RequestSentView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.primary,
+      body: SafeArea(
+        top: true,
+        bottom: true,
+        child: SizedBox(
+          height: double.infinity,
+          width: double.infinity,
+          child: Padding(
+            padding: EdgeInsetsGeometry.symmetric(horizontal: 22.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Image.asset(
+                  AppImages.appLogo,
+                  width: 84.w,
+                  height: 78.h,
+                  fit: BoxFit.fitHeight,
+                ),
+                SizedBox(height: 30),
+                Text(
+                  "your_request".tr,
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: AppColors.white,
+                    height: 1,
+                  ),
+                ),
+                Text(
+                  "been_sent".tr,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 24,
+                    color: AppColors.linkBlue,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  "request_sent_message".tr,
+                  style: TextStyle(fontSize: 14, color: AppColors.white),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

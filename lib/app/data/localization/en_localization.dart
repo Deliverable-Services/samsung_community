@@ -1,0 +1,128 @@
+class EnLocalization {
+  static Map<String, String> enLang = {
+    "logout": "Logout",
+    "wantLogout": "Are you sure you want to logout?",
+    "yes": "Yes",
+    "no": "No",
+    // Welcome Screen
+    "welcomeToOur": "Welcome to our\n",
+    "sCommunity": "S Community",
+    "welcomeDescription":
+        "Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....",
+    "logIn": "Log in",
+    "approval": "Approval",
+    "dontHaveAccount": "I don't have an account ",
+    "signUp": "Sign up",
+    // Login Screen
+    "loginDescription":
+        "To log in to the app, please fill in the following details.",
+    "mobile_number": "Mobile Number",
+    "password": "Password",
+    "type": "Type...",
+    "forgotPassword": "I forgot my password.",
+    "mobile_number_required": "Mobile number is required",
+    "invalid_phone_number": "Please enter a valid phone number",
+    "user_not_found": "User not found. Please sign up first.",
+    "user_already_registered":
+        "User already registered. Please log in instead.",
+    "user_already_signed_up":
+        "User is already signed up. Please log in instead.",
+    "wait_for_approval":
+        "Please wait for approval. Your request is being processed.",
+    "checking": "Checking...",
+    "generating_otp": "Generating OTP...",
+    // Verification Code Screen
+    "verificationCode": "Verification Code",
+    "getVerificationCode": "Get Verification Code",
+    "resendVerificationCode": "Resend verification code",
+    "otp_incorrect": "Incorrect verification code. Please try again.",
+    "otp_expired": "Verification code has expired. Please request a new one.",
+    "verifying": "Verifying...",
+    "otp_sent": "OTP sent. You can send again after",
+    "seconds": "seconds",
+    "saving": "Saving...",
+    // Sign Up Screen
+    "signUpDescription":
+        "To sign up for the app, please fill in the following details.",
+    "confirmPassword": "Confirm Password",
+    "alreadyHaveAccount": "I already have an account ",
+    // Personal Details Screen
+    "addProfilePicture": "Add a profile picture",
+    "fullName": "Full Name",
+    "birthday": "Birthday",
+    "emailAddress": "Email Address",
+    "city": "City",
+    "gender": "Gender",
+    "deviceModel": "Device model",
+    "next": "Next",
+    "account_details": "Account Details",
+    "social_media": "Social media",
+    "profession": "Profession",
+    "bio": "Bio",
+    "name_of_class": "The name of the class",
+    "are_you_student": "Are you a student?",
+    "select": "Select",
+    "choose_college": "Choose a college",
+    "your_request": "Your request has",
+    "been_sent": "been sent!",
+    "request_sent_message":
+        "We've passed your join request to the community manager. Approval usually takes 1–2 business days, and we'll text you as soon as your profile is active in the app.",
+    // Navbar
+    "totalPoints": "Total Points",
+    // Device Not Supported Overlay
+    "deviceNotSupported": "Your device is not supported!",
+    "needSamsungDevice": "To continue, you need to use a Samsung device",
+    "goToStore": "Go to Store",
+    // VOD Screen
+    "vodPodcastsTitle": "VOD & Podcasts",
+    "vodPodcastsDescription":
+        "Access exclusive videos and podcasts, carefully selected to inspire and inform.",
+    "vodFilterAll": "All",
+    "vodFilterVod": "VOD",
+    "vodFilterPodcasts": "Podcasts",
+    "vodLuxuryStores": "VOD Luxury Stores",
+    "vodLoramDescription":
+        "Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....",
+    // Home Screen
+    "homeExclusiveLaunchEvent": "Exclusive Launch Event",
+    "homeLiveEventRegistration": "Live Event Registration",
+    "homeLiveEventDescription":
+        "Be part of an exclusive live. Register now to secure your spot ldcklkc fkvkc.....",
+    "homeMoreDetails": "More Details",
+    "homePoints": "Points: -1,000",
+    "homePodcastsLuxuryStores": "Podcasts Luxury Stores",
+    "homeLoramDescription":
+        "Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....",
+    "homeLoremDescription":
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....",
+    // Filter Component
+    "filterExploreLibrary": "Explore our library.....",
+    "searchForInspiration": "Search for inspiration .....",
+    // Content Card
+    "contentCardViewing": "Viewing",
+    // Store Card
+    "storeCardViewing": "Viewing",
+    // Event
+    "eventDetailsRegistration": "Details & Registration",
+    // Create Post Modal
+    "publishingAPost": "Publishing a post",
+    "publishingAPostDescription": "Lorem ipsum dolor sit amet, consectetur",
+    "title": "Title",
+    "typeATitle": "Type a title",
+    "description": "Description",
+    "typeADescription": "Type a description",
+    "uploadFile": "Upload File",
+    "publish": "Publish",
+    "selectSocialMedia": "Select Social Media",
+    "instagram": "Instagram",
+    "facebook": "Facebook",
+    "delete": "Delete",
+    "share": "Share",
+    // Side Menu
+    "menu": "Menu",
+    "messages": "Messages",
+    "store": "Store",
+    "profile": "Profile",
+    "language": "Language",
+  };
+}
