@@ -3,10 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
+import '../../routes/app_pages.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_images.dart';
 import '../constants/language_options.dart';
 import '../localization/language_controller.dart';
+import '../services/auth_controller.dart';
 import 'bottom_sheet_modal.dart';
 import 'option_item.dart';
 
@@ -104,12 +106,12 @@ class SideMenu extends StatelessWidget {
 
   Future<void> _performLogout() async {
     try {
-      // final authController = Get.find<AuthController>();
-      // await authController.signOut();
-      // // Navigate to welcome screen after logout
-      // AppRoutes.pushAndRemoveUntil(AppRouteName.welcomeScreen);
+      final authController = Get.find<AuthController>();
+      await authController.signOut();
+      Get.offAllNamed(Routes.LOGIN);
     } catch (e) {
       print('Error during logout: $e');
+      Get.offAllNamed(Routes.LOGIN);
     }
   }
 
