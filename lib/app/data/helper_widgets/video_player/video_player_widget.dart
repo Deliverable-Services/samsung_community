@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:video_player/video_player.dart';
+import 'package:get/get.dart';
+import 'package:video_player/video_player.dart' as video_player;
 
 import '../../constants/app_colors.dart';
+import 'video_player_controller.dart';
 import 'video_player_full_screen_layout.dart';
 import 'video_player_layouts.dart';
-import 'video_player_state_manager.dart';
 
-class VideoPlayerWidget extends StatefulWidget {
+class VideoPlayerWidget extends StatelessWidget {
   final String? videoUrl;
   final String? thumbnailUrl;
   final String? thumbnailImage;
-  final VideoPlayerController? controller;
+  final video_player.VideoPlayerController? controller;
   final VoidCallback? onPlay;
   final VoidCallback? onPause;
   final Function(Duration)? onSeek;
@@ -19,6 +20,7 @@ class VideoPlayerWidget extends StatefulWidget {
   final bool showMinimizeIcon;
   final VoidCallback? onMinimize;
   final bool fullScreen;
+  final String? tag;
 
   const VideoPlayerWidget({
     super.key,
@@ -33,222 +35,116 @@ class VideoPlayerWidget extends StatefulWidget {
     this.showMinimizeIcon = false,
     this.onMinimize,
     this.fullScreen = false,
+    this.tag,
   });
 
   @override
-  State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
-}
-
-class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  final _stateManager = VideoPlayerStateManager();
-  VideoPlayerController? _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.controller != null && widget.controller!.value.isInitialized) {
-      _controller = widget.controller;
-      _stateManager.controller = _controller;
-      _stateManager.isInitialized = true;
-      _stateManager.totalDuration = _controller!.value.duration;
-      _stateManager.currentPosition = _controller!.value.position;
-      _stateManager.isPlaying = _controller!.value.isPlaying;
-      _controller!.addListener(_videoListener);
-    }
-  }
-
-  Future<void> _initializeVideo() async {
-    if (widget.videoUrl == null || widget.videoUrl!.isEmpty) return;
-
-    await _stateManager.initializeVideo(
-      widget.videoUrl!,
-      (controller) {
-        if (mounted) {
-          _controller = controller;
-          _controller!.addListener(_videoListener);
-          setState(() {
-            _stateManager.isInitialized = true;
-            _stateManager.hasError = false;
-            _stateManager.errorMessage = null;
-          });
-        }
-      },
-      (error) {
-        if (mounted) {
-          setState(() {
-            _stateManager.hasError = true;
-            _stateManager.errorMessage = error;
-          });
-        }
-      },
-    );
-  }
-
-  void _videoListener() {
-    if (!mounted) return;
-    _stateManager.updateFromController();
-    setState(() {});
-  }
-
-  void _togglePlayPause() async {
-    if (!_stateManager.isInitialized) {
-      if (widget.videoUrl == null || widget.videoUrl!.isEmpty) return;
-      await _initializeVideo();
-      if (_stateManager.isInitialized && _controller != null) {
-        _controller!.play();
-        widget.onPlay?.call();
-        return;
+  Widget build(BuildContext context) {
+    final controllerTag = tag ?? videoUrl ?? 'video_player';
+    VideoPlayerControllerGetX videoController;
+    try {
+      videoController = Get.find<VideoPlayerControllerGetX>(tag: controllerTag);
+      if (videoController.videoUrl != videoUrl) {
+        Get.delete<VideoPlayerControllerGetX>(tag: controllerTag);
+        videoController = Get.put(
+          VideoPlayerControllerGetX(
+            videoUrl: videoUrl,
+            thumbnailUrl: thumbnailUrl,
+            thumbnailImage: thumbnailImage,
+            onPlay: onPlay,
+            onPause: onPause,
+            onSeek: onSeek,
+            controller: controller,
+          ),
+          tag: controllerTag,
+        );
       }
-      return;
+    } catch (_) {
+      videoController = Get.put(
+        VideoPlayerControllerGetX(
+          videoUrl: videoUrl,
+          thumbnailUrl: thumbnailUrl,
+          thumbnailImage: thumbnailImage,
+          onPlay: onPlay,
+          onPause: onPause,
+          onSeek: onSeek,
+          controller: controller,
+        ),
+        tag: controllerTag,
+      );
     }
 
-    if (_controller == null) return;
+    return Obx(() {
+      final aspectRatio = videoController.getAspectRatio();
+      final borderRadius = fullScreen
+          ? BorderRadius.zero
+          : BorderRadius.circular(16.r);
 
-    if (_stateManager.isPlaying) {
-      _controller!.pause();
-      widget.onPause?.call();
-    } else {
-      _controller!.play();
-      widget.onPlay?.call();
-    }
-  }
-
-  void _onPlayButtonTapped() {
-    if (!_stateManager.isInitialized &&
-        widget.videoUrl != null &&
-        widget.videoUrl!.isNotEmpty) {
-      _initializeVideo().then((_) {
-        if (_stateManager.isInitialized && _controller != null) {
-          _controller!.play();
-          widget.onPlay?.call();
-        }
-      });
-    } else {
-      _togglePlayPause();
-    }
-  }
-
-  void _seekTo(Duration position) {
-    if (_controller == null || !_stateManager.isInitialized) return;
-    _controller!.seekTo(position);
-    widget.onSeek?.call(position);
-  }
-
-  double _getSliderValue() {
-    if (_stateManager.totalDuration.inMilliseconds == 0) return 0.0;
-    return _stateManager.currentPosition.inMilliseconds /
-        _stateManager.totalDuration.inMilliseconds;
-  }
-
-  void _handleRetry() {
-    setState(() {
-      _stateManager.hasError = false;
-      _stateManager.errorMessage = null;
-    });
-    _initializeVideo();
-  }
-
-  void _onSliderChanged(double value) {
-    if (_controller == null || !_stateManager.isInitialized) return;
-    setState(() {
-      _stateManager.isSeeking = true;
-    });
-    final newPosition = Duration(
-      milliseconds: (value * _stateManager.totalDuration.inMilliseconds)
-          .round(),
-    );
-    _seekTo(newPosition);
-  }
-
-  void _onSliderChangeEnd() {
-    setState(() {
-      _stateManager.isSeeking = false;
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: borderRadius,
+          color: AppColors.backgroundDark,
+        ),
+        child: ClipRRect(
+          borderRadius: borderRadius,
+          child: _buildLayout(videoController, aspectRatio),
+        ),
+      );
     });
   }
 
-  @override
-  void dispose() {
-    _controller?.removeListener(_videoListener);
-    if (widget.controller == null) {
-      _stateManager.dispose();
-    }
-    super.dispose();
-  }
-
-  double _getAspectRatio() {
-    if (_stateManager.isInitialized && _controller != null) {
-      final size = _controller!.value.size;
-      if (size.height > 0) {
-        return size.width / size.height;
-      }
-    }
-    return 16 / 9;
-  }
-
-  Widget _buildLayout(bool isFullScreen, double aspectRatio) {
-    if (isFullScreen) {
+  Widget _buildLayout(
+    VideoPlayerControllerGetX controller,
+    double aspectRatio,
+  ) {
+    if (fullScreen) {
       return VideoPlayerFullScreenLayout(
         aspectRatio: aspectRatio,
-        isInitialized: _stateManager.isInitialized,
-        isPlaying: _stateManager.isPlaying,
-        hasError: _stateManager.hasError,
-        errorMessage: _stateManager.errorMessage,
-        controller: _controller,
-        videoUrl: widget.videoUrl,
-        thumbnailUrl: widget.thumbnailUrl,
-        thumbnailImage: widget.thumbnailImage,
-        currentPosition: _stateManager.currentPosition,
-        totalDuration: _stateManager.totalDuration,
-        sliderValue: _getSliderValue(),
-        showMinimizeIcon: widget.showMinimizeIcon,
-        onMinimize: widget.onMinimize,
-        onSliderChanged: _onSliderChanged,
-        onSliderChangeEnd: _onSliderChangeEnd,
-        onPlayButtonTapped: _onPlayButtonTapped,
-        onTogglePlayPause: _togglePlayPause,
-        onRetry: _handleRetry,
+        isInitialized: controller.isInitialized.value,
+        isPlaying: controller.isPlaying.value,
+        hasError: controller.hasError.value,
+        isLoading: controller.isLoading.value,
+        isBuffering: controller.isBuffering.value,
+        errorMessage: controller.errorMessage.value,
+        controller: controller.controller,
+        videoUrl: videoUrl,
+        thumbnailUrl: thumbnailUrl,
+        thumbnailImage: thumbnailImage,
+        currentPosition: controller.currentPosition.value,
+        totalDuration: controller.totalDuration.value,
+        sliderValue: controller.getSliderValue(),
+        showMinimizeIcon: showMinimizeIcon,
+        onMinimize: onMinimize,
+        onSliderChanged: controller.onSliderChanged,
+        onSliderChangeEnd: controller.onSliderChangeEnd,
+        onPlayButtonTapped: controller.onPlayButtonTapped,
+        onTogglePlayPause: controller.togglePlayPause,
+        onRetry: controller.handleRetry,
       );
     }
 
     return VideoPlayerNormalLayout(
       aspectRatio: aspectRatio,
-      isInitialized: _stateManager.isInitialized,
-      isPlaying: _stateManager.isPlaying,
-      hasError: _stateManager.hasError,
-      errorMessage: _stateManager.errorMessage,
-      controller: _controller,
-      fullScreen: widget.fullScreen,
-      videoUrl: widget.videoUrl,
-      thumbnailUrl: widget.thumbnailUrl,
-      thumbnailImage: widget.thumbnailImage,
-      currentPosition: _stateManager.currentPosition,
-      totalDuration: _stateManager.totalDuration,
-      sliderValue: _getSliderValue(),
-      showMinimizeIcon: widget.showMinimizeIcon,
-      onMinimize: widget.onMinimize,
-      onSliderChanged: _onSliderChanged,
-      onSliderChangeEnd: _onSliderChangeEnd,
-      onPlayButtonTapped: _onPlayButtonTapped,
-      onRetry: _handleRetry,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final aspectRatio = _getAspectRatio();
-    final borderRadius = widget.fullScreen
-        ? BorderRadius.zero
-        : BorderRadius.circular(16.r);
-
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: borderRadius,
-        color: AppColors.backgroundDark,
-      ),
-      child: ClipRRect(
-        borderRadius: borderRadius,
-        child: _buildLayout(widget.fullScreen, aspectRatio),
-      ),
+      isInitialized: controller.isInitialized.value,
+      isPlaying: controller.isPlaying.value,
+      hasError: controller.hasError.value,
+      isLoading: controller.isLoading.value,
+      isBuffering: controller.isBuffering.value,
+      errorMessage: controller.errorMessage.value,
+      controller: controller.controller,
+      fullScreen: fullScreen,
+      videoUrl: videoUrl,
+      thumbnailUrl: thumbnailUrl,
+      thumbnailImage: thumbnailImage,
+      currentPosition: controller.currentPosition.value,
+      totalDuration: controller.totalDuration.value,
+      sliderValue: controller.getSliderValue(),
+      showMinimizeIcon: showMinimizeIcon,
+      onMinimize: onMinimize,
+      onSliderChanged: controller.onSliderChanged,
+      onSliderChangeEnd: controller.onSliderChangeEnd,
+      onPlayButtonTapped: controller.onPlayButtonTapped,
+      onRetry: controller.handleRetry,
     );
   }
 }

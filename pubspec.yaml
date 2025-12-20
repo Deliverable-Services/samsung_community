@@ -45,6 +45,7 @@ dependencies:
   image_picker: ^1.0.7
   cached_network_image:
   intl:
+  just_audio: ^0.9.36
 
 dev_dependencies:
   flutter_test:

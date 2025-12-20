@@ -153,7 +153,6 @@ class SideMenu extends StatelessWidget {
                 isSelected: isSelected,
                 onTap: () async {
                   languageController.changeLanguage(option.id);
-                  Navigator.of(context, rootNavigator: true).pop();
                 },
               ),
             );

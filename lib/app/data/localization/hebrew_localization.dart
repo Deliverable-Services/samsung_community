@@ -79,6 +79,7 @@ class HebrewiLocalization {
     "vodFilterAll": "הכל",
     "vodFilterVod": "VOD",
     "vodFilterPodcasts": "פודקאסטים",
+    "searchVodPodcasts": "חפש VOD ופודקאסטים...",
     "vodLuxuryStores": "חנויות יוקרה VOD",
     "vodLoramDescription":
         "לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אליט. סד דו איוסמוד טמפור....",
@@ -142,6 +143,7 @@ class HebrewiLocalization {
     "failedToCreateOrSignIn": "נכשל ביצירה או התחברות",
     "otpVerificationFailed": "אימות OTP נכשל",
     "failedToCreatePublicUser": "נכשל ביצירת משתמש ציבורי",
-    "failedToCreatePublicUserAfterRetries": "נכשל ביצירת משתמש ציבורי לאחר ניסיונות",
+    "failedToCreatePublicUserAfterRetries":
+        "נכשל ביצירת משתמש ציבורי לאחר ניסיונות",
   };
 }

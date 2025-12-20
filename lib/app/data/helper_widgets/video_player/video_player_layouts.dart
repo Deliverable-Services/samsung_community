@@ -13,6 +13,8 @@ class VideoPlayerNormalLayout extends StatelessWidget {
   final bool isInitialized;
   final bool isPlaying;
   final bool hasError;
+  final bool isLoading;
+  final bool isBuffering;
   final String? errorMessage;
   final VideoPlayerController? controller;
   final String? thumbnailUrl;
@@ -35,6 +37,8 @@ class VideoPlayerNormalLayout extends StatelessWidget {
     required this.isInitialized,
     required this.isPlaying,
     required this.hasError,
+    required this.isLoading,
+    required this.isBuffering,
     this.errorMessage,
     this.controller,
     this.thumbnailUrl,
@@ -112,6 +116,8 @@ class VideoPlayerNormalLayout extends StatelessWidget {
                       VideoPlayerPlayButton(
                         fullScreen: fullScreen,
                         onTap: onPlayButtonTapped,
+                        isLoading: isLoading,
+                        isBuffering: isBuffering,
                       ),
                     if (isPlaying && isInitialized)
                       GestureDetector(

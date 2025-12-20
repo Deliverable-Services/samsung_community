@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../data/constants/app_colors.dart';
+import '../../../data/constants/app_images.dart';
 import '../../../data/helper_widgets/content_card.dart';
 import '../../../data/helper_widgets/filter_component.dart';
 import '../../../data/models/content_model.dart';
@@ -58,8 +60,10 @@ class _VodViewState extends State<VodView> {
               delegate: SliverChildListDelegate([
                 _buildHeader(),
                 SizedBox(height: 20.h),
+                _buildSearchBar(),
+                SizedBox(height: 20.h),
                 _buildFilters(),
-                SizedBox(height: 30.h),
+                SizedBox(height: 10.h),
               ]),
             ),
           ),
@@ -104,6 +108,84 @@ class _VodViewState extends State<VodView> {
     );
   }
 
+  Widget _buildSearchBar() {
+    return Container(
+      width: double.infinity,
+      height: 50.h,
+      padding: EdgeInsets.symmetric(horizontal: 19.w, vertical: 13.h),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20.r),
+        gradient: const LinearGradient(
+          begin: Alignment(-1.0, 0.0),
+          end: Alignment(1.0, 0.0),
+          colors: [AppColors.searchGradientStart, AppColors.searchGradientEnd],
+          stops: [0, 1.0],
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20.r),
+        child: Row(
+          children: [
+            Image.asset(
+              AppImages.searchIcon,
+              width: 22.w,
+              height: 24.h,
+              fit: BoxFit.contain,
+            ),
+            SizedBox(width: 13.w),
+            Expanded(
+              child: TextField(
+                controller: _controller.searchController,
+                style: TextStyle(
+                  fontFamily: 'Samsung Sharp Sans',
+                  fontStyle: FontStyle.normal,
+                  fontSize: 14.sp,
+                  height: 24 / 14,
+                  letterSpacing: 0,
+                  color: AppColors.white.withOpacity(0.4),
+                ),
+                decoration: InputDecoration(
+                  hintText: 'searchVodPodcasts'.tr,
+                  hintStyle: TextStyle(
+                    fontFamily: 'Samsung Sharp Sans',
+                    fontStyle: FontStyle.normal,
+                    fontSize: 14.sp,
+                    height: 24 / 14,
+                    letterSpacing: 0,
+                    color: AppColors.white.withOpacity(0.4),
+                  ),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  focusedErrorBorder: InputBorder.none,
+                  contentPadding: EdgeInsets.zero,
+                  isDense: true,
+                ),
+              ),
+            ),
+            Obx(() {
+              if (_controller.searchQuery.value.isNotEmpty) {
+                return GestureDetector(
+                  onTap: () {
+                    _controller.searchController.clear();
+                  },
+                  child: Icon(
+                    Icons.clear,
+                    color: AppColors.white.withOpacity(0.4),
+                    size: 20.sp,
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildFilters() {
     return Obx(() {
       final index = _controller.selectedFilterIndex.value;
@@ -125,7 +207,18 @@ class _VodViewState extends State<VodView> {
         ),
       ];
 
-      return FilterComponent(filterItems: filterItems);
+      return Row(
+        children: [
+          for (int i = 0; i < filterItems.length; i++) ...[
+            FilterTablet(
+              text: filterItems[i].text,
+              onTap: filterItems[i].onTap,
+              isSelected: filterItems[i].isSelected,
+            ),
+            if (i < filterItems.length - 1) SizedBox(width: 10.w),
+          ],
+        ],
+      );
     });
   }
 
@@ -192,22 +285,25 @@ class _VodViewState extends State<VodView> {
   }
 
   Widget _buildContentCard(ContentModel content) {
-    final isVideo = content.contentType != ContentType.feed;
-    final videoUrl =
+    final isPodcast = content.contentType == ContentType.podcast;
+    final isVideo = content.contentType == ContentType.vod;
+    final mediaUrl =
         content.mediaFileUrl ??
         (content.mediaFiles != null && content.mediaFiles!.isNotEmpty
             ? content.mediaFiles!.first
             : null);
-    final hasVideo = videoUrl != null && videoUrl.isNotEmpty;
-
+    final hasMedia = mediaUrl != null && mediaUrl.isNotEmpty;
     return ContentCard(
+      imagePath: content.thumbnailUrl,
       title: content.title ?? '',
       description: content.description ?? '',
-      showVideoPlayer: isVideo && hasVideo,
-      imagePath: null,
-      videoUrl: videoUrl,
+      showVideoPlayer: isVideo && hasMedia,
+      showAudioPlayer: isPodcast && hasMedia,
+      videoUrl: isVideo && hasMedia ? mediaUrl : null,
+      audioUrl: isPodcast && hasMedia ? mediaUrl : null,
       thumbnailUrl: content.thumbnailUrl,
       thumbnailImage: content.thumbnailUrl,
+      contentId: content.id,
     );
   }
 }

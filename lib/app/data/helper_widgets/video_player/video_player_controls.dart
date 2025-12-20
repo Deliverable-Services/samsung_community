@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_images.dart';
 import '../video_modal.dart';
-import 'video_player_slider.dart';
+import 'media_slider.dart';
 
 class VideoPlayerControls extends StatelessWidget {
   final Duration currentPosition;
@@ -96,24 +96,16 @@ class VideoPlayerControls extends StatelessWidget {
   }
 
   Widget _buildSlider(BuildContext context) {
-    return SliderTheme(
-      data: SliderTheme.of(context).copyWith(
-        trackHeight: 4.h,
-        activeTrackColor: isFullScreen
-            ? const Color(0xFF8CB5FF)
-            : AppColors.accentBlueLight,
-        inactiveTrackColor: isFullScreen
-            ? const Color(0xFF4A4A4A)
-            : AppColors.backgroundGrey,
-        trackShape: CustomTrackShape(),
-        thumbShape: CustomSliderThumb(thumbRadius: 6.r, borderWidth: 4.w),
-        overlayShape: RoundSliderOverlayShape(overlayRadius: 0),
-      ),
-      child: Slider(
-        value: sliderValue.clamp(0.0, 1.0),
-        onChanged: onSliderChanged,
-        onChangeEnd: (value) => onSliderChangeEnd(),
-      ),
+    return MediaSlider(
+      value: sliderValue,
+      onChanged: onSliderChanged,
+      onChangeEnd: onSliderChangeEnd,
+      activeTrackColor: isFullScreen
+          ? const Color(0xFF8CB5FF)
+          : AppColors.accentBlueLight,
+      inactiveTrackColor: isFullScreen
+          ? const Color(0xFF4A4A4A)
+          : AppColors.backgroundGrey,
     );
   }
 

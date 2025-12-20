@@ -1,8 +1,12 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../common/services/content_service.dart';
 import '../../../data/core/base/base_controller.dart';
 import '../../../data/core/utils/result.dart';
+import '../../../data/helper_widgets/audio_player/audio_player_manager.dart';
+import '../../../data/helper_widgets/video_player/video_player_manager.dart';
 import '../../../data/models/content_model.dart';
 
 class VodController extends BaseController {
@@ -13,6 +17,10 @@ class VodController extends BaseController {
   final RxBool isLoadingContent = false.obs;
   final RxBool isLoadingMore = false.obs;
   final RxBool hasMoreData = true.obs;
+  final TextEditingController searchController = TextEditingController();
+  final RxString searchQuery = ''.obs;
+
+  Timer? _searchDebounceTimer;
 
   static const int _pageSize = 10;
   int _currentOffset = 0;
@@ -23,15 +31,45 @@ class VodController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    searchController.addListener(_onSearchChanged);
     loadContent();
   }
 
+  @override
+  void onClose() {
+    _searchDebounceTimer?.cancel();
+    searchController.removeListener(_onSearchChanged);
+    searchController.dispose();
+    super.onClose();
+  }
+
+  void _onSearchChanged() {
+    _searchDebounceTimer?.cancel();
+    _searchDebounceTimer = Timer(const Duration(milliseconds: 500), () {
+      final query = searchController.text.trim();
+      if (searchQuery.value != query) {
+        _pauseAllMedia();
+        searchQuery.value = query;
+        _currentOffset = 0;
+        contentList.clear();
+        hasMoreData.value = true;
+        loadContent();
+      }
+    });
+  }
+
   void setFilter(int index) {
+    _pauseAllMedia();
     selectedFilterIndex.value = index;
     _currentOffset = 0;
     contentList.clear();
     hasMoreData.value = true;
     loadContent();
+  }
+
+  void _pauseAllMedia() {
+    VideoPlayerManager.pauseAll();
+    AudioPlayerManager.pauseAll();
   }
 
   Future<void> loadContent({bool loadMore = false}) async {
@@ -51,11 +89,15 @@ class VodController extends BaseController {
         filterType = ContentType.podcast;
       }
 
+      final List<ContentType> allowedTypes = [ContentType.vod, ContentType.podcast];
+      
       final result = await _contentService.getContent(
         contentType: filterType,
+        allowedContentTypes: allowedTypes,
         isPublished: true,
         limit: _pageSize,
         offset: loadMore ? _currentOffset : 0,
+        searchQuery: searchQuery.value.isNotEmpty ? searchQuery.value : null,
       );
 
       if (result.isSuccess) {

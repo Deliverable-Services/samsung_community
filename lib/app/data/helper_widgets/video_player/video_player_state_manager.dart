@@ -7,6 +7,8 @@ class VideoPlayerStateManager {
   bool isPlaying = false;
   bool isSeeking = false;
   bool hasError = false;
+  bool isLoading = false;
+  bool isBuffering = false;
   String? errorMessage;
   Duration currentPosition = Duration.zero;
   Duration totalDuration = Duration.zero;
@@ -16,6 +18,7 @@ class VideoPlayerStateManager {
     Function(VideoPlayerController) onInitialized,
     Function(String) onError,
   ) async {
+    isLoading = true;
     try {
       controller?.dispose();
     } catch (_) {}
@@ -37,6 +40,7 @@ class VideoPlayerStateManager {
       );
 
       if (controller!.value.hasError) {
+        isLoading = false;
         isInitialized = false;
         hasError = true;
         errorMessage = controller!.value.errorDescription;
@@ -48,6 +52,7 @@ class VideoPlayerStateManager {
         return;
       }
 
+      isLoading = false;
       isInitialized = true;
       hasError = false;
       errorMessage = null;
@@ -57,6 +62,7 @@ class VideoPlayerStateManager {
       onInitialized(controller!);
     } catch (e) {
       debugPrint('Error initializing video: $e');
+      isLoading = false;
       isInitialized = false;
       hasError = true;
       errorMessage = e.toString();
@@ -82,6 +88,7 @@ class VideoPlayerStateManager {
       currentPosition = controller!.value.position;
       totalDuration = controller!.value.duration;
       isPlaying = controller!.value.isPlaying;
+      isBuffering = controller!.value.isBuffering;
     }
   }
 
@@ -92,4 +99,3 @@ class VideoPlayerStateManager {
     }
   }
 }
-

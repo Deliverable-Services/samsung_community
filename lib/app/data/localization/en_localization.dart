@@ -84,6 +84,7 @@ class EnLocalization {
     "vodFilterAll": "All",
     "vodFilterVod": "VOD",
     "vodFilterPodcasts": "Podcasts",
+    "searchVodPodcasts": "Search VOD & Podcasts...",
     "vodLuxuryStores": "VOD Luxury Stores",
     "vodLoramDescription":
         "Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....",

@@ -3,27 +3,34 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../constants/app_colors.dart';
+import 'audio_player/audio_player_widget.dart';
 import 'event_tablet.dart';
 import 'video_player/video_player_widget.dart';
 
 class ContentCard extends StatelessWidget {
   final String? imagePath;
   final String? videoUrl;
+  final String? audioUrl;
   final String? thumbnailUrl;
   final String? thumbnailImage;
   final String title;
   final String description;
+  final bool showAudioPlayer;
   final bool showVideoPlayer;
+  final String? contentId;
 
   const ContentCard({
     super.key,
     this.imagePath,
     this.videoUrl,
+    this.audioUrl,
     this.thumbnailUrl,
     this.thumbnailImage,
     this.showVideoPlayer = false,
     required this.title,
     required this.description,
+    this.showAudioPlayer = false,
+    this.contentId,
   });
 
   @override
@@ -167,10 +174,21 @@ class ContentCard extends StatelessWidget {
               videoUrl: videoUrl,
               thumbnailUrl: thumbnailUrl,
               thumbnailImage: thumbnailImage,
+              tag: contentId != null
+                  ? 'video_$contentId'
+                  : videoUrl ?? 'video_${title.hashCode}',
             ),
           ],
-          // Button - shown only when showVideoPlayer is false
-          if (!showVideoPlayer) ...[
+          if (showAudioPlayer && !showVideoPlayer) ...[
+            SizedBox(height: 16.h),
+            AudioPlayerWidget(
+              audioUrl: audioUrl,
+              tag: contentId != null
+                  ? 'audio_$contentId'
+                  : audioUrl ?? 'audio_${title.hashCode}',
+            ),
+          ],
+          if (!showVideoPlayer && !showAudioPlayer) ...[
             SizedBox(height: 20.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
