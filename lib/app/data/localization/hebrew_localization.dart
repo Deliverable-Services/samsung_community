@@ -124,7 +124,8 @@ class HebrewiLocalization {
     "likedBy": "אהבו ",
     "and": " ו-",
     "others": "אחרים",
-    "viewAllComments": "הצג את כל {count} התגובות",
+    "viewAllComments": "הצג את כל",
+    "viewAllCommentsSuffix": "התגובות",
     "addComment": "הוסף תגובה...",
     // Side Menu
     "menu": "תפריט",

@@ -35,6 +35,7 @@ class FeedController extends BaseController {
   final selectedImagePath = Rxn<File>();
   final profilePictureUrl = Rxn<String>();
   final isUploadingImage = false.obs;
+  bool _isOpeningSocialModal = false;
 
   FeedController({ContentService? contentService})
     : _contentService = contentService ?? ContentService();
@@ -124,7 +125,7 @@ class FeedController extends BaseController {
       if (result.isSuccess) {
         contentList.value = result.dataOrNull ?? [];
 
-        final futures = contentList.value.map((content) async {
+        final futures = contentList.map((content) async {
           final userResult = await getUserDetail(content.userId);
 
           if (userResult is Success<UserModel?>) {
@@ -244,7 +245,6 @@ class FeedController extends BaseController {
 
       if (url != null) {
         profilePictureUrl.value = url;
-        print('profilePictureUrl.value::::::::${profilePictureUrl.value}');
       } else {
         CommonSnackbar.error('Failed to upload profile picture');
         selectedImagePath.value = null;
@@ -310,8 +310,7 @@ class FeedController extends BaseController {
             /// Optional: reload feed
             loadContent();
 
-            /// Show next modal
-            showSocialMediaModal();
+            CommonSnackbar.success('Post published successfully');
           } else {
             Get.snackbar('Error', 'Failed to publish post');
           }
@@ -328,35 +327,64 @@ class FeedController extends BaseController {
   }
 
   /// Show social media selection modal
-  void showSocialMediaModal() {
-    String? id;
-    BottomSheetModal.show(
-      Get.context!,
-      buttonType: BottomSheetButtonType.close,
-      onClose: () {
-        showCreatePostModal();
-      },
-      content: SocialMediaModal(
-        onInstagramTap: () async {
-          debugPrint('Publishing to Instagram...');
-          if (id != null) {
-            await _contentService.updateContent(
-              id,
-              externalSharePlatforms: ['INSTAGRAM'],
-            );
-          }
-        },
-        onFacebookTap: () async {
-          debugPrint('Publishing to Facebook...');
-          if (id != null) {
-            await _contentService.updateContent(
-              id,
-              externalSharePlatforms: ['FACEBOOK'],
-            );
-          }
-        },
+  void showSocialMediaModal(String? contentId) {
+    if (_isOpeningSocialModal) {
+      debugPrint('Social media modal is already opening');
+      return;
+    }
+
+    final context = Get.context;
+    if (context == null) {
+      debugPrint('Context is null, cannot show social media modal');
+      return;
+    }
+
+    _isOpeningSocialModal = true;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      useRootNavigator: true,
+      builder: (modalContext) => Padding(
+        padding: MediaQuery.of(modalContext).viewInsets,
+        child: BottomSheetModal(
+          content: SocialMediaModal(
+            onInstagramTap: () async {
+              if (Navigator.of(modalContext, rootNavigator: true).canPop()) {
+                Navigator.of(modalContext, rootNavigator: true).pop();
+              }
+              _isOpeningSocialModal = false;
+              debugPrint('Sharing to Instagram...');
+              if (contentId != null) {
+                await _contentService.updateContent(
+                  contentId,
+                  externalSharePlatforms: ['INSTAGRAM'],
+                );
+                CommonSnackbar.success('Shared to Instagram');
+              }
+            },
+            onFacebookTap: () async {
+              if (Navigator.of(modalContext, rootNavigator: true).canPop()) {
+                Navigator.of(modalContext, rootNavigator: true).pop();
+              }
+              _isOpeningSocialModal = false;
+              debugPrint('Sharing to Facebook...');
+              if (contentId != null) {
+                await _contentService.updateContent(
+                  contentId,
+                  externalSharePlatforms: ['FACEBOOK'],
+                );
+                CommonSnackbar.success('Shared to Facebook');
+              }
+            },
+          ),
+          buttonType: BottomSheetButtonType.close,
+        ),
       ),
-    );
+    ).then((_) {
+      _isOpeningSocialModal = false;
+    });
   }
 
   /// Show feed action modal (delete/share)
@@ -367,14 +395,26 @@ class FeedController extends BaseController {
       content: FeedActionModal(
         onDelete: () {
           debugPrint('Delete post at index: $id');
-          Get.back(); // close bottom sheet / menu
+          Get.back();
           if (id != null) {
             deleteContent(id);
             onInit();
           }
         },
         onShare: () {
-          debugPrint('Share post at index: $id');
+          final shareContext = Get.context;
+          if (shareContext != null &&
+              Navigator.of(shareContext, rootNavigator: true).canPop()) {
+            Navigator.of(shareContext, rootNavigator: true).pop();
+          }
+          if (id != null) {
+            Future.delayed(const Duration(milliseconds: 600), () {
+              final context = Get.context;
+              if (context != null && !_isOpeningSocialModal) {
+                showSocialMediaModal(id);
+              }
+            });
+          }
         },
       ),
     );

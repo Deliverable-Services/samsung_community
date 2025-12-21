@@ -30,7 +30,6 @@ class FeedActionModal extends StatelessWidget {
           text: 'share'.tr,
           onTap: () {
             onShare?.call();
-            Get.back();
           },
         ),
       ],

@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../data/helper_widgets/filter_component.dart';
 import '../controllers/feed_controller.dart';
-import 'feed_card.dart';
+import '../local_widgets/feed_card/feed_card.dart';
 
 class FeedView extends GetView<FeedController> {
   const FeedView({super.key});
@@ -26,9 +26,11 @@ class FeedView extends GetView<FeedController> {
                     child: DefaultTextStyle(
                       style: const TextStyle(decoration: TextDecoration.none),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 22.h,
+                        padding: EdgeInsets.only(
+                          left: 16.w,
+                          right: 16.w,
+                          top: 12.h,
+                          bottom: 22.h,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -129,7 +129,8 @@ class EnLocalization {
     "likedBy": "Liked by ",
     "and": " and ",
     "others": "others",
-    "viewAllComments": "View all {count} comments",
+    "viewAllComments": "View all",
+    "viewAllCommentsSuffix": "comments",
     "addComment": "Add comment...",
     // Side Menu
     "menu": "Menu",
@@ -144,10 +145,12 @@ class EnLocalization {
     "failedToCreateAuthUser": "Failed to create auth user",
     "failedToCreateOrFindAuthUser": "Failed to create or find auth user",
     "failedToCreateSession": "Failed to create session",
-    "failedToSignInAfterEmailConfirmation": "Failed to sign in after email confirmation",
+    "failedToSignInAfterEmailConfirmation":
+        "Failed to sign in after email confirmation",
     "failedToCreateOrSignIn": "Failed to create or sign in",
     "otpVerificationFailed": "OTP verification failed",
     "failedToCreatePublicUser": "Failed to create public user",
-    "failedToCreatePublicUserAfterRetries": "Failed to create public user after retries",
+    "failedToCreatePublicUserAfterRetries":
+        "Failed to create public user after retries",
   };
 }
