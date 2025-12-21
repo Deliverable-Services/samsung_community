@@ -106,7 +106,7 @@ class _StackedAvatars extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 60.w,
+      width: (users.length.clamp(1, 3) * 12 + 25).w,
       height: 18.h,
       child: Stack(
         clipBehavior: Clip.none,

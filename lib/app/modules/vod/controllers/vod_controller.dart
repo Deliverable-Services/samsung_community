@@ -77,6 +77,9 @@ class VodController extends BaseController {
       if (isLoadingMore.value || !hasMoreData.value) return;
       isLoadingMore.value = true;
     } else {
+      _currentOffset = 0;
+      contentList.clear();
+      hasMoreData.value = true;
       isLoadingContent.value = true;
       setLoading(true);
     }

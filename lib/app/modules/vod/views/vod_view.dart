@@ -46,29 +46,33 @@ class _VodViewState extends State<VodView> {
   Widget build(BuildContext context) {
     return DefaultTextStyle(
       style: const TextStyle(decoration: TextDecoration.none),
-      child: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          SliverPadding(
-            padding: EdgeInsets.only(
-              left: 16.w,
-              right: 16.w,
-              top: 22.h,
-              bottom: 22.h,
+      child: RefreshIndicator(
+        onRefresh: _controller.loadContent,
+        child: CustomScrollView(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverPadding(
+              padding: EdgeInsets.only(
+                left: 16.w,
+                right: 16.w,
+                top: 22.h,
+                bottom: 22.h,
+              ),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  _buildHeader(),
+                  SizedBox(height: 20.h),
+                  _buildSearchBar(),
+                  SizedBox(height: 20.h),
+                  _buildFilters(),
+                  SizedBox(height: 10.h),
+                ]),
+              ),
             ),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                _buildHeader(),
-                SizedBox(height: 20.h),
-                _buildSearchBar(),
-                SizedBox(height: 20.h),
-                _buildFilters(),
-                SizedBox(height: 10.h),
-              ]),
-            ),
-          ),
-          _buildContentList(),
-        ],
+            _buildContentList(),
+          ],
+        ),
       ),
     );
   }

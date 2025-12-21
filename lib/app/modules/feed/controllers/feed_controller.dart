@@ -139,6 +139,10 @@ class FeedController extends BaseController {
       if (isLoadingMore.value || !hasMoreData.value) return;
       isLoadingMore.value = true;
     } else {
+      _currentOffset = 0;
+      contentList.clear();
+      filteredContentList.clear();
+      hasMoreData.value = true;
       isLoadingContent.value = true;
       setLoading(true);
     }
