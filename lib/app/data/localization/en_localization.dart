@@ -126,6 +126,7 @@ class EnLocalization {
     // Feed Screen
     "datePublished": "Date Published:",
     "readMore": "read more",
+    "showLess": "show less",
     "likedBy": "Liked by ",
     "and": " and ",
     "others": "others",

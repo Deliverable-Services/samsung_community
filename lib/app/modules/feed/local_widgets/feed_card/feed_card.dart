@@ -24,7 +24,6 @@ class FeedCard extends StatelessWidget {
   final VoidCallback? onComment;
   final VoidCallback? onViewComments;
   final VoidCallback? onMenuTap;
-  final VoidCallback? onReadMore;
 
   const FeedCard({
     super.key,
@@ -42,7 +41,6 @@ class FeedCard extends StatelessWidget {
     this.onComment,
     this.onViewComments,
     this.onMenuTap,
-    this.onReadMore,
   });
 
   @override
@@ -80,11 +78,7 @@ class FeedCard extends StatelessWidget {
           SizedBox(height: 20.h),
           const Divider(color: AppColors.dividerLight, thickness: 1, height: 1),
           SizedBox(height: 20.h),
-          FeedCardContent(
-            title: title,
-            description: description,
-            onReadMore: onReadMore,
-          ),
+          FeedCardContent(title: title, description: description),
           SizedBox(height: 20.h),
           const Divider(color: AppColors.dividerLight, thickness: 1, height: 1),
           SizedBox(height: 20.h),
@@ -111,4 +105,3 @@ class FeedCard extends StatelessWidget {
     );
   }
 }
-

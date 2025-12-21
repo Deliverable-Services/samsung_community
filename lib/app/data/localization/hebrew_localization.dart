@@ -121,6 +121,7 @@ class HebrewiLocalization {
     // Feed Screen
     "datePublished": "תאריך פרסום:",
     "readMore": "קרא עוד",
+    "showLess": "הצג פחות",
     "likedBy": "אהבו ",
     "and": " ו-",
     "others": "אחרים",

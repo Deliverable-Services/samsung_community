@@ -85,10 +85,6 @@ class FeedView extends GetView<FeedController> {
                                       commentsCount: content.commentsCount,
                                       onMenuTap: () => controller
                                           .showFeedActionModal(content.id),
-                                      onReadMore: () => controller.onReadMore(
-                                        title: content.title ?? '',
-                                        description: content.description ?? '',
-                                      ),
                                     ),
                                   );
                                 }),
