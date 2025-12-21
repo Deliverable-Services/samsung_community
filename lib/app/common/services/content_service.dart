@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
@@ -10,23 +9,44 @@ import 'supabase_service.dart';
 class ContentService {
   Future<Result<List<ContentModel>>> getContent({
     ContentType? contentType,
+    List<ContentType>? allowedContentTypes,
     bool? isPublished,
     int? limit,
+    int? offset,
+    String? searchQuery,
   }) async {
     try {
       var query = SupabaseService.client.from('content').select();
 
       if (contentType != null) {
         query = query.eq('content_type', contentType.toJson());
+      } else if (allowedContentTypes != null && allowedContentTypes.isNotEmpty) {
+        if (allowedContentTypes.length == 1) {
+          query = query.eq('content_type', allowedContentTypes.first.toJson());
+        } else {
+          final firstType = allowedContentTypes.first.toJson();
+          final secondType = allowedContentTypes.last.toJson();
+          query = query.or('content_type.eq.$firstType,content_type.eq.$secondType');
+        }
       }
 
       if (isPublished != null) {
         query = query.eq('is_published', isPublished);
       }
 
+      if (searchQuery != null && searchQuery.trim().isNotEmpty) {
+        final searchTerm = '%${searchQuery.trim()}%';
+        query = query.ilike('title', searchTerm);
+      }
+
       var transformQuery = query.order('created_at', ascending: false);
 
-      if (limit != null) {
+      if (offset != null) {
+        transformQuery = transformQuery.range(
+          offset,
+          offset + (limit ?? 20) - 1,
+        );
+      } else if (limit != null) {
         transformQuery = transformQuery.limit(limit);
       }
 
@@ -66,10 +86,7 @@ class ContentService {
 
   Future<Result<void>> deleteContent(String contentId) async {
     try {
-      await SupabaseService.client
-          .from('content')
-          .delete()
-          .eq('id', contentId);
+      await SupabaseService.client.from('content').delete().eq('id', contentId);
 
       return const Success(null);
     } catch (e) {
@@ -77,15 +94,14 @@ class ContentService {
     }
   }
 
-
   Future<Result<void>> updateContent(
-      String contentId, {
-        String? title,
-        String? description,
-        bool? isPublished,
-        bool? isFeatured,
-        List? externalSharePlatforms,
-      }) async {
+    String contentId, {
+    String? title,
+    String? description,
+    bool? isPublished,
+    bool? isFeatured,
+    List? externalSharePlatforms,
+  }) async {
     try {
       final Map<String, dynamic> updates = {};
 
@@ -93,7 +109,8 @@ class ContentService {
       if (description != null) updates['description'] = description;
       if (isPublished != null) updates['is_published'] = isPublished;
       if (isFeatured != null) updates['is_featured'] = isFeatured;
-      if (externalSharePlatforms != null) updates['external_share_platforms'] = externalSharePlatforms;
+      if (externalSharePlatforms != null)
+        updates['external_share_platforms'] = externalSharePlatforms;
 
       if (updates.isEmpty) {
         return const Success(null); // nothing to update
@@ -109,9 +126,6 @@ class ContentService {
       return Failure(e.toString());
     }
   }
-
-
-
 
   Future<Result<ContentModel?>> getContentById(String id) async {
     try {

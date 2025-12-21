@@ -79,6 +79,7 @@ class HebrewiLocalization {
     "vodFilterAll": "הכל",
     "vodFilterVod": "VOD",
     "vodFilterPodcasts": "פודקאסטים",
+    "searchVodPodcasts": "חפש VOD ופודקאסטים...",
     "vodLuxuryStores": "חנויות יוקרה VOD",
     "vodLoramDescription":
         "לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אליט. סד דו איוסמוד טמפור....",
@@ -120,10 +121,13 @@ class HebrewiLocalization {
     // Feed Screen
     "datePublished": "תאריך פרסום:",
     "readMore": "קרא עוד",
+    "showLess": "הצג פחות",
     "likedBy": "אהבו ",
     "and": " ו-",
     "others": "אחרים",
-    "viewAllComments": "הצג את כל {count} התגובות",
+    "beTheFirstToLike": "היה הראשון לאהב",
+    "viewAllComments": "הצג את כל",
+    "viewAllCommentsSuffix": "התגובות",
     "addComment": "הוסף תגובה...",
     // Side Menu
     "menu": "תפריט",
@@ -142,6 +146,7 @@ class HebrewiLocalization {
     "failedToCreateOrSignIn": "נכשל ביצירה או התחברות",
     "otpVerificationFailed": "אימות OTP נכשל",
     "failedToCreatePublicUser": "נכשל ביצירת משתמש ציבורי",
-    "failedToCreatePublicUserAfterRetries": "נכשל ביצירת משתמש ציבורי לאחר ניסיונות",
+    "failedToCreatePublicUserAfterRetries":
+        "נכשל ביצירת משתמש ציבורי לאחר ניסיונות",
   };
 }

@@ -1,6 +1,9 @@
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
+import '../../../data/helper_widgets/audio_player/audio_player_manager.dart';
+import '../../../data/helper_widgets/video_player/video_player_manager.dart';
+
 class BottomBarController extends GetxController {
   //TODO: Implement BottomBarController
 
@@ -37,9 +40,15 @@ class BottomBarController extends GetxController {
 
   void changeTab(int index) {
     if (currentIndex.value != index) {
+      _pauseAllMedia();
       currentIndex.value = index;
       Get.offNamed(routes[index], id: 1);
     }
+  }
+
+  void _pauseAllMedia() {
+    VideoPlayerManager.pauseAll();
+    AudioPlayerManager.pauseAll();
   }
 
   void updateTotalPoints(int points) {

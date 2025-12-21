@@ -84,6 +84,7 @@ class EnLocalization {
     "vodFilterAll": "All",
     "vodFilterVod": "VOD",
     "vodFilterPodcasts": "Podcasts",
+    "searchVodPodcasts": "Search VOD & Podcasts...",
     "vodLuxuryStores": "VOD Luxury Stores",
     "vodLoramDescription":
         "Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....",
@@ -125,10 +126,13 @@ class EnLocalization {
     // Feed Screen
     "datePublished": "Date Published:",
     "readMore": "read more",
+    "showLess": "show less",
     "likedBy": "Liked by ",
     "and": " and ",
     "others": "others",
-    "viewAllComments": "View all {count} comments",
+    "beTheFirstToLike": "Be the first one to like",
+    "viewAllComments": "View all",
+    "viewAllCommentsSuffix": "comments",
     "addComment": "Add comment...",
     // Side Menu
     "menu": "Menu",
@@ -143,10 +147,12 @@ class EnLocalization {
     "failedToCreateAuthUser": "Failed to create auth user",
     "failedToCreateOrFindAuthUser": "Failed to create or find auth user",
     "failedToCreateSession": "Failed to create session",
-    "failedToSignInAfterEmailConfirmation": "Failed to sign in after email confirmation",
+    "failedToSignInAfterEmailConfirmation":
+        "Failed to sign in after email confirmation",
     "failedToCreateOrSignIn": "Failed to create or sign in",
     "otpVerificationFailed": "OTP verification failed",
     "failedToCreatePublicUser": "Failed to create public user",
-    "failedToCreatePublicUserAfterRetries": "Failed to create public user after retries",
+    "failedToCreatePublicUserAfterRetries":
+        "Failed to create public user after retries",
   };
 }

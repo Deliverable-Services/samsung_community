@@ -47,23 +47,62 @@ class UploadFileField extends StatelessWidget {
                     padding: EdgeInsets.only(left: 20.w, right: 6.w),
                     child: Row(
                       children: [
-                        // Placeholder text
                         Expanded(
-                          child: Text(
-                            (controller.isLoading.value ||
-                                    controller.profilePictureUrl.value != null)
-                                ? controller.profilePictureUrl.value ??
-                                      'uploadFile'
-                                : 'uploadFile'.tr,
-                            style: TextStyle(
-                              fontFamily: 'Samsung Sharp Sans',
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14.sp,
-                              letterSpacing: 0,
-                              color: AppColors.textWhite,
-                              height: 22 / 14,
-                            ),
-                          ),
+                          child: Obx(() {
+                            if (controller.isUploadingMedia.value) {
+                              return Row(
+                                children: [
+                                  SizedBox(
+                                    width: 16.w,
+                                    height: 16.h,
+                                    child: const CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  Text(
+                                    'Uploading...',
+                                    style: TextStyle(
+                                      fontFamily: 'Samsung Sharp Sans',
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14.sp,
+                                      letterSpacing: 0,
+                                      color: AppColors.textWhite,
+                                      height: 22 / 14,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+
+                            if (controller.uploadedFileName.value != null) {
+                              return Text(
+                                controller.uploadedFileName.value!,
+                                style: TextStyle(
+                                  fontFamily: 'Samsung Sharp Sans',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14.sp,
+                                  letterSpacing: 0,
+                                  color: AppColors.textWhite,
+                                  height: 22 / 14,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              );
+                            }
+
+                            return Text(
+                              'uploadFile'.tr,
+                              style: TextStyle(
+                                fontFamily: 'Samsung Sharp Sans',
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14.sp,
+                                letterSpacing: 0,
+                                color: AppColors.textWhite,
+                                height: 22 / 14,
+                              ),
+                            );
+                          }),
                         ),
                         // Upload icon button
                         Container(
