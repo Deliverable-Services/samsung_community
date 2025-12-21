@@ -8,44 +8,68 @@ import '../../../data/helper_widgets/filter_component.dart';
 import '../controllers/feed_controller.dart';
 import '../local_widgets/feed_card/feed_card.dart';
 
-class FeedView extends GetView<FeedController> {
+class FeedView extends StatefulWidget {
   const FeedView({super.key});
+
+  @override
+  State<FeedView> createState() => _FeedViewState();
+}
+
+class _FeedViewState extends State<FeedView> {
+  late final ScrollController _scrollController;
+  late final FeedController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = Get.find<FeedController>();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent * 0.8) {
+      _controller.loadMoreContent();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         RefreshIndicator(
-          onRefresh: controller.loadContent, // 👈 correct refresh call
+          onRefresh: _controller.loadContent,
           child: Obx(() {
-            return controller.isLoading.value
+            return _controller.isLoading.value
                 ? const Center(child: CircularProgressIndicator())
-                : SingleChildScrollView(
-                    physics:
-                        const AlwaysScrollableScrollPhysics(), // 👈 REQUIRED
-                    child: DefaultTextStyle(
-                      style: const TextStyle(decoration: TextDecoration.none),
-                      child: Padding(
+                : CustomScrollView(
+                    controller: _scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [
+                      SliverPadding(
                         padding: EdgeInsets.only(
                           left: 16.w,
                           right: 16.w,
                           top: 12.h,
                           bottom: 22.h,
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            /// 🔍 Search
+                        sliver: SliverList(
+                          delegate: SliverChildListDelegate([
                             SearchWidget(
                               placeholder: 'searchForInspiration'.tr,
-                              controller: controller.searchController,
-                              onChanged: controller.onSearchChanged,
+                              controller: _controller.searchController,
+                              onChanged: _controller.onSearchChanged,
                             ),
-
                             SizedBox(height: 20.h),
-
-                            /// 🟡 Empty state
-                            if (controller.filteredContentList.isEmpty)
+                            if (_controller.filteredContentList.isEmpty)
                               Center(
                                 child: Padding(
                                   padding: EdgeInsets.only(top: 40.h),
@@ -55,43 +79,82 @@ class FeedView extends GetView<FeedController> {
                                   ),
                                 ),
                               ),
-
-                            /// 📋 Feed list
-                            ...controller.filteredContentList
-                                .asMap()
-                                .entries
-                                .map((entry) {
-                                  final content = entry.value;
-
-                                  return Padding(
-                                    padding: EdgeInsets.only(bottom: 20.h),
-                                    child: FeedCard(
-                                      authorName:
-                                          content.userModel?.fullName ?? '',
-                                      authorAvatar:
-                                          content
-                                              .userModel
-                                              ?.profilePictureUrl ??
-                                          '',
-                                      isVerified: content.isPublished,
-                                      publishedDate: DateFormat(
-                                        'dd/MM/yy',
-                                      ).format(content.createdAt),
-                                      title: content.title ?? '',
-                                      description: content.description ?? '',
-                                      isLiked: content.isFeatured,
-                                      likesCount: content.likesCount,
-                                      likedByUsername: content.userId,
-                                      commentsCount: content.commentsCount,
-                                      onMenuTap: () => controller
-                                          .showFeedActionModal(content.id),
-                                    ),
-                                  );
-                                }),
-                          ],
+                          ]),
                         ),
                       ),
-                    ),
+                      SliverPadding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        sliver: SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                              if (index >=
+                                  _controller.filteredContentList.length) {
+                                return null;
+                              }
+
+                              final content =
+                                  _controller.filteredContentList[index];
+                              final likedUsers = _controller.getLikedByUsers(
+                                content.id,
+                              );
+
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: 20.h),
+                                child: FeedCard(
+                                  contentId: content.id,
+                                  authorName: content.userModel?.fullName ?? '',
+                                  authorAvatar:
+                                      content.userModel?.profilePictureUrl ??
+                                      '',
+                                  isVerified: content.isPublished,
+                                  publishedDate: DateFormat(
+                                    'dd/MM/yy',
+                                  ).format(content.createdAt),
+                                  title: content.title ?? '',
+                                  description: content.description ?? '',
+                                  mediaUrl:
+                                      content.mediaFileUrl ??
+                                      (content.mediaFiles != null &&
+                                              content.mediaFiles!.isNotEmpty
+                                          ? content.mediaFiles!.first
+                                          : null),
+                                  thumbnailUrl: content.thumbnailUrl,
+                                  isLiked: _controller.isLiked(content.id),
+                                  likesCount: content.likesCount,
+                                  likedByUsers: likedUsers.isNotEmpty
+                                      ? likedUsers
+                                      : null,
+                                  commentsCount: content.commentsCount,
+                                  onLike: () =>
+                                      _controller.toggleLike(content.id),
+                                  onComment: () =>
+                                      _controller.showCommentsModal(content.id),
+                                  onViewComments: () =>
+                                      _controller.showCommentsModal(content.id),
+                                  onMenuTap: () => _controller
+                                      .showFeedActionModal(content.id),
+                                ),
+                              );
+                            },
+                            childCount:
+                                _controller.filteredContentList.length +
+                                (_controller.isLoadingMore.value ? 1 : 0),
+                          ),
+                        ),
+                      ),
+                      if (_controller.isLoadingMore.value)
+                        SliverPadding(
+                          padding: EdgeInsets.all(16.w),
+                          sliver: SliverToBoxAdapter(
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(16.w),
+                                child: const CircularProgressIndicator(),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   );
           }),
         ),
@@ -99,7 +162,7 @@ class FeedView extends GetView<FeedController> {
           bottom: -70.h,
           right: -50.w,
           child: GestureDetector(
-            onTap: controller.showCreatePostModal,
+            onTap: _controller.showCreatePostModal,
             child: SizedBox(
               width: 250.w,
               height: 250.h,

@@ -125,6 +125,7 @@ class HebrewiLocalization {
     "likedBy": "אהבו ",
     "and": " ו-",
     "others": "אחרים",
+    "beTheFirstToLike": "היה הראשון לאהב",
     "viewAllComments": "הצג את כל",
     "viewAllCommentsSuffix": "התגובות",
     "addComment": "הוסף תגובה...",

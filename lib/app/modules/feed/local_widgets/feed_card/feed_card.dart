@@ -2,23 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../data/constants/app_colors.dart';
+import '../../../../data/models/user_model copy.dart';
 import 'feed_card_header.dart';
 import 'feed_card_content.dart';
+import 'feed_card_media.dart';
 import 'feed_card_liked_by.dart';
 import 'feed_card_action_buttons.dart';
 import 'feed_card_view_comments.dart';
 import 'feed_card_comment_input.dart';
 
 class FeedCard extends StatelessWidget {
+  final String contentId;
   final String authorName;
   final String? authorAvatar;
   final bool isVerified;
   final String publishedDate;
   final String title;
   final String description;
+  final String? mediaUrl;
+  final String? thumbnailUrl;
   final bool isLiked;
   final int likesCount;
-  final String? likedByUsername;
+  final List<UserModel>? likedByUsers;
   final int commentsCount;
   final VoidCallback? onLike;
   final VoidCallback? onComment;
@@ -27,15 +32,18 @@ class FeedCard extends StatelessWidget {
 
   const FeedCard({
     super.key,
+    required this.contentId,
     required this.authorName,
     this.authorAvatar,
     this.isVerified = false,
     required this.publishedDate,
     required this.title,
     required this.description,
+    this.mediaUrl,
+    this.thumbnailUrl,
     this.isLiked = false,
     this.likesCount = 0,
-    this.likedByUsername,
+    this.likedByUsers,
     this.commentsCount = 0,
     this.onLike,
     this.onComment,
@@ -46,7 +54,7 @@ class FeedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 16.h, bottom: 6.h),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.r),
         gradient: const LinearGradient(
@@ -79,13 +87,21 @@ class FeedCard extends StatelessWidget {
           const Divider(color: AppColors.dividerLight, thickness: 1, height: 1),
           SizedBox(height: 20.h),
           FeedCardContent(title: title, description: description),
+          if (mediaUrl != null && mediaUrl!.isNotEmpty) ...[
+            SizedBox(height: 16.h),
+            FeedCardMedia(
+              mediaUrl: mediaUrl,
+              thumbnailUrl: thumbnailUrl,
+              contentId: contentId,
+            ),
+          ],
           SizedBox(height: 20.h),
           const Divider(color: AppColors.dividerLight, thickness: 1, height: 1),
           SizedBox(height: 20.h),
           FeedCardLikedBy(
             isLiked: isLiked,
             likesCount: likesCount,
-            likedByUsername: likedByUsername,
+            likedByUsers: likedByUsers,
           ),
           SizedBox(height: 14.h),
           FeedCardActionButtons(
@@ -93,13 +109,12 @@ class FeedCard extends StatelessWidget {
             onLike: onLike,
             onComment: onComment,
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 20.h),
           FeedCardViewComments(
             commentsCount: commentsCount,
             onViewComments: onViewComments,
           ),
-          SizedBox(height: 9.h),
-          FeedCardCommentInput(),
+          FeedCardCommentInput(contentId: contentId, onComment: onComment),
         ],
       ),
     );

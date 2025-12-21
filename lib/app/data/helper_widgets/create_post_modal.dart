@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
+
 import '../../modules/feed/controllers/feed_controller.dart';
 import '../constants/app_button.dart';
 import '../constants/app_colors.dart';
@@ -77,12 +81,27 @@ class CreatePostModal extends StatelessWidget {
               // Upload File Field
               UploadFileField(
                 onTap: () {
-                  // TODO: Implement file upload functionality
-                  controller.setLoading(true);
                   onPublish1?.call();
-                  controller.setLoading(false);
                 },
               ),
+              Obx(() {
+                if (controller.selectedMediaFile.value != null ||
+                    controller.uploadedMediaUrl.value != null) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 16.h),
+                      _MediaPreview(
+                        mediaFile: controller.selectedMediaFile.value,
+                        mediaUrl: controller.uploadedMediaUrl.value,
+                        fileName: controller.uploadedFileName.value,
+                        isUploading: controller.isUploadingMedia.value,
+                      ),
+                    ],
+                  );
+                }
+                return const SizedBox.shrink();
+              }),
               SizedBox(height: 32.h),
               // Publish Button
               Center(
@@ -100,6 +119,156 @@ class CreatePostModal extends StatelessWidget {
           );
         });
       },
+    );
+  }
+}
+
+class _MediaPreview extends StatelessWidget {
+  final File? mediaFile;
+  final String? mediaUrl;
+  final String? fileName;
+  final bool isUploading;
+
+  const _MediaPreview({
+    this.mediaFile,
+    this.mediaUrl,
+    this.fileName,
+    this.isUploading = false,
+  });
+
+  bool get _isVideo {
+    if (mediaFile != null) {
+      final path = mediaFile!.path.toLowerCase();
+      return path.endsWith('.mp4') ||
+          path.endsWith('.mov') ||
+          path.endsWith('.avi');
+    }
+    if (mediaUrl != null) {
+      return mediaUrl!.toLowerCase().contains('.mp4') ||
+          mediaUrl!.toLowerCase().contains('.mov') ||
+          mediaUrl!.toLowerCase().contains('.avi');
+    }
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.r),
+        color: AppColors.overlayContainerBackground,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (isUploading)
+            Padding(
+              padding: EdgeInsets.all(16.w),
+              child: Row(
+                children: [
+                  const CircularProgressIndicator(),
+                  SizedBox(width: 12.w),
+                  Text(
+                    'Uploading...',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: AppColors.textWhite,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else ...[
+            Container(
+              height: 200.h,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12.r),
+                  topRight: Radius.circular(12.r),
+                ),
+                color: AppColors.backgroundDark,
+              ),
+              child: _isVideo
+                  ? Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        if (mediaFile != null)
+                          Image.file(
+                            mediaFile!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                          )
+                        else if (mediaUrl != null)
+                          CachedNetworkImage(
+                            imageUrl: mediaUrl!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                            errorWidget: (_, __, ___) => Icon(
+                              Icons.videocam,
+                              size: 48.sp,
+                              color: AppColors.textWhiteOpacity60,
+                            ),
+                          ),
+                        Icon(
+                          Icons.play_circle_filled,
+                          size: 48.sp,
+                          color: AppColors.textWhite,
+                        ),
+                      ],
+                    )
+                  : mediaFile != null
+                  ? Image.file(
+                      mediaFile!,
+                      fit: BoxFit.fitHeight,
+                      width: double.infinity,
+                      height: double.infinity,
+                    )
+                  : mediaUrl != null
+                  ? CachedNetworkImage(
+                      imageUrl: mediaUrl!,
+                      fit: BoxFit.fitHeight,
+                      width: double.infinity,
+                      height: double.infinity,
+                      errorWidget: (_, __, ___) => Icon(
+                        Icons.image,
+                        size: 48.sp,
+                        color: AppColors.textWhiteOpacity60,
+                      ),
+                    )
+                  : const SizedBox(),
+            ),
+            if (fileName != null)
+              Padding(
+                padding: EdgeInsets.all(12.w),
+                child: Row(
+                  children: [
+                    Icon(
+                      _isVideo ? Icons.videocam : Icons.image,
+                      size: 16.sp,
+                      color: AppColors.textWhiteOpacity60,
+                    ),
+                    SizedBox(width: 8.w),
+                    Expanded(
+                      child: Text(
+                        fileName!,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: AppColors.textWhiteOpacity70,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ],
+      ),
     );
   }
 }

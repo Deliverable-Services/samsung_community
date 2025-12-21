@@ -7,8 +7,14 @@ import '../../../data/helper_widgets/option_item.dart';
 class FeedActionModal extends StatelessWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onShare;
+  final bool isOwnPost;
 
-  const FeedActionModal({super.key, this.onDelete, this.onShare});
+  const FeedActionModal({
+    super.key,
+    this.onDelete,
+    this.onShare,
+    this.isOwnPost = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,15 +22,17 @@ class FeedActionModal extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        OptionItem(
-          boxTextWidget: Image.asset(AppImages.trashIcon),
-          text: 'delete'.tr,
-          onTap: () {
-            onDelete?.call();
-            Get.back();
-          },
-        ),
-        SizedBox(height: 16.h),
+        if (isOwnPost) ...[
+          OptionItem(
+            boxTextWidget: Image.asset(AppImages.trashIcon),
+            text: 'delete'.tr,
+            onTap: () {
+              onDelete?.call();
+              Get.back();
+            },
+          ),
+          SizedBox(height: 16.h),
+        ],
         OptionItem(
           boxTextWidget: Image.asset(AppImages.sendIcon),
           text: 'share'.tr,

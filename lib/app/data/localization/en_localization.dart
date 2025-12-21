@@ -130,6 +130,7 @@ class EnLocalization {
     "likedBy": "Liked by ",
     "and": " and ",
     "others": "others",
+    "beTheFirstToLike": "Be the first one to like",
     "viewAllComments": "View all",
     "viewAllCommentsSuffix": "comments",
     "addComment": "Add comment...",
