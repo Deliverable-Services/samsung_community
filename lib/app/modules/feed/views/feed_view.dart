@@ -133,6 +133,11 @@ class _FeedViewState extends State<FeedView> {
                                       _controller.showCommentsModal(content.id),
                                   onMenuTap: () => _controller
                                       .showFeedActionModal(content.id),
+                                  onAddComment: (contentId, commentText) =>
+                                      _controller.addComment(
+                                        contentId,
+                                        commentText,
+                                      ),
                                 ),
                               );
                             },

@@ -18,6 +18,7 @@ abstract class Routes {
   static const PERSONAL_DETAILS = _Paths.PERSONAL_DETAILS;
   static const ACCOUNT_DETAIL = _Paths.ACCOUNT_DETAIL;
   static const REQUEST_SENT = _Paths.REQUEST_SENT;
+  static const PROFILE = _Paths.PROFILE;
 }
 
 abstract class _Paths {
@@ -37,4 +38,5 @@ abstract class _Paths {
   static const PERSONAL_DETAILS = '/personal-details';
   static const ACCOUNT_DETAIL = '/account-detail';
   static const REQUEST_SENT = '/request-sent';
+  static const PROFILE = '/profile';
 }

@@ -20,6 +20,8 @@ import '../modules/on_boarding/bindings/on_boarding_binding.dart';
 import '../modules/on_boarding/views/on_boarding_view.dart';
 import '../modules/personal_details/bindings/personal_details_binding.dart';
 import '../modules/personal_details/views/personal_details_view.dart';
+import '../modules/profile/bindings/profile_binding.dart';
+import '../modules/profile/views/profile_view.dart';
 import '../modules/request_sent/bindings/request_sent_binding.dart';
 import '../modules/request_sent/views/request_sent_view.dart';
 import '../modules/sign_up/bindings/sign_up_binding.dart';
@@ -130,6 +132,12 @@ class AppPages {
       page: () => const VerificationCodeByLoginView(),
       binding: VerificationCodeByLoginBinding(),
       middlewares: [GuestGuard()],
+    ),
+    GetPage(
+      name: _Paths.PROFILE,
+      page: () => const ProfileView(),
+      binding: ProfileBinding(),
+      middlewares: [AuthGuard()],
     ),
   ];
 

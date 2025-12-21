@@ -36,5 +36,6 @@ class AppImages {
       userIcon = '$baseUrl/user.svg',
       languageIcon = '$baseUrl/language.svg',
       imageOnBoardingFrame = '$baseUrl/imageOnBoardingFrame.png',
-      playIcon = '$baseUrl/play_icon.svg';
+      playIcon = '$baseUrl/play_icon.svg',
+      profileSettingsIcon = '$baseUrl/profile_settings.png';
 }
