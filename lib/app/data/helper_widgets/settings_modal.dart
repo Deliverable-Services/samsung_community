@@ -19,9 +19,14 @@ class SettingsModal extends StatelessWidget {
   }
 
   void _handleEditAccountDetails(BuildContext context) {
-    // Navigate after a brief delay
-    Future.delayed(const Duration(milliseconds: 250), () {
-      Get.toNamed(Routes.ACCOUNT_DETAIL);
+    // Close modal first
+    Navigator.of(context, rootNavigator: true).pop();
+    // Navigate to edit profile after modal closes
+    Future.delayed(const Duration(milliseconds: 200), () {
+      Get.toNamed(
+        Routes.EDIT_PROFILE,
+        preventDuplicates: false,
+      );
     });
   }
 

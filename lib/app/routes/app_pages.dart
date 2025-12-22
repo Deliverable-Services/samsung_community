@@ -10,6 +10,8 @@ import '../modules/blocked_users/bindings/blocked_users_binding.dart';
 import '../modules/blocked_users/views/blocked_users_view.dart';
 import '../modules/bottom_bar/bindings/bottom_bar_binding.dart';
 import '../modules/bottom_bar/views/bottom_bar_view.dart';
+import '../modules/edit_profile/bindings/edit_profile_binding.dart';
+import '../modules/edit_profile/views/edit_profile_view.dart';
 import '../modules/events/bindings/events_binding.dart';
 import '../modules/events/views/events_view.dart';
 import '../modules/feed/bindings/feed_binding.dart';
@@ -145,6 +147,12 @@ class AppPages {
       name: _Paths.BLOCKED_USERS,
       page: () => const BlockedUsersView(),
       binding: BlockedUsersBinding(),
+      middlewares: [AuthGuard()],
+    ),
+    GetPage(
+      name: _Paths.EDIT_PROFILE,
+      page: () => const EditProfileView(),
+      binding: EditProfileBinding(),
       middlewares: [AuthGuard()],
     ),
   ];
