@@ -24,6 +24,7 @@ class ProfileController extends BaseController {
   final Rx<UserModel?> user = Rx<UserModel?>(null);
   final RxList<ContentModel> postsList = <ContentModel>[].obs;
   final RxBool isLoadingPosts = false.obs;
+  final RxBool isLoadingStats = false.obs;
   final RxMap<String, bool> likedStatusMap = <String, bool>{}.obs;
   final RxMap<String, List<UserModel>> likedByUsersMap =
       <String, List<UserModel>>{}.obs;
@@ -49,6 +50,7 @@ class ProfileController extends BaseController {
 
   Future<void> loadUserProfile() async {
     try {
+      setLoading(true);
       final currentUser = _authRepo.currentUser.value;
       if (currentUser != null) {
         final userJson = currentUser.toJson();
@@ -57,13 +59,19 @@ class ProfileController extends BaseController {
       }
     } catch (e) {
       handleError('Failed to load profile');
+    } finally {
+      setLoading(false);
     }
   }
 
   Future<void> _loadUserStats() async {
+    isLoadingStats.value = true;
     try {
       final userId = user.value?.id;
-      if (userId == null) return;
+      if (userId == null) {
+        isLoadingStats.value = false;
+        return;
+      }
 
       final postsResult = await _contentService.getContent(
         contentType: ContentType.feed,
@@ -90,6 +98,8 @@ class ProfileController extends BaseController {
       followingCount = (followingResult as List).length;
     } catch (e) {
       debugPrint('Error loading user stats: $e');
+    } finally {
+      isLoadingStats.value = false;
     }
   }
 

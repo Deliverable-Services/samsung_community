@@ -27,16 +27,29 @@ class ProfileView extends GetView<ProfileController> {
           children: [
             Expanded(
               child: Obx(() {
-                if (controller.isLoading.value &&
-                    controller.user.value == null) {
+                final isLoading = controller.isLoading.value;
+                final user = controller.user.value;
+
+                if (isLoading && user == null) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
                 return CustomScrollView(
+                  key: ValueKey('profile_scroll_${user?.id ?? 'loading'}'),
                   slivers: [
                     _buildHeader(),
-                    _buildProfileSection(),
-                    _buildStatsSection(),
+                    if (isLoading || user == null)
+                      _buildProfileAndStatsLoader()
+                    else ...[
+                      SliverToBoxAdapter(
+                        key: const ValueKey('profile_section'),
+                        child: _buildProfileSectionContent(),
+                      ),
+                      SliverToBoxAdapter(
+                        key: const ValueKey('stats_section'),
+                        child: _buildStatsSectionContent(),
+                      ),
+                    ],
                     _buildPostsList(),
                   ],
                 );
@@ -87,95 +100,122 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildProfileSection() {
+  Widget _buildProfileAndStatsLoader() {
     return SliverToBoxAdapter(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           children: [
-            Obx(() {
-              final user = controller.user.value;
-              return Column(
-                children: [
-                  Container(
-                    width: 105.w,
-                    height: 105.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.white, width: 3.w),
-                    ),
-                    child: ClipOval(
-                      child:
-                          user?.profilePictureUrl != null &&
-                              user!.profilePictureUrl!.isNotEmpty
-                          ? CachedNetworkImage(
-                              imageUrl: user.profilePictureUrl!,
-                              fit: BoxFit.cover,
-                              errorWidget: (_, __, ___) => Image.asset(
-                                AppImages.avatar,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                          : Image.asset(AppImages.avatar, fit: BoxFit.cover),
-                    ),
-                  ),
-                  SizedBox(height: 14.h),
-                  Text(
-                    user?.fullName ?? 'User',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.white,
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
-                  if (user?.bio != null && user!.bio!.isNotEmpty)
-                    Text(
-                      user.bio!,
-                      style: TextStyle(
-                        fontFamily: 'Samsung Sharp Sans',
-                        fontSize: 14.sp,
-                        color: AppColors.textWhiteOpacity70,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  SizedBox(height: 12.h),
-                  if (user?.profession != null && user!.profession!.isNotEmpty)
-                    ProfessionBadge(profession: user.profession!),
-                ],
-              );
-            }),
-            SizedBox(height: 24.h),
+            SizedBox(height: 40.h),
+            const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
+              ),
+            ),
+            SizedBox(height: 40.h),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatsSection() {
-    return SliverToBoxAdapter(
-      child: Padding(
+  Widget _buildProfileSectionContent() {
+    return Obx(() {
+      final user = controller.user.value;
+      return Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
           children: [
-            StatCard(
-              icon: AppImages.pointsIcon,
+            Container(
+              width: 105.w,
+              height: 105.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.white, width: 3.w),
+              ),
+              child: ClipOval(
+                child:
+                    user?.profilePictureUrl != null &&
+                        user!.profilePictureUrl!.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: user.profilePictureUrl!,
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) => Container(
+                          color: AppColors.overlayContainerBackground,
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                AppColors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        errorWidget: (_, __, ___) =>
+                            Image.asset(AppImages.avatar, fit: BoxFit.cover),
+                      )
+                    : Image.asset(AppImages.avatar, fit: BoxFit.cover),
+              ),
+            ),
+            SizedBox(height: 14.h),
+            Text(
+              user?.fullName ?? 'User',
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w700,
+                color: AppColors.white,
+              ),
+            ),
+            SizedBox(height: 8.h),
+            if (user?.bio != null && user!.bio!.isNotEmpty)
+              Text(
+                user.bio!,
+                style: TextStyle(
+                  fontFamily: 'Samsung Sharp Sans',
+                  fontSize: 14.sp,
+                  color: AppColors.textWhiteOpacity70,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            SizedBox(height: 12.h),
+            if (user?.profession != null && user!.profession!.isNotEmpty)
+              ProfessionBadge(profession: user.profession!),
+            SizedBox(height: 24.h),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildStatsSectionContent() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: StatCard(
+              icon: AppImages.profilePostIcon,
               count: controller.postsCount,
               label: 'posts'.tr,
             ),
-            StatCard(
-              icon: AppImages.pointsIcon,
+          ),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: StatCard(
+              icon: AppImages.profileFollowersIcon,
               count: controller.followersCount,
               label: 'followers'.tr,
             ),
-            StatCard(
-              icon: AppImages.pointsIcon,
+          ),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: StatCard(
+              icon: AppImages.profileFollowingIcon,
               count: controller.followingCount,
               label: 'following'.tr,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

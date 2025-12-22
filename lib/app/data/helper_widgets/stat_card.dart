@@ -11,18 +11,20 @@ class StatCard extends StatelessWidget {
   final String icon;
   final int count;
   final String label;
+  final bool isLoading;
 
   const StatCard({
     super.key,
     required this.icon,
     required this.count,
     required this.label,
+    this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
+      height: 74.2065658569336.h,
       padding: EdgeInsets.symmetric(horizontal: 10.61.w, vertical: 6.h),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5.9.r),
@@ -77,61 +79,65 @@ class StatCard extends StatelessWidget {
             sigmaY: 4.637411117553711,
           ),
           child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  count.toString(),
-                  style: TextStyle(
-                    fontFamily: 'Samsung Sharp Sans',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18.sp,
-                    height: 14.15 / 18,
-                    letterSpacing: 0,
-                    color: AppColors.white,
-                  ),
-                ),
-                SizedBox(height: 10.h),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 14.w,
-                      height: 14.h,
-                      child: SvgPicture.asset(
-                        AppImages.pointsIcon,
-                        width: 14.w,
-                        height: 14.h,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    SizedBox(width: 4.w),
-                    ShaderMask(
-                      shaderCallback: (bounds) => const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [Color(0xFFBEBEBE), Color(0xFFFFFFFF)],
-                        stops: [0.0101, 1.1984],
-                      ).createShader(bounds),
-                      child: Text(
-                        label,
+            child: isLoading
+                ? const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
+                  )
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        count.toString(),
                         style: TextStyle(
                           fontFamily: 'Samsung Sharp Sans',
                           fontWeight: FontWeight.w700,
-                          fontSize: 12.sp,
-                          height: 14.15 / 12,
+                          fontSize: 18.sp,
+                          height: 14.15 / 18,
                           letterSpacing: 0,
-                          color: Colors.white,
+                          color: AppColors.white,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                      SizedBox(height: 10.h),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 14.w,
+                            height: 14.h,
+                            child: SvgPicture.asset(
+                              icon,
+                              width: 14.w,
+                              height: 14.h,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                          SizedBox(width: 4.w),
+                          ShaderMask(
+                            shaderCallback: (bounds) => const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFFBEBEBE), Color(0xFFFFFFFF)],
+                              stops: [0.0101, 1.1984],
+                            ).createShader(bounds),
+                            child: Text(
+                              label,
+                              style: TextStyle(
+                                fontFamily: 'Samsung Sharp Sans',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12.sp,
+                                height: 14.15 / 12,
+                                letterSpacing: 0,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
           ),
         ),
       ),
