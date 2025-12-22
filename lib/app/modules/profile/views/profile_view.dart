@@ -10,6 +10,7 @@ import '../../../data/helper_widgets/create_post_button.dart';
 import '../../../data/helper_widgets/points_widget.dart';
 import '../../../data/helper_widgets/profession_badge.dart';
 import '../../../data/helper_widgets/profile_picture_widget.dart';
+import '../../../data/helper_widgets/settings_modal.dart';
 import '../../../data/helper_widgets/stat_card.dart';
 import '../../../modules/bottom_bar/controllers/bottom_bar_controller.dart';
 import '../../feed/local_widgets/feed_card/feed_card.dart';
@@ -97,7 +98,9 @@ class ProfileView extends GetView<ProfileController> {
               );
             }),
             GestureDetector(
-              onTap: () => Get.back(),
+              onTap: () {
+                SettingsModal.show(Get.context!);
+              },
               child: Container(
                 width: 40.w,
                 height: 40.h,

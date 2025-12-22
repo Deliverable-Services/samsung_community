@@ -6,6 +6,8 @@ import '../modules/academy/bindings/academy_binding.dart';
 import '../modules/academy/views/academy_view.dart';
 import '../modules/account_detail/bindings/account_detail_binding.dart';
 import '../modules/account_detail/views/account_detail_view.dart';
+import '../modules/blocked_users/bindings/blocked_users_binding.dart';
+import '../modules/blocked_users/views/blocked_users_view.dart';
 import '../modules/bottom_bar/bindings/bottom_bar_binding.dart';
 import '../modules/bottom_bar/views/bottom_bar_view.dart';
 import '../modules/events/bindings/events_binding.dart';
@@ -137,6 +139,12 @@ class AppPages {
       name: _Paths.PROFILE,
       page: () => const ProfileView(),
       binding: ProfileBinding(),
+      middlewares: [AuthGuard()],
+    ),
+    GetPage(
+      name: _Paths.BLOCKED_USERS,
+      page: () => const BlockedUsersView(),
+      binding: BlockedUsersBinding(),
       middlewares: [AuthGuard()],
     ),
   ];
