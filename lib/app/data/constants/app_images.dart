@@ -36,5 +36,10 @@ class AppImages {
       userIcon = '$baseUrl/user.svg',
       languageIcon = '$baseUrl/language.svg',
       imageOnBoardingFrame = '$baseUrl/imageOnBoardingFrame.png',
-      playIcon = '$baseUrl/play_icon.svg';
+      playIcon = '$baseUrl/play_icon.svg',
+      profileSettingsIcon = '$baseUrl/profile_settings.png',
+      profilePostIcon = '$baseUrl/profile_post.svg',
+      profileFollowersIcon = '$baseUrl/profile_followers.svg',
+      profileFollowingIcon = '$baseUrl/profile_following.svg',
+      blockIcon = '$baseUrl/blocked.svg';
 }

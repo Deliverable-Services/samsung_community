@@ -18,6 +18,9 @@ abstract class Routes {
   static const PERSONAL_DETAILS = _Paths.PERSONAL_DETAILS;
   static const ACCOUNT_DETAIL = _Paths.ACCOUNT_DETAIL;
   static const REQUEST_SENT = _Paths.REQUEST_SENT;
+  static const PROFILE = _Paths.PROFILE;
+  static const BLOCKED_USERS = _Paths.BLOCKED_USERS;
+  static const EDIT_PROFILE = _Paths.EDIT_PROFILE;
 }
 
 abstract class _Paths {
@@ -37,4 +40,7 @@ abstract class _Paths {
   static const PERSONAL_DETAILS = '/personal-details';
   static const ACCOUNT_DETAIL = '/account-detail';
   static const REQUEST_SENT = '/request-sent';
+  static const PROFILE = '/profile';
+  static const BLOCKED_USERS = '/blocked-users';
+  static const EDIT_PROFILE = '/edit-profile';
 }

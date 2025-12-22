@@ -10,24 +10,15 @@ import '../../../data/helper_widgets/custom_text_field.dart';
 import '../controllers/personal_details_controller.dart';
 
 class PersonalDetailsForm extends GetView<PersonalDetailsController> {
-  final double topOffset;
-  final double totalOffset;
-
-  const PersonalDetailsForm({
-    super.key,
-    required this.topOffset,
-    required this.totalOffset,
-  });
+  const PersonalDetailsForm({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      top: topOffset - totalOffset,
-      left: 20.w,
-      child: SizedBox(
-        child: Form(
-          key: controller.formKey,
-          child: Column(
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Form(
+        key: controller.formKey,
+        child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               CustomTextField(
@@ -103,8 +94,7 @@ class PersonalDetailsForm extends GetView<PersonalDetailsController> {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }
 

@@ -35,8 +35,8 @@ class SideMenu extends StatelessWidget {
   }
 
   void _handleProfile(BuildContext context) {
-    // Navigator.of(context, rootNavigator: true).pop();
-    // TODO: Navigate to profile screen
+    Navigator.of(context, rootNavigator: true).pop();
+    Get.toNamed(Routes.PROFILE);
   }
 
   void _handleLanguage(BuildContext context) {

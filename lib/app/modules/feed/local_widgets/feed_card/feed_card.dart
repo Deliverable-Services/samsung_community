@@ -29,6 +29,7 @@ class FeedCard extends StatelessWidget {
   final VoidCallback? onComment;
   final VoidCallback? onViewComments;
   final VoidCallback? onMenuTap;
+  final Function(String, String)? onAddComment;
 
   const FeedCard({
     super.key,
@@ -49,6 +50,7 @@ class FeedCard extends StatelessWidget {
     this.onComment,
     this.onViewComments,
     this.onMenuTap,
+    this.onAddComment,
   });
 
   @override
@@ -114,7 +116,11 @@ class FeedCard extends StatelessWidget {
             commentsCount: commentsCount,
             onViewComments: onViewComments,
           ),
-          FeedCardCommentInput(contentId: contentId, onComment: onComment),
+          FeedCardCommentInput(
+            contentId: contentId,
+            onComment: onComment,
+            onAddComment: onAddComment,
+          ),
         ],
       ),
     );

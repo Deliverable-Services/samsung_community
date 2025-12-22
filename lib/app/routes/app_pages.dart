@@ -6,8 +6,12 @@ import '../modules/academy/bindings/academy_binding.dart';
 import '../modules/academy/views/academy_view.dart';
 import '../modules/account_detail/bindings/account_detail_binding.dart';
 import '../modules/account_detail/views/account_detail_view.dart';
+import '../modules/blocked_users/bindings/blocked_users_binding.dart';
+import '../modules/blocked_users/views/blocked_users_view.dart';
 import '../modules/bottom_bar/bindings/bottom_bar_binding.dart';
 import '../modules/bottom_bar/views/bottom_bar_view.dart';
+import '../modules/edit_profile/bindings/edit_profile_binding.dart';
+import '../modules/edit_profile/views/edit_profile_view.dart';
 import '../modules/events/bindings/events_binding.dart';
 import '../modules/events/views/events_view.dart';
 import '../modules/feed/bindings/feed_binding.dart';
@@ -20,6 +24,8 @@ import '../modules/on_boarding/bindings/on_boarding_binding.dart';
 import '../modules/on_boarding/views/on_boarding_view.dart';
 import '../modules/personal_details/bindings/personal_details_binding.dart';
 import '../modules/personal_details/views/personal_details_view.dart';
+import '../modules/profile/bindings/profile_binding.dart';
+import '../modules/profile/views/profile_view.dart';
 import '../modules/request_sent/bindings/request_sent_binding.dart';
 import '../modules/request_sent/views/request_sent_view.dart';
 import '../modules/sign_up/bindings/sign_up_binding.dart';
@@ -130,6 +136,24 @@ class AppPages {
       page: () => const VerificationCodeByLoginView(),
       binding: VerificationCodeByLoginBinding(),
       middlewares: [GuestGuard()],
+    ),
+    GetPage(
+      name: _Paths.PROFILE,
+      page: () => const ProfileView(),
+      binding: ProfileBinding(),
+      middlewares: [AuthGuard()],
+    ),
+    GetPage(
+      name: _Paths.BLOCKED_USERS,
+      page: () => const BlockedUsersView(),
+      binding: BlockedUsersBinding(),
+      middlewares: [AuthGuard()],
+    ),
+    GetPage(
+      name: _Paths.EDIT_PROFILE,
+      page: () => const EditProfileView(),
+      binding: EditProfileBinding(),
+      middlewares: [AuthGuard()],
     ),
   ];
 

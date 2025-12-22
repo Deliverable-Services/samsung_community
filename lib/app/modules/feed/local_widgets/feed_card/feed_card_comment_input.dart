@@ -4,16 +4,17 @@ import 'package:get/get.dart';
 
 import '../../../../data/constants/app_colors.dart';
 import '../../../../data/constants/app_images.dart';
-import '../../controllers/feed_controller.dart';
 
 class FeedCardCommentInput extends StatefulWidget {
   final String contentId;
   final VoidCallback? onComment;
+  final Function(String, String)? onAddComment;
 
   const FeedCardCommentInput({
     super.key,
     required this.contentId,
     this.onComment,
+    this.onAddComment,
   });
 
   @override
@@ -22,7 +23,6 @@ class FeedCardCommentInput extends StatefulWidget {
 
 class _FeedCardCommentInputState extends State<FeedCardCommentInput> {
   final TextEditingController _commentController = TextEditingController();
-  final FeedController _controller = Get.find<FeedController>();
   final RxBool _hasText = false.obs;
 
   @override
@@ -44,8 +44,9 @@ class _FeedCardCommentInputState extends State<FeedCardCommentInput> {
 
   void _submitComment() {
     if (_commentController.text.trim().isNotEmpty) {
-      _controller.addComment(widget.contentId, _commentController.text.trim());
+      final commentText = _commentController.text.trim();
       _commentController.clear();
+      widget.onAddComment?.call(widget.contentId, commentText);
       widget.onComment?.call();
     }
   }
