@@ -20,15 +20,21 @@ class BottomNavItem {
 class BottomNavItems {
   BottomNavItems._();
 
-  static List<BottomNavItem> getItems(BottomBarController controller) {
+  static List<BottomNavItem> getItems(
+    BottomBarController controller,
+    bool isBottomBar,
+  ) {
     return [
       BottomNavItem(
         imagePath: AppImages.homeNavIcon,
         label: 'Home',
         onTap: () {
-          controller.changeTab(0);
+          controller.changeTab(0, isBottomBar);
         },
         isActive: () {
+          if (!isBottomBar) {
+            return false;
+          }
           return controller.currentIndex.value == 0;
         },
       ),
@@ -36,9 +42,12 @@ class BottomNavItems {
         imagePath: AppImages.vodNavIcon,
         label: 'Vod',
         onTap: () {
-          controller.changeTab(1);
+          controller.changeTab(1, isBottomBar);
         },
         isActive: () {
+          if (!isBottomBar) {
+            return false;
+          }
           return controller.currentIndex.value == 1;
         },
       ),
@@ -46,9 +55,12 @@ class BottomNavItems {
         imagePath: AppImages.academyNavIcon,
         label: 'Academy',
         onTap: () {
-          controller.changeTab(2);
+          controller.changeTab(2, isBottomBar);
         },
         isActive: () {
+          if (!isBottomBar) {
+            return false;
+          }
           return controller.currentIndex.value == 2;
         },
       ),
@@ -56,9 +68,12 @@ class BottomNavItems {
         imagePath: AppImages.feedNavIcon,
         label: 'Feed',
         onTap: () {
-          controller.changeTab(3);
+          controller.changeTab(3, isBottomBar);
         },
         isActive: () {
+          if (!isBottomBar) {
+            return false;
+          }
           return controller.currentIndex.value == 3;
         },
       ),
@@ -66,9 +81,12 @@ class BottomNavItems {
         imagePath: AppImages.eventsNavIcon,
         label: 'Events',
         onTap: () {
-          controller.changeTab(4);
+          controller.changeTab(4, isBottomBar);
         },
         isActive: () {
+          if (!isBottomBar) {
+            return false;
+          }
           return controller.currentIndex.value == 4;
         },
       ),

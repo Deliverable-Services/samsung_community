@@ -75,7 +75,7 @@ class ProfileView extends GetView<ProfileController> {
               right: 0,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 16.h),
-                child: const BottomNavBar(),
+                child: BottomNavBar(isBottomBar: false),
               ),
             ),
           ],

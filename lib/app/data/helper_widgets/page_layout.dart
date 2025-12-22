@@ -81,7 +81,7 @@ class _PageLayoutState extends State<PageLayout> {
                     horizontal: 9.w,
                     vertical: 16.h,
                   ),
-                  child: const BottomNavBar(),
+                  child: BottomNavBar(),
                 ),
               ],
             ),

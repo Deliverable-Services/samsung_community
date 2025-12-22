@@ -88,6 +88,18 @@ class EnLocalization {
     "vodLuxuryStores": "VOD Luxury Stores",
     "vodLoramDescription":
         "Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....",
+
+    // Academy Screen
+    "academyTitle": "Academy",
+    "academyDescription":
+        "Exclusive videos, lives, and articles,all in one inspiring space.",
+    "academyAll": "All",
+    "academyVideos": "Videos",
+    "academyReels": "Reels",
+    "academyZoomWorkshops": "Zoom Workshops",
+    "academyAssignments": "Assignments",
+    "searchForInspiration": "Search for inspiration ...",
+
     // Home Screen
     "homeExclusiveLaunchEvent": "Exclusive Launch Event",
     "homeLiveEventRegistration": "Live Event Registration",
