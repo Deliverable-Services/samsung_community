@@ -83,6 +83,17 @@ class HebrewiLocalization {
     "vodLuxuryStores": "חנויות יוקרה VOD",
     "vodLoramDescription":
         "לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אליט. סד דו איוסמוד טמפור....",
+
+    // Academy Screen
+    "academyTitle": "אקדמיה",
+    "academyDescription":
+        "סרטונים בלעדיים, שידורים חיים ומאמרים – הכל במקום אחד מעורר השראה.",
+    "academyAll": "הכול",
+    "academyVideos": "סרטונים",
+    "academyReels": "רילס",
+    "academyZoomWorkshops": "סדנאות זום",
+    "academyAssignments": "משימות",
+    "searchForInspiration": "חיפוש השראה...",
     // Home Screen
     "homeExclusiveLaunchEvent": "אירוע השקה בלעדי",
     "homeLiveEventRegistration": "רישום לאירוע חי",

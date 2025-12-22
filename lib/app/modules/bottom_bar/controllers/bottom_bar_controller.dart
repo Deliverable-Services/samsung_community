@@ -5,8 +5,6 @@ import '../../../data/helper_widgets/audio_player/audio_player_manager.dart';
 import '../../../data/helper_widgets/video_player/video_player_manager.dart';
 
 class BottomBarController extends GetxController {
-  //TODO: Implement BottomBarController
-
   final count = 0.obs;
 
   @override
@@ -38,7 +36,10 @@ class BottomBarController extends GetxController {
     Routes.EVENTS,
   ];
 
-  void changeTab(int index) {
+  void changeTab(int index,bool isBottomBar) {
+    if (!isBottomBar) {
+      Get.back();
+    }
     if (currentIndex.value != index) {
       _pauseAllMedia();
       currentIndex.value = index;

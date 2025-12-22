@@ -8,12 +8,14 @@ import '../constants/bottom_nav_items.dart';
 import 'bottom_nav_menu_item.dart';
 
 class BottomNavBar extends StatelessWidget {
-  const BottomNavBar({super.key});
+  bool? isBottomBar;
+
+  BottomNavBar({super.key, this.isBottomBar = true});
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<BottomBarController>();
-    final items = BottomNavItems.getItems(controller);
+    final items = BottomNavItems.getItems(controller, isBottomBar ?? true);
 
     return Container(
       width: 372.w,
@@ -28,8 +30,9 @@ class BottomNavBar extends StatelessWidget {
         children: [
           for (int i = 0; i < items.length; i++) ...[
             Flexible(
-              child: Obx(
-                () => BottomNavMenuItem(
+              child: Obx(() {
+                controller.count.value;
+                return BottomNavMenuItem(
                   icon: Image.asset(
                     items[i].imagePath,
                     width: 26.w,
@@ -39,8 +42,8 @@ class BottomNavBar extends StatelessWidget {
                   label: items[i].label,
                   isActive: items[i].isActive(),
                   onTap: items[i].onTap,
-                ),
-              ),
+                );
+              }),
             ),
             if (i < items.length - 1) SizedBox(width: 6.w),
           ],

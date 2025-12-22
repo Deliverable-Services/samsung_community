@@ -52,7 +52,7 @@ class BottomBarView extends GetView<BottomBarController> {
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 16.h),
-              child: const BottomNavBar(),
+              child: BottomNavBar(),
             ),
           ],
         ),
