@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../../data/constants/app_images.dart';
+import '../../../data/helper_widgets/create_post_button.dart';
 import '../../../data/helper_widgets/filter_component.dart';
 import '../controllers/feed_controller.dart';
 import '../local_widgets/feed_card/feed_card.dart';
@@ -163,17 +163,11 @@ class _FeedViewState extends State<FeedView> {
                   );
           }),
         ),
-        Positioned(
-          bottom: -70.h,
-          right: -50.w,
-          child: GestureDetector(
-            onTap: _controller.showCreatePostModal,
-            child: SizedBox(
-              width: 250.w,
-              height: 250.h,
-              child: Image.asset(AppImages.createPostIcon),
-            ),
-          ),
+        CreatePostButton(
+          onSuccess: () {
+            _controller.loadContent();
+          },
+          onFailure: () {},
         ),
       ],
     );

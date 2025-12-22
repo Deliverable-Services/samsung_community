@@ -14,11 +14,6 @@ class PersonalDetailsView extends GetView<PersonalDetailsController> {
 
   @override
   Widget build(BuildContext context) {
-    final appBarHeight = TitleAppBar(
-      text: 'Personal details',
-    ).preferredSize.height;
-    final totalOffset = appBarHeight + 20.h;
-
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -33,32 +28,18 @@ class PersonalDetailsView extends GetView<PersonalDetailsController> {
             children: [
               TitleAppBar(text: 'Personal details'),
               Expanded(
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Container(color: Colors.transparent),
-                    ProfilePictureWidget(
-                      topOffset: 72.h,
-                      totalOffset: totalOffset,
-                    ),
-                    Obx(() {
-                      final hasImage =
-                          controller.selectedImagePath.value != null ||
-                          controller.profilePictureUrl.value != null;
-                      return hasImage
-                          ? const SizedBox.shrink()
-                          : AddIconWidget(
-                              topOffset: 98.h,
-                              totalOffset: totalOffset,
-                            );
-                    }),
-                    PersonalDetailsForm(
-                      topOffset: 231.43.h,
-                      totalOffset: totalOffset,
-                    ),
-                    Positioned(
-                      top: 807.h - totalOffset,
-                      left: 20.w,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20.h),
+                      Center(
+                        child: PersonalDetailsProfilePictureWidget(),
+                      ),
+                      SizedBox(height: 20.h),
+                      PersonalDetailsForm(),
+                      SizedBox(height: 40.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
                       child: AppButton(
                         onTap: controller.handleNext,
                         text: 'next'.tr,
@@ -66,7 +47,9 @@ class PersonalDetailsView extends GetView<PersonalDetailsController> {
                         height: 48.h,
                       ),
                     ),
+                      SizedBox(height: 20.h),
                   ],
+                  ),
                 ),
               ),
             ],

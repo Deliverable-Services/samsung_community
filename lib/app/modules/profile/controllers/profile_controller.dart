@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../common/services/content_service.dart';
 import '../../../common/services/content_interaction_service.dart';
+import '../../../common/services/storage_service.dart';
 import '../../../common/services/supabase_service.dart';
+import '../../../data/constants/app_colors.dart';
 import '../../../data/core/base/base_controller.dart';
 import '../../../data/core/utils/result.dart';
 import '../../../data/core/utils/common_snackbar.dart';
@@ -25,6 +30,7 @@ class ProfileController extends BaseController {
   final RxList<ContentModel> postsList = <ContentModel>[].obs;
   final RxBool isLoadingPosts = false.obs;
   final RxBool isLoadingStats = false.obs;
+  final RxBool isUploadingImage = false.obs;
   final RxMap<String, bool> likedStatusMap = <String, bool>{}.obs;
   final RxMap<String, List<UserModel>> likedByUsersMap =
       <String, List<UserModel>>{}.obs;
@@ -32,20 +38,26 @@ class ProfileController extends BaseController {
   int postsCount = 0;
   int followersCount = 0;
   int followingCount = 0;
+  bool _isDeleting = false;
 
   ProfileController({
     ContentService? contentService,
     ContentInteractionService? interactionService,
     AuthRepo? authRepo,
-  })  : _contentService = contentService ?? ContentService(),
-        _interactionService = interactionService ?? ContentInteractionService(),
-        _authRepo = authRepo ?? Get.find<AuthRepo>();
+  }) : _contentService = contentService ?? ContentService(),
+       _interactionService = interactionService ?? ContentInteractionService(),
+       _authRepo = authRepo ?? Get.find<AuthRepo>();
 
   @override
   void onInit() {
     super.onInit();
     loadUserProfile();
     loadUserPosts();
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
   }
 
   Future<void> loadUserProfile() async {
@@ -250,9 +262,7 @@ class ProfileController extends BaseController {
       final post = postsList.firstWhereOrNull((p) => p.id == contentId);
       if (post != null) {
         final index = postsList.indexOf(post);
-        postsList[index] = post.copyWith(
-          commentsCount: post.commentsCount + 1,
-        );
+        postsList[index] = post.copyWith(commentsCount: post.commentsCount + 1);
       }
       CommonSnackbar.success('Comment added');
     } else {
@@ -278,7 +288,8 @@ class ProfileController extends BaseController {
 
     final content = postsList.firstWhereOrNull((c) => c.id == id);
     final currentUser = SupabaseService.currentUser;
-    final isOwnPost = content != null &&
+    final isOwnPost =
+        content != null &&
         currentUser != null &&
         content.userId == currentUser.id;
 
@@ -353,21 +364,139 @@ class ProfileController extends BaseController {
   }
 
   Future<void> deleteContent(String contentId) async {
-    try {
-      setLoading(true);
+    if (_isDeleting) return;
 
+    try {
+      _isDeleting = true;
       final result = await _contentService.deleteContent(contentId);
 
       if (result.isSuccess) {
-        postsList.removeWhere((item) => item.id == contentId);
-        postsCount--;
+        CommonSnackbar.success('Post deleted successfully');
+        // Reload content after 1 second - loading will be handled by loadUserPosts
+        Future.delayed(const Duration(seconds: 1), () {
+          loadUserPosts();
+          _loadUserStats();
+        });
       } else {
         handleError(result.errorOrNull ?? 'Failed to delete post');
       }
     } catch (e) {
       handleError('somethingWentWrong'.tr);
     } finally {
-      setLoading(false);
+      _isDeleting = false;
+    }
+  }
+
+  Future<void> selectProfilePicture() async {
+    try {
+      final source = await _showImageSourceDialog();
+      if (source == null) return;
+
+      final XFile? pickedFile = await StorageService.pickImage(source: source);
+      if (pickedFile != null) {
+        await _uploadProfilePicture(File(pickedFile.path));
+      }
+    } catch (e) {
+      CommonSnackbar.error('Failed to select image');
+    }
+  }
+
+  Future<ImageSource?> _showImageSourceDialog() async {
+    return await Get.dialog<ImageSource>(
+      Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(
+                  Icons.photo_library,
+                  color: AppColors.white,
+                ),
+                title: const Text(
+                  'Choose from Gallery',
+                  style: TextStyle(color: AppColors.white),
+                ),
+                onTap: () => Get.back(result: ImageSource.gallery),
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt, color: AppColors.white),
+                title: const Text(
+                  'Take Photo',
+                  style: TextStyle(color: AppColors.white),
+                ),
+                onTap: () => Get.back(result: ImageSource.camera),
+              ),
+              TextButton(
+                onPressed: () => Get.back(),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(color: AppColors.white),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _uploadProfilePicture(File imageFile) async {
+    final currentUser = _authRepo.currentUser.value;
+    if (currentUser == null || currentUser.id.isEmpty) {
+      CommonSnackbar.error('User not found');
+      return;
+    }
+
+    isUploadingImage.value = true;
+    try {
+      final url = await StorageService.uploadProfilePicture(
+        imageFile: imageFile,
+        userId: currentUser.id,
+        bucketName: 'profile_pictures',
+      );
+
+      if (url != null) {
+        await _updateUserProfilePicture(url);
+        CommonSnackbar.success('Profile picture updated');
+      } else {
+        CommonSnackbar.error('Failed to upload profile picture');
+      }
+    } catch (e) {
+      debugPrint('Error uploading profile picture: $e');
+      CommonSnackbar.error('Failed to upload profile picture');
+    } finally {
+      isUploadingImage.value = false;
+    }
+  }
+
+  Future<void> _updateUserProfilePicture(String imageUrl) async {
+    try {
+      final currentUser = _authRepo.currentUser.value;
+      if (currentUser == null) return;
+
+      await SupabaseService.client
+          .from('users')
+          .update({'profile_picture_url': imageUrl})
+          .eq('id', currentUser.id);
+
+      final updatedUser = user.value;
+      if (updatedUser != null) {
+        final updatedJson = updatedUser.toJson();
+        updatedJson['profile_picture_url'] = imageUrl;
+        final updatedUserModel = UserModel.fromJson(updatedJson);
+        user.value = updatedUserModel;
+        await _authRepo.loadCurrentUser();
+      }
+    } catch (e) {
+      debugPrint('Error updating user profile picture: $e');
+      throw e;
     }
   }
 }

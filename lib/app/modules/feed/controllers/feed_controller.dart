@@ -14,7 +14,6 @@ import '../../../data/core/base/base_controller.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/core/utils/result.dart';
 import '../../../data/helper_widgets/bottom_sheet_modal.dart';
-import '../../../data/helper_widgets/create_post_modal.dart';
 import '../../../data/helper_widgets/social_media_modal.dart';
 import '../../../data/models/content_model.dart';
 import '../../../data/models/user_model copy.dart';
@@ -22,9 +21,6 @@ import '../local_widgets/feed_action_modal.dart';
 import '../local_widgets/comments_modal.dart';
 
 class FeedController extends BaseController {
-  /// Controllers for create post modal
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
   final TextEditingController searchController = TextEditingController();
 
   final ContentService _contentService;
@@ -42,14 +38,11 @@ class FeedController extends BaseController {
 
   static const int _pageSize = 10;
   int _currentOffset = 0;
+  bool _isDeleting = false;
 
   final selectedImagePath = Rxn<File>();
   final profilePictureUrl = Rxn<String>();
   final isUploadingImage = false.obs;
-  final selectedMediaFile = Rxn<File>();
-  final uploadedMediaUrl = Rxn<String>();
-  final uploadedFileName = Rxn<String>();
-  final isUploadingMedia = false.obs;
   bool _isOpeningSocialModal = false;
 
   FeedController({
@@ -246,153 +239,6 @@ class FeedController extends BaseController {
     }
   }
 
-  Future<void> selectMediaFile() async {
-    try {
-      final source = await _showMediaSourceDialog();
-      if (source == null) return;
-
-      final mediaType = await _showMediaTypeDialog();
-      if (mediaType == null) return;
-
-      XFile? pickedFile;
-      if (mediaType == MediaType.image) {
-        pickedFile = await StorageService.pickImage(source: source);
-      } else {
-        pickedFile = await StorageService.pickVideo(source: source);
-      }
-
-      if (pickedFile != null) {
-        selectedMediaFile.value = File(pickedFile.path);
-        uploadedFileName.value = pickedFile.name;
-        await _uploadMediaFile();
-      }
-    } catch (e) {
-      CommonSnackbar.error('Failed to select file');
-    }
-  }
-
-  Future<ImageSource?> _showMediaSourceDialog() async {
-    return await Get.dialog<ImageSource>(
-      Dialog(
-        backgroundColor: Colors.transparent,
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: AppColors.primary,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(
-                  Icons.photo_library,
-                  color: AppColors.white,
-                ),
-                title: Text(
-                  'Choose from Gallery',
-                  style: TextStyle(color: AppColors.white),
-                ),
-                onTap: () => Get.back(result: ImageSource.gallery),
-              ),
-              ListTile(
-                leading: const Icon(Icons.camera_alt, color: AppColors.white),
-                title: Text(
-                  'Take Photo/Video',
-                  style: TextStyle(color: AppColors.white),
-                ),
-                onTap: () => Get.back(result: ImageSource.camera),
-              ),
-              TextButton(
-                onPressed: () => Get.back(),
-                child: Text('Cancel', style: TextStyle(color: AppColors.white)),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<MediaType?> _showMediaTypeDialog() async {
-    return await Get.dialog<MediaType>(
-      Dialog(
-        backgroundColor: Colors.transparent,
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: AppColors.primary,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(
-                  Icons.image,
-                  color: AppColors.white,
-                ),
-                title: Text(
-                  'Image',
-                  style: TextStyle(color: AppColors.white),
-                ),
-                onTap: () => Get.back(result: MediaType.image),
-              ),
-              ListTile(
-                leading: const Icon(Icons.videocam, color: AppColors.white),
-                title: Text(
-                  'Video',
-                  style: TextStyle(color: AppColors.white),
-                ),
-                onTap: () => Get.back(result: MediaType.video),
-              ),
-              TextButton(
-                onPressed: () => Get.back(),
-                child: Text('Cancel', style: TextStyle(color: AppColors.white)),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _uploadMediaFile() async {
-    if (selectedMediaFile.value == null) return;
-
-    isUploadingMedia.value = true;
-    try {
-      final user = SupabaseService.currentUser;
-      final file = selectedMediaFile.value!;
-      final mediaType = file.path.toLowerCase().endsWith('.mp4') ||
-              file.path.toLowerCase().endsWith('.mov') ||
-              file.path.toLowerCase().endsWith('.avi')
-          ? MediaType.video
-          : MediaType.image;
-
-      final url = await StorageService.uploadMedia(
-        mediaFile: file,
-        userId: user?.id ?? '',
-        bucketName: 'content',
-        mediaType: mediaType,
-      );
-
-      if (url != null) {
-        uploadedMediaUrl.value = url;
-      } else {
-        CommonSnackbar.error('Failed to upload file');
-        selectedMediaFile.value = null;
-        uploadedFileName.value = null;
-      }
-    } catch (e) {
-      CommonSnackbar.error('Failed to upload file');
-      selectedMediaFile.value = null;
-      uploadedFileName.value = null;
-    } finally {
-      isUploadingMedia.value = false;
-    }
-  }
-
   Future<ImageSource?> _showImageSourceDialog() async {
     return await Get.dialog<ImageSource>(
       Dialog(
@@ -462,83 +308,6 @@ class FeedController extends BaseController {
     }
   }
 
-  /// Show create post modal
-  /// Show create post modal
-  void showCreatePostModal() {
-    final context = Get.context!;
-
-    BottomSheetModal.show(
-      context,
-      buttonType: BottomSheetButtonType.close,
-      content: CreatePostModal(
-        titleController: titleController,
-        descriptionController: descriptionController,
-        onPublish1: selectMediaFile,
-        onPublish: () async {
-          /// 🛑 Validation
-          if (titleController.text.trim().isEmpty &&
-              descriptionController.text.trim().isEmpty) {
-            Get.snackbar('Error', 'Please enter title or description');
-            return;
-          }
-
-          /// Close modal safely
-          Navigator.of(context, rootNavigator: true).pop();
-
-          final user = SupabaseService.currentUser;
-
-          final mediaUrl = uploadedMediaUrl.value ?? '';
-          final isVideo = mediaUrl.toLowerCase().contains('.mp4') ||
-              mediaUrl.toLowerCase().contains('.mov') ||
-              mediaUrl.toLowerCase().contains('.avi');
-
-          final data = {
-            'title': titleController.text.trim(),
-            'description': descriptionController.text.trim(),
-            'content_type': ContentType.feed.toJson(),
-            'user_id': user?.id ?? '',
-            'media_file_url': mediaUrl,
-            'media_files': mediaUrl.isNotEmpty ? [mediaUrl] : [],
-            'thumbnail_url': isVideo ? '' : mediaUrl,
-            'category': '',
-            'points_to_earn': 0,
-            'is_featured': true,
-            'is_published': true,
-            'is_shared_to_community': true,
-            'external_share_platforms': [],
-            'view_count': 0,
-            'likes_count': 0,
-            'comments_count': 0,
-          };
-
-          final result = await ContentService().addContent(content: data);
-
-          if (result is Success<Map<String, dynamic>>) {
-            /// ✅ Clear fields after success
-            _clearCreatePostFields();
-
-            /// Optional: reload feed
-            loadContent();
-
-            CommonSnackbar.success('Post published successfully');
-          } else {
-            Get.snackbar('Error', 'Failed to publish post');
-          }
-        },
-      ),
-    );
-  }
-
-  void _clearCreatePostFields() {
-    titleController.clear();
-    descriptionController.clear();
-    selectedImagePath.value = null;
-    profilePictureUrl.value = null;
-    selectedMediaFile.value = null;
-    uploadedMediaUrl.value = null;
-    uploadedFileName.value = null;
-  }
-
   /// Show social media selection modal
   void showSocialMediaModal(String? contentId) {
     if (_isOpeningSocialModal) {
@@ -606,7 +375,8 @@ class FeedController extends BaseController {
 
     final content = contentList.firstWhereOrNull((c) => c.id == id);
     final currentUser = SupabaseService.currentUser;
-    final isOwnPost = content != null &&
+    final isOwnPost =
+        content != null &&
         currentUser != null &&
         content.userId == currentUser.id;
 
@@ -619,7 +389,6 @@ class FeedController extends BaseController {
           debugPrint('Delete post at index: $id');
           Get.back();
           deleteContent(id);
-          onInit();
         },
         onShare: () {
           final shareContext = Get.context;
@@ -639,24 +408,25 @@ class FeedController extends BaseController {
   }
 
   Future<void> deleteContent(String contentId) async {
-    try {
-      setLoading(true);
+    if (_isDeleting) return;
 
+    try {
+      _isDeleting = true;
       final result = await _contentService.deleteContent(contentId);
 
       if (result.isSuccess) {
-        /// Remove locally (no reload needed)
-        contentList.removeWhere((item) => item.id == contentId);
-        filteredContentList.removeWhere((item) => item.id == contentId);
-
-        // Get.snackbar('Success', 'Post deleted successfully');
+        CommonSnackbar.success('Post deleted successfully');
+        // Reload content after 1 second - loading will be handled by onInit
+        Future.delayed(const Duration(seconds: 1), () {
+          onInit();
+        });
       } else {
         handleError(result.errorOrNull ?? 'Failed to delete post');
       }
     } catch (e) {
       handleError('somethingWentWrong'.tr);
     } finally {
-      setLoading(false);
+      _isDeleting = false;
     }
   }
 
@@ -801,8 +571,6 @@ class FeedController extends BaseController {
 
   @override
   void onClose() {
-    titleController.dispose();
-    descriptionController.dispose();
     searchController.dispose();
     super.onClose();
   }

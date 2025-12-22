@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -7,8 +6,10 @@ import 'package:intl/intl.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../data/helper_widgets/bottom_nav_bar.dart';
+import '../../../data/helper_widgets/create_post_button.dart';
 import '../../../data/helper_widgets/points_widget.dart';
 import '../../../data/helper_widgets/profession_badge.dart';
+import '../../../data/helper_widgets/profile_picture_widget.dart';
 import '../../../data/helper_widgets/stat_card.dart';
 import '../../../modules/bottom_bar/controllers/bottom_bar_controller.dart';
 import '../../feed/local_widgets/feed_card/feed_card.dart';
@@ -22,42 +23,59 @@ class ProfileView extends GetView<ProfileController> {
     return Scaffold(
       backgroundColor: AppColors.primary,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Stack(
           children: [
-            Expanded(
-              child: Obx(() {
-                final isLoading = controller.isLoading.value;
-                final user = controller.user.value;
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Obx(() {
+                    final isLoading = controller.isLoading.value;
+                    final user = controller.user.value;
 
-                if (isLoading && user == null) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+                    if (isLoading && user == null) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                return CustomScrollView(
-                  key: ValueKey('profile_scroll_${user?.id ?? 'loading'}'),
-                  slivers: [
-                    _buildHeader(),
-                    if (isLoading || user == null)
-                      _buildProfileAndStatsLoader()
-                    else ...[
-                      SliverToBoxAdapter(
-                        key: const ValueKey('profile_section'),
-                        child: _buildProfileSectionContent(),
-                      ),
-                      SliverToBoxAdapter(
-                        key: const ValueKey('stats_section'),
-                        child: _buildStatsSectionContent(),
-                      ),
-                    ],
-                    _buildPostsList(),
-                  ],
-                );
-              }),
+                    return CustomScrollView(
+                      key: ValueKey('profile_scroll_${user?.id ?? 'loading'}'),
+                      slivers: [
+                        _buildHeader(),
+                        if (isLoading || user == null)
+                          _buildProfileAndStatsLoader()
+                        else ...[
+                          SliverToBoxAdapter(
+                            key: const ValueKey('profile_section'),
+                            child: _buildProfileSectionContent(),
+                          ),
+                          SliverToBoxAdapter(
+                            key: const ValueKey('stats_section'),
+                            child: _buildStatsSectionContent(),
+                          ),
+                        ],
+                        _buildPostsList(),
+                      ],
+                    );
+                  }),
+                ),
+              ],
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 16.h),
-              child: const BottomNavBar(),
+            CreatePostButton(
+              onSuccess: () {
+                controller.loadUserPosts();
+                controller.loadUserProfile();
+              },
+              onFailure: () {},
+              bottomOffset: 10.h,
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 16.h),
+                child: const BottomNavBar(),
+              ),
             ),
           ],
         ),
@@ -122,38 +140,19 @@ class ProfileView extends GetView<ProfileController> {
   Widget _buildProfileSectionContent() {
     return Obx(() {
       final user = controller.user.value;
+      final isLoading = controller.isLoading.value;
+      final isUploadingImage = controller.isUploadingImage.value;
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           children: [
-            Container(
-              width: 105.w,
-              height: 105.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: AppColors.white, width: 3.w),
-              ),
-              child: ClipOval(
-                child:
-                    user?.profilePictureUrl != null &&
-                        user!.profilePictureUrl!.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: user.profilePictureUrl!,
-                        fit: BoxFit.cover,
-                        placeholder: (_, __) => Container(
-                          color: AppColors.overlayContainerBackground,
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                AppColors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                        errorWidget: (_, __, ___) =>
-                            Image.asset(AppImages.avatar, fit: BoxFit.cover),
-                      )
-                    : Image.asset(AppImages.avatar, fit: BoxFit.cover),
+            Center(
+              child: ProfilePictureWidget(
+                imageUrl: user?.profilePictureUrl,
+                isLoading: (isLoading && user == null) || isUploadingImage,
+                onTap: controller.selectProfilePicture,
+                showAddText: false,
+                showAddIcon: false,
               ),
             ),
             SizedBox(height: 14.h),
