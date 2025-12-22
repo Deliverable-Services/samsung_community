@@ -10,16 +10,22 @@ import '../modules/blocked_users/bindings/blocked_users_binding.dart';
 import '../modules/blocked_users/views/blocked_users_view.dart';
 import '../modules/bottom_bar/bindings/bottom_bar_binding.dart';
 import '../modules/bottom_bar/views/bottom_bar_view.dart';
+import '../modules/chat_screen/bindings/chat_screen_binding.dart';
+import '../modules/chat_screen/views/chat_screen_view.dart';
 import '../modules/edit_profile/bindings/edit_profile_binding.dart';
 import '../modules/edit_profile/views/edit_profile_view.dart';
 import '../modules/events/bindings/events_binding.dart';
 import '../modules/events/views/events_view.dart';
 import '../modules/feed/bindings/feed_binding.dart';
 import '../modules/feed/views/feed_view.dart';
+import '../modules/followers_following/bindings/followers_following_binding.dart';
+import '../modules/followers_following/views/followers_following_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
+import '../modules/messages/bindings/messages_binding.dart';
+import '../modules/messages/views/messages_view.dart';
 import '../modules/on_boarding/bindings/on_boarding_binding.dart';
 import '../modules/on_boarding/views/on_boarding_view.dart';
 import '../modules/personal_details/bindings/personal_details_binding.dart';
@@ -32,6 +38,8 @@ import '../modules/sign_up/bindings/sign_up_binding.dart';
 import '../modules/sign_up/views/sign_up_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
+import '../modules/user_profile/bindings/user_profile_binding.dart';
+import '../modules/user_profile/views/user_profile_view.dart';
 import '../modules/verification_code/bindings/verification_code_binding.dart';
 import '../modules/verification_code/views/verification_code_view.dart';
 import '../modules/verification_code_by_login/bindings/verification_code_by_login_binding.dart';
@@ -155,6 +163,27 @@ class AppPages {
       page: () => const EditProfileView(),
       binding: EditProfileBinding(),
       middlewares: [AuthGuard()],
+    ),
+    GetPage(
+      name: _Paths.FOLLOWERS_FOLLOWING,
+      page: () => const FollowersFollowingView(),
+      binding: FollowersFollowingBinding(),
+      middlewares: [AuthGuard()],
+    ),
+    GetPage(
+      name: _Paths.USER_PROFILE,
+      page: () => const UserProfileView(),
+      binding: UserProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.MESSAGES,
+      page: () => const MessagesView(),
+      binding: MessagesBinding(),
+    ),
+    GetPage(
+      name: _Paths.CHAT_SCREEN,
+      page: () => const ChatScreenView(),
+      binding: ChatScreenBinding(),
     ),
   ];
 

@@ -31,6 +31,9 @@ class EnLocalization {
         "User already registered. Please log in instead.",
     "user_already_signed_up":
         "User is already signed up. Please log in instead.",
+    "userSuspended": "Your account is suspended. Please contact support.",
+    "userRejected":
+        "Your account request was rejected. Please contact support.",
     "wait_for_approval":
         "Please wait for approval. Your request is being processed.",
     "checking": "Checking...",
@@ -118,7 +121,7 @@ class EnLocalization {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....",
     // Filter Component
     "filterExploreLibrary": "Explore our library.....",
-    "searchForInspiration": "Search for inspiration .....",
+    "searchForInspirationFilter": "Search for inspiration .....",
     // Content Card
     "contentCardViewing": "Viewing",
     // Store Card
@@ -173,5 +176,33 @@ class EnLocalization {
     "failedToCreatePublicUser": "Failed to create public user",
     "failedToCreatePublicUserAfterRetries":
         "Failed to create public user after retries",
+    "signInSuccessful": "Sign in successful",
+    "noPostsYet": "No posts yet",
+    "changeProfilePhoto": "Change profile photo",
+    "blockedUsers": "Blocked Users",
+    "noBlockedUsers": "No blocked users",
+    "unblock": "Unblock",
+    "editAccountDetails": "Edit Account Details",
+    "personalDetails": "Personal details",
+    "accountDetails": "Account details",
+    "noFollowers": "No followers",
+    "notFollowingAnyone": "Not following anyone",
+    "followBack": "Follow back",
+    "follow": "Follow",
+    "message": "Message",
+    "unfollow": "Unfollow",
+    "block": "Block",
+    "user": "User",
+    "username": "username",
+    "noInternetConnection":
+        "No internet connection. Please check your network.",
+    "isRequired": "is required",
+    "messagesSubtitle": "Unique experiences for our members.",
+    "chat": "Chat",
+    "active": "Active",
+    "seeProfile": "See Profile",
+    "messagePlaceholder": "Message...",
+    "send": "Send",
+    "noMessagesYet": "No messages yet",
   };
 }

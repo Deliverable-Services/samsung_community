@@ -39,7 +39,14 @@ class AuthService {
       }
       return false;
     } catch (e) {
-      debugPrint('Error in refreshSession: $e');
+      final errorStr = e.toString();
+      final isNetworkError = errorStr.contains('SocketException') ||
+          errorStr.contains('Failed host lookup') ||
+          errorStr.contains('Network is unreachable');
+      
+      if (!isNetworkError) {
+        debugPrint('Error in refreshSession: $e');
+      }
       return false;
     }
   }
@@ -58,7 +65,14 @@ class AuthService {
               await SupabaseService.auth.refreshSession();
               return true;
             } catch (e) {
-              debugPrint('Error refreshing expired session: $e');
+              final errorStr = e.toString();
+              final isNetworkError = errorStr.contains('SocketException') ||
+                  errorStr.contains('Failed host lookup') ||
+                  errorStr.contains('Network is unreachable');
+              
+              if (!isNetworkError) {
+                debugPrint('Error refreshing expired session: $e');
+              }
               return false;
             }
           }

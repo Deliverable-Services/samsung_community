@@ -27,11 +27,11 @@ class AccountDetailView extends GetView<AccountDetailController> {
                 classController: controller.classController,
                 selectedCollege: controller.selectedCollege,
                 selectedStudent: controller.selectedStudent,
-                saveButtonText: 'signUp'.tr,
-                isLoading: controller.isSaving.value,
-                onSave: (formData) async {
-                  // Call the existing submit handler
-                  await controller.handleSubmit();
+                    saveButtonText: 'signUp'.tr,
+                    isLoading: controller.isSaving.value,
+                    onSave: (formData) async {
+                      // Call the existing submit handler
+                      await controller.handleSubmit();
                 },
               ),
             ),

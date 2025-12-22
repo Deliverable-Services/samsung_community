@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
+import '../../../data/helper_widgets/common_loader.dart';
 import '../../../data/helper_widgets/content_card.dart';
 import '../../../data/helper_widgets/filter_component.dart';
 import '../../../data/models/content_model.dart';
@@ -230,15 +231,7 @@ class _VodViewState extends State<VodView> {
     return Obx(() {
       if (_controller.isLoadingContent.value &&
           _controller.contentList.isEmpty) {
-        return SliverFillRemaining(
-          hasScrollBody: false,
-          child: const Center(
-            child: Padding(
-              padding: EdgeInsets.all(20.0),
-              child: CircularProgressIndicator(),
-            ),
-          ),
-        );
+        return const CommonSliverFillLoader();
       }
 
       final content = _controller.filteredContent;
@@ -275,7 +268,7 @@ class _VodViewState extends State<VodView> {
               if (index == content.length && _controller.isLoadingMore.value) {
                 return Padding(
                   padding: EdgeInsets.symmetric(vertical: 20.h),
-                  child: const Center(child: CircularProgressIndicator()),
+                  child: const CommonLoader(),
                 );
               }
               return null;

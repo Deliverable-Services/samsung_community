@@ -21,7 +21,14 @@ class SupabaseService {
     try {
       await auth.signOut();
     } catch (e) {
-      debugPrint('Error in signOut: $e');
+      final errorStr = e.toString();
+      final isNetworkError = errorStr.contains('SocketException') ||
+          errorStr.contains('Failed host lookup') ||
+          errorStr.contains('Network is unreachable');
+      
+      if (!isNetworkError) {
+        debugPrint('Error in signOut: $e');
+      }
     }
   }
 }

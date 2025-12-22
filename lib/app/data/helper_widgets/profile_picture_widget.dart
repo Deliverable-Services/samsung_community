@@ -15,6 +15,7 @@ class ProfilePictureWidget extends StatelessWidget {
   final VoidCallback? onTap;
   final bool showAddText;
   final bool showAddIcon;
+  final dynamic width;
 
   const ProfilePictureWidget({
     super.key,
@@ -24,20 +25,21 @@ class ProfilePictureWidget extends StatelessWidget {
     this.onTap,
     this.showAddText = true,
     this.showAddIcon = true,
+    this.width,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 157.w,
+      width: width ?? 157.w,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           GestureDetector(
             onTap: onTap,
             child: Container(
-              width: 105.4310531616211.w,
-              height: 105.4310531616211.h,
+              width: width ?? 105.4310531616211.w,
+              height: width ?? 105.4310531616211.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
@@ -70,16 +72,16 @@ class ProfilePictureWidget extends StatelessWidget {
                       child: imageFile != null
                           ? Image.file(imageFile!, fit: BoxFit.cover)
                           : imageUrl != null && imageUrl!.isNotEmpty
-                              ? Image.network(
-                                  imageUrl!,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      color: AppColors.uploadImageBackground,
-                                    );
-                                  },
-                                )
-                              : null,
+                          ? Image.network(
+                              imageUrl!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  color: AppColors.uploadImageBackground,
+                                );
+                              },
+                            )
+                          : null,
                     ),
                   ),
                   if (isLoading)
@@ -138,4 +140,3 @@ class ProfilePictureWidget extends StatelessWidget {
     );
   }
 }
-

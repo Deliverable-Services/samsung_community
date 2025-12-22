@@ -4,34 +4,27 @@ import 'package:get/get.dart';
 
 import 'reusable_form.dart';
 
-/// Reusable Personal Details Form
-/// Excludes top navigation - that should be handled by the parent view
 class PersonalDetailsForm extends StatelessWidget {
-  /// Text controllers for form fields
   final TextEditingController fullNameController;
   final TextEditingController birthdayController;
   final TextEditingController emailController;
   final TextEditingController cityController;
 
-  /// Value notifiers for dropdowns
   final ValueNotifier<String?> selectedGender;
   final ValueNotifier<String?> selectedDeviceModel;
 
-  /// Text to display on the save button
   final String saveButtonText;
 
-  /// Callback function that receives the form data when save is clicked
-  /// The Map contains field keys and their values
   final Future<void> Function(Map<String, dynamic> formData) onSave;
 
-  /// Optional loading state - if true, button will be disabled
   final bool isLoading;
 
-  /// Optional padding around the form
   final EdgeInsetsGeometry? padding;
 
-  /// Optional - hide save button (for auto-save forms)
   final bool hideSaveButton;
+
+  /// Optional callback for field blur events (key, value)
+  final void Function(String key, dynamic value)? onFieldBlur;
 
   const PersonalDetailsForm({
     super.key,
@@ -46,6 +39,7 @@ class PersonalDetailsForm extends StatelessWidget {
     this.isLoading = false,
     this.padding,
     this.hideSaveButton = false,
+    this.onFieldBlur,
   });
 
   @override
@@ -65,6 +59,9 @@ class PersonalDetailsForm extends StatelessWidget {
             return null;
           },
           spacing: 20.h,
+          onBlur: onFieldBlur != null
+              ? () => onFieldBlur!('fullName', fullNameController.text)
+              : null,
         ),
         FormFieldConfig(
           key: 'birthday',
@@ -79,6 +76,9 @@ class PersonalDetailsForm extends StatelessWidget {
             return null;
           },
           spacing: 20.h,
+          onBlur: onFieldBlur != null
+              ? () => onFieldBlur!('birthday', birthdayController.text)
+              : null,
         ),
         FormFieldConfig(
           key: 'email',
@@ -99,6 +99,9 @@ class PersonalDetailsForm extends StatelessWidget {
             return null;
           },
           spacing: 20.h,
+          onBlur: onFieldBlur != null
+              ? () => onFieldBlur!('email', emailController.text)
+              : null,
         ),
         FormFieldConfig(
           key: 'city',
@@ -113,6 +116,9 @@ class PersonalDetailsForm extends StatelessWidget {
             return null;
           },
           spacing: 20.h,
+          onBlur: onFieldBlur != null
+              ? () => onFieldBlur!('city', cityController.text)
+              : null,
         ),
         FormFieldConfig(
           key: 'gender',
@@ -137,4 +143,3 @@ class PersonalDetailsForm extends StatelessWidget {
     );
   }
 }
-

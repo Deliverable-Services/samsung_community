@@ -33,6 +33,9 @@ class AccountDetailsForm extends StatelessWidget {
   /// Optional - hide save button (for auto-save forms)
   final bool hideSaveButton;
 
+  /// Optional callback for field blur events (key, value)
+  final void Function(String key, dynamic value)? onFieldBlur;
+
   const AccountDetailsForm({
     super.key,
     required this.socialMediaController,
@@ -46,6 +49,7 @@ class AccountDetailsForm extends StatelessWidget {
     this.isLoading = false,
     this.padding,
     this.hideSaveButton = false,
+    this.onFieldBlur,
   });
 
   @override
@@ -62,6 +66,10 @@ class AccountDetailsForm extends StatelessWidget {
               placeholder: 'type'.tr,
               textController: socialMediaController,
               spacing: 30.h,
+              onBlur: onFieldBlur != null
+                  ? () =>
+                        onFieldBlur!('socialMedia', socialMediaController.text)
+                  : null,
             ),
             FormFieldConfig(
               key: 'profession',
@@ -70,6 +78,9 @@ class AccountDetailsForm extends StatelessWidget {
               placeholder: 'type'.tr,
               textController: professionController,
               spacing: 30.h,
+              onBlur: onFieldBlur != null
+                  ? () => onFieldBlur!('profession', professionController.text)
+                  : null,
             ),
             FormFieldConfig(
               key: 'bio',
@@ -79,6 +90,9 @@ class AccountDetailsForm extends StatelessWidget {
               textController: bioController,
               maxLines: 5,
               spacing: 30.h,
+              onBlur: onFieldBlur != null
+                  ? () => onFieldBlur!('bio', bioController.text)
+                  : null,
             ),
             FormFieldConfig(
               key: 'isStudent',
@@ -103,8 +117,10 @@ class AccountDetailsForm extends StatelessWidget {
               textController: classController,
               readOnlyBuilder: () => studentValue != 'yes',
               spacing: 30.h,
-              condition: () =>
-                  true, // Always show, but readOnly when not student
+              condition: () => studentValue == 'yes',
+              onBlur: onFieldBlur != null
+                  ? () => onFieldBlur!('className', classController.text)
+                  : null,
             ),
           ],
           saveButtonText: saveButtonText,

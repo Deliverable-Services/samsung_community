@@ -6,15 +6,19 @@ import '../../../../data/constants/app_images.dart';
 
 class FeedCardAvatar extends StatelessWidget {
   final String? authorAvatar;
+  final VoidCallback? onTap;
 
   const FeedCardAvatar({
     super.key,
     this.authorAvatar,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return GestureDetector(
+      onTap: onTap,
+      child: SizedBox(
       width: 57.h,
       height: 57.h,
       child: authorAvatar?.isNotEmpty == true
@@ -35,6 +39,7 @@ class FeedCardAvatar extends StatelessWidget {
               width: double.infinity,
               height: double.infinity,
               fit: BoxFit.fitHeight,
+              ),
             ),
     );
   }

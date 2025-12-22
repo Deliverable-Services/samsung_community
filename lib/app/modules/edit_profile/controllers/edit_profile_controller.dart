@@ -17,18 +17,17 @@ import '../../../repository/auth_repo/auth_repo.dart';
 class EditProfileController extends BaseController {
   final AuthRepo _authRepo;
 
-  // Tab management
-  final RxInt selectedTab = 0.obs; // 0 = Personal details, 1 = Account details
+  final RxInt selectedTab = 0.obs;
 
-  // Personal details controllers
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController birthdayController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
   final ValueNotifier<String?> selectedGender = ValueNotifier<String?>(null);
-  final ValueNotifier<String?> selectedDeviceModel = ValueNotifier<String?>(null);
+  final ValueNotifier<String?> selectedDeviceModel = ValueNotifier<String?>(
+    null,
+  );
 
-  // Account details controllers
   final TextEditingController socialMediaController = TextEditingController();
   final TextEditingController professionController = TextEditingController();
   final TextEditingController bioController = TextEditingController();
@@ -36,20 +35,17 @@ class EditProfileController extends BaseController {
   final ValueNotifier<String?> selectedCollege = ValueNotifier<String?>(null);
   final ValueNotifier<String> selectedStudent = ValueNotifier('no');
 
-  // Profile picture
   final Rxn<File> selectedImagePath = Rxn<File>();
   final Rxn<String> profilePictureUrl = Rxn<String>();
   final RxBool isUploadingImage = false.obs;
   DateTime? selectedBirthday;
 
-  // Auto-save debouncer
   Timer? _saveTimer;
   final RxBool isSaving = false.obs;
   final Map<String, dynamic> _pendingChanges = {};
 
-  EditProfileController({
-    AuthRepo? authRepo,
-  }) : _authRepo = authRepo ?? Get.find<AuthRepo>();
+  EditProfileController({AuthRepo? authRepo})
+    : _authRepo = authRepo ?? Get.find<AuthRepo>();
 
   @override
   void onInit() {
@@ -77,40 +73,58 @@ class EditProfileController extends BaseController {
   }
 
   void _setupAutoSave() {
-    // Listen to text field changes
-    fullNameController.addListener(() => _onFieldChanged('fullName', fullNameController.text));
-    birthdayController.addListener(() => _onFieldChanged('birthday', birthdayController.text));
-    emailController.addListener(() => _onFieldChanged('email', emailController.text));
-    cityController.addListener(() => _onFieldChanged('city', cityController.text));
-    socialMediaController.addListener(() => _onFieldChanged('socialMedia', socialMediaController.text));
-    professionController.addListener(() => _onFieldChanged('profession', professionController.text));
+    fullNameController.addListener(
+      () => _onFieldChanged('fullName', fullNameController.text),
+    );
+    birthdayController.addListener(
+      () => _onFieldChanged('birthday', birthdayController.text),
+    );
+    emailController.addListener(
+      () => _onFieldChanged('email', emailController.text),
+    );
+    cityController.addListener(
+      () => _onFieldChanged('city', cityController.text),
+    );
+    socialMediaController.addListener(
+      () => _onFieldChanged('socialMedia', socialMediaController.text),
+    );
+    professionController.addListener(
+      () => _onFieldChanged('profession', professionController.text),
+    );
     bioController.addListener(() => _onFieldChanged('bio', bioController.text));
-    classController.addListener(() => _onFieldChanged('className', classController.text));
+    classController.addListener(
+      () => _onFieldChanged('className', classController.text),
+    );
 
-    // Listen to dropdown changes
     selectedGender.addListener(() {
       if (selectedGender.value != null) {
-        _onFieldChanged('gender', selectedGender.value);
+        saveFieldOnBlur('gender', selectedGender.value);
       }
     });
     selectedDeviceModel.addListener(() {
       if (selectedDeviceModel.value != null) {
-        _onFieldChanged('deviceModel', selectedDeviceModel.value);
+        saveFieldOnBlur('deviceModel', selectedDeviceModel.value);
       }
     });
     selectedCollege.addListener(() {
       if (selectedCollege.value != null) {
-        _onFieldChanged('college', selectedCollege.value);
+        saveFieldOnBlur('college', selectedCollege.value);
       }
     });
     selectedStudent.addListener(() {
-      _onFieldChanged('isStudent', selectedStudent.value);
+      saveFieldOnBlur('isStudent', selectedStudent.value);
     });
   }
 
   void _onFieldChanged(String key, dynamic value) {
     _pendingChanges[key] = value;
     _debounceSave();
+  }
+
+  /// Save immediately on blur (no debounce)
+  void saveFieldOnBlur(String key, dynamic value) {
+    _pendingChanges[key] = value;
+    _saveChanges();
   }
 
   void _debounceSave() {
@@ -136,7 +150,6 @@ class EditProfileController extends BaseController {
       final profileData = Map<String, dynamic>.from(_pendingChanges);
       _pendingChanges.clear();
 
-      // Convert field names to API format
       final updateData = <String, dynamic>{
         'updated_at': DateTime.now().toUtc().toIso8601String(),
       };
@@ -172,7 +185,6 @@ class EditProfileController extends BaseController {
         updateData['class_name'] = profileData['className'];
       }
       if (profileData.containsKey('socialMedia')) {
-        // Handle social media links
         final socialMedia = profileData['socialMedia'] as String?;
         if (socialMedia != null && socialMedia.isNotEmpty) {
           updateData['social_media_links'] = {'default': socialMedia};
@@ -184,11 +196,9 @@ class EditProfileController extends BaseController {
           .update(updateData)
           .eq('id', currentUser.id);
 
-      // Reload current user
       await _authRepo.loadCurrentUser();
     } catch (e) {
       debugPrint('Error auto-saving profile: $e');
-      // Don't show error snackbar for auto-save to avoid annoying the user
     } finally {
       isSaving.value = false;
     }
@@ -205,15 +215,13 @@ class EditProfileController extends BaseController {
       emailController.text = response['email'] as String? ?? '';
       selectedCollege.value = response['college'] as String?;
       classController.text = response['class_name'] as String? ?? '';
-      
-      // Determine if student based on college/class
+
       final college = selectedCollege.value;
       if (college != null && college.isNotEmpty) {
         selectedStudent.value = 'yes';
       }
     } catch (e) {
       debugPrint('Error loading additional fields: $e');
-      // Non-critical, continue without these fields
     }
   }
 
@@ -229,7 +237,6 @@ class EditProfileController extends BaseController {
       final userJson = currentUser.toJson();
       final user = UserModel.fromJson(userJson);
 
-      // Populate personal details
       fullNameController.text = user.fullName ?? '';
       if (user.birthday != null) {
         final year = user.birthday!.year.toString();
@@ -238,21 +245,17 @@ class EditProfileController extends BaseController {
         birthdayController.text = '$year-$month-$day';
         selectedBirthday = user.birthday;
       }
-      // Email is not in UserModel, fetch from database if needed
       emailController.text = '';
       cityController.text = user.city ?? '';
       selectedGender.value = user.gender?.toJson();
       selectedDeviceModel.value = user.deviceModel;
 
-      // Populate account details
       professionController.text = user.profession ?? '';
       bioController.text = user.bio ?? '';
-      // College and className are not in UserModel, fetch from database
       classController.text = '';
       selectedCollege.value = null;
       selectedStudent.value = 'no';
 
-      // Fetch additional fields from database
       await _loadAdditionalFields(currentUser.id);
 
       profilePictureUrl.value = user.profilePictureUrl;

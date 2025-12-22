@@ -11,6 +11,7 @@ class FeedCardHeader extends StatelessWidget {
   final bool isVerified;
   final String publishedDate;
   final VoidCallback? onMenuTap;
+  final VoidCallback? onAvatarTap;
 
   const FeedCardHeader({
     super.key,
@@ -19,13 +20,17 @@ class FeedCardHeader extends StatelessWidget {
     this.isVerified = false,
     required this.publishedDate,
     this.onMenuTap,
+    this.onAvatarTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        FeedCardAvatar(authorAvatar: authorAvatar),
+        FeedCardAvatar(
+          authorAvatar: authorAvatar,
+          onTap: onAvatarTap,
+        ),
         SizedBox(width: 12.w),
         FeedCardAuthorInfo(
           authorName: authorName,

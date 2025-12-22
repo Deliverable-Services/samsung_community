@@ -17,6 +17,7 @@ class FeedCard extends StatelessWidget {
   final String? authorAvatar;
   final bool isVerified;
   final String publishedDate;
+  final String? authorId;
   final String title;
   final String description;
   final String? mediaUrl;
@@ -30,6 +31,7 @@ class FeedCard extends StatelessWidget {
   final VoidCallback? onViewComments;
   final VoidCallback? onMenuTap;
   final Function(String, String)? onAddComment;
+  final VoidCallback? onAvatarTap;
 
   const FeedCard({
     super.key,
@@ -38,6 +40,7 @@ class FeedCard extends StatelessWidget {
     this.authorAvatar,
     this.isVerified = false,
     required this.publishedDate,
+    this.authorId,
     required this.title,
     required this.description,
     this.mediaUrl,
@@ -51,6 +54,7 @@ class FeedCard extends StatelessWidget {
     this.onViewComments,
     this.onMenuTap,
     this.onAddComment,
+    this.onAvatarTap,
   });
 
   @override
@@ -84,6 +88,7 @@ class FeedCard extends StatelessWidget {
             isVerified: isVerified,
             publishedDate: publishedDate,
             onMenuTap: onMenuTap,
+            onAvatarTap: onAvatarTap,
           ),
           SizedBox(height: 20.h),
           const Divider(color: AppColors.dividerLight, thickness: 1, height: 1),

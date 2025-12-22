@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
+import '../../../data/core/utils/common_snackbar.dart';
 import '../../../repository/auth_repo/auth_repo.dart';
 
 class VerificationCodeByLoginController extends GetxController {
@@ -72,7 +73,7 @@ class VerificationCodeByLoginController extends GetxController {
     final otpCode = verificationCodeController.text.trim();
 
     if (otpCode.isEmpty) {
-      otpError.value = 'verificationCode'.tr + ' is required';
+      otpError.value = '${'verificationCode'.tr} ${'isRequired'.tr}';
       formKey.currentState?.validate();
       return;
     }
@@ -119,7 +120,7 @@ class VerificationCodeByLoginController extends GetxController {
       return;
     }
     // User is approved, navigate to main layout
-
+    CommonSnackbar.success('signInSuccessful'.tr);
     Get.offAllNamed(Routes.BOTTOM_BAR);
   }
 

@@ -25,8 +25,8 @@ class SideMenu extends StatelessWidget {
   }
 
   void _handleMessages(BuildContext context) {
-    // Navigator.of(context, rootNavigator: true).pop();
-    // TODO: Navigate to messages screen
+    Navigator.of(context, rootNavigator: true).pop();
+    Get.toNamed(Routes.MESSAGES);
   }
 
   void _handleStore(BuildContext context) {

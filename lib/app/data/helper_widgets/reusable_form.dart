@@ -12,29 +12,18 @@ import 'custom_radio_button.dart';
 import 'custom_text.dart';
 import 'custom_text_field.dart';
 
-/// Reusable form component that can be used for account details and personal details
-/// Excludes top navigation - that should be handled by the parent view
 class ReusableForm extends StatefulWidget {
-  /// List of form field configurations
   final List<FormFieldConfig> fields;
 
-  /// Text to display on the save button
   final String saveButtonText;
-
-  /// Callback function that receives the form data when save is clicked
-  /// The Map contains field keys and their values
   final Future<void> Function(Map<String, dynamic> formData) onSave;
 
-  /// Optional loading state - if true, button will be disabled
   final bool isLoading;
 
-  /// Optional padding around the form
   final EdgeInsetsGeometry? padding;
 
-  /// Optional scrollable - defaults to true
   final bool isScrollable;
 
-  /// Optional - hide save button (for auto-save forms)
   final bool hideSaveButton;
 
   const ReusableForm({
@@ -72,7 +61,6 @@ class _ReusableFormState extends State<ReusableForm> {
         case FormFieldType.email:
         case FormFieldType.multiline:
         case FormFieldType.date:
-          // Use external controller if provided, otherwise create one
           if (field.textController != null) {
             _controllers[field.key] = field.textController!;
           } else {
@@ -83,16 +71,13 @@ class _ReusableFormState extends State<ReusableForm> {
           if (field.type == FormFieldType.date && field.initialValue != null) {
             try {
               _dateValues[field.key] = DateTime.parse(field.initialValue!);
-            } catch (e) {
-              // Invalid date format, ignore
-            }
+            } catch (e) {}
           }
           break;
         case FormFieldType.dropdown:
         case FormFieldType.gender:
         case FormFieldType.deviceModel:
         case FormFieldType.college:
-          // Use external notifier if provided, otherwise create one
           if (field.dropdownNotifier != null) {
             _dropdownNotifiers[field.key] = field.dropdownNotifier!;
           } else {
@@ -102,7 +87,6 @@ class _ReusableFormState extends State<ReusableForm> {
           }
           break;
         case FormFieldType.radio:
-          // Use external notifier if provided, otherwise create one
           if (field.radioNotifier != null) {
             _radioNotifiers[field.key] = field.radioNotifier!;
           } else {
@@ -112,7 +96,6 @@ class _ReusableFormState extends State<ReusableForm> {
           }
           break;
         case FormFieldType.label:
-          // No controller needed for labels
           break;
       }
     }
@@ -120,14 +103,12 @@ class _ReusableFormState extends State<ReusableForm> {
 
   @override
   void dispose() {
-    // Only dispose controllers/notifiers that we created (not external ones)
     for (final field in widget.fields) {
       switch (field.type) {
         case FormFieldType.text:
         case FormFieldType.email:
         case FormFieldType.multiline:
         case FormFieldType.date:
-          // Only dispose if we created it (not external)
           if (field.textController == null) {
             _controllers[field.key]?.dispose();
           }
@@ -136,13 +117,11 @@ class _ReusableFormState extends State<ReusableForm> {
         case FormFieldType.gender:
         case FormFieldType.deviceModel:
         case FormFieldType.college:
-          // Only dispose if we created it (not external)
           if (field.dropdownNotifier == null) {
             _dropdownNotifiers[field.key]?.dispose();
           }
           break;
         case FormFieldType.radio:
-          // Only dispose if we created it (not external)
           if (field.radioNotifier == null) {
             _radioNotifiers[field.key]?.dispose();
           }
@@ -161,7 +140,6 @@ class _ReusableFormState extends State<ReusableForm> {
 
     final formData = <String, dynamic>{};
 
-    // Collect text field values
     for (final entry in _controllers.entries) {
       final value = entry.value.text.trim();
       if (value.isNotEmpty) {
@@ -169,7 +147,6 @@ class _ReusableFormState extends State<ReusableForm> {
       }
     }
 
-    // Collect dropdown values
     for (final entry in _dropdownNotifiers.entries) {
       final value = entry.value.value;
       if (value != null && value.isNotEmpty) {
@@ -177,12 +154,10 @@ class _ReusableFormState extends State<ReusableForm> {
       }
     }
 
-    // Collect radio values
     for (final entry in _radioNotifiers.entries) {
       formData[entry.key] = entry.value.value;
     }
 
-    // Collect date values
     for (final entry in _dateValues.entries) {
       if (entry.value != null) {
         formData[entry.key] = entry.value!.toIso8601String().split('T')[0];
@@ -198,15 +173,12 @@ class _ReusableFormState extends State<ReusableForm> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
-    // Try to get current date from controller text or _dateValues
     DateTime? currentDate = _dateValues[fieldKey];
     if (currentDate == null &&
         _controllers[fieldKey]?.text.isNotEmpty == true) {
       try {
         currentDate = DateTime.parse(_controllers[fieldKey]!.text);
-      } catch (e) {
-        // Invalid date format, use default
-      }
+      } catch (e) {}
     }
     currentDate ??= today.subtract(const Duration(days: 365 * 18));
 
@@ -254,7 +226,18 @@ class _ReusableFormState extends State<ReusableForm> {
         final year = picked.year.toString();
         final month = picked.month.toString().padLeft(2, '0');
         final day = picked.day.toString().padLeft(2, '0');
-        _controllers[fieldKey]?.text = '$year-$month-$day';
+        final dateString = '$year-$month-$day';
+        _controllers[fieldKey]?.text = dateString;
+
+        // Find the field config and trigger onBlur if available
+        final field = widget.fields.firstWhere(
+          (f) => f.key == fieldKey,
+          orElse: () => widget.fields.first,
+        );
+        if (field.onBlur != null) {
+          // Call onBlur with the date string
+          field.onBlur!();
+        }
       });
     }
   }
@@ -272,6 +255,7 @@ class _ReusableFormState extends State<ReusableForm> {
           placeholder: field.placeholder ?? 'type'.tr,
           validator: field.validator,
           readOnly: field.readOnlyBuilder?.call() ?? field.readOnly,
+          onEditingComplete: field.onBlur,
         );
 
       case FormFieldType.multiline:
@@ -281,6 +265,7 @@ class _ReusableFormState extends State<ReusableForm> {
           placeholder: field.placeholder ?? 'type'.tr,
           maxLines: field.maxLines ?? 5,
           validator: field.validator,
+          onEditingComplete: field.onBlur,
         );
 
       case FormFieldType.date:
@@ -562,52 +547,39 @@ class _ReusableFormState extends State<ReusableForm> {
   }
 }
 
-/// Configuration for a form field
 class FormFieldConfig {
-  /// Unique key for the field (used to identify the field in form data)
   final String key;
 
-  /// Type of field
   final FormFieldType type;
 
-  /// Label text for the field
   final String label;
 
-  /// Optional placeholder text
   final String? placeholder;
 
-  /// Optional initial value
   final String? initialValue;
 
-  /// Optional validator function
   final String? Function(String?)? validator;
 
-  /// Optional spacing after the field
   final double? spacing;
 
-  /// Optional max lines for multiline fields
   final int? maxLines;
 
-  /// Optional dropdown items (for dropdown type)
   final List<Map<String, String>>? dropdownItems;
 
-  /// Optional read-only flag
   final bool readOnly;
 
-  /// Optional read-only function (evaluated dynamically)
   final bool Function()? readOnlyBuilder;
 
-  /// Optional conditional field - only shown when condition is true
   final bool Function()? condition;
 
-  /// Optional external text controller (if provided, form won't create its own)
   final TextEditingController? textController;
 
-  /// Optional external dropdown notifier (if provided, form won't create its own)
   final ValueNotifier<String?>? dropdownNotifier;
 
-  /// Optional external radio notifier (if provided, form won't create its own)
   final ValueNotifier<String>? radioNotifier;
+
+  /// Optional callback when field loses focus (on blur)
+  final VoidCallback? onBlur;
 
   FormFieldConfig({
     required this.key,
@@ -625,10 +597,10 @@ class FormFieldConfig {
     this.textController,
     this.dropdownNotifier,
     this.radioNotifier,
+    this.onBlur,
   });
 }
 
-/// Types of form fields supported
 enum FormFieldType {
   text,
   email,

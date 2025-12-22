@@ -85,16 +85,43 @@ class AuthRepo extends BaseController {
     setLoading(true);
     clearError();
 
-    final result = await _authService.checkUserExists(phoneNumber);
+    try {
+      final result = await _authService.checkUserExists(phoneNumber);
 
-    setLoading(false);
+      setLoading(false);
 
-    if (result.isSuccess) {
-      return result.dataOrNull ?? false;
-    } else {
-      final error = result.errorOrNull ?? 'Failed to check user';
-      debugPrint('Error in checkUserExists: $error');
-      handleError(error);
+      if (result.isSuccess) {
+        return result.dataOrNull ?? false;
+      } else {
+        final error = result.errorOrNull ?? 'Failed to check user';
+        final isNetworkError =
+            error.toString().contains('SocketException') ||
+            error.toString().contains('Failed host lookup') ||
+            error.toString().contains('Network is unreachable');
+
+        if (isNetworkError) {
+          debugPrint('Network error in checkUserExists: $error');
+          handleError('noInternetConnection'.tr);
+        } else {
+          debugPrint('Error in checkUserExists: $error');
+          handleError(error);
+        }
+        return false;
+      }
+    } catch (e) {
+      setLoading(false);
+      final isNetworkError =
+          e.toString().contains('SocketException') ||
+          e.toString().contains('Failed host lookup') ||
+          e.toString().contains('Network is unreachable');
+
+      if (isNetworkError) {
+        debugPrint('Network error in checkUserExists: $e');
+        handleError('noInternetConnection'.tr);
+      } else {
+        debugPrint('Error in checkUserExists: $e');
+        handleError('Failed to check user');
+      }
       return false;
     }
   }
@@ -116,6 +143,20 @@ class AuthRepo extends BaseController {
     } else {
       final error = result.errorOrNull ?? 'Failed to generate OTP for login';
       debugPrint('Error in generateOTPForLogin: $error');
+
+      if (error.toString().contains('USER_SUSPENDED')) {
+        handleError('userSuspended'.tr);
+        return null;
+      }
+      if (error.toString().contains('WAIT_FOR_APPROVAL')) {
+        handleError('wait_for_approval'.tr);
+        return null;
+      }
+      if (error.toString().contains('USER_REJECTED')) {
+        handleError('userRejected'.tr);
+        return null;
+      }
+
       handleError(error);
       return null;
     }
@@ -346,7 +387,15 @@ class AuthRepo extends BaseController {
               return true;
             }
           } catch (e) {
-            debugPrint('Error refreshing session: $e');
+            final errorStr = e.toString();
+            final isNetworkError =
+                errorStr.contains('SocketException') ||
+                errorStr.contains('Failed host lookup') ||
+                errorStr.contains('Network is unreachable');
+
+            if (!isNetworkError) {
+              debugPrint('Error refreshing session: $e');
+            }
           }
         }
         await clearSession();
