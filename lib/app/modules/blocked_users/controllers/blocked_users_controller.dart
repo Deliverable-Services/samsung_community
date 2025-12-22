@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../common/services/supabase_service.dart';
 import '../../../data/core/base/base_controller.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/models/user_model copy.dart';
-import '../../../common/services/supabase_service.dart';
 
 class BlockedUsersController extends BaseController {
   final RxList<UserModel> blockedUsers = <UserModel>[].obs;
