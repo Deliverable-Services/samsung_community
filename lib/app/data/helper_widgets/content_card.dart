@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../constants/app_colors.dart';
+import '../constants/app_images.dart';
 import 'audio_player/audio_player_widget.dart';
 import 'event_tablet.dart';
 import 'video_player/video_player_widget.dart';
@@ -13,11 +15,13 @@ class ContentCard extends StatelessWidget {
   final String? audioUrl;
   final String? thumbnailUrl;
   final String? thumbnailImage;
+  final int? pointsToEarn;
   final String title;
   final String description;
   final bool showAudioPlayer;
   final bool showVideoPlayer;
   final String? contentId;
+  final VoidCallback? onButtonTap;
 
   const ContentCard({
     super.key,
@@ -26,11 +30,13 @@ class ContentCard extends StatelessWidget {
     this.audioUrl,
     this.thumbnailUrl,
     this.thumbnailImage,
+    this.pointsToEarn,
     this.showVideoPlayer = false,
     required this.title,
     required this.description,
     this.showAudioPlayer = false,
     this.contentId,
+    this.onButtonTap,
   });
 
   @override
@@ -58,6 +64,47 @@ class ContentCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (showAudioPlayer && pointsToEarn != null)
+            Column(
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SvgPicture.asset(
+                      AppImages.magicIcon,
+                      width: 44.w,
+                      height: 44.h,
+                      fit: BoxFit.contain,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        SizedBox(
+                          child: SvgPicture.asset(
+                            AppImages.pointsIcon,
+                            width: 18.w,
+                            height: 18.h,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        SizedBox(width: 3.w),
+                        Text(
+                          "$pointsToEarn",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12.sp,
+                            letterSpacing: 0,
+                            color: AppColors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: 14),
+              ],
+            ),
           if (!showVideoPlayer)
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,6 +233,18 @@ class ContentCard extends StatelessWidget {
               tag: contentId != null
                   ? 'audio_$contentId'
                   : audioUrl ?? 'audio_${title.hashCode}',
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IntrinsicWidth(
+                  child: EventTablet(
+                    text: 'sendSolution'.tr,
+                    extraPadding: EdgeInsets.symmetric(horizontal: 36.w),
+                    onTap: onButtonTap,
+                  ),
+                ),
+              ],
             ),
           ],
           if (!showVideoPlayer && !showAudioPlayer) ...[

@@ -99,6 +99,10 @@ class EnLocalization {
     "academyZoomWorkshops": "Zoom Workshops",
     "academyAssignments": "Assignments",
     "searchForInspiration": "Search for inspiration ...",
+    "sendSolution": "Send Solution",
+    "submitAnswer": "Submit answer",
+    "iConfirmGranting": "I confirm granting publication rights",
+    "whichOneCorrect": "Which one's correct? Pick one.",
 
     // Home Screen
     "homeExclusiveLaunchEvent": "Exclusive Launch Event",
@@ -106,7 +110,7 @@ class EnLocalization {
     "homeLiveEventDescription":
         "Be part of an exclusive live. Register now to secure your spot ldcklkc fkvkc.....",
     "homeMoreDetails": "More Details",
-    "homePoints": "Points: -1,000",
+    "homePoints": "Points: ",
     "homePodcastsLuxuryStores": "Podcasts Luxury Stores",
     "homeLoramDescription":
         "Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....",
