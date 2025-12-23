@@ -6,9 +6,15 @@ enum AcademyFileType {
   assignment,
   reel;
 
+  // static AcademyFileType fromString(String value) {
+  //   return AcademyFileType.values.firstWhere(
+  //     (e) => e.name == value.replaceAll('_', ''),
+  //     orElse: () => AcademyFileType.video,
+  //   );
+  // }
   static AcademyFileType fromString(String value) {
     return AcademyFileType.values.firstWhere(
-      (e) => e.name == value.replaceAll('_', ''),
+          (e) => e.toJson() == value,
       orElse: () => AcademyFileType.video,
     );
   }

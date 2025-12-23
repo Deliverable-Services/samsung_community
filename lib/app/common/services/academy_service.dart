@@ -16,7 +16,7 @@ class AcademyService {
   }) async {
     try {
       var query = SupabaseService.client.from('academy_content').select();
-
+      print('contentType::::::::::${contentType}');
       if (contentType != null) {
         query = query.eq('file_type', contentType.toJson());
       } else if (allowedAcademyTypes != null &&
@@ -51,6 +51,7 @@ class AcademyService {
       }
 
       final response = await transformQuery;
+      print('response:::::::::::${response}');
 
       final contentList = (response as List)
           .map(

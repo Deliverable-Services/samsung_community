@@ -20,6 +20,7 @@ class EventLabel {
 
 class EventLaunchCard extends StatelessWidget {
   final String imagePath;
+  String? imagePathNetwork;
   final String title;
   final String description;
   final String buttonText;
@@ -30,9 +31,10 @@ class EventLaunchCard extends StatelessWidget {
   final EdgeInsets? extraPaddingForButton;
   final List<EventLabel>? labels;
 
-  const EventLaunchCard({
+  EventLaunchCard({
     super.key,
     required this.imagePath,
+    this.imagePathNetwork,
     required this.title,
     required this.description,
     this.buttonText = 'Details & Registration',
@@ -50,7 +52,17 @@ class EventLaunchCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(16.r),
       child: Stack(
         children: [
-          Image.asset(imagePath, fit: BoxFit.cover, width: double.infinity),
+          (imagePathNetwork != null && imagePathNetwork!.isNotEmpty)
+              ? Image.network(
+                  imagePathNetwork!,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                )
+              : Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
           if (showButton && text != null && exclusiveEvent)
             Positioned(
               top: 16.h,

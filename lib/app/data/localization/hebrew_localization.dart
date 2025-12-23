@@ -94,13 +94,18 @@ class HebrewiLocalization {
     "academyZoomWorkshops": "סדנאות זום",
     "academyAssignments": "משימות",
     "searchForInspiration": "חיפוש השראה...",
+    "sendSolution": "שלח פתרון",
+    "submitAnswer": "שלח תשובה",
+    "iConfirmGranting": "אני מאשר הענקת זכויות פרסום",
+    "whichOneCorrect": "איזו תשובה נכונה? בחר אחת.",
+
     // Home Screen
     "homeExclusiveLaunchEvent": "אירוע השקה בלעדי",
     "homeLiveEventRegistration": "רישום לאירוע חי",
     "homeLiveEventDescription":
         "היה חלק מאירוע חי בלעדי. הירשם עכשיו כדי להבטיח את המקום שלך ldcklkc fkvkc.....",
     "homeMoreDetails": "פרטים נוספים",
-    "homePoints": "נקודות: -1,000",
+    "homePoints": "נקודות: ",
     "homePodcastsLuxuryStores": "חנויות יוקרה פודקאסטים",
     "homeLoramDescription":
         "לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אליט. סד דו איוסמוד טמפור....",
