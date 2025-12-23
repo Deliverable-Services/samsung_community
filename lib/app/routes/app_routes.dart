@@ -21,6 +21,10 @@ abstract class Routes {
   static const PROFILE = _Paths.PROFILE;
   static const BLOCKED_USERS = _Paths.BLOCKED_USERS;
   static const EDIT_PROFILE = _Paths.EDIT_PROFILE;
+  static const FOLLOWERS_FOLLOWING = _Paths.FOLLOWERS_FOLLOWING;
+  static const USER_PROFILE = _Paths.USER_PROFILE;
+  static const MESSAGES = _Paths.MESSAGES;
+  static const CHAT_SCREEN = _Paths.CHAT_SCREEN;
 }
 
 abstract class _Paths {
@@ -43,4 +47,8 @@ abstract class _Paths {
   static const PROFILE = '/profile';
   static const BLOCKED_USERS = '/blocked-users';
   static const EDIT_PROFILE = '/edit-profile';
+  static const FOLLOWERS_FOLLOWING = '/followers-following';
+  static const USER_PROFILE = '/user-profile';
+  static const MESSAGES = '/messages';
+  static const CHAT_SCREEN = '/chat-screen';
 }

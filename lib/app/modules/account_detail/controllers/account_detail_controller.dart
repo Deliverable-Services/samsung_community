@@ -19,18 +19,15 @@ class AccountDetailController extends GetxController {
   final phoneNumber = ''.obs;
   final isSaving = false.obs;
 
-  // Personal details from previous screen
   Map<String, dynamic>? personalDetailsData;
 
   @override
   void onInit() {
     super.onInit();
-    // Get data from route parameters (includes personal details from previous screen)
     final parameters = Get.parameters as Map<String, dynamic>?;
     if (parameters != null && parameters.isNotEmpty) {
       personalDetailsData = parameters;
     }
-    // Get phone number from parameters or from personal details data
     if (phoneNumber.value.isEmpty) {
       phoneNumber.value =
           (parameters?['phoneNumber'] as String? ??
@@ -38,7 +35,6 @@ class AccountDetailController extends GetxController {
           '';
     }
 
-    // Listen to student selection changes
     selectedStudent.addListener(onStudentSelectionChanged);
   }
 
@@ -60,8 +56,6 @@ class AccountDetailController extends GetxController {
     super.dispose();
   }
 
-  /// Parse social media URL to extract platform name
-  /// Returns the platform name (instagram, facebook, etc.) or null if invalid
   String? parseSocialMediaPlatform(String url) {
     if (url.isEmpty) return null;
 
@@ -70,10 +64,8 @@ class AccountDetailController extends GetxController {
 
     final host = uri.host.toLowerCase();
 
-    // Remove www. prefix if present
     final cleanHost = host.replaceFirst(RegExp(r'^www\.'), '');
 
-    // Check for known platforms
     if (cleanHost.contains('instagram.com')) {
       return 'instagram';
     } else if (cleanHost.contains('facebook.com')) {
@@ -92,7 +84,6 @@ class AccountDetailController extends GetxController {
     return null;
   }
 
-  /// Validate URL format
   bool isValidUrl(String url) {
     if (url.isEmpty) return false;
     final uri = Uri.tryParse(url);
@@ -140,10 +131,8 @@ class AccountDetailController extends GetxController {
 
     isSaving.value = true;
 
-    // Prepare profile data - combine personal details and account details
     final profileData = <String, dynamic>{};
 
-    // Add personal details from previous screen
     if (personalDetailsData != null) {
       final personalData = personalDetailsData!;
       if (personalData.containsKey('fullName') &&
@@ -174,7 +163,6 @@ class AccountDetailController extends GetxController {
       }
     }
 
-    // Add account detail fields (optional)
     final profession = professionController.text.trim();
     if (profession.isNotEmpty) {
       profileData['profession'] = profession;
@@ -185,12 +173,10 @@ class AccountDetailController extends GetxController {
       profileData['bio'] = bio;
     }
 
-    // Add social media link only if provided
     if (socialMediaUrl.isNotEmpty && platform != null) {
       profileData['socialMediaLinks'] = {platform: socialMediaUrl};
     }
 
-    // Add student-specific fields if applicable
     if (selectedStudent.value == 'yes') {
       profileData['college'] = selectedCollege.value ?? '';
       profileData['className'] = classController.text.trim();

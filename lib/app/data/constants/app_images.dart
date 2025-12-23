@@ -42,5 +42,6 @@ class AppImages {
       profilePostIcon = '$baseUrl/profile_post.svg',
       profileFollowersIcon = '$baseUrl/profile_followers.svg',
       profileFollowingIcon = '$baseUrl/profile_following.svg',
-      blockIcon = '$baseUrl/blocked.svg';
+      blockIcon = '$baseUrl/blocked.svg',
+      editProfileIcon = '$baseUrl/edit_profile.svg';
 }

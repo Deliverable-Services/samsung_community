@@ -3,8 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../../common/services/supabase_service.dart';
+import '../../../data/helper_widgets/common_loader.dart';
 import '../../../data/helper_widgets/create_post_button.dart';
 import '../../../data/helper_widgets/filter_component.dart';
+import '../../../routes/app_pages.dart';
 import '../controllers/feed_controller.dart';
 import '../local_widgets/feed_card/feed_card.dart';
 
@@ -49,7 +52,7 @@ class _FeedViewState extends State<FeedView> {
           onRefresh: _controller.loadContent,
           child: Obx(() {
             return _controller.isLoading.value
-                ? const Center(child: CircularProgressIndicator())
+                ? const CommonLoader()
                 : CustomScrollView(
                     controller: _scrollController,
                     physics: const AlwaysScrollableScrollPhysics(),
@@ -138,6 +141,21 @@ class _FeedViewState extends State<FeedView> {
                                         contentId,
                                         commentText,
                                       ),
+                                  onAvatarTap: () {
+                                    final userId = content.userId;
+                                    if (userId.isEmpty) return;
+                                    final currentId =
+                                        SupabaseService.currentUser?.id;
+                                    if (currentId != null &&
+                                        currentId == userId) {
+                                      Get.toNamed(Routes.PROFILE);
+                                    } else {
+                                      Get.toNamed(
+                                        Routes.USER_PROFILE,
+                                        parameters: {'userId': userId},
+                                      );
+                                    }
+                                  },
                                 ),
                               );
                             },
@@ -154,7 +172,7 @@ class _FeedViewState extends State<FeedView> {
                             child: Center(
                               child: Padding(
                                 padding: EdgeInsets.all(16.w),
-                                child: const CircularProgressIndicator(),
+                                child: const CommonLoader(),
                               ),
                             ),
                           ),

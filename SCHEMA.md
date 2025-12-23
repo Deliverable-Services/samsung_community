@@ -1,3 +1,256 @@
+## Database Schema (public)
+
+**Source**: Generated from latest Supabase remote schema (`supabase db dump --schema public`)  
+**Focus**: Overview of all public tables, with details for the new **conversation/chat** flow.
+
+---
+
+## Key Tables in `public` Schema
+
+- **Users & profiles**
+
+  - `users`
+  - `user_approval_requests`
+  - `user_kpis`
+  - `user_follows`
+  - `user_blocks`
+
+- **Content & engagement**
+
+  - `content`
+  - `content_likes`
+  - `content_comments`
+  - `academy_content`
+  - `academy_content_views`
+  - `events`
+  - `event_registrations`
+
+- **Points & store**
+
+  - `points_transactions`
+  - `store_products`
+  - `store_orders`
+
+- **Riddles / gamification**
+
+  - `weekly_riddles`
+  - `riddle_submissions`
+
+- **Notifications**
+
+  - `notifications`
+
+- **New: Conversations / messaging**
+  - `conversations`
+  - `conversation_participants`
+  - `conversation_messages`
+  - `conversation_typing_status`
+
+---
+
+## Users (existing)
+
+Main users table extending `auth.users`. Already includes:
+
+- Online state: `is_online` (boolean), `last_seen_at` (timestamptz)
+- Identity & profile: `phone_number`, `full_name`, `profile_picture_url`, `language_preference`, `gender`, etc.
+- Points & status: `points_balance`, `status` (`user_status` enum), `role` (`user_role` enum)
+- Auth linkage: `auth_user_id` → `auth.users(id)`
+
+This is reused by the conversation tables via foreign keys.
+
+---
+
+## New Conversation / Messaging Schema
+
+### 1. `conversations`
+
+Chat conversation container (1-1 or group).
+
+| Column            | Type        | Constraints / Notes                                |
+| ----------------- | ----------- | -------------------------------------------------- |
+| `id`              | UUID        | PK, `DEFAULT extensions.uuid_generate_v4()`        |
+| `is_group`        | BOOLEAN     | NOT NULL, `DEFAULT false` (false = 1-1 chat)       |
+| `title`           | TEXT        | Optional, useful for group chats                   |
+| `created_by`      | UUID        | FK → `users(id)`, `ON DELETE SET NULL`             |
+| `last_message_at` | TIMESTAMPTZ | Updated when new messages arrive                   |
+| `created_at`      | TIMESTAMPTZ | NOT NULL, `DEFAULT now()`                          |
+| `updated_at`      | TIMESTAMPTZ | NOT NULL, `DEFAULT now()` (kept fresh via trigger) |
+
+**Indexes**
+
+- `idx_conversations_last_message_at` on `(last_message_at DESC NULLS LAST)`
+
+**Triggers**
+
+- `update_conversations_updated_at`
+  - `BEFORE UPDATE ON conversations`
+  - Calls `public.update_updated_at_column()` to keep `updated_at` fresh.
+
+**RLS Policies**
+
+- **Users can view their conversations**: `SELECT` allowed if the user is a participant in the conversation.
+- **Users can update their conversations**: `UPDATE` allowed for participants (e.g. renaming).
+
+---
+
+### 2. `conversation_participants`
+
+Links users to conversations and stores per-user state (read position).
+
+| Column            | Type        | Constraints / Notes                                     |
+| ----------------- | ----------- | ------------------------------------------------------- |
+| `id`              | UUID        | PK, `DEFAULT extensions.uuid_generate_v4()`             |
+| `conversation_id` | UUID        | NOT NULL, FK → `conversations(id)`, `ON DELETE CASCADE` |
+| `user_id`         | UUID        | NOT NULL, FK → `users(id)`, `ON DELETE CASCADE`         |
+| `joined_at`       | TIMESTAMPTZ | NOT NULL, `DEFAULT now()`                               |
+| `last_read_at`    | TIMESTAMPTZ | Nullable, last message seen by this user in this convo  |
+
+**Constraints**
+
+- `UNIQUE (conversation_id, user_id)` to avoid duplicate membership rows.
+
+**Indexes**
+
+- `idx_conversation_participants_user` on `(user_id)`
+- `idx_conversation_participants_conversation` on `(conversation_id)`
+
+**How to compute unread messages**
+
+- For a given participant:
+  - Unread messages = messages where  
+    `conversation_id = ?` AND `created_at > last_read_at` (or `last_read_at IS NULL`).
+
+**RLS Policies**
+
+- **Users can view own conversation participants**: `SELECT` only where `user_id = auth.uid()`.
+- **Users can join conversations**: `INSERT` only where `user_id = auth.uid()`.
+- **Users can leave conversations**: `DELETE` only where `user_id = auth.uid()`.
+- **Users can update own participant state**: `UPDATE` only where `user_id = auth.uid()` (e.g. update `last_read_at`).
+
+---
+
+### 3. `conversation_messages`
+
+Stores the actual chat messages, including media.
+
+| Column            | Type        | Constraints / Notes                                                |
+| ----------------- | ----------- | ------------------------------------------------------------------ |
+| `id`              | UUID        | PK, `DEFAULT extensions.uuid_generate_v4()`                        |
+| `conversation_id` | UUID        | NOT NULL, FK → `conversations(id)`, `ON DELETE CASCADE`            |
+| `sender_id`       | UUID        | NOT NULL, FK → `users(id)`, `ON DELETE CASCADE`                    |
+| `content`         | TEXT        | Plain-text message body (optional if only media)                   |
+| `media`           | JSONB       | `DEFAULT '[]'::jsonb`, array of media objects (e.g. `{url, type}`) |
+| `metadata`        | JSONB       | `DEFAULT '{}'::jsonb`, reactions / reply-to / extra info           |
+| `created_at`      | TIMESTAMPTZ | NOT NULL, `DEFAULT now()`                                          |
+| `updated_at`      | TIMESTAMPTZ | NOT NULL, `DEFAULT now()`                                          |
+| `deleted_at`      | TIMESTAMPTZ | For soft delete (sender-side delete)                               |
+
+**Indexes**
+
+- `idx_conversation_messages_conversation_created_at` on `(conversation_id, created_at DESC)`
+- `idx_conversation_messages_sender_created_at` on `(sender_id, created_at DESC)`
+
+**Triggers**
+
+- `conversation_messages_after_insert`
+  - `AFTER INSERT ON conversation_messages`
+  - Calls `public.update_conversation_last_message()` which:
+    - Sets `conversations.last_message_at = NEW.created_at`
+    - Updates `conversations.updated_at = now()`
+
+**RLS Policies**
+
+- **Users can view conversation messages**: `SELECT` allowed only if user is a participant of that conversation.
+- **Users can send messages**: `INSERT` allowed only if:
+  - `sender_id = auth.uid()`, and
+  - The user is a participant in the target conversation.
+- **Senders can soft-delete own messages**: `UPDATE` allowed only where `sender_id = auth.uid()` (e.g. to set `deleted_at` or edit `content`).
+
+**Media model**
+
+- `media` is a JSON array, so you can support:
+  - Images, video, audio, documents, etc.
+  - Example item: `{ "url": "https://...", "type": "image", "thumbUrl": "https://..." }`
+
+---
+
+### 4. `conversation_typing_status`
+
+Persisted typing indicator per user per conversation.
+
+| Column            | Type        | Constraints / Notes                                     |
+| ----------------- | ----------- | ------------------------------------------------------- |
+| `id`              | UUID        | PK, `DEFAULT extensions.uuid_generate_v4()`             |
+| `conversation_id` | UUID        | NOT NULL, FK → `conversations(id)`, `ON DELETE CASCADE` |
+| `user_id`         | UUID        | NOT NULL, FK → `users(id)`, `ON DELETE CASCADE`         |
+| `is_typing`       | BOOLEAN     | NOT NULL, `DEFAULT false`                               |
+| `updated_at`      | TIMESTAMPTZ | NOT NULL, `DEFAULT now()`                               |
+
+**Constraints**
+
+- `UNIQUE (conversation_id, user_id)` to have at most one row per user per conversation.
+
+**Indexes**
+
+- `idx_conversation_typing_conversation` on `(conversation_id)`
+- `idx_conversation_typing_user` on `(user_id)`
+
+**RLS Policies**
+
+- **Users can view typing status in their conversations**: `SELECT` allowed if user is a participant in that conversation.
+- **Users can update own typing status**: `INSERT` allowed only where `user_id = auth.uid()`.
+- **Users can change own typing status**: `UPDATE` allowed only where `user_id = auth.uid()`.
+
+**Usage pattern**
+
+- On keydown / typing start:
+  - Upsert row with `is_typing = true`, `updated_at = now()`.
+- On typing stop / blur:
+  - Update row with `is_typing = false`, `updated_at = now()`.
+
+---
+
+## High-level Conversation Flow
+
+- **Start / open conversation**
+
+  - Create a row in `conversations` (optionally with `is_group = false` for 1-1).
+  - Insert rows in `conversation_participants` for all users.
+
+- **Send message**
+
+  - Insert into `conversation_messages` with `conversation_id`, `sender_id`, `content` and/or `media`.
+  - Trigger updates `conversations.last_message_at` automatically.
+
+- **Read / unread**
+
+  - When a user views a conversation, update `conversation_participants.last_read_at` to `now()`.
+  - Unread count per conversation = messages where `created_at > last_read_at` for that participant.
+
+- **Typing indicator**
+  - Frontend updates `conversation_typing_status` for current user in a conversation.
+  - Other participants subscribe and show "is typing" if `is_typing = true` and `updated_at` is recent.
+
+---
+
+## Grants (for Supabase roles)
+
+For the new tables the migration grants:
+
+- `GRANT ALL ON TABLE public.conversations TO anon, authenticated, service_role;`
+- `GRANT ALL ON TABLE public.conversation_participants TO anon, authenticated, service_role;`
+- `GRANT ALL ON TABLE public.conversation_messages TO anon, authenticated, service_role;`
+- `GRANT ALL ON TABLE public.conversation_typing_status TO anon, authenticated, service_role;`
+
+Combined with the RLS policies above, this enables:
+
+- **Logged-in users** (`authenticated`) to:
+  - Participate in conversations,
+  - Send and read messages where they are participants,
+  - See who is typing in their conversations.
+- **Service role** to bypass RLS if needed for backend tasks.
+
 # Database Schema Documentation
 
 **Last Updated:** Generated from latest database schema  

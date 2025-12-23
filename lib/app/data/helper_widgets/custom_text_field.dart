@@ -15,6 +15,7 @@ class CustomTextField extends StatefulWidget {
     this.width,
     this.validator,
     this.onChanged,
+    this.onEditingComplete,
     this.readOnly = false,
   });
 
@@ -27,6 +28,7 @@ class CustomTextField extends StatefulWidget {
   final double? width;
   final String? Function(String?)? validator;
   final void Function(String)? onChanged;
+  final VoidCallback? onEditingComplete;
   final bool readOnly;
 
   @override
@@ -98,6 +100,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         minLines: 1,
                         validator: widget.validator,
                         onChanged: widget.onChanged,
+                        onEditingComplete: widget.onEditingComplete,
                         style: TextStyle(
                           fontFamily: 'Samsung Sharp Sans',
                           fontWeight: FontWeight.w500,
@@ -140,6 +143,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     minLines: widget.maxLines,
                     validator: widget.validator,
                     onChanged: widget.onChanged,
+                    onEditingComplete: widget.onEditingComplete,
                     style: TextStyle(
                       fontFamily: 'Samsung Sharp Sans',
                       fontWeight: FontWeight.w500,

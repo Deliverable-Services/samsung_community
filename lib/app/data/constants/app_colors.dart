@@ -150,6 +150,7 @@ class AppColors {
 
   // Interactive Colors
   static const Color likePink = Color(0xFFFF4081); // Material pink
+  static const Color unfollowPink = Color(0xFFF20E8E); // Unfollow button
   static const Color iconGrey = Color(0xFF707070);
 
   // Search & Input Colors

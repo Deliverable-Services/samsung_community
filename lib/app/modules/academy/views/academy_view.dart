@@ -8,6 +8,7 @@ import '../../../common/services/supabase_service.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../data/helper_widgets/bottom_sheet_modal.dart';
+import '../../../data/helper_widgets/common_loader.dart';
 import '../../../data/helper_widgets/content_card.dart';
 import '../../../data/helper_widgets/event_launch_card.dart';
 import '../../../data/helper_widgets/filter_component.dart';
@@ -218,15 +219,7 @@ class AcademyView extends GetView<AcademyController> {
   Widget _buildContentList() {
     return Obx(() {
       if (controller.isLoadingContent.value && controller.contentList.isEmpty) {
-        return SliverFillRemaining(
-          hasScrollBody: false,
-          child: const Center(
-            child: Padding(
-              padding: EdgeInsets.all(20.0),
-              child: CircularProgressIndicator(),
-            ),
-          ),
-        );
+        return const CommonSliverFillLoader();
       }
 
       final content = controller.filteredContent;
@@ -263,7 +256,7 @@ class AcademyView extends GetView<AcademyController> {
               if (index == content.length && controller.isLoadingMore.value) {
                 return Padding(
                   padding: EdgeInsets.symmetric(vertical: 20.h),
-                  child: const Center(child: CircularProgressIndicator()),
+                  child: const CommonLoader(),
                 );
               }
               return null;
