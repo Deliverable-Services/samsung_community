@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../../common/services/video_thumbnail_service.dart';
+import 'video_player_thumbnail_controller.dart';
 
-class VideoPlayerThumbnail extends StatefulWidget {
+class VideoPlayerThumbnail extends StatelessWidget {
   final String? thumbnailUrl;
   final String? thumbnailImage;
   final String? videoUrl;
@@ -16,59 +17,46 @@ class VideoPlayerThumbnail extends StatefulWidget {
   });
 
   @override
-  State<VideoPlayerThumbnail> createState() => _VideoPlayerThumbnailState();
-}
+  Widget build(BuildContext context) {
+    final controllerTag =
+        'thumbnail_${videoUrl ?? thumbnailUrl ?? thumbnailImage ?? 'default'}';
 
-class _VideoPlayerThumbnailState extends State<VideoPlayerThumbnail> {
-  String? _generatedThumbnailPath;
-  bool _isGenerating = false;
-
-  @override
-  void initState() {
-    super.initState();
-    if (_shouldGenerateThumbnail()) {
-      _generateThumbnail();
-    }
-  }
-
-  bool _shouldGenerateThumbnail() {
-    return (widget.thumbnailUrl == null && widget.thumbnailImage == null) &&
-        widget.videoUrl != null &&
-        widget.videoUrl!.isNotEmpty;
-  }
-
-  Future<void> _generateThumbnail() async {
-    if (widget.videoUrl == null || widget.videoUrl!.isEmpty) return;
-
-    setState(() {
-      _isGenerating = true;
-    });
-
+    VideoPlayerThumbnailController controller;
     try {
-      final thumbnailPath = await VideoThumbnailService.generateThumbnail(
-        videoUrl: widget.videoUrl!,
-        timeMs: 1000,
-        quality: 75,
+      controller = Get.find<VideoPlayerThumbnailController>(tag: controllerTag);
+    } catch (_) {
+      controller = Get.put(
+        VideoPlayerThumbnailController(
+          videoUrl: videoUrl,
+          thumbnailUrl: thumbnailUrl,
+          thumbnailImage: thumbnailImage,
+        ),
+        tag: controllerTag,
       );
-
-      if (mounted && thumbnailPath != null) {
-        setState(() {
-          _generatedThumbnailPath = thumbnailPath;
-          _isGenerating = false;
-        });
-      } else if (mounted) {
-        setState(() {
-          _isGenerating = false;
-        });
-      }
-    } catch (e) {
-      print('Error generating thumbnail: $e');
-      if (mounted) {
-        setState(() {
-          _isGenerating = false;
-        });
-      }
     }
+
+    return Obx(() {
+      if (controller.thumbnailUrl != null) {
+        return _buildThumbnailImage(controller.thumbnailUrl!);
+      }
+
+      if (controller.thumbnailImage != null) {
+        return _buildThumbnailImage(controller.thumbnailImage!);
+      }
+
+      if (controller.generatedThumbnailPath.value != null) {
+        return _buildThumbnailImage(controller.generatedThumbnailPath.value!);
+      }
+
+      if (controller.isGenerating.value) {
+        return Container(
+          color: const Color(0xFF2A2A2A),
+          child: const Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      return Container(color: const Color(0xFF2A2A2A));
+    });
   }
 
   Widget _buildThumbnailImage(String url) {
@@ -80,9 +68,7 @@ class _VideoPlayerThumbnailState extends State<VideoPlayerThumbnail> {
         height: double.infinity,
         placeholder: (context, url) => Container(
           color: const Color(0xFF2A2A2A),
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: const Center(child: CircularProgressIndicator()),
         ),
         errorWidget: (context, url, error) {
           return Container(color: const Color(0xFF2A2A2A));
@@ -110,31 +96,4 @@ class _VideoPlayerThumbnailState extends State<VideoPlayerThumbnail> {
       );
     }
   }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.thumbnailUrl != null) {
-      return _buildThumbnailImage(widget.thumbnailUrl!);
-    }
-
-    if (widget.thumbnailImage != null) {
-      return _buildThumbnailImage(widget.thumbnailImage!);
-    }
-
-    if (_generatedThumbnailPath != null) {
-      return _buildThumbnailImage(_generatedThumbnailPath!);
-    }
-
-    if (_isGenerating) {
-      return Container(
-        color: const Color(0xFF2A2A2A),
-        child: const Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-
-    return Container(color: const Color(0xFF2A2A2A));
-  }
 }
-
