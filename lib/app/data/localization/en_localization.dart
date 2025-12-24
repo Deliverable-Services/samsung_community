@@ -107,6 +107,16 @@ class EnLocalization {
     "iConfirmGranting": "I confirm granting publication rights",
     "whichOneCorrect": "Which one's correct? Pick one.",
 
+    // Events Screen
+    "communityEvents":"Community Events",
+    "uniqueExperiences":"Unique experiences for our members.",
+    "search":"Search...",
+    "exploreOurEvents":"Explore our Events...",
+    "allEvents":'All Events',
+    "myEvents":'My Events',
+    "details":'Details',
+    "buying":'Buying',
+
     // Home Screen
     "homeExclusiveLaunchEvent": "Exclusive Launch Event",
     "homeLiveEventRegistration": "Live Event Registration",

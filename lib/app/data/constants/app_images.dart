@@ -8,6 +8,7 @@ class AppImages {
       hamburgerIcon = '$baseUrl/hamburger_icon.png',
       notSupportedIcon = '$baseUrl/not_supported.png',
       pointsIcon = '$baseUrl/points.svg',
+      creditIcon = '$baseUrl/credit.svg',
       magicIcon = '$baseUrl/magic.svg',
       star3Icon = '$baseUrl/star_3.png',
       eventLaunchCard = '$baseUrl/exclusive_event.png',

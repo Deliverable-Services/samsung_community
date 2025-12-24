@@ -150,6 +150,17 @@ class HebrewiLocalization {
     "viewAllComments": "הצג את כל",
     "viewAllCommentsSuffix": "התגובות",
     "addComment": "הוסף תגובה...",
+
+    // Events Screen
+    "communityEvents": "אירועי קהילה",
+    "uniqueExperiences": "חוויות ייחודיות לחברי הקהילה שלנו.",
+    "search": "חיפוש...",
+    "exploreOurEvents": "גלו את האירועים שלנו...",
+    "allEvents": "כל האירועים",
+    "myEvents": "האירועים שלי",
+    "details": "פרטים",
+    "buying": "רכישה",
+
     // Side Menu
     "menu": "תפריט",
     "messages": "הודעות",
