@@ -205,5 +205,9 @@ class EnLocalization {
     "messagePlaceholder": "Message...",
     "send": "Send",
     "noMessagesYet": "No messages yet",
+    "report": "Report",
+    "reportSubmittedSuccessfully": "Report Submitted Successfully",
+    "reportSuccessMessage": "Your report has been successfully sent to the community manager",
+    "close": "Close",
   };
 }

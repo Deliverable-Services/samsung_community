@@ -197,5 +197,9 @@ class HebrewiLocalization {
     "messagePlaceholder": "הודעה...",
     "send": "שלח",
     "noMessagesYet": "אין הודעות עדיין",
+    "report": "דווח",
+    "reportSubmittedSuccessfully": "הדיווח נשלח בהצלחה",
+    "reportSuccessMessage": "הדיווח שלך נשלח בהצלחה למנהל הקהילה",
+    "close": "סגור",
   };
 }

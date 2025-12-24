@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 
 import '../../../data/models/user_model.dart';
 import '../../../common/services/supabase_service.dart';
+import '../local_widgets/chat_options_modal.dart';
+import '../local_widgets/report_success_modal.dart';
 
 class ChatMessage {
   final String id;
@@ -29,6 +31,7 @@ class ChatScreenController extends GetxController {
   final RxBool isSending = false.obs;
   final RxString conversationId = ''.obs;
   final RxString currentUserId = ''.obs;
+  final RxBool isBlocked = false.obs;
 
   @override
   void onInit() {
@@ -78,10 +81,30 @@ class ChatScreenController extends GetxController {
           .single();
       
       otherUser.value = UserModel.fromJson(response);
+      await _checkBlockStatus(userId);
     } catch (e) {
       Get.snackbar('Error', 'Failed to load user data');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> _checkBlockStatus(String userId) async {
+    try {
+      if (currentUserId.value.isEmpty) {
+        await _getCurrentUserId();
+      }
+      
+      final response = await SupabaseService.client
+          .from('user_blocks')
+          .select()
+          .eq('blocker_id', currentUserId.value)
+          .eq('blocked_id', userId)
+          .maybeSingle();
+      
+      isBlocked.value = response != null;
+    } catch (e) {
+      print('Error checking block status: $e');
     }
   }
 
@@ -118,7 +141,7 @@ class ChatScreenController extends GetxController {
 
   Future<void> sendMessage() async {
     final text = messageController.text.trim();
-    if (text.isEmpty || conversationId.value.isEmpty) return;
+    if (text.isEmpty || conversationId.value.isEmpty || isBlocked.value) return;
 
     try {
       isSending.value = true;
@@ -168,6 +191,55 @@ class ChatScreenController extends GetxController {
   void navigateToProfile() {
     if (otherUser.value != null) {
       Get.toNamed('/user-profile', parameters: {'userId': otherUser.value!.id});
+    }
+  }
+
+  void showChatOptionsModal() {
+    final context = Get.context;
+    if (context == null) return;
+    ChatOptionsModal.show(context, this);
+  }
+
+  void showReportSuccessModal() {
+    final context = Get.context;
+    if (context == null) return;
+    ReportSuccessModal.show(context);
+  }
+
+  Future<void> blockUser() async {
+    if (otherUser.value == null || currentUserId.value.isEmpty) return;
+    
+    try {
+      await SupabaseService.client
+          .from('user_blocks')
+          .insert({
+            'blocker_id': currentUserId.value,
+            'blocked_id': otherUser.value!.id,
+          });
+      
+      isBlocked.value = true;
+      Get.snackbar('Success', 'User blocked successfully');
+    } catch (e) {
+      print('Error blocking user: $e');
+      Get.snackbar('Error', 'Failed to block user');
+    }
+  }
+
+  Future<void> unblockUser() async {
+    if (otherUser.value == null || currentUserId.value.isEmpty) return;
+    
+    try {
+      await SupabaseService.client
+          .from('user_blocks')
+          .delete()
+          .eq('blocker_id', currentUserId.value)
+          .eq('blocked_id', otherUser.value!.id);
+      
+      isBlocked.value = false;
+      Get.snackbar('Success', 'User unblocked successfully');
+    } catch (e) {
+      print('Error unblocking user: $e');
+      Get.snackbar('Error', 'Failed to unblock user');
     }
   }
 

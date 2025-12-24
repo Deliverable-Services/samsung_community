@@ -18,14 +18,17 @@ class ChatHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Container(
-            width: 40.w,
-            height: 40.h,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.overlayContainerBackground,
+          GestureDetector(
+            onTap: () => controller.showChatOptionsModal(),
+            child: Container(
+              width: 40.w,
+              height: 40.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.overlayContainerBackground,
+              ),
+              child: Icon(Icons.more_vert, color: AppColors.white, size: 20.sp),
             ),
-            child: Icon(Icons.more_vert, color: AppColors.white, size: 20.sp),
           ),
           CustomBackButton(rotation: 0, onTap: () => Get.back()),
         ],

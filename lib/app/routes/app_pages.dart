@@ -179,6 +179,7 @@ class AppPages {
       name: _Paths.MESSAGES,
       page: () => const MessagesView(),
       binding: MessagesBinding(),
+      transition: Transition.noTransition,
     ),
     GetPage(
       name: _Paths.CHAT_SCREEN,

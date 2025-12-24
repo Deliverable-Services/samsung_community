@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../common/services/app_lifecycle_service.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/helper_widgets/profile_picture_widget.dart';
 import '../controllers/chat_screen_controller.dart';
@@ -20,6 +21,11 @@ class ChatProfileSection extends StatelessWidget {
       if (user == null) {
         return const SizedBox.shrink();
       }
+
+      final isOnline = AppLifecycleService.isUserOnline(
+        user.isOnline,
+        user.lastSeenAt,
+      );
 
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -40,12 +46,12 @@ class ChatProfileSection extends StatelessWidget {
                   height: 9.h,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: user.isOnline
+                    color: isOnline
                         ? AppColors.activeIndicatorBackground
                         : AppColors.inactiveIndicatorBackground,
                     border: Border.all(
                       width: 1,
-                      color: user.isOnline
+                      color: isOnline
                           ? AppColors.activeIndicatorBorder
                           : AppColors.inactiveIndicatorBorder,
                     ),
@@ -53,14 +59,14 @@ class ChatProfileSection extends StatelessWidget {
                 ),
                 SizedBox(width: 6.w),
                 Text(
-                  user.isOnline ? 'active'.tr : 'inactive'.tr,
+                  isOnline ? 'active'.tr : 'inactive'.tr,
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontStyle: FontStyle.normal,
                     fontSize: 14.sp,
                     height: 22 / 14,
                     letterSpacing: 0,
-                    color: user.isOnline
+                    color: isOnline
                         ? AppColors.activeIndicatorBorder
                         : AppColors.inactiveIndicatorBorder,
                   ),
