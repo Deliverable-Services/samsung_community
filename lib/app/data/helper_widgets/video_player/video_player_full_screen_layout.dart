@@ -83,6 +83,7 @@ class VideoPlayerFullScreenLayout extends StatelessWidget {
       child: VideoPlayerThumbnail(
         thumbnailUrl: thumbnailUrl,
         thumbnailImage: thumbnailImage,
+        videoUrl: videoUrl,
       ),
     );
   }

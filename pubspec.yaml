@@ -41,6 +41,8 @@ dependencies:
   cached_network_image:
   intl:
   just_audio: ^0.9.36
+  video_thumbnail: ^0.5.3
+  path_provider: ^2.1.1
 
 dev_dependencies:
   flutter_test:
