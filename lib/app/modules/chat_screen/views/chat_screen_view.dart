@@ -7,6 +7,7 @@ import '../local_widgets/chat_header.dart';
 import '../local_widgets/chat_profile_section.dart';
 import '../local_widgets/chat_messages_list.dart';
 import '../local_widgets/chat_input_bar.dart';
+import '../local_widgets/chat_unblock_button.dart';
 
 class ChatScreenView extends GetView<ChatScreenController> {
   const ChatScreenView({super.key});
@@ -24,12 +25,18 @@ class ChatScreenView extends GetView<ChatScreenController> {
                 child: Column(
                   children: [
                     ChatProfileSection(controller: controller),
+                    SizedBox(height: 10),
                     ChatMessagesList(controller: controller),
                   ],
                 ),
               ),
             ),
-            ChatInputBar(controller: controller),
+            Obx(() {
+              if (controller.isBlocked.value) {
+                return ChatUnblockButton(controller: controller);
+              }
+              return ChatInputBar(controller: controller);
+            }),
           ],
         ),
       ),

@@ -18,8 +18,7 @@ class UserPostsList extends GetView<UserProfileController> {
           hasScrollBody: false,
           child: Center(
             child: CircularProgressIndicator(
-              valueColor:
-                  AlwaysStoppedAnimation<Color>(AppColors.linkBlue),
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.linkBlue),
             ),
           ),
         );
@@ -53,6 +52,7 @@ class UserPostsList extends GetView<UserProfileController> {
         sliver: SliverList(
           delegate: SliverChildBuilderDelegate((context, index) {
             final post = controller.postsList[index];
+            final likedUsers = controller.getLikedByUsers(post.id);
             return Padding(
               padding: EdgeInsets.only(bottom: 20.h),
               child: FeedCard(
@@ -69,15 +69,16 @@ class UserPostsList extends GetView<UserProfileController> {
                         ? post.mediaFiles!.first
                         : null),
                 thumbnailUrl: post.thumbnailUrl,
-                isLiked: false,
+                isLiked: controller.isLiked(post.id),
                 likesCount: post.likesCount,
-                likedByUsers: null,
+                likedByUsers: likedUsers.isNotEmpty ? likedUsers : null,
                 commentsCount: post.commentsCount,
-                onLike: null,
-                onComment: () {},
-                onViewComments: () {},
-                onMenuTap: () {},
-                onAddComment: (contentId, commentText) {},
+                onLike: () => controller.toggleLike(post.id),
+                onComment: () => controller.showCommentsModal(post.id),
+                onViewComments: () => controller.showCommentsModal(post.id),
+                onMenuTap: () => controller.showFeedActionModal(post.id),
+                onAddComment: (contentId, commentText) =>
+                    controller.addComment(contentId, commentText),
               ),
             );
           }, childCount: controller.postsList.length),
@@ -86,4 +87,3 @@ class UserPostsList extends GetView<UserProfileController> {
     });
   }
 }
-

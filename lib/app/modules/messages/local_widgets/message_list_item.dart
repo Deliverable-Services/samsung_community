@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../routes/app_pages.dart';
+import '../controllers/messages_controller.dart';
 
 class MessageListItem extends StatelessWidget {
   final String username;
@@ -24,16 +25,18 @@ class MessageListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
+    final messagesController = Get.find<MessagesController>();
+    return InkWell(
+      onTap: () async {
         if (conversationId != null || userId != null) {
-          Get.toNamed(
+          await Get.toNamed(
             Routes.CHAT_SCREEN,
             arguments: {
               'conversationId': conversationId ?? '',
               'userId': userId,
             },
           );
+          messagesController.refreshConversations();
         }
       },
       child: Padding(

@@ -39,7 +39,7 @@ class UserProfileTopCard extends GetView<UserProfileController> {
                       Expanded(
                         child: StatCard(
                           icon: AppImages.profilePostIcon,
-                          count: controller.postsCount,
+                          count: controller.postsCount.value,
                           label: 'posts'.tr,
                           isBold: false,
                           showBoxDecoration: false,
@@ -49,7 +49,7 @@ class UserProfileTopCard extends GetView<UserProfileController> {
                       Expanded(
                         child: StatCard(
                           icon: AppImages.profileFollowersIcon,
-                          count: controller.followersCount,
+                          count: controller.followersCount.value,
                           label: 'followers'.tr,
                           isBold: false,
                           showBoxDecoration: false,
@@ -66,7 +66,7 @@ class UserProfileTopCard extends GetView<UserProfileController> {
                       Expanded(
                         child: StatCard(
                           icon: AppImages.profileFollowingIcon,
-                          count: controller.followingCount,
+                          count: controller.followingCount.value,
                           label: 'following'.tr,
                           isBold: false,
                           showBoxDecoration: false,
@@ -196,7 +196,10 @@ class UserProfileTopCard extends GetView<UserProfileController> {
                 SizedBox(width: 10.w),
                 Expanded(
                   flex: 4,
-                  child: _OutlinedButton(text: 'message'.tr, onTap: () {}),
+                  child: _OutlinedButton(
+                    text: 'message'.tr,
+                    onTap: controller.navigateToChat,
+                  ),
                 ),
               ],
             ),

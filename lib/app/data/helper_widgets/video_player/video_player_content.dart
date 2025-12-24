@@ -13,6 +13,7 @@ class VideoPlayerContent extends StatelessWidget {
   final bool fullScreen;
   final String? thumbnailUrl;
   final String? thumbnailImage;
+  final String? videoUrl;
   final VoidCallback onRetry;
 
   const VideoPlayerContent({
@@ -24,6 +25,7 @@ class VideoPlayerContent extends StatelessWidget {
     required this.fullScreen,
     this.thumbnailUrl,
     this.thumbnailImage,
+    this.videoUrl,
     required this.onRetry,
   });
 
@@ -61,6 +63,7 @@ class VideoPlayerContent extends StatelessWidget {
       child: VideoPlayerThumbnail(
         thumbnailUrl: thumbnailUrl,
         thumbnailImage: thumbnailImage,
+        videoUrl: videoUrl,
       ),
     );
   }

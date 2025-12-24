@@ -30,8 +30,8 @@ class SideMenu extends StatelessWidget {
   }
 
   void _handleStore(BuildContext context) {
-    // Navigator.of(context, rootNavigator: true).pop();
-    // TODO: Navigate to store screen
+    Navigator.of(context, rootNavigator: true).pop();
+    Get.toNamed(Routes.STORE);
   }
 
   void _handleProfile(BuildContext context) {

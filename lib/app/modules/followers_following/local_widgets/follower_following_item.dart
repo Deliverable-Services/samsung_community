@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../common/services/supabase_service.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/models/user_model copy.dart';
 import '../controllers/followers_following_controller.dart';
@@ -64,14 +65,16 @@ class FollowerFollowingItem extends GetView<FollowersFollowingController> {
               style: TextStyle(fontSize: 14.sp, color: AppColors.white),
             ),
           ),
-          SizedBox(width: 12.w),
-          Row(
-            children: [
-              _buildMessageButton(),
-              SizedBox(width: 8.w),
-              _buildMoreButton(user.id),
-            ],
-          ),
+          if (!_isCurrentUser(user.id)) ...[
+            SizedBox(width: 12.w),
+            Row(
+              children: [
+                _buildMessageButton(),
+                SizedBox(width: 8.w),
+                _buildMoreButton(user.id),
+              ],
+            ),
+          ],
         ],
       ),
     );
@@ -79,7 +82,7 @@ class FollowerFollowingItem extends GetView<FollowersFollowingController> {
 
   Widget _buildMessageButton() {
     return GestureDetector(
-      onTap: () {},
+      onTap: () => controller.navigateToChat(user.id),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         decoration: BoxDecoration(
@@ -111,6 +114,11 @@ class FollowerFollowingItem extends GetView<FollowersFollowingController> {
         child: Icon(Icons.more_vert, color: AppColors.white, size: 20.sp),
       ),
     );
+  }
+
+  bool _isCurrentUser(String userId) {
+    final currentUser = SupabaseService.currentUser;
+    return currentUser != null && currentUser.id == userId;
   }
 
   void _showMoreOptions(String userId) {

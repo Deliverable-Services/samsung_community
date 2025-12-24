@@ -25,6 +25,7 @@ abstract class Routes {
   static const USER_PROFILE = _Paths.USER_PROFILE;
   static const MESSAGES = _Paths.MESSAGES;
   static const CHAT_SCREEN = _Paths.CHAT_SCREEN;
+  static const STORE = _Paths.STORE;
 }
 
 abstract class _Paths {
@@ -51,4 +52,5 @@ abstract class _Paths {
   static const USER_PROFILE = '/user-profile';
   static const MESSAGES = '/messages';
   static const CHAT_SCREEN = '/chat-screen';
+  static const STORE = '/store';
 }

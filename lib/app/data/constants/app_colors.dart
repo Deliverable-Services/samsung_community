@@ -175,4 +175,10 @@ class AppColors {
   // Border gradient: 131.74deg, #FFFFFF -55.4%, rgba(255, 255, 255, 0) 100%
   static const Color createPostBorderStart = Color(0xFFFFFFFF);
   static const Color createPostBorderEnd = Color(0x00FFFFFF);
+
+  // Active Status Indicator Colors
+  static const Color activeIndicatorBackground = Color(0xFFC6FFED);
+  static const Color activeIndicatorBorder = Color(0xFF00FFAE);
+  static const Color inactiveIndicatorBackground = Color(0xFFFFC6C6);
+  static const Color inactiveIndicatorBorder = Color(0xFFFF4000);
 }

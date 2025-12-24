@@ -6,6 +6,7 @@ import '../../data/core/utils/result.dart';
 import '../../data/localization/get_prefs.dart';
 import '../../data/models/user_model.dart';
 import '../../routes/app_pages.dart';
+import '../../common/services/app_lifecycle_service.dart';
 import '../../common/services/auth_service.dart';
 import '../../common/services/supabase_service.dart';
 import '../../data/core/utils/common_snackbar.dart';
@@ -60,6 +61,7 @@ class AuthRepo extends BaseController {
       currentUser.value = result.dataOrNull;
       if (result.dataOrNull != null) {
         GetPrefs.setMap(GetPrefs.userProfile, result.dataOrNull!.toJson());
+        AppLifecycleService.instance.setCurrentUserId(result.dataOrNull!.id);
       }
     } else {
       final error = result.errorOrNull ?? 'Failed to load user';
@@ -75,6 +77,7 @@ class AuthRepo extends BaseController {
       if (result.isSuccess && result.dataOrNull != null) {
         currentUser.value = result.dataOrNull;
         GetPrefs.setMap(GetPrefs.userProfile, result.dataOrNull!.toJson());
+        AppLifecycleService.instance.setCurrentUserId(result.dataOrNull!.id);
       }
     } catch (e) {
       debugPrint('Error fetching user profile: $e');
@@ -292,6 +295,7 @@ class AuthRepo extends BaseController {
             final userModel = UserModel.fromJson(sessionData['user']);
             currentUser.value = userModel;
             GetPrefs.setMap(GetPrefs.userProfile, userModel.toJson());
+            AppLifecycleService.instance.setCurrentUserId(userModel.id);
           } catch (e) {
             debugPrint('Error parsing user profile: $e');
           }
@@ -480,6 +484,8 @@ class AuthRepo extends BaseController {
     await clearSession();
 
     final result = await _authService.signOut();
+
+    AppLifecycleService.instance.clearCurrentUserId();
 
     if (result.isSuccess) {
       currentUser.value = null;
