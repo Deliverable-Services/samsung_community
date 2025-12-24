@@ -37,6 +37,7 @@ class StoreProductCard extends StatelessWidget {
         buttonText: 'detailsPurchase'.tr,
         showButton: true,
         exclusiveEvent: true,
+        text: dateStr,
         onButtonTap: onTap,
         labels: [
           EventLabel(
@@ -65,7 +66,6 @@ class StoreProductCard extends StatelessWidget {
           ),
           if (product.quantityInStock > 0)
             EventLabel(text: '${product.quantityInStock} ${'remaining'.tr}'),
-          EventLabel(text: dateStr),
         ],
       ),
     );

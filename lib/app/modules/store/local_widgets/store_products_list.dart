@@ -50,7 +50,7 @@ class StoreProductsList extends GetView<StoreController> {
                   child: StoreProductCard(
                     product: products[index],
                     onTap: () {
-                      // TODO: Navigate to product details
+                      controller.showProductDetails(products[index]);
                     },
                   ),
                 );
@@ -71,4 +71,3 @@ class StoreProductsList extends GetView<StoreController> {
     });
   }
 }
-

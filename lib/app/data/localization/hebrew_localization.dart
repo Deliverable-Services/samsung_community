@@ -220,5 +220,14 @@ class HebrewiLocalization {
     "reportSubmittedSuccessfully": "הדיווח נשלח בהצלחה",
     "reportSuccessMessage": "הדיווח שלך נשלח בהצלחה למנהל הקהילה",
     "close": "סגור",
+    "insufficientPoints": "אין לך מספיק נקודות.",
+    "insufficientPointsMessage": "יתרתך נמוכה מדי לביצוע פעולה זו.",
+    "shippingAddress": "כתובת משלוח",
+    "address": "כתובת",
+    "zipCode": "מיקוד",
+    "contactPhoneNumber": "מספר טלפון ליצירת קשר",
+    "confirmation": "אישור",
+    "orderCompletedSuccessfully": "ההזמנה הושלמה בהצלחה",
+    "courierContactMessage": "השליח יצור איתך קשר כדי לתאם משלוח.",
   };
 }

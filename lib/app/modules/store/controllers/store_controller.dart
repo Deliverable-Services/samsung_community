@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../data/helper_widgets/bottom_sheet_modal.dart';
 import '../../../data/models/store_product_model.dart';
+import '../local_widgets/store_product_details_modal.dart';
 
 class StoreController extends GetxController {
   final RxInt selectedTabIndex = 0.obs;
@@ -248,5 +250,15 @@ class StoreController extends GetxController {
       return myPurchasesList;
     }
     return productsList;
+  }
+
+  void showProductDetails(StoreProductModel product) {
+    if (Get.context == null) return;
+
+    BottomSheetModal.show(
+      Get.context!,
+      buttonType: BottomSheetButtonType.close,
+      content: StoreProductDetailsModal(product: product),
+    );
   }
 }
