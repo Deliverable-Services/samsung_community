@@ -179,4 +179,6 @@ class AppColors {
   // Active Status Indicator Colors
   static const Color activeIndicatorBackground = Color(0xFFC6FFED);
   static const Color activeIndicatorBorder = Color(0xFF00FFAE);
+  static const Color inactiveIndicatorBackground = Color(0xFFFFC6C6);
+  static const Color inactiveIndicatorBorder = Color(0xFFFF4000);
 }

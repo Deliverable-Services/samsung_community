@@ -6,6 +6,7 @@ import '../../../common/services/supabase_service.dart';
 import '../../../data/core/base/base_controller.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/models/user_model copy.dart';
+import '../../../routes/app_pages.dart';
 
 class FollowersFollowingController extends BaseController {
   final RxInt selectedTab = 0.obs;
@@ -254,6 +255,96 @@ class FollowersFollowingController extends BaseController {
     } catch (e) {
       debugPrint('Error unfollowing user: $e');
       CommonSnackbar.error('Failed to unfollow user');
+    }
+  }
+
+  Future<void> navigateToChat(String otherUserId) async {
+    final currentUser = SupabaseService.currentUser;
+    if (currentUser == null) {
+      CommonSnackbar.error('User not found');
+      return;
+    }
+
+    try {
+      String? conversationId = await _findOrCreateConversation(
+        currentUser.id,
+        otherUserId,
+      );
+
+      if (conversationId != null) {
+        Get.toNamed(
+          Routes.CHAT_SCREEN,
+          arguments: {
+            'conversationId': conversationId,
+            'userId': otherUserId,
+          },
+        );
+      } else {
+        CommonSnackbar.error('Failed to create conversation');
+      }
+    } catch (e) {
+      CommonSnackbar.error('Failed to open chat');
+    }
+  }
+
+  Future<String?> _findOrCreateConversation(
+    String currentUserId,
+    String otherUserId,
+  ) async {
+    try {
+      final currentUserConvs = await SupabaseService.client
+          .from('conversation_participants')
+          .select('conversation_id')
+          .eq('user_id', currentUserId);
+
+      if ((currentUserConvs as List).isEmpty) {
+        return await _createNewConversation(currentUserId, otherUserId);
+      }
+
+      final convIds = (currentUserConvs as List)
+          .map((c) => c['conversation_id'] as String)
+          .toList();
+
+      final sharedConversation = await SupabaseService.client
+          .from('conversation_participants')
+          .select('conversation_id')
+          .eq('user_id', otherUserId)
+          .inFilter('conversation_id', convIds)
+          .maybeSingle();
+
+      if (sharedConversation != null) {
+        return sharedConversation['conversation_id'] as String?;
+      }
+
+      return await _createNewConversation(currentUserId, otherUserId);
+    } catch (e) {
+      debugPrint('Error finding/creating conversation: $e');
+      return null;
+    }
+  }
+
+  Future<String?> _createNewConversation(
+    String currentUserId,
+    String otherUserId,
+  ) async {
+    try {
+      final newConversation = await SupabaseService.client
+          .from('conversations')
+          .insert({})
+          .select('id')
+          .single();
+
+      final conversationId = newConversation['id'] as String;
+
+      await SupabaseService.client.from('conversation_participants').insert([
+        {'conversation_id': conversationId, 'user_id': currentUserId},
+        {'conversation_id': conversationId, 'user_id': otherUserId},
+      ]);
+
+      return conversationId;
+    } catch (e) {
+      debugPrint('Error creating conversation: $e');
+      return null;
     }
   }
 }

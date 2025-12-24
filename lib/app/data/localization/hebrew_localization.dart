@@ -192,6 +192,7 @@ class HebrewiLocalization {
     "messagesSubtitle": "חוויות ייחודיות לחברים שלנו.",
     "chat": "צ'אט",
     "active": "פעיל",
+    "inactive": "לא פעיל",
     "seeProfile": "צפה בפרופיל",
     "messagePlaceholder": "הודעה...",
     "send": "שלח",

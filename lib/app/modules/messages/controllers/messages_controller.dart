@@ -38,6 +38,15 @@ class MessagesController extends GetxController {
     loadConversations();
   }
 
+  @override
+  void onReady() {
+    super.onReady();
+  }
+
+  void refreshConversations() {
+    loadConversations();
+  }
+
   Future<void> _getCurrentUserId() async {
     try {
       final user = await SupabaseService.client.auth.currentUser;

@@ -200,6 +200,7 @@ class EnLocalization {
     "messagesSubtitle": "Unique experiences for our members.",
     "chat": "Chat",
     "active": "Active",
+    "inactive": "Inactive",
     "seeProfile": "See Profile",
     "messagePlaceholder": "Message...",
     "send": "Send",

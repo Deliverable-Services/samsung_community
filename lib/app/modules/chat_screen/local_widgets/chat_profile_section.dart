@@ -40,26 +40,29 @@ class ChatProfileSection extends StatelessWidget {
                   height: 9.h,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppColors.activeIndicatorBackground,
+                    color: user.isOnline
+                        ? AppColors.activeIndicatorBackground
+                        : AppColors.inactiveIndicatorBackground,
                     border: Border.all(
                       width: 1,
-                      color: AppColors.activeIndicatorBorder,
+                      color: user.isOnline
+                          ? AppColors.activeIndicatorBorder
+                          : AppColors.inactiveIndicatorBorder,
                     ),
                   ),
                 ),
                 SizedBox(width: 6.w),
                 Text(
-                  'active'.tr,
+                  user.isOnline ? 'active'.tr : 'inactive'.tr,
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
-                    fontStyle: FontStyle
-                        .normal, // 'Medium' style not available in Flutter, using normal
-                    fontSize: 14,
-                    height:
-                        22 /
-                        14, // line-height: 22px equals Flutter's `height` property = lineHeight/fontSize
+                    fontStyle: FontStyle.normal,
+                    fontSize: 14.sp,
+                    height: 22 / 14,
                     letterSpacing: 0,
-                    color: AppColors.activeIndicatorBorder,
+                    color: user.isOnline
+                        ? AppColors.activeIndicatorBorder
+                        : AppColors.inactiveIndicatorBorder,
                   ),
                 ),
               ],

@@ -40,11 +40,16 @@ class ChatScreenController extends GetxController {
       if (userId != null) {
         loadUserData(userId);
       }
-      if (conversationId.value.isNotEmpty) {
-        loadMessages();
-      }
+      _initializeChat();
     }
-    _getCurrentUserId();
+  }
+
+  Future<void> _initializeChat() async {
+    await _getCurrentUserId();
+    if (conversationId.value.isNotEmpty) {
+      await loadMessages();
+      await markAsRead();
+    }
   }
 
   Future<void> _getCurrentUserId() async {
@@ -82,6 +87,9 @@ class ChatScreenController extends GetxController {
 
   Future<void> loadMessages() async {
     if (conversationId.value.isEmpty) return;
+    if (currentUserId.value.isEmpty) {
+      await _getCurrentUserId();
+    }
     
     try {
       isLoading.value = true;
@@ -124,6 +132,7 @@ class ChatScreenController extends GetxController {
       
       messageController.clear();
       await loadMessages();
+      markAsRead();
     } catch (e) {
       Get.snackbar('Error', 'Failed to send message');
     } finally {
@@ -131,9 +140,34 @@ class ChatScreenController extends GetxController {
     }
   }
 
+  Future<void> markAsRead() async {
+    if (conversationId.value.isEmpty || currentUserId.value.isEmpty) {
+      print('Cannot mark as read: conversationId=${conversationId.value}, currentUserId=${currentUserId.value}');
+      return;
+    }
+
+    try {
+      final now = DateTime.now().toIso8601String();
+      print('Marking messages as read: conversationId=${conversationId.value}, userId=${currentUserId.value}, time=$now');
+      
+      final result = await SupabaseService.client
+          .from('conversation_participants')
+          .update({
+            'last_read_at': now,
+          })
+          .eq('conversation_id', conversationId.value)
+          .eq('user_id', currentUserId.value)
+          .select();
+      
+      print('Mark as read result: $result');
+    } catch (e) {
+      print('Error marking messages as read: $e');
+    }
+  }
+
   void navigateToProfile() {
     if (otherUser.value != null) {
-      Get.toNamed('/user-profile', arguments: {'userId': otherUser.value!.id});
+      Get.toNamed('/user-profile', parameters: {'userId': otherUser.value!.id});
     }
   }
 
