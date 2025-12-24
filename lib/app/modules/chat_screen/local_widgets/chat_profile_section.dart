@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -20,35 +22,44 @@ class ChatProfileSection extends StatelessWidget {
       }
 
       return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           children: [
             ProfilePictureWidget(
               imageUrl: user.profilePictureUrl,
-              width: 120.w,
+              width: 105.w,
               showAddText: false,
               showAddIcon: false,
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: 20.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  width: 8.w,
-                  height: 8.h,
-                  decoration: const BoxDecoration(
+                  width: 9.w,
+                  height: 9.h,
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppColors.success,
+                    color: AppColors.activeIndicatorBackground,
+                    border: Border.all(
+                      width: 1,
+                      color: AppColors.activeIndicatorBorder,
+                    ),
                   ),
                 ),
                 SizedBox(width: 6.w),
                 Text(
                   'active'.tr,
                   style: TextStyle(
-                    fontFamily: 'Samsung Sharp Sans',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 14.sp,
-                    color: AppColors.success,
+                    fontWeight: FontWeight.w700,
+                    fontStyle: FontStyle
+                        .normal, // 'Medium' style not available in Flutter, using normal
+                    fontSize: 14,
+                    height:
+                        22 /
+                        14, // line-height: 22px equals Flutter's `height` property = lineHeight/fontSize
+                    letterSpacing: 0,
+                    color: AppColors.activeIndicatorBorder,
                   ),
                 ),
               ],
@@ -57,9 +68,8 @@ class ChatProfileSection extends StatelessWidget {
             Text(
               user.fullName ?? 'user'.tr,
               style: TextStyle(
-                fontFamily: 'Samsung Sharp Sans',
                 fontWeight: FontWeight.w700,
-                fontSize: 18.sp,
+                fontSize: 16.sp,
                 color: AppColors.white,
               ),
             ),
@@ -68,7 +78,6 @@ class ChatProfileSection extends StatelessWidget {
               Text(
                 user.bio!,
                 style: TextStyle(
-                  fontFamily: 'Samsung Sharp Sans',
                   fontWeight: FontWeight.w400,
                   fontSize: 14.sp,
                   color: AppColors.textWhiteOpacity70,
@@ -79,22 +88,69 @@ class ChatProfileSection extends StatelessWidget {
             GestureDetector(
               onTap: controller.navigateToProfile,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                width: 97.w,
+                height: 35.h,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20.r),
+                  borderRadius: BorderRadius.circular(100.r),
                   gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [AppColors.createPostGradientStart, AppColors.createPostGradientEnd],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.createPostGradientStart,
+                      AppColors.createPostGradientEnd,
+                    ],
+                    stops: [0.0041, 1.0042],
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      offset: const Offset(0, 7.43),
+                      blurRadius: 16.6,
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.09),
+                      offset: const Offset(0, 30.15),
+                      blurRadius: 30.15,
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      offset: const Offset(0, 68.16),
+                      blurRadius: 41.07,
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.01),
+                      offset: const Offset(0, 121.02),
+                      blurRadius: 48.5,
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.0),
+                      offset: const Offset(0, 189.18),
+                      blurRadius: 52.87,
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.25),
+                      offset: const Offset(2, -2),
+                      blurRadius: 2,
+                      spreadRadius: 0,
+                    ),
+                  ],
                 ),
-                child: Text(
-                  'seeProfile'.tr,
-                  style: TextStyle(
-                    fontFamily: 'Samsung Sharp Sans',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14.sp,
-                    color: AppColors.white,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(100.r),
+                  child: SizedBox(
+                    child: Center(
+                      child: Text(
+                        'seeProfile'.tr,
+                        style: TextStyle(
+                          fontFamily: 'Samsung Sharp Sans',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12.sp,
+                          height: 24 / 12,
+                          letterSpacing: 0,
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -105,4 +161,3 @@ class ChatProfileSection extends StatelessWidget {
     });
   }
 }
-

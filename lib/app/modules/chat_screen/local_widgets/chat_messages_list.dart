@@ -56,9 +56,8 @@ class ChatMessagesList extends StatelessWidget {
                   child: Text(
                     dateTimeStr,
                     style: TextStyle(
-                      fontFamily: 'Samsung Sharp Sans',
                       fontWeight: FontWeight.w400,
-                      fontSize: 12.sp,
+                      fontSize: 14.sp,
                       color: AppColors.textWhiteOpacity70,
                     ),
                   ),
@@ -77,4 +76,3 @@ class ChatMessagesList extends StatelessWidget {
     });
   }
 }
-

@@ -24,7 +24,7 @@ class MessageListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         if (conversationId != null || userId != null) {
           Get.toNamed(

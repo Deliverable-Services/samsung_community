@@ -11,36 +11,38 @@ class EditProfileTabContent extends GetView<EditProfileController> {
 
   @override
   Widget build(BuildContext context) {
-    if (controller.selectedTab.value == 0) {
-      return PersonalDetailsForm(
-        fullNameController: controller.fullNameController,
-        birthdayController: controller.birthdayController,
-        emailController: controller.emailController,
-        cityController: controller.cityController,
-        selectedGender: controller.selectedGender,
-        selectedDeviceModel: controller.selectedDeviceModel,
-        saveButtonText: '',
-        isLoading: false,
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        hideSaveButton: true,
-        onSave: (formData) async {},
-        onFieldBlur: (key, value) => controller.saveFieldOnBlur(key, value),
-      );
-    } else {
-      return AccountDetailsForm(
-        socialMediaController: controller.socialMediaController,
-        professionController: controller.professionController,
-        bioController: controller.bioController,
-        classController: controller.classController,
-        selectedCollege: controller.selectedCollege,
-        selectedStudent: controller.selectedStudent,
-        saveButtonText: '',
-        isLoading: false,
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-        hideSaveButton: true,
-        onSave: (formData) async {},
-        onFieldBlur: (key, value) => controller.saveFieldOnBlur(key, value),
-      );
-    }
+    return Obx(() {
+      if (controller.selectedTab.value == 0) {
+        return PersonalDetailsForm(
+          fullNameController: controller.fullNameController,
+          birthdayController: controller.birthdayController,
+          emailController: controller.emailController,
+          cityController: controller.cityController,
+          selectedGender: controller.selectedGender,
+          selectedDeviceModel: controller.selectedDeviceModel,
+          saveButtonText: '',
+          isLoading: false,
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          hideSaveButton: true,
+          onSave: (formData) async {},
+          onFieldBlur: (key, value) => controller.saveFieldOnBlur(key, value),
+        );
+      } else {
+        return AccountDetailsForm(
+          socialMediaController: controller.socialMediaController,
+          professionController: controller.professionController,
+          bioController: controller.bioController,
+          classController: controller.classController,
+          selectedCollege: controller.selectedCollege,
+          selectedStudent: controller.selectedStudent,
+          saveButtonText: '',
+          isLoading: false,
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+          hideSaveButton: true,
+          onSave: (formData) async {},
+          onFieldBlur: (key, value) => controller.saveFieldOnBlur(key, value),
+        );
+      }
+    });
   }
 }

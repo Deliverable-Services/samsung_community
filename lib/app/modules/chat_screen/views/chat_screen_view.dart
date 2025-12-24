@@ -24,6 +24,7 @@ class ChatScreenView extends GetView<ChatScreenController> {
                 child: Column(
                   children: [
                     ChatProfileSection(controller: controller),
+                    SizedBox(height: 10),
                     ChatMessagesList(controller: controller),
                   ],
                 ),
