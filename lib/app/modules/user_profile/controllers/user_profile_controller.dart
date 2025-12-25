@@ -68,6 +68,7 @@ class UserProfileController extends GetxController {
           .from('users')
           .select('*')
           .eq('id', targetUserId)
+          .isFilter('deleted_at', null)
           .maybeSingle();
       if (response != null) {
         user.value = UserModel.fromJson(response);
@@ -97,13 +98,15 @@ class UserProfileController extends GetxController {
       final followersResult = await SupabaseService.client
           .from('user_follows')
           .select()
-          .eq('following_id', targetUserId);
+          .eq('following_id', targetUserId)
+          .isFilter('deleted_at', null);
       followersCount.value = (followersResult as List).length;
 
       final followingResult = await SupabaseService.client
           .from('user_follows')
           .select()
-          .eq('follower_id', targetUserId);
+          .eq('follower_id', targetUserId)
+          .isFilter('deleted_at', null);
       followingCount.value = (followingResult as List).length;
     } catch (_) {
     } finally {
@@ -194,6 +197,7 @@ class UserProfileController extends GetxController {
         .select()
         .eq('follower_id', currentUserId)
         .eq('following_id', targetUserId)
+        .isFilter('deleted_at', null)
         .maybeSingle();
     isFollowing.value = result != null;
 
@@ -202,6 +206,7 @@ class UserProfileController extends GetxController {
         .select()
         .eq('follower_id', targetUserId)
         .eq('following_id', currentUserId)
+        .isFilter('deleted_at', null)
         .maybeSingle();
     isFollowedBy.value = reverseResult != null;
   }
@@ -214,7 +219,7 @@ class UserProfileController extends GetxController {
       if (isFollowing.value) {
         await SupabaseService.client
             .from('user_follows')
-            .delete()
+            .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
             .eq('follower_id', currentUserId)
             .eq('following_id', targetUserId);
         isFollowing.value = false;
@@ -438,7 +443,8 @@ class UserProfileController extends GetxController {
       final currentUserConvs = await SupabaseService.client
           .from('conversation_participants')
           .select('conversation_id')
-          .eq('user_id', currentUserId);
+          .eq('user_id', currentUserId)
+          .isFilter('deleted_at', null);
 
       if ((currentUserConvs as List).isEmpty) {
         return await _createNewConversation(currentUserId, otherUserId);
@@ -453,6 +459,7 @@ class UserProfileController extends GetxController {
           .select('conversation_id')
           .eq('user_id', otherUserId)
           .inFilter('conversation_id', convIds)
+          .isFilter('deleted_at', null)
           .maybeSingle();
 
       if (sharedConversation != null) {

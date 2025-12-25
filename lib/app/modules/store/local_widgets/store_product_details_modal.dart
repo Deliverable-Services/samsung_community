@@ -13,12 +13,40 @@ import '../../../data/helper_widgets/event_tablet.dart';
 import '../../../data/helper_widgets/video_player/video_player_widget.dart';
 import '../../../data/models/store_product_model.dart';
 import '../../../repository/auth_repo/auth_repo.dart';
+import '../controllers/store_controller.dart';
 import 'shipping_address_modal.dart';
 
 class StoreProductDetailsModal extends StatelessWidget {
   final StoreProductModel product;
+  final bool hideBuyButton;
 
-  const StoreProductDetailsModal({super.key, required this.product});
+  const StoreProductDetailsModal({
+    super.key,
+    required this.product,
+    this.hideBuyButton = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = Get.find<StoreController>();
+    return _StoreProductDetailsModalContent(
+      product: product,
+      hideBuyButton: hideBuyButton,
+      controller: controller,
+    );
+  }
+}
+
+class _StoreProductDetailsModalContent extends StatelessWidget {
+  final StoreProductModel product;
+  final bool hideBuyButton;
+  final StoreController controller;
+
+  const _StoreProductDetailsModalContent({
+    required this.product,
+    required this.hideBuyButton,
+    required this.controller,
+  });
 
   String _formatPoints(int points) {
     return points.toString().replaceAllMapped(
@@ -52,8 +80,9 @@ class StoreProductDetailsModal extends StatelessWidget {
       Get.back();
       ShippingAddressModal.show(
         context,
+        product: product,
         onConfirm: () {
-          // TODO: Handle purchase confirmation
+          // Order created successfully
         },
       );
     } catch (e) {
@@ -169,15 +198,23 @@ class StoreProductDetailsModal extends StatelessWidget {
                 },
               ),
             ),
-          SizedBox(height: 24.h),
-          AppButton(
-            onTap: () {
-              _handlePurchase(context);
-            },
-            text:
-                '${'buying'.tr} ${'homePoints'.tr}${_formatPoints(product.costPoints)}',
-            width: double.infinity,
-          ),
+          if (!hideBuyButton) ...[
+            SizedBox(height: 24.h),
+            Obx(
+              () => AppButton(
+                onTap: controller.isCreatingOrder.value
+                    ? null
+                    : () {
+                        _handlePurchase(context);
+                      },
+                text: controller.isCreatingOrder.value
+                    ? 'Processing...'
+                    : '${'buying'.tr} ${'homePoints'.tr}${_formatPoints(product.costPoints)}',
+                width: double.infinity,
+                isEnabled: !controller.isCreatingOrder.value,
+              ),
+            ),
+          ],
         ],
       ),
     );

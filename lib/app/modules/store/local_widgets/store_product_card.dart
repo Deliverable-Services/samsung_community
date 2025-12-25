@@ -12,8 +12,14 @@ import '../../../data/models/store_product_model.dart';
 class StoreProductCard extends StatelessWidget {
   final StoreProductModel product;
   final VoidCallback? onTap;
+  final bool isMyPurchases;
 
-  const StoreProductCard({super.key, required this.product, this.onTap});
+  const StoreProductCard({
+    super.key,
+    required this.product,
+    this.onTap,
+    this.isMyPurchases = false,
+  });
 
   String _formatPoints(int points) {
     return points.toString().replaceAllMapped(
@@ -34,7 +40,7 @@ class StoreProductCard extends StatelessWidget {
         imagePathNetwork: product.imageUrl,
         title: product.name,
         description: product.description ?? '',
-        buttonText: 'detailsPurchase'.tr,
+        buttonText: isMyPurchases ? 'details'.tr : 'detailsPurchase'.tr,
         showButton: true,
         exclusiveEvent: true,
         text: dateStr,
@@ -64,7 +70,7 @@ class StoreProductCard extends StatelessWidget {
             ),
             extraPadding: EdgeInsets.symmetric(vertical: -2.5.w),
           ),
-          if (product.quantityInStock > 0)
+          if (product.quantityInStock > 0 && !isMyPurchases)
             EventLabel(text: '${product.quantityInStock} ${'remaining'.tr}'),
         ],
       ),

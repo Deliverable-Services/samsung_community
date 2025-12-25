@@ -56,6 +56,16 @@ class ProfileController extends BaseController {
   }
 
   @override
+  void onReady() {
+    super.onReady();
+    _refreshUserData();
+  }
+
+  Future<void> _refreshUserData() async {
+    await _authRepo.loadCurrentUser();
+  }
+
+  @override
   void onClose() {
     super.onClose();
   }
@@ -172,6 +182,7 @@ class ProfileController extends BaseController {
           .from('users')
           .select('*')
           .eq('id', userId)
+          .isFilter('deleted_at', null)
           .maybeSingle();
 
       if (response != null) {

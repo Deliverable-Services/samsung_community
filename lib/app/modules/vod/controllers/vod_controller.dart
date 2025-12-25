@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../common/services/content_service.dart';
 import '../../../data/core/base/base_controller.dart';
+import '../../../repository/auth_repo/auth_repo.dart';
 import '../../../data/core/utils/result.dart';
 import '../../../data/helper_widgets/audio_player/audio_player_manager.dart';
 import '../../../data/helper_widgets/video_player/video_player_manager.dart';
@@ -28,11 +29,23 @@ class VodController extends BaseController {
   VodController({ContentService? contentService})
     : _contentService = contentService ?? ContentService();
 
+  final AuthRepo _authRepo = Get.find<AuthRepo>();
+
   @override
   void onInit() {
     super.onInit();
     searchController.addListener(_onSearchChanged);
     loadContent();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    _refreshUserData();
+  }
+
+  Future<void> _refreshUserData() async {
+    await _authRepo.loadCurrentUser();
   }
 
   @override
@@ -92,8 +105,11 @@ class VodController extends BaseController {
         filterType = ContentType.podcast;
       }
 
-      final List<ContentType> allowedTypes = [ContentType.vod, ContentType.podcast];
-      
+      final List<ContentType> allowedTypes = [
+        ContentType.vod,
+        ContentType.podcast,
+      ];
+
       final result = await _contentService.getContent(
         contentType: filterType,
         allowedContentTypes: allowedTypes,
@@ -105,7 +121,7 @@ class VodController extends BaseController {
 
       if (result.isSuccess) {
         final newContent = result.dataOrNull ?? [];
-        
+
         if (loadMore) {
           contentList.addAll(newContent);
         } else {

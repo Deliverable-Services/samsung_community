@@ -229,5 +229,7 @@ class HebrewiLocalization {
     "confirmation": "אישור",
     "orderCompletedSuccessfully": "ההזמנה הושלמה בהצלחה",
     "courierContactMessage": "השליח יצור איתך קשר כדי לתאם משלוח.",
+    "invalidZipCode": "אנא הזן מיקוד תקין",
+    "noPurchasesYet": "עדיין אין רכישות",
   };
 }

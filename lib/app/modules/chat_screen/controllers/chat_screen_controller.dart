@@ -63,6 +63,7 @@ class ChatScreenController extends GetxController {
             .from('users')
             .select('id')
             .eq('auth_user_id', user.id)
+            .isFilter('deleted_at', null)
             .single();
         currentUserId.value = userData['id'] as String;
       }
@@ -78,6 +79,7 @@ class ChatScreenController extends GetxController {
           .from('users')
           .select()
           .eq('id', userId)
+          .isFilter('deleted_at', null)
           .single();
       
       otherUser.value = UserModel.fromJson(response);
@@ -100,6 +102,7 @@ class ChatScreenController extends GetxController {
           .select()
           .eq('blocker_id', currentUserId.value)
           .eq('blocked_id', userId)
+          .isFilter('deleted_at', null)
           .maybeSingle();
       
       isBlocked.value = response != null;
@@ -120,6 +123,7 @@ class ChatScreenController extends GetxController {
           .from('conversation_messages')
           .select('*, sender:users!conversation_messages_sender_id_fkey(id, full_name, profile_picture_url)')
           .eq('conversation_id', conversationId.value)
+          .isFilter('deleted_at', null)
           .order('created_at', ascending: true);
       
       messages.value = (response as List).map((msg) {

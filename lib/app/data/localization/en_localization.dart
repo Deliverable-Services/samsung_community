@@ -238,5 +238,7 @@ class EnLocalization {
     "confirmation": "confirmation",
     "orderCompletedSuccessfully": "Order completed successfully",
     "courierContactMessage": "The courier will contact you to arrange delivery.",
+    "invalidZipCode": "Please enter a valid zip code",
+    "noPurchasesYet": "No purchases yet",
   };
 }

@@ -15,7 +15,6 @@ class StoreHeader extends StatelessWidget {
         Text(
           'exploreStore'.tr,
           style: TextStyle(
-            fontFamily: 'Samsung Sharp Sans',
             fontWeight: FontWeight.w700,
             fontSize: 16.sp,
             height: 24 / 16,
@@ -43,4 +42,3 @@ class StoreHeader extends StatelessWidget {
     );
   }
 }
-
