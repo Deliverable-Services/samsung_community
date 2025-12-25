@@ -15,7 +15,10 @@ class AcademyService {
     String? searchQuery,
   }) async {
     try {
-      var query = SupabaseService.client.from('academy_content').select();
+      var query = SupabaseService.client
+          .from('academy_content')
+          .select()
+          .isFilter('deleted_at', null);
       print('contentType::::::::::${contentType}');
       if (contentType != null) {
         query = query.eq('file_type', contentType.toJson());
@@ -92,7 +95,7 @@ class AcademyService {
     try {
       await SupabaseService.client
           .from('academy_content')
-          .delete()
+          .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
           .eq('id', contentId);
 
       return const Success(null);
@@ -141,6 +144,7 @@ class AcademyService {
           .from('academy_content')
           .select()
           .eq('id', id)
+          .isFilter('deleted_at', null)
           .maybeSingle();
 
       if (response == null) {

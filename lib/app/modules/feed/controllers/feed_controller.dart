@@ -11,6 +11,7 @@ import '../../../common/services/storage_service.dart';
 import '../../../common/services/supabase_service.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/core/base/base_controller.dart';
+import '../../../repository/auth_repo/auth_repo.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/core/utils/result.dart';
 import '../../../data/helper_widgets/bottom_sheet_modal.dart';
@@ -51,10 +52,22 @@ class FeedController extends BaseController {
   }) : _contentService = contentService ?? ContentService(),
        _interactionService = interactionService ?? ContentInteractionService();
 
+  final AuthRepo _authRepo = Get.find<AuthRepo>();
+
   @override
   void onInit() {
     super.onInit();
     loadContent();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    _refreshUserData();
+  }
+
+  Future<void> _refreshUserData() async {
+    await _authRepo.loadCurrentUser();
   }
 
   void setFilter(int index) {
@@ -71,6 +84,7 @@ class FeedController extends BaseController {
         .from('users')
         .select('*')
         .eq('id', userId)
+        .isFilter('deleted_at', null)
         .maybeSingle();
 
     if (response != null) {

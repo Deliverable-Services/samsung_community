@@ -46,5 +46,7 @@ class AppImages {
       blockIcon = '$baseUrl/blocked.svg',
       editProfileIcon = '$baseUrl/edit_profile.svg',
       reportIcon = '$baseUrl/report.svg',
-      reportedIcon = '$baseUrl/reported.svg';
+      reportedIcon = '$baseUrl/reported.svg',
+      notEnoughPointsIcon = '$baseUrl/not_enough_points.svg',
+      verifiedIcon = '$baseUrl/verify.svg';
 }

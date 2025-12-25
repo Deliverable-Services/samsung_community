@@ -71,7 +71,8 @@ class BlockedUsersController extends BaseController {
               updated_at
             )
           ''')
-          .eq('blocker_id', currentUser.id);
+          .eq('blocker_id', currentUser.id)
+          .isFilter('deleted_at', null);
 
       final List<UserModel> users = [];
       for (final item in response as List) {
@@ -111,7 +112,7 @@ class BlockedUsersController extends BaseController {
 
       await SupabaseService.client
           .from('user_blocks')
-          .delete()
+          .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
           .eq('blocker_id', currentUser.id)
           .eq('blocked_id', userId);
 

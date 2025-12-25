@@ -15,6 +15,7 @@ class UserService {
           .from('users')
           .select('id')
           .eq('phone_number', normalizedPhone)
+          .isFilter('deleted_at', null)
           .maybeSingle();
 
       return Success(response != null);
@@ -34,6 +35,7 @@ class UserService {
           .from('users')
           .select('id, status, role, device_model')
           .eq('phone_number', normalizedPhone)
+          .isFilter('deleted_at', null)
           .maybeSingle();
 
       if (response == null) {

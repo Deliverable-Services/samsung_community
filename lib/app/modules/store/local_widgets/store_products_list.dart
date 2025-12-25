@@ -21,13 +21,17 @@ class StoreProductsList extends GetView<StoreController> {
       final products = controller.filteredProducts;
 
       if (products.isEmpty && !controller.isLoadingProducts.value) {
+        final emptyMessage = controller.selectedTabIndex.value == 0
+            ? 'noProducts'.tr
+            : 'noPurchasesYet'.tr;
+
         return SliverFillRemaining(
           hasScrollBody: false,
           child: Center(
             child: Padding(
               padding: EdgeInsets.all(20.h),
               child: Text(
-                'noProducts'.tr,
+                emptyMessage,
                 style: TextStyle(
                   fontFamily: 'Samsung Sharp Sans',
                   fontSize: 14.sp,
@@ -45,12 +49,14 @@ class StoreProductsList extends GetView<StoreController> {
           delegate: SliverChildBuilderDelegate(
             (context, index) {
               if (index < products.length) {
+                final isMyPurchases = controller.selectedTabIndex.value == 1;
                 return Padding(
                   padding: EdgeInsets.only(bottom: 20.h),
                   child: StoreProductCard(
                     product: products[index],
+                    isMyPurchases: isMyPurchases,
                     onTap: () {
-                      // TODO: Navigate to product details
+                      controller.showProductDetails(products[index]);
                     },
                   ),
                 );
@@ -71,4 +77,3 @@ class StoreProductsList extends GetView<StoreController> {
     });
   }
 }
-
