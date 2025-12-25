@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 import 'app/common/services/app_lifecycle_service.dart';
+import 'app/common/services/profile_service.dart';
 import 'app/common/services/supabase_service.dart';
 import 'app/data/constants/app_consts.dart';
 import 'app/data/localization/get_prefs.dart';
@@ -37,6 +38,7 @@ Future<void> main() async {
   );
   LanguageController _languageController = Get.put(LanguageController());
   Get.put(AuthRepo(), permanent: true);
+  Get.put(ProfileService(), permanent: true);
   final appLifecycleService = Get.put(AppLifecycleService(), permanent: true);
   await appLifecycleService.initialize();
   runApp(

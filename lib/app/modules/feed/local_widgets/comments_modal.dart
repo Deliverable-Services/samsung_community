@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 
 import '../../../common/services/content_interaction_service.dart';
 import '../../../common/services/supabase_service.dart';
+import '../../../repository/auth_repo/auth_repo.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../data/core/utils/result.dart';
@@ -217,16 +218,38 @@ class _CommentsModalState extends State<CommentsModal> {
           SizedBox(height: 16.h),
           Row(
             children: [
-              SizedBox(
-                width: 32.w,
-                height: 32.h,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16.r),
-                  child: SupabaseService.currentUser != null
-                      ? Image.asset(AppImages.avatar)
-                      : Image.asset(AppImages.avatar),
-                ),
-              ),
+              Obx(() {
+                final authRepo = Get.find<AuthRepo>();
+                final currentUser = authRepo.currentUser.value;
+                final profilePictureUrl = currentUser?.profilePictureUrl;
+                
+                return SizedBox(
+                  width: 32.w,
+                  height: 32.h,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16.r),
+                    child: profilePictureUrl != null && profilePictureUrl.isNotEmpty
+                        ? CachedNetworkImage(
+                            imageUrl: profilePictureUrl,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                            errorWidget: (_, __, ___) => Image.asset(
+                              AppImages.avatar,
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : Image.asset(
+                            AppImages.avatar,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                  ),
+                );
+              }),
               SizedBox(width: 12.w),
               Expanded(
                 child: TextField(

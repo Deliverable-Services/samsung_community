@@ -17,15 +17,15 @@ class StatsSection extends GetView<ProfileController> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
+          Obx(() => Expanded(
             child: StatCard(
               icon: AppImages.profilePostIcon,
               count: controller.postsCount,
               label: 'posts'.tr,
             ),
-          ),
+          )),
           SizedBox(width: 8.w),
-          Expanded(
+          Obx(() => Expanded(
             child: StatCard(
               icon: AppImages.profileFollowersIcon,
               count: controller.followersCount,
@@ -35,9 +35,9 @@ class StatsSection extends GetView<ProfileController> {
                 parameters: {'tab': 'followers'},
               ),
             ),
-          ),
+          )),
           SizedBox(width: 8.w),
-          Expanded(
+          Obx(() => Expanded(
             child: StatCard(
               icon: AppImages.profileFollowingIcon,
               count: controller.followingCount,
@@ -47,7 +47,7 @@ class StatsSection extends GetView<ProfileController> {
                 parameters: {'tab': 'following'},
               ),
             ),
-          ),
+          )),
         ],
       ),
     );

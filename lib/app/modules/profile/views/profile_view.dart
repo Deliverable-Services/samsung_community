@@ -31,9 +31,12 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.refreshProfileData();
-    });
+    final route = ModalRoute.of(context);
+    if (route != null && route.isCurrent) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.refreshProfileData();
+      });
+    }
   }
 
   @override
@@ -49,7 +52,7 @@ class _ProfileViewState extends State<ProfileView> {
                 Expanded(
                   child: Obx(() {
                     final isLoading = controller.isLoading.value;
-                    final user = controller.user.value;
+                    final user = controller.userRx.value;
 
                     return CustomScrollView(
                       key: ValueKey('profile_scroll_${user?.id ?? 'loading'}'),
