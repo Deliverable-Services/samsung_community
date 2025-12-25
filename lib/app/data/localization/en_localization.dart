@@ -108,14 +108,14 @@ class EnLocalization {
     "whichOneCorrect": "Which one's correct? Pick one.",
 
     // Events Screen
-    "communityEvents":"Community Events",
-    "uniqueExperiences":"Unique experiences for our members.",
-    "search":"Search...",
-    "exploreOurEvents":"Explore our Events...",
-    "allEvents":'All Events',
-    "myEvents":'My Events',
-    "details":'Details',
-    "buying":'Buying',
+    "communityEvents": "Community Events",
+    "uniqueExperiences": "Unique experiences for our members.",
+    "search": "Search...",
+    "exploreOurEvents": "Explore our Events...",
+    "allEvents": 'All Events',
+    "myEvents": 'My Events',
+    "details": 'Details',
+    "buying": 'Buying',
 
     // Home Screen
     "homeExclusiveLaunchEvent": "Exclusive Launch Event",
@@ -225,7 +225,20 @@ class EnLocalization {
     "noMessagesYet": "No messages yet",
     "report": "Report",
     "reportSubmittedSuccessfully": "Report Submitted Successfully",
-    "reportSuccessMessage": "Your report has been successfully sent to the community manager",
+    "reportSuccessMessage":
+        "Your report has been successfully sent to the community manager",
     "close": "Close",
+    "insufficientPoints": "You don't have enough points.",
+    "insufficientPointsMessage":
+        "Your balance is too low to complete this action.",
+    "shippingAddress": "Shipping address",
+    "address": "address",
+    "zipCode": "zip code",
+    "contactPhoneNumber": "Contact phone number",
+    "confirmation": "confirmation",
+    "orderCompletedSuccessfully": "Order completed successfully",
+    "courierContactMessage": "The courier will contact you to arrange delivery.",
+    "invalidZipCode": "Please enter a valid zip code",
+    "noPurchasesYet": "No purchases yet",
   };
 }

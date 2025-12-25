@@ -1,8 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
+import '../../../common/services/supabase_service.dart';
+import '../../../data/core/utils/common_snackbar.dart';
+import '../../../data/helper_widgets/bottom_sheet_modal.dart';
 import '../../../data/models/store_product_model.dart';
+import '../../../repository/auth_repo/auth_repo.dart';
+import '../local_widgets/store_product_details_modal.dart';
 
 class StoreController extends GetxController {
   final RxInt selectedTabIndex = 0.obs;
@@ -11,6 +17,7 @@ class StoreController extends GetxController {
   final RxBool isLoadingProducts = false.obs;
   final RxBool isLoadingMore = false.obs;
   final RxBool hasMoreData = true.obs;
+  final RxBool isCreatingOrder = false.obs;
   final TextEditingController searchController = TextEditingController();
   final RxString searchQuery = ''.obs;
 
@@ -19,11 +26,23 @@ class StoreController extends GetxController {
   static const int _pageSize = 10;
   int _currentOffset = 0;
 
+  final AuthRepo _authRepo = Get.find<AuthRepo>();
+
   @override
   void onInit() {
     super.onInit();
     searchController.addListener(_onSearchChanged);
     loadProducts();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    _refreshUserData();
+  }
+
+  Future<void> _refreshUserData() async {
+    await _authRepo.loadCurrentUser();
   }
 
   @override
@@ -68,173 +87,109 @@ class StoreController extends GetxController {
       isLoadingProducts.value = true;
     }
 
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      var query = SupabaseService.client
+          .from('store_products')
+          .select()
+          .eq('is_available', true)
+          .isFilter('deleted_at', null);
 
-    final dummyProducts = _getDummyProducts();
+      if (searchQuery.value.isNotEmpty) {
+        final searchTerm = '%${searchQuery.value.trim()}%';
+        query = query.ilike('name', searchTerm);
+      }
 
-    List<StoreProductModel> filteredProducts = dummyProducts;
-    if (searchQuery.value.isNotEmpty) {
-      filteredProducts = dummyProducts
-          .where(
-            (product) => product.name.toLowerCase().contains(
-              searchQuery.value.toLowerCase(),
-            ),
-          )
-          .toList();
-    }
+      var transformQuery = query.order('created_at', ascending: false);
 
-    if (loadMore) {
-      final startIndex = _currentOffset;
-      final endIndex = startIndex + _pageSize;
-      if (startIndex < filteredProducts.length) {
-        final newProducts = filteredProducts.sublist(
-          startIndex,
-          endIndex > filteredProducts.length
-              ? filteredProducts.length
-              : endIndex,
+      if (loadMore) {
+        transformQuery = transformQuery.range(
+          _currentOffset,
+          _currentOffset + _pageSize - 1,
         );
-        productsList.addAll(newProducts);
-        _currentOffset = endIndex;
-        if (endIndex >= filteredProducts.length) {
-          hasMoreData.value = false;
-        }
       } else {
+        transformQuery = transformQuery.range(0, _pageSize - 1);
+      }
+
+      final response = await transformQuery;
+      final productsData = response as List<dynamic>;
+
+      final newProducts = productsData
+          .map((json) => StoreProductModel.fromJson(json as Map<String, dynamic>))
+          .toList();
+
+      if (loadMore) {
+        productsList.addAll(newProducts);
+        _currentOffset += newProducts.length;
+      } else {
+        productsList.value = newProducts;
+        _currentOffset = newProducts.length;
+      }
+
+      if (newProducts.length < _pageSize) {
         hasMoreData.value = false;
       }
-    } else {
-      final limitedProducts = filteredProducts.take(_pageSize).toList();
-      productsList.value = limitedProducts;
-      _currentOffset = limitedProducts.length;
-      if (limitedProducts.length < _pageSize ||
-          limitedProducts.length >= filteredProducts.length) {
-        hasMoreData.value = false;
-      }
+    } catch (e) {
+      debugPrint('Error loading products: $e');
+      CommonSnackbar.error('somethingWentWrong'.tr);
+    } finally {
+      isLoadingProducts.value = false;
+      isLoadingMore.value = false;
     }
-
-    isLoadingProducts.value = false;
-    isLoadingMore.value = false;
   }
 
-  List<StoreProductModel> _getDummyProducts() {
-    final now = DateTime.now();
-    return [
-      StoreProductModel(
-        id: '1',
-        name: 'By Neta products',
-        description:
-            'Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....',
-        costPoints: 1000,
-        quantityInStock: 23,
-        imageUrl:
-            'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400',
-        isAvailable: true,
-        createdAt: now.subtract(const Duration(days: 5)),
-        updatedAt: now.subtract(const Duration(days: 5)),
-      ),
-      StoreProductModel(
-        id: '2',
-        name: 'Premium Skincare Set',
-        description:
-            'Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....',
-        costPoints: 2500,
-        quantityInStock: 15,
-        imageUrl:
-            'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400',
-        isAvailable: true,
-        createdAt: now.subtract(const Duration(days: 3)),
-        updatedAt: now.subtract(const Duration(days: 3)),
-      ),
-      StoreProductModel(
-        id: '3',
-        name: 'Luxury Perfume Collection',
-        description:
-            'Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....',
-        costPoints: 3500,
-        quantityInStock: 8,
-        imageUrl:
-            'https://images.unsplash.com/photo-1541643600914-78b084683601?w=400',
-        isAvailable: true,
-        createdAt: now.subtract(const Duration(days: 2)),
-        updatedAt: now.subtract(const Duration(days: 2)),
-      ),
-      StoreProductModel(
-        id: '4',
-        name: 'Beauty Essentials Bundle',
-        description:
-            'Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....',
-        costPoints: 1800,
-        quantityInStock: 30,
-        imageUrl:
-            'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400',
-        isAvailable: true,
-        createdAt: now.subtract(const Duration(days: 7)),
-        updatedAt: now.subtract(const Duration(days: 7)),
-      ),
-      StoreProductModel(
-        id: '5',
-        name: 'Hair Care Premium Kit',
-        description:
-            'Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....',
-        costPoints: 2200,
-        quantityInStock: 12,
-        imageUrl:
-            'https://images.unsplash.com/photo-1522338242992-e1a54906a8da?w=400',
-        isAvailable: true,
-        createdAt: now.subtract(const Duration(days: 1)),
-        updatedAt: now.subtract(const Duration(days: 1)),
-      ),
-      StoreProductModel(
-        id: '6',
-        name: 'Facial Treatment Set',
-        description:
-            'Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....',
-        costPoints: 2800,
-        quantityInStock: 18,
-        imageUrl:
-            'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400',
-        isAvailable: true,
-        createdAt: now.subtract(const Duration(days: 4)),
-        updatedAt: now.subtract(const Duration(days: 4)),
-      ),
-    ];
-  }
 
   Future<void> loadMyPurchases() async {
     isLoadingProducts.value = true;
-    await Future.delayed(const Duration(seconds: 1));
 
-    final now = DateTime.now();
-    final dummyPurchases = [
-      StoreProductModel(
-        id: '1',
-        name: 'By Neta products',
-        description:
-            'Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....',
-        costPoints: 1000,
-        quantityInStock: 23,
-        imageUrl:
-            'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400',
-        isAvailable: true,
-        createdAt: now.subtract(const Duration(days: 5)),
-        updatedAt: now.subtract(const Duration(days: 5)),
-      ),
-      StoreProductModel(
-        id: '2',
-        name: 'Premium Skincare Set',
-        description:
-            'Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....',
-        costPoints: 2500,
-        quantityInStock: 15,
-        imageUrl:
-            'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400',
-        isAvailable: true,
-        createdAt: now.subtract(const Duration(days: 3)),
-        updatedAt: now.subtract(const Duration(days: 3)),
-      ),
-    ];
+    try {
+      final currentUserId = SupabaseService.currentUser?.id;
+      if (currentUserId == null) {
+        myPurchasesList.clear();
+        isLoadingProducts.value = false;
+        return;
+      }
 
-    myPurchasesList.value = dummyPurchases;
-    isLoadingProducts.value = false;
+      final response = await SupabaseService.client
+          .from('store_orders')
+          .select('''
+            store_products (
+              id,
+              name,
+              description,
+              description_video_url,
+              cost_points,
+              quantity_in_stock,
+              image_url,
+              is_available,
+              created_by,
+              created_at,
+              updated_at
+            )
+          ''')
+          .eq('user_id', currentUserId)
+          .isFilter('deleted_at', null)
+          .order('ordered_at', ascending: false);
+
+      final ordersData = response as List<dynamic>;
+      final purchases = <StoreProductModel>[];
+
+      for (final order in ordersData) {
+        final productData = order['store_products'];
+        if (productData != null) {
+          purchases.add(
+            StoreProductModel.fromJson(productData as Map<String, dynamic>),
+          );
+        }
+      }
+
+      myPurchasesList.value = purchases;
+    } catch (e) {
+      debugPrint('Error loading purchases: $e');
+      CommonSnackbar.error('somethingWentWrong'.tr);
+      myPurchasesList.clear();
+    } finally {
+      isLoadingProducts.value = false;
+    }
   }
 
   void loadMoreProducts() {
@@ -248,5 +203,109 @@ class StoreController extends GetxController {
       return myPurchasesList;
     }
     return productsList;
+  }
+
+  void showProductDetails(StoreProductModel product) {
+    if (Get.context == null) return;
+
+    final isMyPurchasesTab = selectedTabIndex.value == 1;
+
+    BottomSheetModal.show(
+      Get.context!,
+      buttonType: BottomSheetButtonType.close,
+      content: StoreProductDetailsModal(
+        product: product,
+        hideBuyButton: isMyPurchasesTab,
+      ),
+    );
+  }
+
+  Future<bool> createOrder({
+    required StoreProductModel product,
+    required String city,
+    required String address,
+    required String zipCode,
+    required String phone,
+  }) async {
+    if (isCreatingOrder.value) return false;
+    
+    try {
+      isCreatingOrder.value = true;
+      
+      final currentUserId = SupabaseService.currentUser?.id;
+      if (currentUserId == null) {
+        CommonSnackbar.error('User not authenticated');
+        return false;
+      }
+
+      final authRepo = Get.find<AuthRepo>();
+      final currentUser = authRepo.currentUser.value;
+      if (currentUser == null) {
+        CommonSnackbar.error('User not found');
+        return false;
+      }
+
+      final currentPoints = currentUser.pointsBalance;
+      if (currentPoints < product.costPoints) {
+        CommonSnackbar.error('insufficientPoints'.tr);
+        return false;
+      }
+
+      final shippingAddress = '$address, $city';
+      final balanceAfter = currentPoints - product.costPoints;
+
+      final orderResponse = await SupabaseService.client
+          .from('store_orders')
+          .insert({
+            'user_id': currentUserId,
+            'product_id': product.id,
+            'quantity': 1,
+            'points_paid': product.costPoints,
+            'shipping_address': shippingAddress,
+            'shipping_zip': zipCode.trim(),
+            'shipping_phone': phone.trim(),
+            'status': 'pending',
+          })
+          .select('id')
+          .single();
+
+      final orderId = orderResponse['id'] as String;
+
+      await SupabaseService.client.from('points_transactions').insert({
+        'user_id': currentUserId,
+        'transaction_type': 'spent',
+        'amount': -product.costPoints,
+        'balance_after': balanceAfter,
+        'description': 'Purchase: ${product.name}',
+        'related_entity_type': 'store_order',
+        'related_entity_id': orderId,
+      });
+
+      await SupabaseService.client
+          .from('users')
+          .update({'points_balance': balanceAfter})
+          .eq('id', currentUserId);
+
+      final newQuantity = product.quantityInStock - 1;
+      if (newQuantity >= 0) {
+        await SupabaseService.client
+            .from('store_products')
+            .update({
+              'quantity_in_stock': newQuantity,
+              'is_available': newQuantity > 0,
+            })
+            .eq('id', product.id);
+      }
+
+      await authRepo.loadCurrentUser();
+
+      return true;
+    } catch (e) {
+      debugPrint('Error creating order: $e');
+      CommonSnackbar.error('somethingWentWrong'.tr);
+      return false;
+    } finally {
+      isCreatingOrder.value = false;
+    }
   }
 }

@@ -111,7 +111,8 @@ class FollowersFollowingController extends BaseController {
               updated_at
             )
           ''')
-          .eq('following_id', userId);
+          .eq('following_id', userId)
+          .isFilter('deleted_at', null);
 
       final List<UserModel> users = [];
       for (final item in response as List) {
@@ -163,7 +164,8 @@ class FollowersFollowingController extends BaseController {
               updated_at
             )
           ''')
-          .eq('follower_id', userId);
+          .eq('follower_id', userId)
+          .isFilter('deleted_at', null);
 
       final List<UserModel> users = [];
       for (final item in response as List) {
@@ -196,6 +198,7 @@ class FollowersFollowingController extends BaseController {
           .select()
           .eq('follower_id', currentUserId)
           .eq('following_id', otherUserId)
+          .isFilter('deleted_at', null)
           .maybeSingle();
 
       isFollowingMap[otherUserId] = response != null;
@@ -244,7 +247,7 @@ class FollowersFollowingController extends BaseController {
 
       await SupabaseService.client
           .from('user_follows')
-          .delete()
+          .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
           .eq('follower_id', currentUser.id)
           .eq('following_id', userId);
 
@@ -295,7 +298,8 @@ class FollowersFollowingController extends BaseController {
       final currentUserConvs = await SupabaseService.client
           .from('conversation_participants')
           .select('conversation_id')
-          .eq('user_id', currentUserId);
+          .eq('user_id', currentUserId)
+          .isFilter('deleted_at', null);
 
       if ((currentUserConvs as List).isEmpty) {
         return await _createNewConversation(currentUserId, otherUserId);
@@ -310,6 +314,7 @@ class FollowersFollowingController extends BaseController {
           .select('conversation_id')
           .eq('user_id', otherUserId)
           .inFilter('conversation_id', convIds)
+          .isFilter('deleted_at', null)
           .maybeSingle();
 
       if (sharedConversation != null) {

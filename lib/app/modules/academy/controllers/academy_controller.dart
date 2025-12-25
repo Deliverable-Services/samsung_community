@@ -11,6 +11,7 @@ import '../../../common/services/supabase_service.dart';
 import '../../../data/core/base/base_controller.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/core/utils/result.dart';
+import '../../../repository/auth_repo/auth_repo.dart';
 import '../../../data/helper_widgets/audio_player/audio_player_manager.dart';
 import '../../../data/helper_widgets/bottom_sheet_modal.dart';
 import '../../../data/helper_widgets/video_player/video_player_manager.dart';
@@ -43,6 +44,7 @@ class AcademyController extends BaseController {
   final uploadedMediaUrl = Rxn<String>();
   final uploadedFileName = Rxn<String>();
   final isUploadingMedia = false.obs;
+  final AuthRepo _authRepo = Get.find<AuthRepo>();
 
   @override
   void onInit() {
@@ -51,6 +53,16 @@ class AcademyController extends BaseController {
     scrollController.addListener(_onScroll);
     searchController.addListener(_onSearchChanged);
     loadContent();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    _refreshUserData();
+  }
+
+  Future<void> _refreshUserData() async {
+    await _authRepo.loadCurrentUser();
   }
 
   void _onScroll() {

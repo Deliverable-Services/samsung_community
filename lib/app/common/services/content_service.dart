@@ -16,7 +16,10 @@ class ContentService {
     String? searchQuery,
   }) async {
     try {
-      var query = SupabaseService.client.from('content').select();
+      var query = SupabaseService.client
+          .from('content')
+          .select()
+          .isFilter('deleted_at', null);
 
       if (contentType != null) {
         query = query.eq('content_type', contentType.toJson());
@@ -86,7 +89,10 @@ class ContentService {
 
   Future<Result<void>> deleteContent(String contentId) async {
     try {
-      await SupabaseService.client.from('content').delete().eq('id', contentId);
+      await SupabaseService.client
+          .from('content')
+          .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
+          .eq('id', contentId);
 
       return const Success(null);
     } catch (e) {
@@ -133,6 +139,7 @@ class ContentService {
           .from('content')
           .select()
           .eq('id', id)
+          .isFilter('deleted_at', null)
           .maybeSingle();
 
       if (response == null) {

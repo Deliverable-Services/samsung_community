@@ -13,7 +13,7 @@ class ProfileSection extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final user = controller.user.value;
+      final user = controller.userRx.value;
       final isLoading = controller.isLoading.value;
       final isUploadingImage = controller.isUploadingImage.value;
       return Padding(

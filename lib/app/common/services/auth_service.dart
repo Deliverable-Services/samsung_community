@@ -100,6 +100,7 @@ class AuthService {
             .from('users')
             .select()
             .eq('phone_number', normalizedPhone)
+            .isFilter('deleted_at', null)
             .maybeSingle();
 
         if (response != null) {
@@ -112,6 +113,7 @@ class AuthService {
           .from('users')
           .select()
           .eq('id', user.id)
+          .isFilter('deleted_at', null)
           .maybeSingle();
 
       if (responseById != null) {

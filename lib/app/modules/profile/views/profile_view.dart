@@ -12,8 +12,32 @@ import '../local_widgets/profile_header.dart';
 import '../local_widgets/profile_section.dart';
 import '../local_widgets/stats_section.dart';
 
-class ProfileView extends GetView<ProfileController> {
+class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
+
+  @override
+  State<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<ProfileView> {
+  late final ProfileController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<ProfileController>();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route != null && route.isCurrent) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.refreshProfileData();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +52,7 @@ class ProfileView extends GetView<ProfileController> {
                 Expanded(
                   child: Obx(() {
                     final isLoading = controller.isLoading.value;
-                    final user = controller.user.value;
+                    final user = controller.userRx.value;
 
                     return CustomScrollView(
                       key: ValueKey('profile_scroll_${user?.id ?? 'loading'}'),

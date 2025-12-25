@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../common/services/content_service.dart';
 import '../../../common/services/content_interaction_service.dart';
+import '../../../common/services/content_service.dart';
+import '../../../common/services/profile_service.dart';
 import '../../../common/services/storage_service.dart';
 import '../../../common/services/supabase_service.dart';
 import '../../../data/constants/app_colors.dart';
@@ -22,37 +23,54 @@ import '../../feed/local_widgets/comments_modal.dart';
 import '../../feed/local_widgets/feed_action_modal.dart';
 
 class ProfileController extends BaseController {
-  final ContentService _contentService;
   final ContentInteractionService _interactionService;
+  final ContentService _contentService;
+  final ProfileService _profileService;
   final AuthRepo _authRepo;
 
-  final Rx<UserModel?> user = Rx<UserModel?>(null);
-  final RxList<ContentModel> postsList = <ContentModel>[].obs;
-  final RxBool isLoadingPosts = false.obs;
-  final RxBool isLoadingStats = false.obs;
   final RxBool isUploadingImage = false.obs;
-  final RxMap<String, bool> likedStatusMap = <String, bool>{}.obs;
-  final RxMap<String, List<UserModel>> likedByUsersMap =
-      <String, List<UserModel>>{}.obs;
 
-  int postsCount = 0;
-  int followersCount = 0;
-  int followingCount = 0;
   bool _isDeleting = false;
 
   ProfileController({
-    ContentService? contentService,
     ContentInteractionService? interactionService,
+    ContentService? contentService,
+    ProfileService? profileService,
     AuthRepo? authRepo,
-  }) : _contentService = contentService ?? ContentService(),
-       _interactionService = interactionService ?? ContentInteractionService(),
+  }) : _interactionService = interactionService ?? ContentInteractionService(),
+       _contentService = contentService ?? ContentService(),
+       _profileService = profileService ?? Get.find<ProfileService>(),
        _authRepo = authRepo ?? Get.find<AuthRepo>();
+
+  UserModel? get user => _profileService.user.value;
+  Rx<UserModel?> get userRx => _profileService.user;
+  RxList<ContentModel> get postsList => _profileService.postsList;
+  RxBool get isLoadingPosts => _profileService.isLoadingPosts;
+  RxBool get isLoadingStats => _profileService.isLoadingStats;
+  int get postsCount => _profileService.postsCount.value;
+  int get followersCount => _profileService.followersCount.value;
+  int get followingCount => _profileService.followingCount.value;
+  @override
+  RxBool get isLoading =>
+      (_profileService.isLoadingPosts.value ||
+              _profileService.isLoadingStats.value)
+          .obs;
 
   @override
   void onInit() {
     super.onInit();
-    loadUserProfile();
-    loadUserPosts();
+    _profileService.loadUserProfile();
+    _profileService.loadUserPosts();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    _profileService.refreshProfileData();
+  }
+
+  Future<void> refreshProfileData() async {
+    await _profileService.refreshProfileData();
   }
 
   @override
@@ -61,162 +79,19 @@ class ProfileController extends BaseController {
   }
 
   Future<void> loadUserProfile() async {
-    try {
-      setLoading(true);
-      final currentUser = _authRepo.currentUser.value;
-      if (currentUser != null) {
-        final userJson = currentUser.toJson();
-        user.value = UserModel.fromJson(userJson);
-        await _loadUserStats();
-      }
-    } catch (e) {
-      handleError('Failed to load profile');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  Future<void> _loadUserStats() async {
-    isLoadingStats.value = true;
-    try {
-      final userId = user.value?.id;
-      if (userId == null) {
-        isLoadingStats.value = false;
-        return;
-      }
-
-      final postsResult = await _contentService.getContent(
-        contentType: ContentType.feed,
-        isPublished: true,
-      );
-
-      if (postsResult.isSuccess) {
-        final allPosts = postsResult.dataOrNull ?? [];
-        postsCount = allPosts.where((p) => p.userId == userId).length;
-      }
-
-      final followersResult = await SupabaseService.client
-          .from('user_follows')
-          .select()
-          .eq('following_id', userId);
-
-      followersCount = (followersResult as List).length;
-
-      final followingResult = await SupabaseService.client
-          .from('user_follows')
-          .select()
-          .eq('follower_id', userId);
-
-      followingCount = (followingResult as List).length;
-    } catch (e) {
-      debugPrint('Error loading user stats: $e');
-    } finally {
-      isLoadingStats.value = false;
-    }
+    await _profileService.loadUserProfile();
   }
 
   Future<void> loadUserPosts() async {
-    isLoadingPosts.value = true;
-    setLoading(true);
-
-    try {
-      final userId = _authRepo.currentUser.value?.id;
-      if (userId == null) {
-        isLoadingPosts.value = false;
-        setLoading(false);
-        return;
-      }
-
-      final result = await _contentService.getContent(
-        contentType: ContentType.feed,
-        isPublished: true,
-      );
-
-      if (result.isSuccess) {
-        final allContent = result.dataOrNull ?? [];
-        final userPosts = allContent.where((c) => c.userId == userId).toList();
-
-        final futures = userPosts.map((content) async {
-          final userResult = await _getUserDetail(content.userId);
-          if (userResult is Success<UserModel?>) {
-            final userModel = userResult.data;
-            if (userModel != null) {
-              return content.copyWith(userModel: userModel);
-            }
-          }
-          return content;
-        }).toList();
-
-        final updatedList = await Future.wait(futures);
-        postsList.value = updatedList;
-
-        final currentUserId = SupabaseService.currentUser?.id;
-        if (currentUserId != null) {
-          await _loadLikedStatuses(updatedList, currentUserId);
-          await _loadLikedByUsers(updatedList);
-        }
-      } else {
-        handleError(result.errorOrNull ?? 'somethingWentWrong'.tr);
-      }
-    } catch (e) {
-      handleError('somethingWentWrong'.tr);
-    } finally {
-      isLoadingPosts.value = false;
-      setLoading(false);
-    }
-  }
-
-  Future<Result<UserModel?>> _getUserDetail(String userId) async {
-    try {
-      final response = await SupabaseService.client
-          .from('users')
-          .select('*')
-          .eq('id', userId)
-          .maybeSingle();
-
-      if (response != null) {
-        return Success(UserModel.fromJson(response));
-      } else {
-        return const Success(null);
-      }
-    } catch (e) {
-      return Failure(e.toString());
-    }
-  }
-
-  Future<void> _loadLikedStatuses(
-    List<ContentModel> contents,
-    String userId,
-  ) async {
-    for (final content in contents) {
-      final result = await _interactionService.isLiked(
-        contentId: content.id,
-        userId: userId,
-      );
-      if (result.isSuccess) {
-        likedStatusMap[content.id] = result.dataOrNull ?? false;
-      }
-    }
-  }
-
-  Future<void> _loadLikedByUsers(List<ContentModel> contents) async {
-    for (final content in contents) {
-      final result = await _interactionService.getLikedByUsers(
-        contentId: content.id,
-      );
-      if (result.isSuccess) {
-        final users = result.dataOrNull ?? [];
-        likedByUsersMap[content.id] = users.cast<UserModel>();
-      }
-    }
+    await _profileService.loadUserPosts();
   }
 
   bool isLiked(String contentId) {
-    return likedStatusMap[contentId] ?? false;
+    return _profileService.isLiked(contentId);
   }
 
   List<UserModel> getLikedByUsers(String contentId) {
-    return likedByUsersMap[contentId] ?? [];
+    return _profileService.getLikedByUsers(contentId);
   }
 
   Future<void> toggleLike(String contentId) async {
@@ -230,19 +105,23 @@ class ProfileController extends BaseController {
 
     if (result.isSuccess) {
       final isLikedNow = result.dataOrNull ?? false;
-      likedStatusMap[contentId] = isLikedNow;
+      _profileService.likedStatusMap[contentId] = isLikedNow;
 
-      final post = postsList.firstWhereOrNull((p) => p.id == contentId);
+      final post = _profileService.postsList.firstWhereOrNull(
+        (p) => p.id == contentId,
+      );
       if (post != null) {
-        final index = postsList.indexOf(post);
-        postsList[index] = post.copyWith(
+        final index = _profileService.postsList.indexOf(post);
+        _profileService.postsList[index] = post.copyWith(
           likesCount: isLikedNow
               ? post.likesCount + 1
               : (post.likesCount > 0 ? post.likesCount - 1 : 0),
         );
       }
 
-      await _loadLikedByUsers([post!]);
+      if (post != null) {
+        await _profileService.refreshLikedByUsers(contentId);
+      }
     } else {
       CommonSnackbar.error(result.errorOrNull ?? 'Failed to like post');
     }
@@ -259,10 +138,14 @@ class ProfileController extends BaseController {
     );
 
     if (result.isSuccess) {
-      final post = postsList.firstWhereOrNull((p) => p.id == contentId);
+      final post = _profileService.postsList.firstWhereOrNull(
+        (p) => p.id == contentId,
+      );
       if (post != null) {
-        final index = postsList.indexOf(post);
-        postsList[index] = post.copyWith(commentsCount: post.commentsCount + 1);
+        final index = _profileService.postsList.indexOf(post);
+        _profileService.postsList[index] = post.copyWith(
+          commentsCount: post.commentsCount + 1,
+        );
       }
       CommonSnackbar.success('Comment added');
     } else {
@@ -286,7 +169,9 @@ class ProfileController extends BaseController {
   void showFeedActionModal(String? id) {
     if (id == null) return;
 
-    final content = postsList.firstWhereOrNull((c) => c.id == id);
+    final content = _profileService.postsList.firstWhereOrNull(
+      (c) => c.id == id,
+    );
     final currentUser = SupabaseService.currentUser;
     final isOwnPost =
         content != null &&
@@ -372,10 +257,9 @@ class ProfileController extends BaseController {
 
       if (result.isSuccess) {
         CommonSnackbar.success('Post deleted successfully');
-        // Reload content after 1 second - loading will be handled by loadUserPosts
         Future.delayed(const Duration(seconds: 1), () {
-          loadUserPosts();
-          _loadUserStats();
+          _profileService.loadUserPosts();
+          _profileService.loadUserProfile();
         });
       } else {
         handleError(result.errorOrNull ?? 'Failed to delete post');
@@ -478,7 +362,7 @@ class ProfileController extends BaseController {
 
   Future<void> _updateUserProfilePicture(String imageUrl) async {
     try {
-      final currentUser = _authRepo.currentUser.value;
+      final currentUser = _profileService.user.value;
       if (currentUser == null) return;
 
       await SupabaseService.client
@@ -486,14 +370,12 @@ class ProfileController extends BaseController {
           .update({'profile_picture_url': imageUrl})
           .eq('id', currentUser.id);
 
-      final updatedUser = user.value;
-      if (updatedUser != null) {
-        final updatedJson = updatedUser.toJson();
-        updatedJson['profile_picture_url'] = imageUrl;
-        final updatedUserModel = UserModel.fromJson(updatedJson);
-        user.value = updatedUserModel;
-        await _authRepo.loadCurrentUser();
-      }
+      final updatedJson = currentUser.toJson();
+      updatedJson['profile_picture_url'] = imageUrl;
+      final updatedUserModel = UserModel.fromJson(updatedJson);
+      _profileService.user.value = updatedUserModel;
+      await _authRepo.loadCurrentUser();
+      await _profileService.refreshProfileData();
     } catch (e) {
       debugPrint('Error updating user profile picture: $e');
       throw e;

@@ -78,6 +78,8 @@ class AuthRepo extends BaseController {
         currentUser.value = result.dataOrNull;
         GetPrefs.setMap(GetPrefs.userProfile, result.dataOrNull!.toJson());
         AppLifecycleService.instance.setCurrentUserId(result.dataOrNull!.id);
+      } else {
+        debugPrint('Failed to fetch user profile: ${result.errorOrNull}');
       }
     } catch (e) {
       debugPrint('Error fetching user profile: $e');

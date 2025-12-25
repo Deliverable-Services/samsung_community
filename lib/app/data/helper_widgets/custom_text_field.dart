@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../constants/app_colors.dart';
@@ -17,6 +18,7 @@ class CustomTextField extends StatefulWidget {
     this.onChanged,
     this.onEditingComplete,
     this.readOnly = false,
+    this.inputFormatters,
   });
 
   final String? label;
@@ -30,6 +32,7 @@ class CustomTextField extends StatefulWidget {
   final void Function(String)? onChanged;
   final VoidCallback? onEditingComplete;
   final bool readOnly;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -101,6 +104,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         validator: widget.validator,
                         onChanged: widget.onChanged,
                         onEditingComplete: widget.onEditingComplete,
+                        inputFormatters: widget.inputFormatters,
                         style: TextStyle(
                           fontFamily: 'Samsung Sharp Sans',
                           fontWeight: FontWeight.w500,
@@ -144,6 +148,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     validator: widget.validator,
                     onChanged: widget.onChanged,
                     onEditingComplete: widget.onEditingComplete,
+                    inputFormatters: widget.inputFormatters,
                     style: TextStyle(
                       fontFamily: 'Samsung Sharp Sans',
                       fontWeight: FontWeight.w500,

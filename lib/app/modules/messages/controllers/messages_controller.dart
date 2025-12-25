@@ -75,7 +75,8 @@ class MessagesController extends GetxController {
       final participantsResponse = await SupabaseService.client
           .from('conversation_participants')
           .select('conversation_id, last_read_at, conversations!inner(id, last_message_at)')
-          .eq('user_id', currentUserId.value);
+          .eq('user_id', currentUserId.value)
+          .isFilter('deleted_at', null);
 
       final participants = participantsResponse as List;
       
@@ -108,6 +109,7 @@ class MessagesController extends GetxController {
             .select('user_id')
             .eq('conversation_id', convId)
             .neq('user_id', currentUserId.value)
+            .isFilter('deleted_at', null)
             .maybeSingle();
 
         String? otherUserId;
@@ -124,6 +126,7 @@ class MessagesController extends GetxController {
                 .from('users')
                 .select('id, full_name, profile_picture_url')
                 .eq('id', otherUserId)
+                .isFilter('deleted_at', null)
                 .maybeSingle();
             
             if (userData != null) {
@@ -137,6 +140,7 @@ class MessagesController extends GetxController {
             .from('conversation_messages')
             .select('content, created_at')
             .eq('conversation_id', convId)
+            .isFilter('deleted_at', null)
             .order('created_at', ascending: false)
             .limit(1)
             .maybeSingle();
@@ -152,14 +156,16 @@ class MessagesController extends GetxController {
               .select('id')
               .eq('conversation_id', convId)
               .gt('created_at', lastReadAt)
-              .neq('sender_id', currentUserId.value);
+              .neq('sender_id', currentUserId.value)
+              .isFilter('deleted_at', null);
           unreadCount = (unreadResponse as List).length;
         } else {
           final unreadResponse = await SupabaseService.client
               .from('conversation_messages')
               .select('id')
               .eq('conversation_id', convId)
-              .neq('sender_id', currentUserId.value);
+              .neq('sender_id', currentUserId.value)
+              .isFilter('deleted_at', null);
           unreadCount = (unreadResponse as List).length;
         }
 

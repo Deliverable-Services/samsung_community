@@ -8,40 +8,38 @@ class FeedCardAvatar extends StatelessWidget {
   final String? authorAvatar;
   final VoidCallback? onTap;
 
-  const FeedCardAvatar({
-    super.key,
-    this.authorAvatar,
-    this.onTap,
-  });
+  const FeedCardAvatar({super.key, this.authorAvatar, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
-      width: 57.h,
-      height: 57.h,
-      child: authorAvatar?.isNotEmpty == true
-          ? CachedNetworkImage(
-              imageUrl: authorAvatar!,
-              width: double.infinity,
-              height: double.infinity,
-              fit: BoxFit.fitHeight,
-              errorWidget: (_, __, ___) => Image.asset(
-                AppImages.avatar,
-                width: double.infinity,
-                height: double.infinity,
-                fit: BoxFit.fitHeight,
-              ),
-            )
-          : Image.asset(
-              AppImages.avatar,
-              width: double.infinity,
-              height: double.infinity,
-              fit: BoxFit.fitHeight,
-              ),
-            ),
+        width: 57.h,
+        height: 57.h,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(100),
+          child: authorAvatar?.isNotEmpty == true
+              ? CachedNetworkImage(
+                  imageUrl: authorAvatar!,
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                  errorWidget: (_, __, ___) => Image.asset(
+                    AppImages.avatar,
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : Image.asset(
+                  AppImages.avatar,
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+        ),
+      ),
     );
   }
 }
-

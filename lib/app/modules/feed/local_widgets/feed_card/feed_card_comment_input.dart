@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import 'package:cached_network_image/cached_network_image.dart';
+
+import '../../../../repository/auth_repo/auth_repo.dart';
 import '../../../../data/constants/app_colors.dart';
 import '../../../../data/constants/app_images.dart';
 
@@ -58,11 +61,34 @@ class _FeedCardCommentInputState extends State<FeedCardCommentInput> {
         SizedBox(
           width: 24.w,
           height: 24.h,
-          child: Image.asset(
-            AppImages.avatar,
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.fitHeight,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(100),
+            child: Obx(() {
+              final authRepo = Get.find<AuthRepo>();
+              final currentUser = authRepo.currentUser.value;
+              final profilePictureUrl = currentUser?.profilePictureUrl;
+
+              if (profilePictureUrl != null && profilePictureUrl.isNotEmpty) {
+                return CachedNetworkImage(
+                  imageUrl: profilePictureUrl,
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                  errorWidget: (_, __, ___) => Image.asset(
+                    AppImages.avatar,
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                );
+              }
+              return Image.asset(
+                AppImages.avatar,
+                width: double.infinity,
+                height: double.infinity,
+                fit: BoxFit.cover,
+              );
+            }),
           ),
         ),
         SizedBox(width: 12.w),
@@ -104,10 +130,7 @@ class _FeedCardCommentInputState extends State<FeedCardCommentInput> {
                   size: 16.sp,
                 ),
                 padding: EdgeInsets.zero,
-                constraints: BoxConstraints(
-                  minWidth: 24.w,
-                  minHeight: 24.h,
-                ),
+                constraints: BoxConstraints(minWidth: 24.w, minHeight: 24.h),
               ),
             ),
           );
@@ -116,4 +139,3 @@ class _FeedCardCommentInputState extends State<FeedCardCommentInput> {
     );
   }
 }
-
