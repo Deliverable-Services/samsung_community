@@ -43,6 +43,7 @@ dependencies:
   just_audio: ^0.9.36
   video_thumbnail: ^0.5.3
   path_provider: ^2.1.1
+  file_picker:
 
 dev_dependencies:
   flutter_test:

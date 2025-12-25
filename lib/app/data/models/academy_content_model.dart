@@ -31,6 +31,7 @@ enum AcademyFileType {
 
 class AcademyContentModel {
   final String id;
+  final String? assignmentId;
   final String title;
   final String? description;
   final AcademyFileType fileType;
@@ -45,6 +46,7 @@ class AcademyContentModel {
 
   AcademyContentModel({
     required this.id,
+    this.assignmentId,
     required this.title,
     this.description,
     required this.fileType,
@@ -61,6 +63,7 @@ class AcademyContentModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'assignment_id': assignmentId ??'',
       'title': title,
       'description': description,
       'file_type': fileType.toJson(),
@@ -78,6 +81,7 @@ class AcademyContentModel {
   factory AcademyContentModel.fromJson(Map<String, dynamic> json) {
     return AcademyContentModel(
       id: json['id'] as String,
+      assignmentId: json['assignment_id'] ??'',
       title: json['title'] as String,
       description: json['description'] as String?,
       fileType: AcademyFileType.fromString(json['file_type'] as String),
@@ -94,6 +98,7 @@ class AcademyContentModel {
 
   AcademyContentModel copyWith({
     String? id,
+    String? assignmentId,
     String? title,
     String? description,
     AcademyFileType? fileType,
@@ -108,6 +113,7 @@ class AcademyContentModel {
   }) {
     return AcademyContentModel(
       id: id ?? this.id,
+      assignmentId: assignmentId ?? this.assignmentId ??'',
       title: title ?? this.title,
       description: description ?? this.description,
       fileType: fileType ?? this.fileType,

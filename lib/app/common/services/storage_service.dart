@@ -1,12 +1,13 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'supabase_service.dart';
 
-enum MediaType { image, video }
+enum MediaType { image, video, audio }
 
 class StorageService {
   static Future<String?> uploadMedia({
@@ -102,8 +103,22 @@ class StorageService {
         return pickImage(source: source);
       case MediaType.video:
         return pickVideo(source: source, maxDuration: maxVideoDuration);
+      case MediaType.audio:
+        return pickAudio();
     }
   }
+
+  static Future<XFile?> pickAudio() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.audio,
+    );
+
+    if (result != null && result.files.single.path != null) {
+      return XFile(result.files.single.path!);
+    }
+    return null;
+  }
+
 
   static Future<void> deleteFile({
     required String filePath,
@@ -129,6 +144,8 @@ class StorageService {
         return 'jpg';
       case MediaType.video:
         return 'mp4';
+      case MediaType.audio:
+        return 'mp3';
     }
   }
 
@@ -138,6 +155,8 @@ class StorageService {
         return 'image/jpeg';
       case MediaType.video:
         return 'video/mp4';
+      case MediaType.audio:
+        return 'audio/mp3';
     }
   }
 }
