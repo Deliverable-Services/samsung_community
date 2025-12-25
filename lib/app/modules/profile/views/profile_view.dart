@@ -12,8 +12,29 @@ import '../local_widgets/profile_header.dart';
 import '../local_widgets/profile_section.dart';
 import '../local_widgets/stats_section.dart';
 
-class ProfileView extends GetView<ProfileController> {
+class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
+
+  @override
+  State<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<ProfileView> {
+  late final ProfileController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<ProfileController>();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.refreshProfileData();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

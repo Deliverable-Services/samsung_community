@@ -39,6 +39,7 @@ class ProfileController extends BaseController {
   int followersCount = 0;
   int followingCount = 0;
   bool _isDeleting = false;
+  DateTime? _lastRefreshTime;
 
   ProfileController({
     ContentService? contentService,
@@ -58,11 +59,19 @@ class ProfileController extends BaseController {
   @override
   void onReady() {
     super.onReady();
-    _refreshUserData();
+    refreshProfileData();
   }
 
-  Future<void> _refreshUserData() async {
+  Future<void> refreshProfileData() async {
+    final now = DateTime.now();
+    if (_lastRefreshTime != null &&
+        now.difference(_lastRefreshTime!).inSeconds < 2) {
+      return;
+    }
+    _lastRefreshTime = now;
     await _authRepo.loadCurrentUser();
+    await loadUserProfile();
+    await loadUserPosts();
   }
 
   @override
