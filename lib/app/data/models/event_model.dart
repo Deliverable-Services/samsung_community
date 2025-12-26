@@ -1,19 +1,31 @@
 /// Event Model based on Supabase schema
 
 enum EventType {
-  workshop,
-  webinar,
-  meetup,
-  exclusive;
+  zoomWorkshop,
+  liveEvent,
+  reel;
 
   static EventType fromString(String value) {
+    // Handle snake_case from database
+    final normalizedValue = value.replaceAll('_', '');
     return EventType.values.firstWhere(
-      (e) => e.name == value,
-      orElse: () => EventType.workshop,
+      (e) => e.name.toLowerCase() == normalizedValue.toLowerCase() ||
+          e.name == value,
+      orElse: () => EventType.zoomWorkshop,
     );
   }
 
-  String toJson() => name;
+  String toJson() {
+    // Convert to snake_case for database
+    switch (this) {
+      case EventType.zoomWorkshop:
+        return 'zoom_workshop';
+      case EventType.liveEvent:
+        return 'live_event';
+      case EventType.reel:
+        return 'reel';
+    }
+  }
 }
 
 class EventModel {
@@ -30,6 +42,8 @@ class EventModel {
   final String? zoomLink;
   final String? zoomMeetingId;
   final String? imageUrl;
+  final String? videoUrl;
+  final DateTime? endDate;
   final bool isPublished;
   final String? createdBy;
   final DateTime createdAt;
@@ -49,6 +63,8 @@ class EventModel {
     this.zoomLink,
     this.zoomMeetingId,
     this.imageUrl,
+    this.videoUrl,
+    this.endDate,
     required this.isPublished,
     this.createdBy,
     required this.createdAt,
@@ -70,6 +86,8 @@ class EventModel {
       'zoom_link': zoomLink,
       'zoom_meeting_id': zoomMeetingId,
       'image_url': imageUrl,
+      'video_url': videoUrl,
+      'end_date': endDate?.toIso8601String(),
       'is_published': isPublished,
       'created_by': createdBy,
       'created_at': createdAt.toIso8601String(),
@@ -92,6 +110,10 @@ class EventModel {
       zoomLink: json['zoom_link'] as String?,
       zoomMeetingId: json['zoom_meeting_id'] as String?,
       imageUrl: json['image_url'] as String?,
+      videoUrl: json['video_url'] as String?,
+      endDate: json['end_date'] != null
+          ? DateTime.parse(json['end_date'] as String)
+          : null,
       isPublished: json['is_published'] as bool? ?? false,
       createdBy: json['created_by'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
@@ -113,6 +135,8 @@ class EventModel {
     String? zoomLink,
     String? zoomMeetingId,
     String? imageUrl,
+    String? videoUrl,
+    DateTime? endDate,
     bool? isPublished,
     String? createdBy,
     DateTime? createdAt,
@@ -132,6 +156,8 @@ class EventModel {
       zoomLink: zoomLink ?? this.zoomLink,
       zoomMeetingId: zoomMeetingId ?? this.zoomMeetingId,
       imageUrl: imageUrl ?? this.imageUrl,
+      videoUrl: videoUrl ?? this.videoUrl,
+      endDate: endDate ?? this.endDate,
       isPublished: isPublished ?? this.isPublished,
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,

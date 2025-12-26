@@ -5,9 +5,11 @@ import 'package:get/get.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../data/helper_widgets/bottom_sheet_modal.dart';
-import '../../../data/helper_widgets/event_buying_bottom_bar_modal.dart';
 import '../../../data/helper_widgets/event_launch_card.dart';
+import '../../../data/models/event_model.dart';
+import '../../store/local_widgets/product_detail.dart';
 import '../controllers/events_controller.dart';
+import '../local_widgets/event_email_modal.dart';
 
 class EventsView extends GetView<EventsController> {
   const EventsView({super.key});
@@ -50,130 +52,132 @@ class EventsView extends GetView<EventsController> {
             ];
           },
           body: TabBarView(
-            children: [
-              SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-                child: Column(
-                  children: [
-                    _buildSearchBarForAllEvent(),
-                    SizedBox(height: 20.h),
-                    AllEventLaunchCard(
-                      imagePath: AppImages.eventLaunchCard,
-                      title: 'homeExclusiveLaunchEvent'.tr,
-                      description: 'homeLoramDescription'.tr,
-                      exclusiveEvent: true,
-                      labels: [
-                        EventLabel(text: '08.12.2025'),
-                        EventLabel(text: '23 Remaining'),
-                      ],
-                    ),
-                    SizedBox(height: 16.h),
-                    AllEventLaunchCard(
-                      imagePath: AppImages.eventLaunchCard,
-                      title: 'homeExclusiveLaunchEvent'.tr,
-                      description: 'homeLoramDescription'.tr,
-                      exclusiveEvent: true,
-                      labels: [
-                        EventLabel(text: '08.12.2025'),
-                        EventLabel(text: '23 Remaining'),
-                      ],
-                    ),
-                    SizedBox(height: 16.h),
-                    AllEventLaunchCard(
-                      imagePath: AppImages.eventLaunchCard,
-                      title: 'homeExclusiveLaunchEvent'.tr,
-                      description: 'homeLoramDescription'.tr,
-                      exclusiveEvent: true,
-                      labels: [
-                        EventLabel(text: '08.12.2025'),
-                        EventLabel(text: '23 Remaining'),
-                      ],
-                    ),
-                    SizedBox(height: 16.h),
-                    AllEventLaunchCard(
-                      imagePath: AppImages.eventLaunchCard,
-                      title: 'homeExclusiveLaunchEvent'.tr,
-                      description: 'homeLoramDescription'.tr,
-                      exclusiveEvent: true,
-                      labels: [
-                        EventLabel(text: '08.12.2025'),
-                        EventLabel(text: '23 Remaining'),
-                      ],
-                    ),
-                    SizedBox(height: 16.h),
-                  ],
-                ),
-              ),
-              SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-                child: Column(
-                  children: [
-                    _buildSearchBar(),
-                    SizedBox(height: 20.h),
-                    EventLaunchCard(
-                      imagePath: AppImages.eventLaunchCard,
-                      title: 'homeExclusiveLaunchEvent'.tr,
-                      description: 'homeLoramDescription'.tr,
-                      text: '08.12.2025',
-                      buttonText: 'details',
-                      showButton: true,
-                      exclusiveEvent: true,
-                      onButtonTap: () {
-                        final context = Get.context;
-                        if (context == null) return;
-                        BottomSheetModal.show(
-                          context,
-                          buttonType: BottomSheetButtonType.close,
-                          content: EventBuyingBottomBarModal(
-                            title: 'homeExclusiveLaunchEvent'.tr,
-                            description:
-                                'orem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore....',
-                            text: '08.12.2025',
-                          ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: 16.h),
-                    EventLaunchCard(
-                      imagePath: AppImages.eventLaunchCard,
-                      title: 'homeExclusiveLaunchEvent'.tr,
-                      description: 'homeLoramDescription'.tr,
-                      text: '08.12.2025',
-                      buttonText: 'details',
-                      showButton: true,
-                      exclusiveEvent: true,
-                      onButtonTap: () {},
-                    ),
-                    SizedBox(height: 16.h),
-                    EventLaunchCard(
-                      imagePath: AppImages.eventLaunchCard,
-                      title: 'homeExclusiveLaunchEvent'.tr,
-                      description: 'homeLoramDescription'.tr,
-                      text: '08.12.2025',
-                      buttonText: 'details',
-                      showButton: true,
-                      exclusiveEvent: true,
-                      onButtonTap: () {},
-                    ),
-                    SizedBox(height: 16.h),
-                    EventLaunchCard(
-                      imagePath: AppImages.eventLaunchCard,
-                      title: 'homeExclusiveLaunchEvent'.tr,
-                      description: 'homeLoramDescription'.tr,
-                      text: '08.12.2025',
-                      buttonText: 'details',
-                      showButton: true,
-                      exclusiveEvent: true,
-                      onButtonTap: () {},
-                    ),
-                    SizedBox(height: 16.h),
-                  ],
-                ),
-              ),
-            ],
+            children: [_buildAllEventsTab(), _buildMyEventsTab()],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildAllEventsTab() {
+    return RefreshIndicator(
+      onRefresh: () => controller.loadAllEvents(),
+      child: Obx(() {
+        if (controller.isLoadingAllEvents.value &&
+            controller.allEventsList.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (controller.allEventsList.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: EdgeInsets.all(32.w),
+              child: Text(
+                'noEventsFound'.tr,
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+          );
+        }
+
+        return ListView(
+          controller: controller.allEventsScrollController,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+          children: [
+            _buildSearchBarForAllEvent(),
+            SizedBox(height: 20.h),
+            ...controller.allEventsList.map((event) {
+              return Column(
+                children: [
+                  AllEventLaunchCard(
+                    imagePath: AppImages.eventLaunchCard,
+                    imagePathNetwork: event.imageUrl,
+                    title: event.title,
+                    description: event.description ?? '',
+                    exclusiveEvent: true,
+                    buttonText: "Details & Registration",
+                    onButtonTap: () => _showEventDetailsModal(event),
+                    labels: [
+                      EventLabel(
+                        text: controller.formatEventDate(event.eventDate),
+                      ),
+                      EventLabel(
+                        text: event.maxTickets != null
+                            ? '${controller.getRemainingTickets(event)} ${'remaining'.tr}'
+                            : 'Unlimited',
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16.h),
+                ],
+              );
+            }).toList(),
+            if (controller.isLoadingAllEvents.value &&
+                controller.allEventsList.isNotEmpty)
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+          ],
+        );
+      }),
+    );
+  }
+
+  Widget _buildMyEventsTab() {
+    return RefreshIndicator(
+      onRefresh: () => controller.loadMyEvents(),
+      child: Obx(() {
+        if (controller.isLoadingMyEvents.value &&
+            controller.myEventsList.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (controller.myEventsList.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: EdgeInsets.all(32.w),
+              child: Text(
+                'noMyEventsFound'.tr,
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+          );
+        }
+
+        return ListView(
+          controller: controller.myEventsScrollController,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+          children: [
+            _buildSearchBar(),
+            SizedBox(height: 20.h),
+            ...controller.myEventsList.map((event) {
+              return Column(
+                children: [
+                  EventLaunchCard(
+                    imagePath: AppImages.eventLaunchCard,
+                    imagePathNetwork: event.imageUrl,
+                    title: event.title,
+                    description: event.description ?? '',
+                    text: controller.formatEventDate(event.eventDate),
+                    buttonText: 'details'.tr,
+                    showButton: true,
+                    exclusiveEvent: event.eventType == EventType.liveEvent,
+                    onButtonTap: () => _showEventDetailsModal(event),
+                  ),
+                  SizedBox(height: 16.h),
+                ],
+              );
+            }).toList(),
+            if (controller.isLoadingMyEvents.value &&
+                controller.myEventsList.isNotEmpty)
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+          ],
+        );
+      }),
     );
   }
 
@@ -364,6 +368,73 @@ class EventsView extends GetView<EventsController> {
             }),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showEventDetailsModal(EventModel event) {
+    final context = Get.context;
+    if (context == null) return;
+
+    // Build description with event details
+    String description = event.description ?? '';
+
+    // Top tablets - date
+    final List<String> topTablets = [
+      controller.formatEventDate(event.eventDate),
+    ];
+
+    // Middle tablets - points and credit
+    final List<String> middleTablets = [];
+    if (event.costCreditCents != null && event.costCreditCents! > 0) {
+      middleTablets.add(
+        'Credits: ${(event.costCreditCents! / 100).toStringAsFixed(0)}',
+      );
+    }
+    if (event.costPoints != null && event.costPoints! > 0) {
+      middleTablets.add('Points: ${event.costPoints}');
+    }
+
+    // Media URL - prefer video, then image
+    final String? mediaUrl =
+        event.videoUrl != null && event.videoUrl!.isNotEmpty
+        ? event.videoUrl
+        : event.imageUrl;
+    final bool isVideo = event.videoUrl != null && event.videoUrl!.isNotEmpty;
+
+    // Bottom button
+    String? buttonText;
+    VoidCallback? buttonOnTap;
+    if ((event.costPoints != null && event.costPoints! > 0) ||
+        (event.costCreditCents != null && event.costCreditCents! > 0)) {
+      buttonText = 'Buying';
+      buttonOnTap = () {
+        // Close the product detail modal first
+        Get.back();
+        // Show email input modal
+        EventEmailModal.show(
+          context,
+          onNext: () {
+            // TODO: Handle event purchase/registration with email
+          },
+        );
+      };
+    }
+
+    BottomSheetModal.show(
+      context,
+      buttonType: BottomSheetButtonType.close,
+      content: ProductDetail(
+        topTablets: topTablets,
+        title: event.title,
+        description: description,
+        middleTablets: middleTablets.isNotEmpty ? middleTablets : null,
+        mediaUrl: mediaUrl,
+        isVideo: isVideo,
+        bottomButtonText: buttonText,
+        bottomButtonOnTap: buttonOnTap,
+        isButtonEnabled: true,
+        tag: 'event_${event.id}',
       ),
     );
   }
