@@ -16,10 +16,8 @@ class AcademyService {
   }) async {
     try {
       var query = SupabaseService.client
-          .from('academy_content')
-          .select()
-          .isFilter('deleted_at', null);
-      print('contentType::::::::::${contentType}');
+          .from('v_academy_content_full')
+          .select();
       if (contentType != null) {
         query = query.eq('file_type', contentType.toJson());
       } else if (allowedAcademyTypes != null &&
@@ -54,7 +52,6 @@ class AcademyService {
       }
 
       final response = await transformQuery;
-      print('response:::::::::::${response}');
 
       final contentList = (response as List)
           .map(
@@ -90,7 +87,6 @@ class AcademyService {
       return Failure(AppException.fromError(e).message);
     }
   }
-
 
   Future<Result<Map<String, dynamic>>> assignmentSubmissions({
     required Map<String, dynamic> content,

@@ -20,8 +20,8 @@ class VodContent {
     this.thumbnailImage,
   });
 
-  ContentCard toContentCard() {
-    return ContentCard(
+  ContentCard1 toContentCard() {
+    return ContentCard1(
       title: title,
       description: description,
       showVideoPlayer: showVideoPlayer,

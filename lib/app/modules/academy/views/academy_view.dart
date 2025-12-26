@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../../common/services/supabase_service.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../data/helper_widgets/common_loader.dart';
@@ -12,6 +13,7 @@ import '../../../data/helper_widgets/event_launch_card.dart';
 import '../../../data/helper_widgets/filter_component.dart';
 import '../../../data/models/academy_content_model.dart';
 import '../controllers/academy_controller.dart';
+import 'assignment_card.dart';
 
 class AcademyView extends GetView<AcademyController> {
   const AcademyView({super.key});
@@ -245,10 +247,7 @@ class AcademyView extends GetView<AcademyController> {
           delegate: SliverChildBuilderDelegate(
             (context, index) {
               if (index < content.length) {
-                return Padding(
-                  padding: EdgeInsets.only(bottom: 20.h),
-                  child: _buildContentCard(content[index]),
-                );
+                return _buildContentCard(content[index]);
               }
               if (index == content.length && controller.isLoadingMore.value) {
                 return Padding(
@@ -273,107 +272,123 @@ class AcademyView extends GetView<AcademyController> {
     final isZoomWorkshop = content.fileType == AcademyFileType.zoomWorkshop;
     final mediaUrl = content.mediaFileUrl;
     final hasMedia = mediaUrl != null && mediaUrl.isNotEmpty;
+    bool userIdMatched =
+        content.submissionUserIds?.contains(SupabaseService.currentUser?.id) ??
+        false;
+
+    if (userIdMatched) {
+      return SizedBox();
+    }
     if (isZoomWorkshop) {
-      return Container(
-        padding: EdgeInsets.all(16.w),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.r),
-          gradient: const LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color.fromRGBO(214, 214, 214, 0.14),
-              Color.fromRGBO(112, 112, 112, 0.14),
-            ],
-            stops: [0.0, 1.0],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0x1A000000),
-              offset: Offset(0, 7.43.h),
-              blurRadius: 16.6.r,
-              spreadRadius: 0,
+      return Padding(
+        padding: EdgeInsets.only(bottom: 20.h),
+        child: Container(
+          padding: EdgeInsets.all(16.w),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16.r),
+            gradient: const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color.fromRGBO(214, 214, 214, 0.14),
+                Color.fromRGBO(112, 112, 112, 0.14),
+              ],
+              stops: [0.0, 1.0],
             ),
-          ],
-        ),
-        child: EventLaunchCard(
-          imagePath: AppImages.eventRegisteration,
-          title: content.title,
-          imagePathNetwork: content.mediaFileUrl,
-          description: content.description ?? '',
-          text: 'homeMoreDetails'.tr,
-          showButton: true,
-          onButtonTap: () {
-            // TODO: Navigate to Eventer payment screen
-          },
-          exclusiveEvent: false,
-          extraPaddingForButton: EdgeInsets.symmetric(horizontal: 16.w),
-          labels: [
-            EventLabel(
-              widget: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    child: SvgPicture.asset(
-                      AppImages.pointsIcon,
-                      width: 18.w,
-                      height: 18.h,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  SizedBox(width: 3.w),
-                  Text(
-                    "${'homePoints'.tr}${content.pointsToEarn}",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12.sp,
-                      letterSpacing: 0,
-                      color: AppColors.white,
-                    ),
-                  ),
-                ],
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0x1A000000),
+                offset: Offset(0, 7.43.h),
+                blurRadius: 16.6.r,
+                spreadRadius: 0,
               ),
-              extraPadding: EdgeInsets.symmetric(vertical: -2.5.w),
-              onTap: () {
-                // TODO: Handle button tap
-              },
-            ),
-            EventLabel(
-              text: DateFormat('dd.MM.yy').format(content.createdAt),
-              onTap: () {
-                // TODO: Handle button tap
-              },
-            ),
-          ],
+            ],
+          ),
+          child: EventLaunchCard(
+            imagePath: AppImages.eventRegisteration,
+            title: content.title,
+            description: content.description ?? '',
+            text: 'homeMoreDetails'.tr,
+            showButton: true,
+            onButtonTap: () {
+              // TODO: Navigate to Eventer payment screen
+            },
+            exclusiveEvent: false,
+            extraPaddingForButton: EdgeInsets.symmetric(horizontal: 16.w),
+            labels: [
+              EventLabel(
+                widget: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      child: SvgPicture.asset(
+                        AppImages.pointsIcon,
+                        width: 18.w,
+                        height: 18.h,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    SizedBox(width: 3.w),
+                    Text(
+                      "${'homePoints'.tr} ${content.pointsToEarn}",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12.sp,
+                        letterSpacing: 0,
+                        color: AppColors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                extraPadding: EdgeInsets.symmetric(vertical: -2.5.w),
+                onTap: () {
+                  // TODO: Handle button tap
+                },
+              ),
+              EventLabel(
+                text: DateFormat(
+                  'dd.MM.yyyy',
+                ).format(DateTime.parse("${content.createdAt}")),
+                onTap: () {
+                  // TODO: Handle button tap
+                },
+              ),
+            ],
+          ),
         ),
       );
     } else if (isAssignment) {
-      return ContentCard(
-        imagePath: null,
-        title: content.title,
-        description: content.description ?? '',
-        showVideoPlayer: false && hasMedia,
-        showAudioPlayer: isAssignment && hasMedia,
-        videoUrl: false && hasMedia ? mediaUrl : null,
-        audioUrl: isAssignment && hasMedia ? mediaUrl : null,
-        thumbnailUrl: content.mediaFileUrl,
-        thumbnailImage: content.mediaFileUrl,
-        contentId: content.id,
-        onButtonTap: () => controller.clickOnButtonTap(content: content),
-        pointsToEarn: content.pointsToEarn,
+      final isAudio = content.taskType?.toUpperCase() == 'Audio'.toUpperCase();
+      final isMCQ = content.taskType?.toUpperCase() == 'MCQ'.toUpperCase();
+      final isText = content.taskType?.toUpperCase() == 'Text'.toUpperCase();
+      return Padding(
+        padding: EdgeInsets.only(bottom: 20.h),
+        child: AssignmentCard(
+          title: content.title,
+          description: content.description ?? '',
+          showAudioPlayer: isAssignment && hasMedia,
+          audioUrl: isAssignment && hasMedia ? mediaUrl : null,
+          contentId: content.academyContentId,
+          pointsToEarn: content.pointsToEarn,
+          isAudio: isAudio,
+          onButtonTap: () => controller.clickOnButtonTap(content: content),
+        ),
       );
     } else {
-      return ContentCard(
-        imagePath: content.mediaFileUrl,
-        title: content.title,
-        description: content.description ?? '',
-        showVideoPlayer: isVideo && hasMedia,
-        showAudioPlayer: isAssignment && hasMedia,
-        videoUrl: isVideo && hasMedia ? mediaUrl : null,
-        audioUrl: isAssignment && hasMedia ? mediaUrl : null,
-        thumbnailUrl: content.mediaFileUrl,
-        thumbnailImage: content.mediaFileUrl,
-        contentId: content.id,
+      return Padding(
+        padding: EdgeInsets.only(bottom: 20.h),
+        child: ContentCard1(
+          imagePath: content.mediaFileUrl,
+          title: content.title,
+          description: content.description ?? '',
+          showVideoPlayer: isVideo && hasMedia,
+          showAudioPlayer: isAssignment && hasMedia,
+          videoUrl: isVideo && hasMedia ? mediaUrl : null,
+          audioUrl: isAssignment && hasMedia ? mediaUrl : null,
+          thumbnailUrl: content.mediaFileUrl,
+          thumbnailImage: content.mediaFileUrl,
+          contentId: content.academyContentId,
+        ),
       );
     }
   }

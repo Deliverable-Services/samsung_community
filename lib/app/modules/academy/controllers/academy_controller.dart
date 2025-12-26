@@ -11,12 +11,13 @@ import '../../../common/services/supabase_service.dart';
 import '../../../data/core/base/base_controller.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/core/utils/result.dart';
-import '../../../repository/auth_repo/auth_repo.dart';
 import '../../../data/helper_widgets/audio_player/audio_player_manager.dart';
 import '../../../data/helper_widgets/bottom_sheet_modal.dart';
 import '../../../data/helper_widgets/video_player/video_player_manager.dart';
 import '../../../data/models/academy_content_model.dart';
+import '../../../repository/auth_repo/auth_repo.dart';
 import '../views/academic_audio_submit_module.dart';
+import '../views/academic_text_submit_module.dart';
 
 class AcademyController extends BaseController {
   final AcademyService academyService;
@@ -28,6 +29,7 @@ class AcademyController extends BaseController {
   final RxBool hasMoreData = true.obs;
   final RxBool isConfirmChecked = false.obs;
   final TextEditingController searchController = TextEditingController();
+  final TextEditingController textController = TextEditingController();
   final RxString searchQuery = ''.obs;
 
   Timer? searchDebounceTimer;
@@ -198,6 +200,10 @@ class AcademyController extends BaseController {
       return;
     }
 
+    final isAudio = content.taskType?.toUpperCase() == 'Audio'.toUpperCase();
+    final isMCQ = content.taskType?.toUpperCase() == 'MCQ'.toUpperCase();
+    final isText = content.taskType?.toUpperCase() == 'Text'.toUpperCase();
+
     BottomSheetModal.show(
       context,
       buttonType: BottomSheetButtonType.close,
@@ -205,15 +211,157 @@ class AcademyController extends BaseController {
         clearFields();
         Get.back();
       },
-      content: AcademicAudioSubmitModule(
+      content: isAudio
+          ? AcademicAudioSubmitModule(
+              title: content.title,
+              description: content.description ?? '',
+              pointsToEarn: content.pointsToEarn,
+              onPublish1: selectMediaFile,
+              onPublish: () => clickOnSendAudio(content: content),
+            )
+          : isText
+          ? AcademicTextSubmitModule(
+              title: content.title,
+              description: content.description ?? '',
+              pointsToEarn: content.pointsToEarn,
+              onPublish: () => clickOnText(content: content),
+            )
+          : AcademicMcqSubmitModule(
+              title: content.title,
+              description: content.description ?? '',
+              pointsToEarn: content.pointsToEarn,
+              options: content.answers ?? [],
+              onSubmit: (selectedIndex) =>
+                  clickOnMcq(content: content, selectedIndex: selectedIndex),
+            ),
+    );
+  }
+
+  void clickOnSendAudio({required AcademyContentModel content}) async {
+    if (!(uploadedMediaUrl.value != null &&
+        uploadedMediaUrl.value!.isNotEmpty)) {
+      CommonSnackbar.error('Please select audio file');
+      return;
+    }
+    if (!isConfirmChecked.value) {
+      CommonSnackbar.error('Please enable check box');
+      return;
+    }
+
+    Get.back();
+
+    final user = SupabaseService.currentUser;
+    if (user == null) {
+      CommonSnackbar.error('User not found');
+      return;
+    }
+
+    final data = {
+      'solution': uploadedMediaUrl.value,
+      'assignment_id': content.assignmentId,
+      'user_id': user.id,
+    };
+
+    final result = await AcademyService().assignmentSubmissions(content: data);
+
+    if (result is Success<Map<String, dynamic>>) {
+      clearFields();
+
+      CommonSnackbar.success('Audio published successfully');
+    } else {
+      CommonSnackbar.error('Failed to publish audio');
+    }
+  }
+
+  void clickOnText({required AcademyContentModel content}) async {
+    if (!(textController.text.trim().isNotEmpty)) {
+      CommonSnackbar.error('Please enter text');
+      return;
+    }
+    if (!isConfirmChecked.value) {
+      CommonSnackbar.error('Please enable check box');
+      return;
+    }
+
+    Get.back();
+
+    final user = SupabaseService.currentUser;
+    if (user == null) {
+      CommonSnackbar.error('User not found');
+      return;
+    }
+
+    final data = {
+      'solution': textController.text,
+      'assignment_id': content.assignmentId, // ✅ now guaranteed non-null
+      'user_id': user.id,
+    };
+
+    final result = await AcademyService().assignmentSubmissions(content: data);
+
+    if (result is Success<Map<String, dynamic>>) {
+      clearFields();
+      CommonSnackbar.success('Text published successfully');
+    } else {
+      CommonSnackbar.error('Failed to publish text');
+    }
+  }
+
+  void clickOnMcq({
+    required AcademyContentModel content,
+    required int selectedIndex,
+  }) async {
+    Get.back();
+
+    final user = SupabaseService.currentUser;
+    if (user == null) {
+      CommonSnackbar.error('User not found');
+      return;
+    }
+
+    final selectedOptionMap = content.answers?[selectedIndex];
+    final selectedOptionKey = selectedOptionMap.keys.first;
+
+    final data = {
+      'solution': selectedOptionKey, // 👈 VERY IMPORTANT
+      'assignment_id': content.assignmentId,
+      'user_id': user.id,
+    };
+
+    final result = await AcademyService().assignmentSubmissions(content: data);
+
+    if (result is Success<Map<String, dynamic>>) {
+      clearFields();
+      CommonSnackbar.success('Answer submitted successfully');
+    } else {
+      CommonSnackbar.error('Failed to submit answer');
+    }
+  }
+
+  void clickOnButtonTap2({required AcademyContentModel content}) {
+    final context = Get.context;
+    if (context == null) return;
+
+    /// 🔒 Assignment guard
+    if (content.assignmentId == null) {
+      CommonSnackbar.error('This content does not accept submissions');
+      return;
+    }
+
+    BottomSheetModal.show(
+      context,
+      buttonType: BottomSheetButtonType.close,
+      onClose: () {
+        clearFields();
+        Get.back();
+      },
+      content: AcademicTextSubmitModule(
         title: content.title,
         description: content.description ?? '',
         pointsToEarn: content.pointsToEarn,
-        onPublish1: selectMediaFile,
         onPublish: () async {
-          if (!(uploadedMediaUrl.value != null &&
-              uploadedMediaUrl.value!.isNotEmpty)) {
-            CommonSnackbar.error('Please select audio file');
+          if (!(textController.text.trim().isNotEmpty)) {
+            CommonSnackbar.error('Please enter text');
             return;
           }
           if (!isConfirmChecked.value) {
@@ -230,7 +378,7 @@ class AcademyController extends BaseController {
           }
 
           final data = {
-            'solution': uploadedMediaUrl.value,
+            'solution': textController.text,
             'assignment_id': content.assignmentId, // ✅ now guaranteed non-null
             'user_id': user.id,
           };
@@ -241,9 +389,9 @@ class AcademyController extends BaseController {
 
           if (result is Success<Map<String, dynamic>>) {
             clearFields();
-            CommonSnackbar.success('Audio published successfully');
+            CommonSnackbar.success('Text published successfully');
           } else {
-            CommonSnackbar.error('Failed to publish audio');
+            CommonSnackbar.error('Failed to publish text');
           }
         },
       ),
@@ -300,7 +448,9 @@ class AcademyController extends BaseController {
   void clearFields() {
     selectedMediaFile.value = null;
     uploadedMediaUrl.value = '';
+    textController.clear();
     uploadedFileName.value = null;
     isConfirmChecked.value = false;
+    loadMoreContent();
   }
 }
