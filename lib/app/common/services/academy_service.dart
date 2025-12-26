@@ -91,6 +91,28 @@ class AcademyService {
     }
   }
 
+
+  Future<Result<Map<String, dynamic>>> assignmentSubmissions({
+    required Map<String, dynamic> content,
+  }) async {
+    try {
+      final response = await SupabaseService.client
+          .from('assignment_submissions')
+          .insert(content) // ✅ DO NOT jsonEncode
+          .select()
+          .maybeSingle(); // ✅ Safe
+
+      if (response == null) {
+        return Failure('Academy was not inserted. Check RLS policies.');
+      }
+
+      return Success(response);
+    } catch (e) {
+      debugPrint('Error in addAcademy: $e');
+      return Failure(AppException.fromError(e).message);
+    }
+  }
+
   Future<Result<void>> deleteAcademy(String contentId) async {
     try {
       await SupabaseService.client

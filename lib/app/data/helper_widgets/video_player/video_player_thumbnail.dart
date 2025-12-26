@@ -35,28 +35,30 @@ class VideoPlayerThumbnail extends StatelessWidget {
       );
     }
 
-    return Obx(() {
-      if (controller.thumbnailUrl != null) {
-        return _buildThumbnailImage(controller.thumbnailUrl!);
-      }
+    return GetBuilder(builder: (controller1) {
+     return Obx(() {
+        if (controller.thumbnailUrl != null) {
+          return _buildThumbnailImage(controller.thumbnailUrl!);
+        }
 
-      if (controller.thumbnailImage != null) {
-        return _buildThumbnailImage(controller.thumbnailImage!);
-      }
+        if (controller.thumbnailImage != null) {
+          return _buildThumbnailImage(controller.thumbnailImage!);
+        }
 
-      if (controller.generatedThumbnailPath.value != null) {
-        return _buildThumbnailImage(controller.generatedThumbnailPath.value!);
-      }
+        if (controller.generatedThumbnailPath.value != null) {
+          return _buildThumbnailImage(controller.generatedThumbnailPath.value!);
+        }
 
-      if (controller.isGenerating.value) {
-        return Container(
-          color: const Color(0xFF2A2A2A),
-          child: const Center(child: CircularProgressIndicator()),
-        );
-      }
+        if (controller.isGenerating.value) {
+          return Container(
+            color: const Color(0xFF2A2A2A),
+            child: const Center(child: CircularProgressIndicator()),
+          );
+        }
 
-      return Container(color: const Color(0xFF2A2A2A));
-    });
+        return Container(color: const Color(0xFF2A2A2A));
+      });
+    },);
   }
 
   Widget _buildThumbnailImage(String url) {

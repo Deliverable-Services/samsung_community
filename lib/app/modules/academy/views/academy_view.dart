@@ -4,17 +4,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../../common/services/supabase_service.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
-import '../../../data/helper_widgets/bottom_sheet_modal.dart';
 import '../../../data/helper_widgets/common_loader.dart';
 import '../../../data/helper_widgets/content_card.dart';
 import '../../../data/helper_widgets/event_launch_card.dart';
 import '../../../data/helper_widgets/filter_component.dart';
 import '../../../data/models/academy_content_model.dart';
 import '../controllers/academy_controller.dart';
-import 'academic_audio_submit_module.dart';
 
 class AcademyView extends GetView<AcademyController> {
   const AcademyView({super.key});
@@ -362,72 +359,7 @@ class AcademyView extends GetView<AcademyController> {
         thumbnailUrl: content.mediaFileUrl,
         thumbnailImage: content.mediaFileUrl,
         contentId: content.id,
-        onButtonTap: () {
-          final context = Get.context;
-          if (context == null) return;
-
-          BottomSheetModal.show(
-            context,
-            buttonType: BottomSheetButtonType.close,
-            content: AcademicAudioSubmitModule(
-              title: content.title,
-              description: content.description ?? '',
-              pointsToEarn: content.pointsToEarn,
-              // onPublish1: selectMediaFile,
-              // selectedMediaFile: selectedMediaFile.value,
-              // uploadedMediaUrl: uploadedMediaUrl.value,
-              // uploadedFileName: uploadedFileName.value,
-              // isUploadingMedia: isUploadingMedia.value,
-              onPublish: () async {
-                Navigator.of(context, rootNavigator: true).pop();
-                final user = SupabaseService.currentUser;
-                // if (user == null) {
-                //   CommonSnackbar.error('User not found');
-                //   onFailure();
-                //   return;
-                // }
-                //
-                // final mediaUrl = uploadedMediaUrl.value ?? '';
-                // final isVideo =
-                //     mediaUrl.toLowerCase().contains('.mp4') ||
-                //     mediaUrl.toLowerCase().contains('.mov') ||
-                //     mediaUrl.toLowerCase().contains('.avi');
-                //
-                // final data = {
-                //   'title': titleController.text.trim(),
-                //   'description': descriptionController.text.trim(),
-                //   'content_type': ContentType.feed.toJson(),
-                //   'user_id': user.id,
-                //   'media_file_url': mediaUrl,
-                //   'media_files': mediaUrl.isNotEmpty ? [mediaUrl] : [],
-                //   'thumbnail_url': isVideo ? '' : mediaUrl,
-                //   'category': '',
-                //   'points_to_earn': 0,
-                //   'is_featured': true,
-                //   'is_published': true,
-                //   'is_shared_to_community': true,
-                //   'external_share_platforms': [],
-                //   'view_count': 0,
-                //   'likes_count': 0,
-                //   'comments_count': 0,
-                // };
-                //
-                // final result = await ContentService().addContent(
-                //   content: data,
-                // );
-                //
-                // if (result is Success<Map<String, dynamic>>) {
-                //   clearFields();
-                //   CommonSnackbar.success('Post published successfully');
-                //   onSuccess();
-                // } else {
-                //   CommonSnackbar.error('Failed to publish post');
-                //   onFailure();
-                // }
-              },
-            ),
-          );
-        },
+        onButtonTap: () => controller.clickOnButtonTap(content: content),
         pointsToEarn: content.pointsToEarn,
       );
     } else {

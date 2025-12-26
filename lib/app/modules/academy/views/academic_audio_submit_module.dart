@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -10,18 +7,14 @@ import '../../../data/constants/app_button.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../data/helper_widgets/upload_file_field.dart';
+import '../controllers/academy_controller.dart';
 
 class AcademicAudioSubmitModule extends StatelessWidget {
   final String title;
   final String description;
   final VoidCallback? onPublish;
   final VoidCallback? onPublish1;
-  final File? selectedMediaFile;
-  final String? uploadedMediaUrl;
-  final String? uploadedFileName;
-  final bool isUploadingMedia;
   final int? pointsToEarn;
-
 
   const AcademicAudioSubmitModule({
     super.key,
@@ -29,266 +22,110 @@ class AcademicAudioSubmitModule extends StatelessWidget {
     required this.description,
     this.onPublish,
     this.onPublish1,
-    this.selectedMediaFile,
-    this.uploadedMediaUrl,
-    this.uploadedFileName,
     this.pointsToEarn,
-    this.isUploadingMedia = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(
-                  child: SvgPicture.asset(
-                    AppImages.pointsIcon,
-                    width: 18.w,
-                    height: 18.h,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                SizedBox(width: 3.w),
-                Text(
-                  "$pointsToEarn",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 12.sp,
-                    letterSpacing: 0,
-                    color: AppColors.white,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 14),
-          ],
-        ),
-        // Title
-        Text(
-          title,
-          style: TextStyle(
-            fontFamily: 'Samsung Sharp Sans',
-            fontWeight: FontWeight.w700,
-            fontSize: 16.sp,
-            height: 24 / 16,
-            letterSpacing: 0,
-            color: AppColors.textWhite,
-          ),
-        ),
-        // Description
-        Text(
-          description,
-          style: TextStyle(
-            fontFamily: 'Samsung Sharp Sans',
-            fontSize: 14.sp,
-            height: 22 / 14,
-            letterSpacing: 0,
-            color: AppColors.textWhite,
-          ),
-        ),
-        SizedBox(height: 20.h),
-        // Upload File Field
-        UploadFileField(
-          onTap: () {
-            onPublish1?.call();
-          },
-          uploadedFileName: uploadedFileName,
-          isUploadingMedia: isUploadingMedia,
-        ),
-        if (selectedMediaFile != null || uploadedMediaUrl != null)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    final controller = Get.find<AcademyController>();
+
+    return Obx(
+          () => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// Points
+          Row(
             children: [
-              SizedBox(height: 16.h),
-              _MediaPreview(
-                mediaFile: selectedMediaFile,
-                mediaUrl: uploadedMediaUrl,
-                fileName: uploadedFileName,
-                isUploading: isUploadingMedia,
+              SvgPicture.asset(
+                AppImages.pointsIcon,
+                width: 18.w,
+                height: 18.h,
+              ),
+              SizedBox(width: 4.w),
+              Text(
+                "${pointsToEarn ?? 0}",
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12.sp,
+                  color: AppColors.white,
+                ),
               ),
             ],
           ),
-        SizedBox(height: 24.h),
-        Text(
-          'iConfirmGranting'.tr,
-          style: TextStyle(
-            fontFamily: 'Samsung Sharp Sans',
-            fontWeight: FontWeight.w700,
-            fontSize: 12.sp,
-            height: 24 / 16,
-            letterSpacing: 0,
-            color: AppColors.textWhite,
+
+          SizedBox(height: 14.h),
+
+          /// Title
+          Text(
+            title,
+            style: TextStyle(
+              fontFamily: 'Samsung Sharp Sans',
+              fontWeight: FontWeight.w700,
+              fontSize: 16.sp,
+              color: AppColors.textWhite,
+            ),
           ),
-        ),
-        SizedBox(height: 24.h),
-        // Publish Button
-        Center(
-          child: AppButton(
-            onTap: () {
-              // TODO: Implement publish functionality
-              onPublish?.call();
-            },
+
+          /// Description
+          Text(
+            description,
+            style: TextStyle(
+              fontFamily: 'Samsung Sharp Sans',
+              fontSize: 14.sp,
+              color: AppColors.textWhite,
+            ),
+          ),
+
+          SizedBox(height: 20.h),
+
+          /// Upload file
+          UploadFileField(
+            onTap: onPublish1,
+            uploadedFileName: controller.uploadedFileName.value,
+            isUploadingMedia: controller.isUploadingMedia.value,
+          ),
+
+          SizedBox(height: 24.h),
+
+          /// Checkbox
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Checkbox(
+                value: controller.isConfirmChecked.value,
+                onChanged: (value) =>
+                controller.isConfirmChecked.value = value ?? false,
+                activeColor: AppColors.white,
+                checkColor: AppColors.primary,
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () =>
+                      controller.isConfirmChecked.toggle(),
+                  child: Text(
+                    'iConfirmGranting'.tr,
+                    style: TextStyle(
+                      fontFamily: 'Samsung Sharp Sans',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12.sp,
+                      color: AppColors.textWhite,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 24.h),
+
+          /// Submit Button (disabled until checked)
+          AppButton(
+            onTap: onPublish,
             text: 'submitAnswer'.tr,
             width: double.infinity,
             height: 48.h,
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class _MediaPreview extends StatelessWidget {
-  final File? mediaFile;
-  final String? mediaUrl;
-  final String? fileName;
-  final bool isUploading;
-
-  const _MediaPreview({
-    this.mediaFile,
-    this.mediaUrl,
-    this.fileName,
-    this.isUploading = false,
-  });
-
-  bool get _isVideo {
-    if (mediaFile != null) {
-      final path = mediaFile!.path.toLowerCase();
-      return path.endsWith('.mp4') ||
-          path.endsWith('.mov') ||
-          path.endsWith('.avi');
-    }
-    if (mediaUrl != null) {
-      return mediaUrl!.toLowerCase().contains('.mp4') ||
-          mediaUrl!.toLowerCase().contains('.mov') ||
-          mediaUrl!.toLowerCase().contains('.avi');
-    }
-    return false;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.r),
-        color: AppColors.overlayContainerBackground,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (isUploading)
-            Padding(
-              padding: EdgeInsets.all(16.w),
-              child: Row(
-                children: [
-                  const CircularProgressIndicator(),
-                  SizedBox(width: 12.w),
-                  Text(
-                    'Uploading...',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: AppColors.textWhite,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          else ...[
-            Container(
-              height: 200.h,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12.r),
-                  topRight: Radius.circular(12.r),
-                ),
-                color: AppColors.backgroundDark,
-              ),
-              child: _isVideo
-                  ? Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        if (mediaFile != null)
-                          Image.file(
-                            mediaFile!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                          )
-                        else if (mediaUrl != null)
-                          CachedNetworkImage(
-                            imageUrl: mediaUrl!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                            errorWidget: (_, __, ___) => Icon(
-                              Icons.videocam,
-                              size: 48.sp,
-                              color: AppColors.textWhiteOpacity60,
-                            ),
-                          ),
-                        Icon(
-                          Icons.play_circle_filled,
-                          size: 48.sp,
-                          color: AppColors.textWhite,
-                        ),
-                      ],
-                    )
-                  : mediaFile != null
-                  ? Image.file(
-                      mediaFile!,
-                      fit: BoxFit.fitHeight,
-                      width: double.infinity,
-                      height: double.infinity,
-                    )
-                  : mediaUrl != null
-                  ? CachedNetworkImage(
-                      imageUrl: mediaUrl!,
-                      fit: BoxFit.fitHeight,
-                      width: double.infinity,
-                      height: double.infinity,
-                      errorWidget: (_, __, ___) => Icon(
-                        Icons.image,
-                        size: 48.sp,
-                        color: AppColors.textWhiteOpacity60,
-                      ),
-                    )
-                  : const SizedBox(),
-            ),
-            if (fileName != null)
-              Padding(
-                padding: EdgeInsets.all(12.w),
-                child: Row(
-                  children: [
-                    Icon(
-                      _isVideo ? Icons.videocam : Icons.image,
-                      size: 16.sp,
-                      color: AppColors.textWhiteOpacity60,
-                    ),
-                    SizedBox(width: 8.w),
-                    Expanded(
-                      child: Text(
-                        fileName!,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: AppColors.textWhiteOpacity70,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-          ],
         ],
       ),
     );

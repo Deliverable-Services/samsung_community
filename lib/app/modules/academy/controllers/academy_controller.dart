@@ -1,15 +1,22 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../common/services/academy_service.dart';
+import '../../../common/services/storage_service.dart';
+import '../../../common/services/supabase_service.dart';
 import '../../../data/core/base/base_controller.dart';
+import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/core/utils/result.dart';
 import '../../../repository/auth_repo/auth_repo.dart';
 import '../../../data/helper_widgets/audio_player/audio_player_manager.dart';
+import '../../../data/helper_widgets/bottom_sheet_modal.dart';
 import '../../../data/helper_widgets/video_player/video_player_manager.dart';
 import '../../../data/models/academy_content_model.dart';
+import '../views/academic_audio_submit_module.dart';
 
 class AcademyController extends BaseController {
   final AcademyService academyService;
@@ -19,6 +26,7 @@ class AcademyController extends BaseController {
   final RxBool isLoadingContent = false.obs;
   final RxBool isLoadingMore = false.obs;
   final RxBool hasMoreData = true.obs;
+  final RxBool isConfirmChecked = false.obs;
   final TextEditingController searchController = TextEditingController();
   final RxString searchQuery = ''.obs;
 
@@ -32,6 +40,10 @@ class AcademyController extends BaseController {
 
   late final ScrollController scrollController;
 
+  final selectedMediaFile = Rxn<File>();
+  final uploadedMediaUrl = Rxn<String>();
+  final uploadedFileName = Rxn<String>();
+  final isUploadingMedia = false.obs;
   final AuthRepo _authRepo = Get.find<AuthRepo>();
 
   @override
@@ -132,7 +144,7 @@ class AcademyController extends BaseController {
 
       final result = await academyService.getAcademy(
         contentType: filterType,
-       // allowedAcademyTypes: allowedTypes,
+        // allowedAcademyTypes: allowedTypes,
         isPublished: true,
         limit: pageSize,
         offset: loadMore ? currentOffset : 0,
@@ -174,5 +186,121 @@ class AcademyController extends BaseController {
 
   List<AcademyContentModel> get filteredContent {
     return contentList;
+  }
+
+  void clickOnButtonTap({required AcademyContentModel content}) {
+    final context = Get.context;
+    if (context == null) return;
+
+    /// 🔒 Assignment guard
+    if (content.assignmentId == null) {
+      CommonSnackbar.error('This content does not accept submissions');
+      return;
+    }
+
+    BottomSheetModal.show(
+      context,
+      buttonType: BottomSheetButtonType.close,
+      onClose: () {
+        clearFields();
+        Get.back();
+      },
+      content: AcademicAudioSubmitModule(
+        title: content.title,
+        description: content.description ?? '',
+        pointsToEarn: content.pointsToEarn,
+        onPublish1: selectMediaFile,
+        onPublish: () async {
+          if (!(uploadedMediaUrl.value != null &&
+              uploadedMediaUrl.value!.isNotEmpty)) {
+            CommonSnackbar.error('Please select audio file');
+            return;
+          }
+          if (!isConfirmChecked.value) {
+            CommonSnackbar.error('Please enable check box');
+            return;
+          }
+
+          Get.back();
+
+          final user = SupabaseService.currentUser;
+          if (user == null) {
+            CommonSnackbar.error('User not found');
+            return;
+          }
+
+          final data = {
+            'solution': uploadedMediaUrl.value,
+            'assignment_id': content.assignmentId, // ✅ now guaranteed non-null
+            'user_id': user.id,
+          };
+
+          final result = await AcademyService().assignmentSubmissions(
+            content: data,
+          );
+
+          if (result is Success<Map<String, dynamic>>) {
+            clearFields();
+            CommonSnackbar.success('Audio published successfully');
+          } else {
+            CommonSnackbar.error('Failed to publish audio');
+          }
+        },
+      ),
+    );
+  }
+
+  Future<void> selectMediaFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(type: FileType.audio);
+      if (result != null && result.files.single.path != null) {
+        selectedMediaFile.value = File(result.files.single.path!);
+        uploadedFileName.value = result.files.single.name;
+        await _uploadMediaFile(mediaType: MediaType.audio);
+      }
+    } catch (e) {
+      CommonSnackbar.error('Failed to select file');
+    }
+  }
+
+  Future<void> _uploadMediaFile({required MediaType mediaType}) async {
+    if (selectedMediaFile.value == null) return;
+
+    isUploadingMedia.value = true;
+    try {
+      final currentUser = SupabaseService.currentUser;
+      if (currentUser == null) {
+        CommonSnackbar.error('User not found');
+        return;
+      }
+
+      final file = selectedMediaFile.value!;
+
+      final url = await StorageService.uploadMedia(
+        mediaFile: file,
+        userId: currentUser.id,
+        bucketName: 'assignments',
+        mediaType: mediaType, // image / video / audio
+      );
+
+      if (url != null) {
+        uploadedMediaUrl.value = url;
+      } else {
+        CommonSnackbar.error('Failed to upload file');
+        clearFields();
+      }
+    } catch (e) {
+      CommonSnackbar.error('Failed to upload file');
+      clearFields();
+    } finally {
+      isUploadingMedia.value = false;
+    }
+  }
+
+  void clearFields() {
+    selectedMediaFile.value = null;
+    uploadedMediaUrl.value = '';
+    uploadedFileName.value = null;
+    isConfirmChecked.value = false;
   }
 }
