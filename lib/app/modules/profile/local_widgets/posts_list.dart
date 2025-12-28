@@ -49,7 +49,9 @@ class PostsList extends GetView<ProfileController> {
             final likedUsers = controller.getLikedByUsers(post.id);
 
             return Padding(
-              padding: EdgeInsets.only(bottom: 20.h),
+              padding: EdgeInsets.only(
+                bottom: index == controller.postsList.length - 1 ? 90.h : 20.h,
+              ),
               child: FeedCard(
                 contentId: post.id,
                 authorName: post.userModel?.fullName ?? '',

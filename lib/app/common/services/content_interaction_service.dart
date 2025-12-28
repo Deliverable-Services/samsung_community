@@ -20,9 +20,10 @@ class ContentInteractionService {
           .maybeSingle();
 
       if (existingLike != null) {
+        // Hard delete - remove the like record
         await SupabaseService.client
             .from('content_likes')
-            .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
+            .delete()
             .eq('content_id', contentId)
             .eq('user_id', userId);
         return const Success(false);
@@ -49,7 +50,6 @@ class ContentInteractionService {
           .select('id')
           .eq('content_id', contentId)
           .eq('user_id', userId)
-          .isFilter('deleted_at', null)
           .maybeSingle();
 
       return Success(like != null);
@@ -116,15 +116,17 @@ class ContentInteractionService {
 
   Future<Result<List<UserModel>>> getLikedByUsers({
     required String contentId,
-    int limit = 3,
+    int? limit,
   }) async {
     try {
-      final response = await SupabaseService.client
+      final baseQuery = SupabaseService.client
           .from('content_likes')
           .select('user_id, users!inner(*)')
-          .eq('content_id', contentId)
-          .isFilter('deleted_at', null)
-          .limit(limit);
+          .eq('content_id', contentId);
+
+      final response = limit != null
+          ? await baseQuery.limit(limit)
+          : await baseQuery;
 
       final users = <UserModel>[];
       for (final item in response as List) {

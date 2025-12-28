@@ -128,20 +128,33 @@ class _AvatarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final profilePictureUrl = user?.profilePictureUrl;
+    final userId = user?.id;
+    
     return Positioned(
       left: left,
       child: Container(
+        key: ValueKey('avatar_${userId}_${profilePictureUrl ?? 'none'}'),
         width: 18.w,
         height: 18.h,
         decoration: const BoxDecoration(shape: BoxShape.circle),
-        child: user?.profilePictureUrl?.isNotEmpty == true
+        child: profilePictureUrl != null &&
+                profilePictureUrl.isNotEmpty &&
+                userId != null
             ? ClipRRect(
                 borderRadius: BorderRadius.circular(9.r),
                 child: CachedNetworkImage(
-                  imageUrl: user!.profilePictureUrl!,
+                  imageUrl: profilePictureUrl,
                   width: double.infinity,
                   height: double.infinity,
                   fit: BoxFit.cover,
+                  key: ValueKey('image_${userId}_$profilePictureUrl'),
+                  placeholder: (context, url) => Image.asset(
+                    AppImages.avatar,
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.fitHeight,
+                  ),
                   errorWidget: (_, __, ___) => Image.asset(
                     AppImages.avatar,
                     width: double.infinity,

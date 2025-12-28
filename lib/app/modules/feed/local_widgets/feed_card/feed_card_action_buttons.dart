@@ -33,8 +33,8 @@ class FeedCardActionButtons extends StatelessWidget {
           onTap: onComment,
           child: Image.asset(
             AppImages.commentIcon,
-            width: 16.w,
-            height: 16.h,
+            width: 17.h,
+            height: 17.h,
             fit: BoxFit.fitHeight,
           ),
         ),
@@ -42,4 +42,3 @@ class FeedCardActionButtons extends StatelessWidget {
     );
   }
 }
-

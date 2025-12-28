@@ -8,6 +8,7 @@ import '../../../data/constants/app_button.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../data/helper_widgets/custom_text_field.dart';
+import '../../../data/helper_widgets/title_app_bar.dart';
 import '../controllers/verification_code_controller.dart';
 
 class VerificationCodeView extends GetView<VerificationCodeController> {
@@ -21,6 +22,7 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
+        appBar: TitleAppBar(text: "", isLeading: false),
         backgroundColor: AppColors.primary,
         body: SafeArea(
           top: true,
@@ -34,7 +36,7 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(top: 36.h),
+                      padding: EdgeInsets.only(top: 10.h),
                       child: Center(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8.r),
@@ -109,7 +111,7 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                 ),
               ),
               Positioned(
-                top: 334.h,
+                top: 304.h,
                 left: 20.w,
                 child: SizedBox(
                   width: 350.w,
@@ -222,7 +224,7 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                 ),
               ),
               Positioned(
-                top: 710.h,
+                top: 680.h,
                 left: 20.w,
                 child: AppButton(
                   onTap:
@@ -239,7 +241,7 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                 ),
               ),
               Positioned(
-                top: 788.h,
+                top: 758.h,
                 left: 0,
                 right: 0,
                 child: Center(

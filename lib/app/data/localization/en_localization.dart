@@ -152,6 +152,8 @@ class EnLocalization {
     "selectSocialMedia": "Select Social Media",
     "instagram": "Instagram",
     "facebook": "Facebook",
+    "communityFeed": "Community Feed",
+    "tikTok": "TikTok",
     "delete": "Delete",
     "share": "Share",
     // Feed Screen
@@ -239,7 +241,8 @@ class EnLocalization {
     "contactPhoneNumber": "Contact phone number",
     "confirmation": "confirmation",
     "orderCompletedSuccessfully": "Order completed successfully",
-    "courierContactMessage": "The courier will contact you to arrange delivery.",
+    "courierContactMessage":
+        "The courier will contact you to arrange delivery.",
     "invalidZipCode": "Please enter a valid zip code",
     "noPurchasesYet": "No purchases yet",
   };

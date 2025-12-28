@@ -7,6 +7,7 @@ import '../constants/app_images.dart';
 
 class UploadFileField extends StatelessWidget {
   final VoidCallback? onTap;
+  final VoidCallback? onRemove;
   final String? iconPath;
   final String? uploadedFileName;
   final bool isUploadingMedia;
@@ -14,6 +15,7 @@ class UploadFileField extends StatelessWidget {
   const UploadFileField({
     super.key,
     this.onTap,
+    this.onRemove,
     this.iconPath,
     this.uploadedFileName,
     this.isUploadingMedia = false,
@@ -21,10 +23,13 @@ class UploadFileField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasFile = uploadedFileName != null && uploadedFileName!.isNotEmpty;
+
     return isUploadingMedia
         ? const Center(child: CircularProgressIndicator())
         : GestureDetector(
-            onTap: onTap,
+            onTap: hasFile ? null : onTap,
+            behavior: HitTestBehavior.opaque,
             child: Container(
               width: double.infinity,
               height: 48.h,
@@ -90,19 +95,25 @@ class UploadFileField extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                   ),
-                  Container(
-                    width: 30.w,
-                    height: 30.h,
-                    decoration: BoxDecoration(
-                      color: AppColors.accentBlue,
-                      borderRadius: BorderRadius.circular(6.r),
-                    ),
-                    child: Center(
-                      child: Image.asset(
-                        iconPath ?? AppImages.uploadFileIcon,
-                        width: 30.w,
-                        height: 30.h,
-                        fit: BoxFit.contain,
+                  GestureDetector(
+                    onTap: hasFile ? onRemove : onTap,
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(
+                      width: 30.w,
+                      height: 30.h,
+                      decoration: BoxDecoration(
+                        color: AppColors.accentBlue,
+                        borderRadius: BorderRadius.circular(6.r),
+                      ),
+                      child: Center(
+                        child: Image.asset(
+                          hasFile
+                              ? AppImages.crossIcon
+                              : (iconPath ?? AppImages.uploadFileIcon),
+                          width: hasFile ? 15.w : 30.w,
+                          height: hasFile ? 15.h : 30.h,
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
                   ),

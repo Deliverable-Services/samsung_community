@@ -82,6 +82,11 @@ class AcademicAudioSubmitModule extends StatelessWidget {
           /// Upload file
           UploadFileField(
             onTap: onPublish1,
+            onRemove: () {
+              controller.selectedMediaFile.value = null;
+              controller.uploadedMediaUrl.value = null;
+              controller.uploadedFileName.value = null;
+            },
             uploadedFileName: controller.uploadedFileName.value,
             isUploadingMedia: controller.isUploadingMedia.value,
           ),

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -245,35 +246,105 @@ class UserProfileController extends GetxController {
       return;
     }
 
-    try {
-      final result = await _interactionService.toggleLike(
-        contentId: contentId,
-        userId: currentUserId,
-      );
+    final post = postsList.firstWhereOrNull((p) => p.id == contentId);
+    if (post == null) return;
 
+    // Store previous state for potential revert
+    final previousIsLiked = likedStatusMap[contentId] ?? false;
+    final previousLikesCount = post.likesCount;
+    final previousLikedByUsers = List<UserModel>.from(
+      likedByUsersMap[contentId] ?? [],
+    );
+
+    // Optimistic update - update UI immediately
+    final newIsLiked = !previousIsLiked;
+    likedStatusMap[contentId] = newIsLiked;
+
+    final index = postsList.indexOf(post);
+    final newLikesCount = newIsLiked
+        ? previousLikesCount + 1
+        : (previousLikesCount > 0 ? previousLikesCount - 1 : 0);
+
+    postsList[index] = post.copyWith(likesCount: newLikesCount);
+
+    // Update likedByUsers optimistically
+    if (newIsLiked) {
+      final existingLikedBy = likedByUsersMap[contentId] ?? [];
+      final userExists = existingLikedBy.any((u) => u.id == currentUserId);
+      if (!userExists) {
+        // Get current user data from database to create UserModel
+        SupabaseService.client
+            .from('users')
+            .select()
+            .eq('id', currentUserId)
+            .isFilter('deleted_at', null)
+            .maybeSingle()
+            .then((userResponse) {
+          if (userResponse != null) {
+            final convertedUser = UserModel.fromJson(userResponse);
+            final updatedList = <UserModel>[convertedUser, ...existingLikedBy];
+            likedByUsersMap[contentId] = updatedList.take(3).toList();
+          }
+        }).catchError((e) {
+          debugPrint('Error getting current user for likedBy: $e');
+        });
+      }
+    } else {
+      final existingLikedBy = likedByUsersMap[contentId] ?? [];
+      likedByUsersMap[contentId] = existingLikedBy
+          .where((u) => u.id != currentUserId)
+          .toList();
+    }
+
+    // Run API call in background
+    _interactionService
+        .toggleLike(
+      contentId: contentId,
+      userId: currentUserId,
+    )
+        .then((result) async {
       if (result.isSuccess) {
-        final isLikedNow = result.dataOrNull ?? false;
-        likedStatusMap[contentId] = isLikedNow;
+        final serverIsLiked = result.dataOrNull ?? false;
+        likedStatusMap[contentId] = serverIsLiked;
 
-        final post = postsList.firstWhereOrNull((p) => p.id == contentId);
-        if (post != null) {
-          final index = postsList.indexOf(post);
-          final newLikesCount = isLikedNow
-              ? post.likesCount + 1
-              : (post.likesCount > 0 ? post.likesCount - 1 : 0);
+        final updatedPost = postsList.firstWhereOrNull((p) => p.id == contentId);
+        if (updatedPost != null) {
+          final postIndex = postsList.indexOf(updatedPost);
+          postsList[postIndex] = updatedPost.copyWith(
+            likesCount: serverIsLiked
+                ? updatedPost.likesCount + (newIsLiked ? 0 : 1)
+                : (updatedPost.likesCount > 0
+                    ? updatedPost.likesCount - (newIsLiked ? 1 : 0)
+                    : 0),
+          );
 
-          postsList[index] = post.copyWith(likesCount: newLikesCount);
-
-          if (isLikedNow) {
-            await _loadLikedByUsers([postsList[index]]);
+          if (serverIsLiked) {
+            await _loadLikedByUsers([postsList[postIndex]]);
+          } else {
+            final existingLikedBy = likedByUsersMap[contentId] ?? [];
+            likedByUsersMap[contentId] = existingLikedBy
+                .where((u) => u.id != currentUserId)
+                .toList();
           }
         }
       } else {
+        // Revert on error
+        likedStatusMap[contentId] = previousIsLiked;
+        if (index < postsList.length) {
+          postsList[index] = post.copyWith(likesCount: previousLikesCount);
+        }
+        likedByUsersMap[contentId] = previousLikedByUsers;
         _showError(result.errorOrNull ?? 'Failed to like content');
       }
-    } catch (_) {
+    }).catchError((error) {
+      // Revert on exception
+      likedStatusMap[contentId] = previousIsLiked;
+      if (index < postsList.length) {
+        postsList[index] = post.copyWith(likesCount: previousLikesCount);
+      }
+      likedByUsersMap[contentId] = previousLikedByUsers;
       _showError('somethingWentWrong'.tr);
-    }
+    });
   }
 
   Future<void> addComment(String contentId, String commentText) async {
@@ -397,6 +468,30 @@ class UserProfileController extends GetxController {
                   externalSharePlatforms: ['FACEBOOK'],
                 );
                 CommonSnackbar.success('Shared to Facebook');
+              }
+            },
+            onTikTokTap: () async {
+              if (Navigator.of(modalContext, rootNavigator: true).canPop()) {
+                Navigator.of(modalContext, rootNavigator: true).pop();
+              }
+              if (contentId != null) {
+                await _contentService.updateContent(
+                  contentId,
+                  externalSharePlatforms: ['TIKTOK'],
+                );
+                CommonSnackbar.success('Shared to TikTok');
+              }
+            },
+            onCommunityFeedTap: () async {
+              if (Navigator.of(modalContext, rootNavigator: true).canPop()) {
+                Navigator.of(modalContext, rootNavigator: true).pop();
+              }
+              if (contentId != null) {
+                await _contentService.updateContent(
+                  contentId,
+                  externalSharePlatforms: ['COMMUNITY_FEED'],
+                );
+                CommonSnackbar.success('Shared to Community Feed');
               }
             },
           ),

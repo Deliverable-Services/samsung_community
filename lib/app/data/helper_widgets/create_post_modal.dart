@@ -16,6 +16,7 @@ class CreatePostModal extends StatelessWidget {
   final TextEditingController descriptionController;
   final VoidCallback? onPublish;
   final VoidCallback? onPublish1;
+  final VoidCallback? onRemoveFile;
   final File? selectedMediaFile;
   final String? uploadedMediaUrl;
   final String? uploadedFileName;
@@ -27,6 +28,7 @@ class CreatePostModal extends StatelessWidget {
     required this.descriptionController,
     this.onPublish,
     this.onPublish1,
+    this.onRemoveFile,
     this.selectedMediaFile,
     this.uploadedMediaUrl,
     this.uploadedFileName,
@@ -86,6 +88,7 @@ class CreatePostModal extends StatelessWidget {
           onTap: () {
             onPublish1?.call();
           },
+          onRemove: onRemoveFile,
           uploadedFileName: uploadedFileName,
           isUploadingMedia: isUploadingMedia,
         ),

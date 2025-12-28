@@ -8,6 +8,7 @@ import '../../../data/constants/app_button.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../data/helper_widgets/custom_text_field.dart';
+import '../../../data/helper_widgets/title_app_bar.dart';
 import '../controllers/verification_code_by_login_controller.dart';
 
 class VerificationCodeByLoginView
@@ -22,6 +23,7 @@ class VerificationCodeByLoginView
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
+        appBar: TitleAppBar(text: "", isLeading: false),
         backgroundColor: AppColors.primary,
         body: SafeArea(
           top: true,
@@ -35,7 +37,7 @@ class VerificationCodeByLoginView
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(top: 36.h),
+                      padding: EdgeInsets.only(top: 10.h),
                       child: Center(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8.r),
@@ -112,7 +114,7 @@ class VerificationCodeByLoginView
               Obx(() {
                 controller.count.value;
                 return Positioned(
-                  top: 334.h,
+                  top: 304.h,
                   left: 20.w,
                   child: SizedBox(
                     width: 350.w,
@@ -149,51 +151,60 @@ class VerificationCodeByLoginView
                             child: Obx(() {
                               if (controller.resendCountdown.value > 0) {
                                 return Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: 'otp_sent'.tr + ' ',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 12.sp,
-                                            height: 22 / 14,
-                                            letterSpacing: 0,
-                                          color: AppColors.white.withOpacity(0.7),
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: 'otp_sent'.tr + ' ',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 12.sp,
+                                          height: 22 / 14,
+                                          letterSpacing: 0,
+                                          color: AppColors.white.withOpacity(
+                                            0.7,
                                           ),
                                         ),
-                                        TextSpan(
-                                        text: '${controller.resendCountdown.value}',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 12.sp,
-                                            height: 22 / 14,
-                                            letterSpacing: 0,
-                                            color: AppColors.linkBlue,
+                                      ),
+                                      TextSpan(
+                                        text:
+                                            '${controller.resendCountdown.value}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 12.sp,
+                                          height: 22 / 14,
+                                          letterSpacing: 0,
+                                          color: AppColors.linkBlue,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: ' ${'seconds'.tr}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 12.sp,
+                                          height: 22 / 14,
+                                          letterSpacing: 0,
+                                          color: AppColors.white.withOpacity(
+                                            0.7,
                                           ),
                                         ),
-                                        TextSpan(
-                                          text: ' ${'seconds'.tr}',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 12.sp,
-                                            height: 22 / 14,
-                                            letterSpacing: 0,
-                                          color: AppColors.white.withOpacity(0.7),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    textAlign: TextAlign.center,
-                                    textScaler: const TextScaler.linear(1.0),
+                                      ),
+                                    ],
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  textScaler: const TextScaler.linear(1.0),
                                 );
                               } else {
-                                return Obx(() => GestureDetector(
-                                      onTap: (controller.isResending.value ||
-                                              controller.resendCountdown.value > 0)
+                                return Obx(
+                                  () => GestureDetector(
+                                    onTap:
+                                        (controller.isResending.value ||
+                                            controller.resendCountdown.value >
+                                                0)
                                         ? null
                                         : controller.handleResendCode,
                                     child: Opacity(
-                                        opacity: (controller.isResending.value ||
+                                      opacity:
+                                          (controller.isResending.value ||
                                               controller.resendCountdown.value >
                                                   0)
                                           ? 0.5
@@ -207,11 +218,13 @@ class VerificationCodeByLoginView
                                           letterSpacing: 0,
                                           color: AppColors.linkBlue,
                                         ),
-                                          textScaler:
-                                              const TextScaler.linear(1.0),
+                                        textScaler: const TextScaler.linear(
+                                          1.0,
                                         ),
                                       ),
-                                    ));
+                                    ),
+                                  ),
+                                );
                               }
                             }),
                           ),
@@ -223,7 +236,7 @@ class VerificationCodeByLoginView
                 );
               }),
               Positioned(
-                top: 710.h,
+                top: 680.h,
                 left: 20.w,
                 child: Obx(() {
                   controller.count.value;
@@ -244,7 +257,7 @@ class VerificationCodeByLoginView
                 }),
               ),
               Positioned(
-                top: 788.h,
+                top: 758.h,
                 left: 0,
                 right: 0,
                 child: Center(

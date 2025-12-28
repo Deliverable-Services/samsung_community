@@ -38,6 +38,11 @@ class CreatePostService {
           titleController: titleController,
           descriptionController: descriptionController,
           onPublish1: selectMediaFile,
+          onRemoveFile: () {
+            selectedMediaFile.value = null;
+            uploadedMediaUrl.value = null;
+            uploadedFileName.value = null;
+          },
           selectedMediaFile: selectedMediaFile.value,
           uploadedMediaUrl: uploadedMediaUrl.value,
           uploadedFileName: uploadedFileName.value,

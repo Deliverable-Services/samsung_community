@@ -23,13 +23,16 @@ class ContentService {
 
       if (contentType != null) {
         query = query.eq('content_type', contentType.toJson());
-      } else if (allowedContentTypes != null && allowedContentTypes.isNotEmpty) {
+      } else if (allowedContentTypes != null &&
+          allowedContentTypes.isNotEmpty) {
         if (allowedContentTypes.length == 1) {
           query = query.eq('content_type', allowedContentTypes.first.toJson());
         } else {
           final firstType = allowedContentTypes.first.toJson();
           final secondType = allowedContentTypes.last.toJson();
-          query = query.or('content_type.eq.$firstType,content_type.eq.$secondType');
+          query = query.or(
+            'content_type.eq.$firstType,content_type.eq.$secondType',
+          );
         }
       }
 

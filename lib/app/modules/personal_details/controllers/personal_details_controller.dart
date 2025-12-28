@@ -38,15 +38,7 @@ class PersonalDetailsController extends GetxController {
       phoneNumber.value = (parameters?['phoneNumber'] as String?) ?? '';
     }
 
-    if (birthdayController.text.isEmpty) {
-      final now = DateTime.now();
-      final eighteenYearsAgo = DateTime(now.year - 18, now.month, now.day);
-      selectedBirthday = eighteenYearsAgo;
-      final year = eighteenYearsAgo.year.toString();
-      final month = eighteenYearsAgo.month.toString().padLeft(2, '0');
-      final day = eighteenYearsAgo.day.toString().padLeft(2, '0');
-      birthdayController.text = '$year-$month-$day';
-    }
+    // Birthday field should remain empty - user must select a date
   }
 
   @override
@@ -221,52 +213,59 @@ class PersonalDetailsController extends GetxController {
     genderError.value = '';
     deviceModelError.value = '';
 
-    final List<String> errors = [];
+    // Validate form fields first
+    if (formKey.currentState != null && !formKey.currentState!.validate()) {
+      // Form validation failed - errors are shown inline
+      // Also show specific toasters for better UX
+      final fullName = fullNameController.text.trim();
+      if (fullName.isEmpty) {
+        CommonSnackbar.error('${'fullName'.tr} is required');
+        return;
+      }
 
-    final fullName = fullNameController.text.trim();
-    if (fullName.isEmpty) {
-      errors.add('fullName'.tr);
-    }
+      final birthday = birthdayController.text.trim();
+      if (birthday.isEmpty) {
+        CommonSnackbar.error('${'birthday'.tr} is required');
+        return;
+      }
 
-    final birthday = birthdayController.text.trim();
-    if (birthday.isEmpty) {
-      errors.add('birthday'.tr);
-    }
+      final email = emailController.text.trim();
+      if (email.isEmpty) {
+        CommonSnackbar.error('${'emailAddress'.tr} is required');
+        return;
+      } else {
+        final emailRegex = RegExp(
+          r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+        );
+        if (!emailRegex.hasMatch(email)) {
+          CommonSnackbar.error('Please enter a valid ${'emailAddress'.tr}');
+          return;
+        }
+      }
 
-    final email = emailController.text.trim();
-    if (email.isEmpty) {
-      errors.add('emailAddress'.tr);
-    } else {
-      final emailRegex = RegExp(
-        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-      );
-      if (!emailRegex.hasMatch(email)) {
-        errors.add('emailAddress'.tr + ' (invalid format)');
+      final city = cityController.text.trim();
+      if (city.isEmpty) {
+        CommonSnackbar.error('${'city'.tr} is required');
+        return;
       }
     }
 
-    final city = cityController.text.trim();
-    if (city.isEmpty) {
-      errors.add('city'.tr);
-    }
-
+    // Validate dropdowns
     if (selectedGender.value == null || selectedGender.value!.isEmpty) {
-      errors.add('gender'.tr);
+      CommonSnackbar.error('${'gender'.tr} is required');
+      genderError.value = '${'gender'.tr} is required';
+      return;
     }
 
     if (selectedDeviceModel.value == null ||
         selectedDeviceModel.value!.isEmpty) {
-      errors.add('deviceModel'.tr);
+      CommonSnackbar.error('${'deviceModel'.tr} is required');
+      deviceModelError.value = '${'deviceModel'.tr} is required';
+      return;
     }
 
     if (phoneNumber.value.isEmpty) {
-      errors.add('mobile_number'.tr);
-    }
-
-    if (errors.isNotEmpty) {
-      final errorMessage = '${errors.join(', ')} is required';
-      CommonSnackbar.error(errorMessage);
-      formKey.currentState?.validate();
+      CommonSnackbar.error('${'mobile_number'.tr} is required');
       return;
     }
 

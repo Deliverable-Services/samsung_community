@@ -95,36 +95,100 @@ class ProfileController extends BaseController {
   }
 
   Future<void> toggleLike(String contentId) async {
-    final currentUser = SupabaseService.currentUser;
-    if (currentUser == null) return;
+    final currentUserSupabase = SupabaseService.currentUser;
+    if (currentUserSupabase == null) return;
 
-    final result = await _interactionService.toggleLike(
-      contentId: contentId,
-      userId: currentUser.id,
+    final post = _profileService.postsList.firstWhereOrNull(
+      (p) => p.id == contentId,
+    );
+    if (post == null) return;
+
+    // Store previous state for potential revert
+    final previousIsLiked = _profileService.likedStatusMap[contentId] ?? false;
+    final previousLikesCount = post.likesCount;
+    final previousLikedByUsers = List<UserModel>.from(
+      _profileService.likedByUsersMap[contentId] ?? [],
     );
 
-    if (result.isSuccess) {
-      final isLikedNow = result.dataOrNull ?? false;
-      _profileService.likedStatusMap[contentId] = isLikedNow;
+    // Optimistic update - update UI immediately
+    final newIsLiked = !previousIsLiked;
+    _profileService.likedStatusMap[contentId] = newIsLiked;
 
-      final post = _profileService.postsList.firstWhereOrNull(
-        (p) => p.id == contentId,
-      );
-      if (post != null) {
-        final index = _profileService.postsList.indexOf(post);
+    final index = _profileService.postsList.indexOf(post);
+    final newLikesCount = newIsLiked
+        ? previousLikesCount + 1
+        : (previousLikesCount > 0 ? previousLikesCount - 1 : 0);
+
+    _profileService.postsList[index] = post.copyWith(
+      likesCount: newLikesCount,
+    );
+
+    // Update likedByUsers optimistically
+    final currentUser = _authRepo.currentUser.value;
+    if (currentUser != null && newIsLiked) {
+      final existingLikedBy = _profileService.likedByUsersMap[contentId] ?? [];
+      final userExists = existingLikedBy.any((u) => u.id == currentUser.id);
+      if (!userExists) {
+        final userJson = currentUser.toJson();
+        final convertedUser = UserModel.fromJson(userJson);
+        final updatedList = <UserModel>[convertedUser, ...existingLikedBy];
+        _profileService.likedByUsersMap[contentId] = updatedList.take(3).toList();
+      }
+    } else if (!newIsLiked) {
+      final existingLikedBy = _profileService.likedByUsersMap[contentId] ?? [];
+      _profileService.likedByUsersMap[contentId] = existingLikedBy
+          .where((u) => u.id != currentUserSupabase.id)
+          .toList();
+    }
+
+    // Run API call in background
+    _interactionService
+        .toggleLike(
+      contentId: contentId,
+      userId: currentUserSupabase.id,
+    )
+        .then((result) async {
+      if (result.isSuccess) {
+        final serverIsLiked = result.dataOrNull ?? false;
+        _profileService.likedStatusMap[contentId] = serverIsLiked;
+
+        final updatedPost = _profileService.postsList.firstWhereOrNull(
+          (p) => p.id == contentId,
+        );
+        if (updatedPost != null) {
+          final postIndex = _profileService.postsList.indexOf(updatedPost);
+          _profileService.postsList[postIndex] = updatedPost.copyWith(
+            likesCount: serverIsLiked
+                ? updatedPost.likesCount + (newIsLiked ? 0 : 1)
+                : (updatedPost.likesCount > 0
+                    ? updatedPost.likesCount - (newIsLiked ? 1 : 0)
+                    : 0),
+          );
+        }
+
+        await _profileService.refreshLikedByUsers(contentId);
+      } else {
+        // Revert on error
+        _profileService.likedStatusMap[contentId] = previousIsLiked;
+        if (index < _profileService.postsList.length) {
+          _profileService.postsList[index] = post.copyWith(
+            likesCount: previousLikesCount,
+          );
+        }
+        _profileService.likedByUsersMap[contentId] = previousLikedByUsers;
+        CommonSnackbar.error(result.errorOrNull ?? 'Failed to like post');
+      }
+    }).catchError((error) {
+      // Revert on exception
+      _profileService.likedStatusMap[contentId] = previousIsLiked;
+      if (index < _profileService.postsList.length) {
         _profileService.postsList[index] = post.copyWith(
-          likesCount: isLikedNow
-              ? post.likesCount + 1
-              : (post.likesCount > 0 ? post.likesCount - 1 : 0),
+          likesCount: previousLikesCount,
         );
       }
-
-      if (post != null) {
-        await _profileService.refreshLikedByUsers(contentId);
-      }
-    } else {
-      CommonSnackbar.error(result.errorOrNull ?? 'Failed to like post');
-    }
+      _profileService.likedByUsersMap[contentId] = previousLikedByUsers;
+      CommonSnackbar.error('somethingWentWrong'.tr);
+    });
   }
 
   Future<void> addComment(String contentId, String commentText) async {
@@ -239,6 +303,30 @@ class ProfileController extends BaseController {
                   externalSharePlatforms: ['FACEBOOK'],
                 );
                 CommonSnackbar.success('Shared to Facebook');
+              }
+            },
+            onTikTokTap: () async {
+              if (Navigator.of(modalContext, rootNavigator: true).canPop()) {
+                Navigator.of(modalContext, rootNavigator: true).pop();
+              }
+              if (contentId != null) {
+                await _contentService.updateContent(
+                  contentId,
+                  externalSharePlatforms: ['TIKTOK'],
+                );
+                CommonSnackbar.success('Shared to TikTok');
+              }
+            },
+            onCommunityFeedTap: () async {
+              if (Navigator.of(modalContext, rootNavigator: true).canPop()) {
+                Navigator.of(modalContext, rootNavigator: true).pop();
+              }
+              if (contentId != null) {
+                await _contentService.updateContent(
+                  contentId,
+                  externalSharePlatforms: ['COMMUNITY_FEED'],
+                );
+                CommonSnackbar.success('Shared to Community Feed');
               }
             },
           ),

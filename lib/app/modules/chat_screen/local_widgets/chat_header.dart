@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../data/constants/app_colors.dart';
 import '../../../data/helper_widgets/back_button.dart';
+import '../../../data/helper_widgets/custom_circle_button.dart';
 import '../controllers/chat_screen_controller.dart';
 
 class ChatHeader extends StatelessWidget {
@@ -18,17 +19,12 @@ class ChatHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          GestureDetector(
+          CustomCircleButton(
             onTap: () => controller.showChatOptionsModal(),
-            child: Container(
-              width: 40.w,
-              height: 40.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.overlayContainerBackground,
-              ),
-              child: Icon(Icons.more_vert, color: AppColors.white, size: 20.sp),
-            ),
+            image: Icon(Icons.more_vert, color: AppColors.white, size: 20.sp),
+            width: 32.w,
+            height: 32.w,
+            rotation: 1.5708, // 90 degrees in radians
           ),
           CustomBackButton(rotation: 0, onTap: () => Get.back()),
         ],

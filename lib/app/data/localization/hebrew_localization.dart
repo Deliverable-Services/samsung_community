@@ -134,6 +134,8 @@ class HebrewiLocalization {
     "selectSocialMedia": "בחר מדיה חברתית",
     "instagram": "אינסטגרם",
     "facebook": "פייסבוק",
+    "communityFeed": "פיד הקהילה",
+    "tikTok": "טיקטוק",
     "delete": "מחק",
     "share": "שתף",
     // Feed Screen

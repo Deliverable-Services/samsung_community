@@ -33,6 +33,8 @@ class AppImages {
       crossIcon = '$baseUrl/cross.png',
       instagramIcon = '$baseUrl/instagram.png',
       facebookIcon = '$baseUrl/facebook.png',
+      tiktokIcon = '$baseUrl/tiktok.svg',
+      communityFeedIcon = '$baseUrl/community_feed.svg',
       messagesIcon = '$baseUrl/message.svg',
       storeIcon = '$baseUrl/store.svg',
       userIcon = '$baseUrl/user.svg',

@@ -83,7 +83,7 @@ class _ProfileViewState extends State<ProfileView> {
                 controller.loadUserProfile();
               },
               onFailure: () {},
-              bottomOffset: 10.h,
+              bottomOffset: 22.h,
             ),
             Positioned(
               bottom: 0,
