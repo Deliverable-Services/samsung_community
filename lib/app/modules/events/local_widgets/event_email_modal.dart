@@ -6,32 +6,86 @@ import '../../../data/constants/app_button.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/helper_widgets/bottom_sheet_modal.dart';
 import '../../../data/helper_widgets/custom_text_field.dart';
+import '../../../routes/app_pages.dart';
 import '../controllers/event_email_controller.dart';
 
 class EventEmailModal extends StatelessWidget {
+  final String? eventId;
   final VoidCallback? onNext;
 
-  const EventEmailModal({super.key, this.onNext});
+  const EventEmailModal({super.key, this.eventId, this.onNext});
 
-  static void show(BuildContext context, {VoidCallback? onNext}) {
+  static void show(
+    BuildContext context, {
+    String? eventId,
+    VoidCallback? onNext,
+  }) {
     // Create and put controller
     Get.put(EventEmailController());
     BottomSheetModal.show(
       context,
-      content: EventEmailModal(onNext: onNext),
+      content: EventEmailModal(eventId: eventId, onNext: onNext),
       buttonType: BottomSheetButtonType.close,
       onClose: () {
-        // Remove controller when modal closes
-        Get.delete<EventEmailController>();
+        // Remove controller when modal closes with a small delay
+        // to ensure widget tree is done with it
+        Future.microtask(() {
+          if (Get.isRegistered<EventEmailController>()) {
+            Get.delete<EventEmailController>();
+          }
+        });
       },
     );
   }
 
   void _handleNext(BuildContext context, EventEmailController controller) {
     if (controller.isValidEmail) {
-      onNext?.call();
-      Navigator.of(context, rootNavigator: true).pop();
-      Get.delete<EventEmailController>();
+      final email = controller.email.value;
+
+      // Navigate to payment screen if eventId is provided
+      if (eventId != null && eventId!.isNotEmpty) {
+        // Close modal first
+        Navigator.of(context, rootNavigator: true).pop();
+
+        // Delete controller after frame is complete to avoid disposal during rebuild
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (Get.isRegistered<EventEmailController>()) {
+            Get.delete<EventEmailController>();
+          }
+        });
+
+        // Navigate to payment screen
+        Get.toNamed(
+          Routes.EVENTER_PAYMENT,
+          arguments: {
+            'eventId': eventId,
+            'email': email,
+            'config': {
+              'lang': 'en_EN',
+              'colorScheme': '#FFFFFF',
+              'colorScheme2': '#000000',
+              'colorSchemeButton': '#1FA3FF',
+              'showBanner': false,
+              'showEventDetails': false,
+              'showBackground': true,
+              'showLocationDescription': false,
+              'showSeller': false,
+              'showPoweredBy': false,
+            },
+          },
+        );
+      } else {
+        // Fallback to onNext callback if no eventId
+        onNext?.call();
+        Navigator.of(context, rootNavigator: true).pop();
+
+        // Delete controller after frame is complete
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (Get.isRegistered<EventEmailController>()) {
+            Get.delete<EventEmailController>();
+          }
+        });
+      }
     }
   }
 

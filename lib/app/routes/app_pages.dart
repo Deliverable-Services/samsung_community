@@ -14,6 +14,8 @@ import '../modules/chat_screen/bindings/chat_screen_binding.dart';
 import '../modules/chat_screen/views/chat_screen_view.dart';
 import '../modules/edit_profile/bindings/edit_profile_binding.dart';
 import '../modules/edit_profile/views/edit_profile_view.dart';
+import '../modules/eventer_payment/bindings/eventer_payment_binding.dart';
+import '../modules/eventer_payment/views/eventer_payment_view.dart';
 import '../modules/events/bindings/events_binding.dart';
 import '../modules/events/views/events_view.dart';
 import '../modules/feed/bindings/feed_binding.dart';
@@ -192,6 +194,11 @@ class AppPages {
       name: _Paths.STORE,
       page: () => const StoreView(),
       binding: StoreBinding(),
+    ),
+    GetPage(
+      name: _Paths.EVENTER_PAYMENT,
+      page: () => const EventerPaymentView(),
+      binding: EventerPaymentBinding(),
     ),
   ];
 

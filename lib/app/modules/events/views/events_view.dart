@@ -414,9 +414,7 @@ class EventsView extends GetView<EventsController> {
         // Show email input modal
         EventEmailModal.show(
           context,
-          onNext: () {
-            // TODO: Handle event purchase/registration with email
-          },
+          eventId: event.id,
         );
       };
     }
