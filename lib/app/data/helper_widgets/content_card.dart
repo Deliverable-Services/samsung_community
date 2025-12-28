@@ -9,7 +9,7 @@ import 'audio_player/audio_player_widget.dart';
 import 'event_tablet.dart';
 import 'video_player/video_player_widget.dart';
 
-class ContentCard extends StatelessWidget {
+class ContentCard1 extends StatelessWidget {
   final String? imagePath;
   final String? videoUrl;
   final String? audioUrl;
@@ -22,8 +22,9 @@ class ContentCard extends StatelessWidget {
   final bool showVideoPlayer;
   final String? contentId;
   final VoidCallback? onButtonTap;
+  final VoidCallback? onTap;
 
-  const ContentCard({
+  const ContentCard1({
     super.key,
     this.imagePath,
     this.videoUrl,
@@ -37,6 +38,7 @@ class ContentCard extends StatelessWidget {
     this.showAudioPlayer = false,
     this.contentId,
     this.onButtonTap,
+    this.onTap,
   });
 
   @override
@@ -185,7 +187,6 @@ class ContentCard extends StatelessWidget {
                 ),
               ],
             ),
-          // Title and Description - shown when showVideoPlayer is true
           if (showVideoPlayer) ...[
             Text(
               title,
@@ -256,9 +257,7 @@ class ContentCard extends StatelessWidget {
                   child: EventTablet(
                     text: 'contentCardViewing'.tr,
                     extraPadding: EdgeInsets.symmetric(horizontal: 36.w),
-                    onTap: () {
-                      // TODO: Handle button tap
-                    },
+                    onTap: onTap,
                   ),
                 ),
               ],

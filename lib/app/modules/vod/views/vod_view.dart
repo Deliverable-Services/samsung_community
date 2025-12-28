@@ -290,7 +290,7 @@ class _VodViewState extends State<VodView> {
             ? content.mediaFiles!.first
             : null);
     final hasMedia = mediaUrl != null && mediaUrl.isNotEmpty;
-    return ContentCard(
+    return ContentCard1(
       imagePath: content.thumbnailUrl,
       title: content.title ?? '',
       description: content.description ?? '',
