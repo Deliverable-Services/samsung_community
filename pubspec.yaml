@@ -44,6 +44,8 @@ dependencies:
   video_thumbnail: ^0.5.3
   path_provider: ^2.1.1
   file_picker:
+  webview_flutter: ^4.9.0
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:

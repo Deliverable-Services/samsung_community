@@ -114,6 +114,8 @@ class EnLocalization {
     "exploreOurEvents": "Explore our Events...",
     "allEvents": 'All Events',
     "myEvents": 'My Events',
+    "noEventsFound": "No events found",
+    "noMyEventsFound": "No events found for you",
     "details": 'Details',
     "buying": 'Buying',
 

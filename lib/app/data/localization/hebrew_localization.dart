@@ -158,6 +158,8 @@ class HebrewiLocalization {
     "exploreOurEvents": "גלו את האירועים שלנו...",
     "allEvents": "כל האירועים",
     "myEvents": "האירועים שלי",
+    "noEventsFound": "לא נמצאו אירועים",
+    "noMyEventsFound": "לא נמצאו אירועים עבורך",
     "details": "פרטים",
     "buying": "רכישה",
 
