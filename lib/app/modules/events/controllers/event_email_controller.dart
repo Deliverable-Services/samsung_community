@@ -14,7 +14,7 @@ class EventEmailController extends GetxController {
 
   void _onEmailChanged() {
     if (!_isDisposed) {
-      email.value = emailController.text.trim();
+    email.value = emailController.text.trim();
     }
   }
 

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
+import '../../../common/services/analytics_service.dart';
 import '../../../data/constants/app_button.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
@@ -15,6 +16,12 @@ class SignUpView extends GetView<SignUpController> {
 
   @override
   Widget build(BuildContext context) {
+    // Log screen view when screen appears
+    AnalyticsService.trackScreenView(
+      screenName: 'sign screen enter phone',
+      screenClass: 'SignUpView',
+    );
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -148,7 +155,15 @@ class SignUpView extends GetView<SignUpController> {
                         (controller.isValidating.value ||
                             !controller.isFormValid)
                         ? null
-                        : controller.handleSignUp,
+                        : () {
+                            // Log button click event
+                            AnalyticsService.logButtonClick(
+                              screenName: 'sign screen enter phone',
+                              buttonName: 'Signup',
+                              eventName: 'signup_enter_phone_click',
+                            );
+                            controller.handleSignUp();
+                          },
                     text: controller.isValidating.value
                         ? 'generating_otp'.tr
                         : 'signUp'.tr,
@@ -192,6 +207,12 @@ class SignUpView extends GetView<SignUpController> {
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
+                                // Log button click event
+                                AnalyticsService.logButtonClick(
+                                  screenName: 'sign screen enter phone',
+                                  buttonName: 'login',
+                                  eventName: 'signup_enter_phone_click',
+                                );
                                 Get.toNamed(Routes.LOGIN);
                               },
                           ),

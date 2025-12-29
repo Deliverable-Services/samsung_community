@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
+import '../../../common/services/analytics_service.dart';
 import '../../../data/constants/app_button.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
@@ -15,6 +16,12 @@ class LoginView extends GetView<LoginController> {
 
   @override
   Widget build(BuildContext context) {
+    // Log screen view when screen appears
+    AnalyticsService.trackScreenView(
+      screenName: 'Login screen enter phone',
+      screenClass: 'LoginView',
+    );
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -81,7 +88,7 @@ class LoginView extends GetView<LoginController> {
                           textScaler: const TextScaler.linear(1.0),
                           maxLines: 2,
                           overflow: TextOverflow.visible,
-      ),
+                        ),
                       ),
                     ),
                     SizedBox(height: 30.h),
@@ -89,7 +96,7 @@ class LoginView extends GetView<LoginController> {
                       width: 304.w,
                       height: 32.h,
                       child: Center(
-        child: Text(
+                        child: Text(
                           'loginDescription'.tr,
                           textAlign: TextAlign.center,
                           style: TextStyle(
@@ -139,7 +146,15 @@ class LoginView extends GetView<LoginController> {
                   () => AppButton(
                     onTap: controller.isValidating.value
                         ? null
-                        : controller.handleLogin,
+                        : () {
+                            // Log button click event
+                            AnalyticsService.logButtonClick(
+                              screenName: 'Login screen enter phone',
+                              buttonName: 'Get verification code',
+                              eventName: 'login_enter_phone_click',
+                            );
+                            controller.handleLogin();
+                          },
                     text: controller.isValidating.value
                         ? 'checking'.tr
                         : 'getVerificationCode'.tr,
@@ -181,6 +196,12 @@ class LoginView extends GetView<LoginController> {
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
+                                // Log button click event
+                                AnalyticsService.logButtonClick(
+                                  screenName: 'Login screen enter phone',
+                                  buttonName: 'signup',
+                                  eventName: 'login_enter_phone_click',
+                                );
                                 Get.toNamed(Routes.SIGN_UP);
                               },
                           ),

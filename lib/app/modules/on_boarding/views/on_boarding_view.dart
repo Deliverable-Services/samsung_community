@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
+import '../../../common/services/analytics_service.dart';
 import '../../../data/constants/app_button.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
@@ -11,8 +12,14 @@ import '../controllers/on_boarding_controller.dart';
 
 class OnBoardingView extends GetView<OnBoardingController> {
   const OnBoardingView({super.key});
+
   @override
   Widget build(BuildContext context) {
+    // Log screen view when screen appears
+    AnalyticsService.trackScreenView(
+      screenName: 'Main screen',
+      screenClass: 'OnBoardingView',
+    );
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -143,7 +150,15 @@ class OnBoardingView extends GetView<OnBoardingController> {
                 ),
                 SizedBox(height: 90.h),
                 AppButton(
-                  onTap: () => Get.toNamed(Routes.LOGIN),
+                  onTap: () {
+                    // Log button click event
+                    AnalyticsService.logButtonClick(
+                      screenName: 'Main screen',
+                      buttonName: 'Login',
+                      eventName: 'main_screen_click',
+                    );
+                    Get.toNamed(Routes.LOGIN);
+                  },
                   text: 'logIn'.tr,
                 ),
                 SizedBox(height: 30.h),
@@ -169,6 +184,12 @@ class OnBoardingView extends GetView<OnBoardingController> {
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
+                            // Log button click event
+                            AnalyticsService.logButtonClick(
+                              screenName: 'Main screen',
+                              buttonName: 'signup',
+                              eventName: 'main_screen_click',
+                            );
                             Get.toNamed(Routes.SIGN_UP);
                           },
                       ),
