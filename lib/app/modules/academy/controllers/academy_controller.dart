@@ -4,15 +4,19 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/services/academy_service.dart';
 import '../../../common/services/storage_service.dart';
 import '../../../common/services/supabase_service.dart';
+import '../../../data/constants/app_images.dart';
 import '../../../data/core/base/base_controller.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/core/utils/result.dart';
 import '../../../data/helper_widgets/audio_player/audio_player_manager.dart';
 import '../../../data/helper_widgets/bottom_sheet_modal.dart';
+import '../../../data/helper_widgets/event_buying_bottom_bar_modal.dart';
 import '../../../data/helper_widgets/video_player/video_player_manager.dart';
 import '../../../data/models/academy_content_model.dart';
 import '../../../repository/auth_repo/auth_repo.dart';
@@ -453,4 +457,150 @@ class AcademyController extends BaseController {
     isConfirmChecked.value = false;
     loadMoreContent();
   }
+
+  void clickOnMoreDetails({required AcademyContentModel content}) {
+    final context = Get.context;
+    if (context == null) return;
+
+    /// 🔒 Assignment guard
+    if (content.zoomLink == null) {
+      CommonSnackbar.error('This content does not accept submissions');
+      return;
+    }
+    BottomSheetModal.show(
+      context,
+      buttonType: BottomSheetButtonType.close,
+      onClose: () {
+        clearFields();
+        Get.back();
+      },
+      content: EventBuyingBottomBarModal(
+        text: content.title,
+        title: content.title,
+        description: content.description ?? '',
+        points: "${content.pointsToEarn}",
+        date: DateFormat(
+          'dd.MM.yyyy',
+        ).format(DateTime.parse("${content.eventDate}")),
+        timing: content.taskEndTime ?? '',
+        onButtonTap: () {
+          Get.back();
+          clickOnRegistration(content: content);
+        },
+      ),
+    );
+  }
+
+  void clickOnRegistration({required AcademyContentModel content}) {
+    final context = Get.context;
+    if (context == null) return;
+
+    /// 🔒 Assignment guard
+    if (content.zoomLink == null) {
+      CommonSnackbar.error('This content does not accept submissions');
+      return;
+    }
+    BottomSheetModal.show(
+      context,
+      buttonType: BottomSheetButtonType.close,
+      onClose: () {
+        clearFields();
+        Get.back();
+      },
+      content: RegistrationSuccessModal(
+        icon: AppImages.icFailed,
+        title: "youDoNotHaveEnoughPoints".tr,
+        text: "payByCreditCard".tr,
+        description: 'yourBalanceIsTooLowToCompleteThisAction'.tr,
+        onButtonTap: () {
+          Get.back();
+          clickOnSuccess(content: content);
+        },
+      ),
+    );
+  }
+
+  void clickOnSuccess({required AcademyContentModel content}) {
+    final context = Get.context;
+    if (context == null) return;
+
+    /// 🔒 Assignment guard
+    if (content.zoomLink == null) {
+      CommonSnackbar.error('This content does not accept submissions');
+      return;
+    }
+    BottomSheetModal.show(
+      context,
+      buttonType: BottomSheetButtonType.close,
+      onClose: () {
+        clearFields();
+        Get.back();
+      },
+      content: RegistrationSuccessModal(
+        icon: AppImages.icVerify,
+        title: "registrationSuccessful".tr,
+        text: "close".tr,
+        description: 'theZoomLinkWillBeUpdatedPriorToTheLiveSession'.tr,
+        onButtonTap: () {
+          Get.back();
+          clickOnLiveVideo(content: content);
+        },
+      ),
+    );
+  }
+
+  void clickOnLiveVideo({required AcademyContentModel content}) {
+    final context = Get.context;
+    if (context == null) return;
+
+    /// 🔒 Assignment guard
+    if (content.zoomLink == null) {
+      CommonSnackbar.error('This content does not accept submissions');
+      return;
+    }
+    BottomSheetModal.show(
+      context,
+      buttonType: BottomSheetButtonType.close,
+      onClose: () {
+        clearFields();
+        Get.back();
+      },
+      content: RegistrationSuccessModal(
+        icon: AppImages.icLiveVideoStartingSoon,
+        title: "liveVideoStartingSoon".tr,
+        text: "joinLive".tr,
+        description: 'anExclusiveLiveSessionIsAbout'.tr,
+        onButtonTap: () {
+          joinZoomMeeting(content.zoomLink ?? '');
+          Get.back();
+        },
+      ),
+    );
+  }
+
+  Future<void> joinZoomMeeting(String zoomUrl) async {
+    if (zoomUrl.isEmpty) return;
+
+    final Uri uri = Uri.parse(zoomUrl);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication, // Opens Zoom app if installed
+      );
+    } else {
+      throw 'Could not launch Zoom link';
+    }
+  }
+
+  /* Future<void> joinZoomMeetingSmart(String zoomUrl) async {
+    final Uri zoomAppUri = Uri.parse("zoomus://zoom.us/join?confno=MEETING_ID");
+    final Uri webUri = Uri.parse(zoomUrl);
+
+    if (await canLaunchUrl(zoomAppUri)) {
+      await launchUrl(zoomAppUri);
+    } else {
+      await launchUrl(webUri, mode: LaunchMode.externalApplication);
+    }
+  }*/
 }

@@ -100,6 +100,19 @@ class HebrewiLocalization {
     "submitAnswer": "שלח תשובה",
     "iConfirmGranting": "אני מאשר הענקת זכויות פרסום",
     "whichOneCorrect": "איזו תשובה נכונה? בחר אחת.",
+    "registration": "הרשמה",
+    "youDoNotHaveEnoughPoints": "אין לך מספיק נקודות.",
+    "yourBalanceIsTooLowToCompleteThisAction":
+        "היתרה שלך נמוכה מדי כדי להשלים פעולה זו.",
+    "payByCreditCard": "שלם באמצעות כרטיס אשראי",
+    "registrationSuccessful": "ההרשמה בוצעה בהצלחה",
+    "theZoomLinkWillBeUpdatedPriorToTheLiveSession":
+        "קישור הזום יעודכן לפני תחילת השידור החי.",
+    "close": "סגור",
+    "anExclusiveLiveSessionIsAbout":
+        "מפגש חי בלעדי עומד להתחיל. הצטרף בקרוב כדי לא לפספס!",
+    "liveVideoStartingSoon": "וידאו חי מתחיל בקרוב",
+    "joinLive": "הצטרף לשידור החי",
 
     // Home Screen
     "homeExclusiveLaunchEvent": "אירוע השקה בלעדי",
@@ -107,7 +120,7 @@ class HebrewiLocalization {
     "homeLiveEventDescription":
         "היה חלק מאירוע חי בלעדי. הירשם עכשיו כדי להבטיח את המקום שלך ldcklkc fkvkc.....",
     "homeMoreDetails": "פרטים נוספים",
-    "homePoints": "נקודות: ",
+    "homePoints": "נקודות: -",
     "homePodcastsLuxuryStores": "חנויות יוקרה פודקאסטים",
     "homeLoramDescription":
         "לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אליט. סד דו איוסמוד טמפור....",

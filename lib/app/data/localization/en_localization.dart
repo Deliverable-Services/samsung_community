@@ -106,6 +106,16 @@ class EnLocalization {
     "submitAnswer": "Submit answer",
     "iConfirmGranting": "I confirm granting publication rights",
     "whichOneCorrect": "Which one's correct? Pick one.",
+    "registration": "Registration",
+    "youDoNotHaveEnoughPoints": "You don't have enough points.",
+    "yourBalanceIsTooLowToCompleteThisAction": "Your balance is too low to complete this action.",
+    "payByCreditCard": "Pay by credit card",
+    "registrationSuccessful": "Registration Successful",
+    "theZoomLinkWillBeUpdatedPriorToTheLiveSession": "The Zoom link will be updated prior to the live session.",
+    "close": "Close",
+    "anExclusiveLiveSessionIsAbout": "An exclusive live session is about to go live. Tune in shortly to catch all the action!",
+    "liveVideoStartingSoon": "Live Video Starting Soon",
+    "joinLive": "Join Live",
 
     // Events Screen
     "communityEvents": "Community Events",
@@ -125,7 +135,7 @@ class EnLocalization {
     "homeLiveEventDescription":
         "Be part of an exclusive live. Register now to secure your spot ldcklkc fkvkc.....",
     "homeMoreDetails": "More Details",
-    "homePoints": "Points: ",
+    "homePoints": "Points: -",
     "homePodcastsLuxuryStores": "Podcasts Luxury Stores",
     "homeLoramDescription":
         "Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....",

@@ -180,11 +180,11 @@ class AcademyView extends GetView<AcademyController> {
           isSelected: index == 1,
           onTap: () => controller.setFilter(1),
         ),
-        FilterItem(
-          text: 'academyReels'.tr,
-          isSelected: index == 2,
-          onTap: () => controller.setFilter(2),
-        ),
+        // FilterItem(
+        //   text: 'academyReels'.tr,
+        //   isSelected: index == 2,
+        //   onTap: () => controller.setFilter(2),
+        // ),
         FilterItem(
           text: 'academyZoomWorkshops'.tr,
           isSelected: index == 3,
@@ -310,9 +310,7 @@ class AcademyView extends GetView<AcademyController> {
             description: content.description ?? '',
             text: 'homeMoreDetails'.tr,
             showButton: true,
-            onButtonTap: () {
-              // TODO: Navigate to Eventer payment screen
-            },
+            onButtonTap: () =>controller.clickOnMoreDetails(content: content),
             exclusiveEvent: false,
             extraPaddingForButton: EdgeInsets.symmetric(horizontal: 16.w),
             labels: [
