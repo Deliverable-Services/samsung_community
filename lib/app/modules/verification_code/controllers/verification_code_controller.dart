@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
+import '../../../common/services/analytics_service.dart';
 import '../../../data/constants/language_options.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/helper_widgets/bottom_sheet_modal.dart';
@@ -154,6 +155,12 @@ class VerificationCodeController extends GetxController {
   }
 
   void _showLanguageSelector() {
+    // Log screen view when language selector appears
+    AnalyticsService.logScreenView(
+      screenName: 'signup screen choose language',
+      screenClass: 'LanguageSelectorModal',
+    );
+
     BottomSheetModal.show(
       Get.context!,
       content: SizedBox(
@@ -163,6 +170,8 @@ class VerificationCodeController extends GetxController {
             final index = entry.key;
             final option = entry.value;
             final isLast = index == LanguageOptions.options.length - 1;
+            // Map language ID to button name for analytics
+            final buttonName = option.id == 'en' ? 'english' : 'hebrew';
             return Padding(
               padding: EdgeInsets.only(bottom: isLast ? 10.h : 15.h),
               child: OptionItem(
@@ -170,6 +179,12 @@ class VerificationCodeController extends GetxController {
                 boxText: option.boxText,
                 isSelected: selectedLanguageId.value == option.id,
                 onTap: () async {
+                  // Log button click event
+                  AnalyticsService.logButtonClick(
+                    screenName: 'signup screen choose language',
+                    buttonName: buttonName,
+                    eventName: 'signup_choose_language_click',
+                  );
                   selectedLanguageId.value = option.id;
 
                   if (phoneNumber.value.isNotEmpty) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../common/services/analytics_service.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/helper_widgets/personal_details_form.dart';
 import '../../../data/helper_widgets/title_app_bar.dart';
@@ -13,6 +14,12 @@ class PersonalDetailsView extends GetView<PersonalDetailsController> {
 
   @override
   Widget build(BuildContext context) {
+    // Log screen view when screen appears
+    AnalyticsService.trackScreenView(
+      screenName: 'signup screen personal details',
+      screenClass: 'PersonalDetailsView',
+    );
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -31,9 +38,7 @@ class PersonalDetailsView extends GetView<PersonalDetailsController> {
                   child: Column(
                     children: [
                       SizedBox(height: 20.h),
-                      Center(
-                        child: PersonalDetailsProfilePictureWidget(),
-                      ),
+                      Center(child: PersonalDetailsProfilePictureWidget()),
                       SizedBox(height: 20.h),
                       PersonalDetailsForm(
                         fullNameController: controller.fullNameController,
@@ -58,8 +63,9 @@ class PersonalDetailsView extends GetView<PersonalDetailsController> {
                             if (birthdayStr != null && birthdayStr.isNotEmpty) {
                               controller.birthdayController.text = birthdayStr;
                               try {
-                                controller.selectedBirthday =
-                                    DateTime.parse(birthdayStr);
+                                controller.selectedBirthday = DateTime.parse(
+                                  birthdayStr,
+                                );
                               } catch (e) {
                                 // Invalid date format, ignore
                               }
