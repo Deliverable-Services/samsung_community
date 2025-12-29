@@ -1,9 +1,12 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:samsung_community_mobile/app/common/services/supabase_service.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/constants/app_colors.dart';
 import '../../data/core/utils/common_snackbar.dart';
@@ -13,7 +16,6 @@ import '../../data/helper_widgets/create_post_modal.dart';
 import '../../data/models/content_model.dart';
 import 'content_service.dart';
 import 'storage_service.dart';
-import 'supabase_service.dart';
 
 class CreatePostService {
   final TextEditingController titleController = TextEditingController();
@@ -91,6 +93,11 @@ class CreatePostService {
             final result = await ContentService().addContent(content: data);
 
             if (result is Success<Map<String, dynamic>>) {
+              shareToInstagram(
+                mediaPath: selectedMediaFile.value?.path ?? '',
+                caption:
+                    "${titleController.text}\n${descriptionController.text}",
+              );
               clearFields();
               CommonSnackbar.success('Post published successfully');
               onSuccess();
@@ -102,6 +109,35 @@ class CreatePostService {
         ),
       ),
     );
+  }
+
+  ///Instagram opens → user selects Feed / Reel / Story
+  Future<void> shareToInstagram({
+    required String mediaPath, // local file path
+    required String caption,
+  }) async {
+    // Copy caption
+    await Clipboard.setData(ClipboardData(text: caption));
+
+    // Share media
+    await Share.shareXFiles([XFile(mediaPath)], text: caption);
+  }
+
+  /// Share Image / Video + Text (Facebook app)
+  Future<void> shareToFacebook({
+    required String mediaPath,
+    required String text,
+  }) async {
+    await Share.shareXFiles([XFile(mediaPath)], text: text);
+  }
+
+  ///Facebook Text Post
+  Future<void> shareTextFacebook(String text) async {
+    final Uri uri = Uri.parse(
+      "https://www.facebook.com/sharer/sharer.php?u=&quote=${Uri.encodeComponent(text)}",
+    );
+
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
   Future<void> selectMediaFile() async {
