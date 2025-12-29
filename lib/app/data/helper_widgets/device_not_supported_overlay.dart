@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../common/services/analytics_service.dart';
 import '../constants/app_button.dart';
 import '../constants/app_images.dart';
 
@@ -10,6 +11,17 @@ class DeviceNotSupportedOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Log screen view event when modal appears
+    AnalyticsService.trackScreenView(
+      screenName: 'Popup device not approved',
+      screenClass: 'DeviceNotSupportedOverlay',
+    );
+    // Also log custom event as specified
+    AnalyticsService.logEvent(
+      eventName: 'Popup_device_not_approved_click',
+      parameters: {'screen_name': 'Popup device not approved'},
+    );
+
     return SizedBox(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -124,6 +136,12 @@ class DeviceNotSupportedOverlay extends StatelessWidget {
           SizedBox(height: 30.h),
           AppButton(
             onTap: () {
+              // Log button click event
+              AnalyticsService.logButtonClick(
+                screenName: 'Popup device not approved',
+                buttonName: 'Go to store',
+                eventName: 'Popup_device_not_approved_click',
+              );
               // TODO: Handle go to store action
             },
             text: 'goToStore'.tr,

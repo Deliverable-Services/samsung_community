@@ -36,7 +36,7 @@ class EventerPaymentView extends GetView<EventerPaymentController> {
               const Center(
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
-                ),
+      ),
               ),
             if (controller.isLoading.value)
               Container(

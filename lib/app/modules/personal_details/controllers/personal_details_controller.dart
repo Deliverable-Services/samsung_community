@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
+import '../../../common/services/analytics_service.dart';
 import '../../../common/services/storage_service.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/core/utils/common_snackbar.dart';
@@ -126,6 +127,13 @@ class PersonalDetailsController extends GetxController {
   void increment() => count.value++;
 
   Future<void> selectProfilePicture() async {
+    // Log button click event
+    AnalyticsService.logButtonClick(
+      screenName: 'signup screen personal details',
+      buttonName: 'Add a photo',
+      eventName: 'signup_personal_details_click',
+    );
+
     try {
       final source = await _showImageSourceDialog();
       if (source == null) return;
@@ -268,6 +276,14 @@ class PersonalDetailsController extends GetxController {
       CommonSnackbar.error('${'mobile_number'.tr} is required');
       return;
     }
+
+    // Log button click event with device_model parameter (only on next click)
+    AnalyticsService.logButtonClick(
+      screenName: 'signup screen personal details',
+      buttonName: 'next',
+      eventName: 'signup_personal_details_click',
+      additionalParams: {'device_model': selectedDeviceModel.value ?? ''},
+    );
 
     final personalDetailsData = <String, String>{
       'phoneNumber': phoneNumber.value,

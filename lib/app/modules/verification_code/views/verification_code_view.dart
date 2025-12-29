@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
+import '../../../common/services/analytics_service.dart';
 import '../../../data/constants/app_button.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
@@ -16,6 +17,12 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
 
   @override
   Widget build(BuildContext context) {
+    // Log screen view when screen appears
+    AnalyticsService.trackScreenView(
+      screenName: 'signup screen verification code',
+      screenClass: 'VerificationCodeView',
+    );
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -192,7 +199,18 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                                       (controller.isResending.value ||
                                           controller.resendCountdown.value > 0)
                                       ? null
-                                      : controller.handleResendCode,
+                                      : () {
+                                          // Log button click event
+                                          AnalyticsService.logButtonClick(
+                                            screenName:
+                                                'signup screen verification code',
+                                            buttonName:
+                                                'Resend verification code',
+                                            eventName:
+                                                'signup_verification_code_click',
+                                          );
+                                          controller.handleResendCode();
+                                        },
                                   child: Opacity(
                                     opacity:
                                         (controller.isResending.value ||
@@ -230,7 +248,15 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                   onTap:
                       (controller.isVerifying.value || !controller.isFormValid)
                       ? null
-                      : controller.handleSignUp,
+                      : () {
+                          // Log button click event
+                          AnalyticsService.logButtonClick(
+                            screenName: 'signup screen verification code',
+                            buttonName: 'signup',
+                            eventName: 'signup_verification_code_click',
+                          );
+                          controller.handleSignUp();
+                        },
                   text: controller.isVerifying.value
                       ? 'verifying'.tr
                       : 'signUp'.tr,
@@ -272,6 +298,12 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
+                                // Log button click event
+                                AnalyticsService.logButtonClick(
+                                  screenName: 'signup screen verification code',
+                                  buttonName: 'login',
+                                  eventName: 'signup_verification_code_click',
+                                );
                                 Get.toNamed(Routes.LOGIN);
                               },
                           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../common/services/analytics_service.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
 import '../controllers/request_sent_controller.dart';
@@ -11,6 +12,17 @@ class RequestSentView extends GetView<RequestSentController> {
 
   @override
   Widget build(BuildContext context) {
+    // Log screen view event when screen appears
+    AnalyticsService.trackScreenView(
+      screenName: 'signup screen request sent',
+      screenClass: 'RequestSentView',
+    );
+    // Also log custom event as specified
+    AnalyticsService.logEvent(
+      eventName: 'signup_request_sent_view',
+      parameters: {'screen_name': 'signup screen request sent'},
+    );
+
     return Scaffold(
       backgroundColor: AppColors.primary,
       body: SafeArea(

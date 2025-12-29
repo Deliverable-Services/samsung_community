@@ -1,3 +1,6 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,6 +21,21 @@ GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase
+  try {
+    await Firebase.initializeApp();
+    debugPrint('Firebase initialized successfully');
+
+    // Enable Analytics debug mode in debug builds
+    if (kDebugMode) {
+      await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+      debugPrint('Firebase Analytics debug mode enabled');
+    }
+  } catch (e) {
+    debugPrint('Warning: Failed to initialize Firebase: $e');
+  }
+
   try {
     await dotenv.load(fileName: '.env');
   } catch (e) {

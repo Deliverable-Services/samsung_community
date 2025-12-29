@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
+import '../../../common/services/analytics_service.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../repository/auth_repo/auth_repo.dart';
 
@@ -128,6 +129,17 @@ class AccountDetailController extends GetxController {
       CommonSnackbar.error(errorMessage);
       return;
     }
+
+    // Log button click event with student and college parameters
+    AnalyticsService.logButtonClick(
+      screenName: 'signup screen personal details',
+      buttonName: 'signup',
+      eventName: 'signup_personal_details_click',
+      additionalParams: {
+        'student': selectedStudent.value == 'yes' ? 'Yes' : 'no',
+        'college': selectedCollege.value ?? '',
+      },
+    );
 
     isSaving.value = true;
 
