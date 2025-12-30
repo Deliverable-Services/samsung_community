@@ -167,7 +167,7 @@ class AssignmentCard extends StatelessWidget {
                   alignment: Alignment.centerRight,
                   child: IntrinsicWidth(
                     child: EventTablet(
-                      text: isSubmitted ? 'Submitted' : 'sendSolution'.tr,
+                      text: isSubmitted ? 'submitted'.tr : 'sendSolution'.tr,
                       extraPadding: EdgeInsets.symmetric(horizontal: 36.w),
                       onTap: isSubmitted ? null : onButtonTap,
                     ),

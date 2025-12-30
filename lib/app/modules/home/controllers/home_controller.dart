@@ -73,11 +73,11 @@ class HomeController extends GetxController {
         }
       } else {
         CommonSnackbar.error(
-          result.errorOrNull ?? 'Failed to load weekly riddle',
+          result.errorOrNull ?? 'failedToLoadWeeklyRiddle'.tr,
         );
       }
     } catch (e) {
-      CommonSnackbar.error('Failed to load weekly riddle');
+      CommonSnackbar.error('failedToLoadWeeklyRiddle'.tr);
     } finally {
       isLoadingRiddle.value = false;
     }
@@ -128,7 +128,7 @@ class HomeController extends GetxController {
   ) async {
     final user = SupabaseService.currentUser;
     if (user == null) {
-      CommonSnackbar.error('User not found');
+      CommonSnackbar.error('userNotFound'.tr);
       return;
     }
 
@@ -138,9 +138,7 @@ class HomeController extends GetxController {
     );
 
     if (hasSubmitted.isSuccess && hasSubmitted.dataOrNull == true) {
-      CommonSnackbar.error(
-        'You have already submitted a solution for this riddle',
-      );
+      CommonSnackbar.error('alreadySubmittedRiddle'.tr);
       return;
     }
 
@@ -173,7 +171,7 @@ class HomeController extends GetxController {
           (riddle.question is List && (riddle.question as List).isEmpty) ||
           (riddle.question is Map && (riddle.question as Map).isEmpty)) {
         // If MCQ type but no options, show error message
-        CommonSnackbar.error('MCQ riddle is missing question options');
+        CommonSnackbar.error('mcqMissingOptions'.tr);
         return;
       }
 
@@ -197,7 +195,7 @@ class HomeController extends GetxController {
           return {entry.key: entry.value};
         }).toList();
       } else {
-        CommonSnackbar.error('Invalid question format');
+        CommonSnackbar.error('invalidQuestionFormat'.tr);
         return;
       }
 
@@ -304,11 +302,11 @@ class HomeController extends GetxController {
   /// Submit text solution
   Future<void> submitTextSolution(WeeklyRiddleModel riddle) async {
     if (!(textController.text.trim().isNotEmpty)) {
-      CommonSnackbar.error('Please enter text');
+      CommonSnackbar.error('pleaseEnterText'.tr);
       return;
     }
     if (!isConfirmChecked.value) {
-      CommonSnackbar.error('Please enable check box');
+      CommonSnackbar.error('pleaseEnableCheckbox'.tr);
       return;
     }
 
@@ -316,7 +314,7 @@ class HomeController extends GetxController {
 
     final user = SupabaseService.currentUser;
     if (user == null) {
-      CommonSnackbar.error('User not found');
+      CommonSnackbar.error('userNotFound'.tr);
       return;
     }
 
@@ -355,7 +353,7 @@ class HomeController extends GetxController {
       }
       loadWeeklyRiddle(); // Refresh to update submission status
     } else {
-      CommonSnackbar.error('Failed to submit solution');
+      CommonSnackbar.error('failedToSubmitSolution'.tr);
     }
   }
 
@@ -368,7 +366,7 @@ class HomeController extends GetxController {
 
     final user = SupabaseService.currentUser;
     if (user == null) {
-      CommonSnackbar.error('User not found');
+      CommonSnackbar.error('userNotFound'.tr);
       return;
     }
 
@@ -433,11 +431,11 @@ class HomeController extends GetxController {
   Future<void> submitAudioSolution(WeeklyRiddleModel riddle) async {
     if (!(uploadedMediaUrl.value != null &&
         uploadedMediaUrl.value!.isNotEmpty)) {
-      CommonSnackbar.error('Please select audio file');
+      CommonSnackbar.error('pleaseSelectAudioFile'.tr);
       return;
     }
     if (!isConfirmChecked.value) {
-      CommonSnackbar.error('Please enable check box');
+      CommonSnackbar.error('pleaseEnableCheckbox'.tr);
       return;
     }
 
@@ -445,7 +443,7 @@ class HomeController extends GetxController {
 
     final user = SupabaseService.currentUser;
     if (user == null) {
-      CommonSnackbar.error('User not found');
+      CommonSnackbar.error('userNotFound'.tr);
       return;
     }
 
@@ -467,7 +465,7 @@ class HomeController extends GetxController {
       _showSubmittedModal();
       loadWeeklyRiddle(); // Refresh to update submission status
     } else {
-      CommonSnackbar.error('Failed to submit solution');
+      CommonSnackbar.error('failedToSubmitSolution'.tr);
     }
   }
 
@@ -475,11 +473,11 @@ class HomeController extends GetxController {
   Future<void> submitVideoSolution(WeeklyRiddleModel riddle) async {
     if (!(uploadedMediaUrl.value != null &&
         uploadedMediaUrl.value!.isNotEmpty)) {
-      CommonSnackbar.error('Please select video file');
+      CommonSnackbar.error('pleaseSelectVideoFile'.tr);
       return;
     }
     if (!isConfirmChecked.value) {
-      CommonSnackbar.error('Please enable check box');
+      CommonSnackbar.error('pleaseEnableCheckbox'.tr);
       return;
     }
 
@@ -487,7 +485,7 @@ class HomeController extends GetxController {
 
     final user = SupabaseService.currentUser;
     if (user == null) {
-      CommonSnackbar.error('User not found');
+      CommonSnackbar.error('userNotFound'.tr);
       return;
     }
 
@@ -509,7 +507,7 @@ class HomeController extends GetxController {
       _showSubmittedModal();
       loadWeeklyRiddle(); // Refresh to update submission status
     } else {
-      CommonSnackbar.error('Failed to submit solution');
+      CommonSnackbar.error('failedToSubmitSolution'.tr);
     }
   }
 
@@ -523,7 +521,7 @@ class HomeController extends GetxController {
       icon: SvgPicture.asset(AppImages.correctAnswerRiddleIcon),
       iconWidth: 50.w,
       iconHeight: 50.h,
-      title: 'Amazing! You got it right!',
+      title: 'amazingGotItRight'.tr,
       descriptionWidget: RichText(
         textAlign: TextAlign.center,
         text: TextSpan(
@@ -533,19 +531,19 @@ class HomeController extends GetxController {
             color: AppColors.textWhiteOpacity70,
           ),
           children: [
-            const TextSpan(text: 'You\'ve earned '),
+            TextSpan(text: 'youveEarned'.tr),
             TextSpan(
-              text: '$pointsEarned points',
+              text: '$pointsEarned ${'points'.tr}',
               style: TextStyle(
                 color: const Color(0xFF4FC3F7), // Light blue
                 fontWeight: FontWeight.w700,
               ),
             ),
-            const TextSpan(text: ' for your correct answer!'),
+            TextSpan(text: 'forCorrectAnswer'.tr),
           ],
         ),
       ),
-      buttonText: 'Close',
+      buttonText: 'close'.tr,
     );
   }
 
@@ -559,9 +557,9 @@ class HomeController extends GetxController {
       iconPath: AppImages.incorrectAnswerRiddleIcon, // Using failed icon
       iconWidth: 50.w,
       iconHeight: 50.h,
-      title: 'Your answer\'s not quite right',
-      description: 'maybe you\'ll get it next time.',
-      buttonText: 'Close',
+      title: 'answerNotQuiteRight'.tr,
+      description: 'maybeNextTime'.tr,
+      buttonText: 'close'.tr,
     );
   }
 
@@ -575,9 +573,9 @@ class HomeController extends GetxController {
       iconPath: AppImages.icVerify, // Using verify icon for submitted
       iconWidth: 60.w,
       iconHeight: 60.h,
-      title: 'Your answer has been submitted!',
-      description: 'We\'re reviewing your answer and will update you shortly.',
-      buttonText: 'Close',
+      title: 'answerSubmitted'.tr,
+      description: 'reviewingAnswer'.tr,
+      buttonText: 'close'.tr,
     );
   }
 
@@ -595,7 +593,7 @@ class HomeController extends GetxController {
         );
       }
     } catch (e) {
-      CommonSnackbar.error('Failed to select file');
+      CommonSnackbar.error('failedToSelectFile'.tr);
     }
   }
 
@@ -607,7 +605,7 @@ class HomeController extends GetxController {
     try {
       final currentUser = SupabaseService.currentUser;
       if (currentUser == null) {
-        CommonSnackbar.error('User not found');
+        CommonSnackbar.error('userNotFound'.tr);
         return;
       }
 
@@ -623,11 +621,11 @@ class HomeController extends GetxController {
       if (url != null) {
         uploadedMediaUrl.value = url;
       } else {
-        CommonSnackbar.error('Failed to upload file');
+        CommonSnackbar.error('failedToUploadFile'.tr);
         clearFields();
       }
     } catch (e) {
-      CommonSnackbar.error('Failed to upload file');
+      CommonSnackbar.error('failedToUploadFile'.tr);
       clearFields();
     } finally {
       isUploadingMedia.value = false;

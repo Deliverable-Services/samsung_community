@@ -108,12 +108,15 @@ class EnLocalization {
     "whichOneCorrect": "Which one's correct? Pick one.",
     "registration": "Registration",
     "youDoNotHaveEnoughPoints": "You don't have enough points.",
-    "yourBalanceIsTooLowToCompleteThisAction": "Your balance is too low to complete this action.",
+    "yourBalanceIsTooLowToCompleteThisAction":
+        "Your balance is too low to complete this action.",
     "payByCreditCard": "Pay by credit card",
     "registrationSuccessful": "Registration Successful",
-    "theZoomLinkWillBeUpdatedPriorToTheLiveSession": "The Zoom link will be updated prior to the live session.",
+    "theZoomLinkWillBeUpdatedPriorToTheLiveSession":
+        "The Zoom link will be updated prior to the live session.",
     "close": "Close",
-    "anExclusiveLiveSessionIsAbout": "An exclusive live session is about to go live. Tune in shortly to catch all the action!",
+    "anExclusiveLiveSessionIsAbout":
+        "An exclusive live session is about to go live. Tune in shortly to catch all the action!",
     "liveVideoStartingSoon": "Live Video Starting Soon",
     "joinLive": "Join Live",
 
@@ -241,7 +244,6 @@ class EnLocalization {
     "reportSubmittedSuccessfully": "Report Submitted Successfully",
     "reportSuccessMessage":
         "Your report has been successfully sent to the community manager",
-    "close": "Close",
     "insufficientPoints": "You don't have enough points.",
     "insufficientPointsMessage":
         "Your balance is too low to complete this action.",
@@ -255,5 +257,28 @@ class EnLocalization {
         "The courier will contact you to arrange delivery.",
     "invalidZipCode": "Please enter a valid zip code",
     "noPurchasesYet": "No purchases yet",
+    // Weekly Riddle
+    "failedToLoadWeeklyRiddle": "Failed to load weekly riddle",
+    "alreadySubmittedRiddle":
+        "You have already submitted a solution for this riddle",
+    "mcqMissingOptions": "MCQ riddle is missing question options",
+    "invalidQuestionFormat": "Invalid question format",
+    "pleaseEnterText": "Please enter text",
+    "pleaseEnableCheckbox": "Please enable check box",
+    "failedToSubmitSolution": "Failed to submit solution",
+    "pleaseSelectAudioFile": "Please select audio file",
+    "pleaseSelectVideoFile": "Please select video file",
+    "failedToSelectFile": "Failed to select file",
+    "failedToUploadFile": "Failed to upload file",
+    "amazingGotItRight": "Amazing! You got it right!",
+    "youveEarned": "You've earned ",
+    "points": "points",
+    "forCorrectAnswer": " for your correct answer!",
+    "answerNotQuiteRight": "Your answer's not quite right",
+    "maybeNextTime": "maybe you'll get it next time.",
+    "answerSubmitted": "Your answer has been submitted!",
+    "reviewingAnswer":
+        "We're reviewing your answer and will update you shortly.",
+    "submitted": "Submitted",
   };
 }
