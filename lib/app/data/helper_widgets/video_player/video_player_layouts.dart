@@ -6,6 +6,7 @@ import '../../constants/app_colors.dart';
 import 'video_player_controls.dart';
 import 'video_player_error_widget.dart';
 import 'video_player_play_button.dart';
+import 'video_player_thumbnail.dart';
 
 class VideoPlayerNormalLayout extends StatelessWidget {
   final double aspectRatio;
@@ -85,13 +86,11 @@ class VideoPlayerNormalLayout extends StatelessWidget {
             ? const Color(0xFF2A2A2A)
             : AppColors.backgroundDarkMedium,
       ),
-
-      ///TODO COMENTED BY MAHENDRA PLEASE CHECK PARAV
-      // child: VideoPlayerThumbnail(
-      //   thumbnailUrl: thumbnailUrl,
-      //   thumbnailImage: thumbnailImage,
-      //   videoUrl: videoUrl,
-      // ),
+      child: VideoPlayerThumbnail(
+        thumbnailUrl: thumbnailUrl,
+        thumbnailImage: thumbnailImage,
+        videoUrl: videoUrl,
+      ),
     );
   }
 

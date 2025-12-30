@@ -24,6 +24,20 @@ class VideoPlayerThumbnail extends StatelessWidget {
     VideoPlayerThumbnailController controller;
     try {
       controller = Get.find<VideoPlayerThumbnailController>(tag: controllerTag);
+      // Update controller if URLs changed
+      if (controller.videoUrl != videoUrl ||
+          controller.thumbnailUrl != thumbnailUrl ||
+          controller.thumbnailImage != thumbnailImage) {
+        Get.delete<VideoPlayerThumbnailController>(tag: controllerTag);
+        controller = Get.put(
+          VideoPlayerThumbnailController(
+            videoUrl: videoUrl,
+            thumbnailUrl: thumbnailUrl,
+            thumbnailImage: thumbnailImage,
+          ),
+          tag: controllerTag,
+        );
+      }
     } catch (_) {
       controller = Get.put(
         VideoPlayerThumbnailController(
@@ -35,30 +49,30 @@ class VideoPlayerThumbnail extends StatelessWidget {
       );
     }
 
-    return GetBuilder(builder: (controller1) {
-     return Obx(() {
-        if (controller.thumbnailUrl != null) {
-          return _buildThumbnailImage(controller.thumbnailUrl!);
-        }
+    // Check non-reactive properties first
+    if (controller.thumbnailUrl != null) {
+      return _buildThumbnailImage(controller.thumbnailUrl!);
+    }
 
-        if (controller.thumbnailImage != null) {
-          return _buildThumbnailImage(controller.thumbnailImage!);
-        }
+    if (controller.thumbnailImage != null) {
+      return _buildThumbnailImage(controller.thumbnailImage!);
+    }
 
-        if (controller.generatedThumbnailPath.value != null) {
-          return _buildThumbnailImage(controller.generatedThumbnailPath.value!);
-        }
+    // Use Obx only for reactive variables
+    return Obx(() {
+      if (controller.generatedThumbnailPath.value != null) {
+        return _buildThumbnailImage(controller.generatedThumbnailPath.value!);
+      }
 
-        if (controller.isGenerating.value) {
-          return Container(
-            color: const Color(0xFF2A2A2A),
-            child: const Center(child: CircularProgressIndicator()),
-          );
-        }
+      if (controller.isGenerating.value) {
+        return Container(
+          color: const Color(0xFF2A2A2A),
+          child: const Center(child: CircularProgressIndicator()),
+        );
+      }
 
-        return Container(color: const Color(0xFF2A2A2A));
-      });
-    },);
+      return Container(color: const Color(0xFF2A2A2A));
+    });
   }
 
   Widget _buildThumbnailImage(String url) {

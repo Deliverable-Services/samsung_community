@@ -299,8 +299,8 @@ class UserProfileController extends GetxController {
     // Run API call in background
     _interactionService
         .toggleLike(
-      contentId: contentId,
-      userId: currentUserId,
+        contentId: contentId,
+        userId: currentUserId,
     )
         .then((result) async {
       if (result.isSuccess) {

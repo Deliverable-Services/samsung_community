@@ -76,6 +76,7 @@ class ContentCard1 extends StatelessWidget {
               height: 16.h,
               fit: BoxFit.contain,
             ),
+            SizedBox(height: 8.h),
           ],
           if (showAudioPlayer && pointsToEarn != null)
             Column(
