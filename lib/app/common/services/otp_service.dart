@@ -85,7 +85,6 @@ class OtpService {
           })
           .eq('phone_number', normalizedPhone);
 
-      debugPrint('✅ Generated OTP for signup: $otpCode');
       return Success(otpCode);
     } catch (e) {
       debugPrint('Error in generateOTP: $e');

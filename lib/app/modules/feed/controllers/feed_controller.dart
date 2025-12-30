@@ -249,7 +249,7 @@ class FeedController extends BaseController {
         await _uploadProfilePicture();
       }
     } catch (e) {
-      CommonSnackbar.error('Failed to select image');
+      CommonSnackbar.error('failed_to_select_image'.tr);
     }
   }
 
@@ -311,11 +311,11 @@ class FeedController extends BaseController {
       if (url != null) {
         profilePictureUrl.value = url;
       } else {
-        CommonSnackbar.error('Failed to upload profile picture');
+        CommonSnackbar.error('failed_to_upload_profile_picture'.tr);
         selectedImagePath.value = null;
       }
     } catch (e) {
-      CommonSnackbar.error('Failed to upload profile picture');
+      CommonSnackbar.error('failed_to_upload_profile_picture'.tr);
       selectedImagePath.value = null;
     } finally {
       isUploadingImage.value = false;
@@ -357,7 +357,7 @@ class FeedController extends BaseController {
                   contentId,
                   externalSharePlatforms: ['INSTAGRAM'],
                 );
-                CommonSnackbar.success('Shared to Instagram');
+                CommonSnackbar.success('shared_to_instagram'.tr);
               }
             },
             onFacebookTap: () async {
@@ -371,7 +371,7 @@ class FeedController extends BaseController {
                   contentId,
                   externalSharePlatforms: ['FACEBOOK'],
                 );
-                CommonSnackbar.success('Shared to Facebook');
+                CommonSnackbar.success('shared_to_facebook'.tr);
               }
             },
             onTikTokTap: () async {
@@ -385,7 +385,7 @@ class FeedController extends BaseController {
                   contentId,
                   externalSharePlatforms: ['TIKTOK'],
                 );
-                CommonSnackbar.success('Shared to TikTok');
+                CommonSnackbar.success('shared_to_tiktok'.tr);
               }
             },
             onCommunityFeedTap: () async {
@@ -399,7 +399,7 @@ class FeedController extends BaseController {
                   contentId,
                   externalSharePlatforms: ['COMMUNITY_FEED'],
                 );
-                CommonSnackbar.success('Shared to Community Feed');
+                CommonSnackbar.success('shared_to_community_feed'.tr);
               }
             },
           ),
@@ -457,7 +457,7 @@ class FeedController extends BaseController {
       final result = await _contentService.deleteContent(contentId);
 
       if (result.isSuccess) {
-        CommonSnackbar.success('Post deleted successfully');
+        CommonSnackbar.success('post_deleted_successfully'.tr);
         // Reload content after 1 second - loading will be handled by onInit
         Future.delayed(const Duration(seconds: 1), () {
           onInit();
@@ -503,7 +503,7 @@ class FeedController extends BaseController {
   Future<void> toggleLike(String contentId) async {
     final currentUserId = SupabaseService.currentUser?.id;
     if (currentUserId == null) {
-      CommonSnackbar.error('Please login to like content');
+      CommonSnackbar.error('please_login_to_like_content'.tr);
       return;
     }
 
@@ -626,12 +626,12 @@ class FeedController extends BaseController {
   Future<void> addComment(String contentId, String commentText) async {
     final currentUserId = SupabaseService.currentUser?.id;
     if (currentUserId == null) {
-      CommonSnackbar.error('Please login to comment');
+      CommonSnackbar.error('please_login_to_comment'.tr);
       return;
     }
 
     if (commentText.trim().isEmpty) {
-      CommonSnackbar.error('Comment cannot be empty');
+      CommonSnackbar.error('comment_cannot_be_empty'.tr);
       return;
     }
 
@@ -658,9 +658,9 @@ class FeedController extends BaseController {
           }
         }
 
-        CommonSnackbar.success('Comment added successfully');
+        CommonSnackbar.success('comment_added_successfully'.tr);
       } else {
-        handleError(result.errorOrNull ?? 'Failed to add comment');
+        handleError(result.errorOrNull ?? 'failed_to_add_comment'.tr);
       }
     } catch (e) {
       handleError('somethingWentWrong'.tr);

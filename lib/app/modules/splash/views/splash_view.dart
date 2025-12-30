@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../data/constants/app_colors.dart';
@@ -20,14 +19,7 @@ class SplashView extends GetView<SplashController> {
         },
         child: Scaffold(
           backgroundColor: AppColors.primary,
-          body: Center(
-            child: Image.asset(
-              AppImages.appLogo,
-              width: 266.w,
-              height: 248.h,
-              fit: BoxFit.fitHeight,
-            ),
-          ),
+          body: Image.asset(AppImages.imageSplash, fit: BoxFit.cover),
         ),
       );
     });

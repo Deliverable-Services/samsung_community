@@ -121,7 +121,7 @@ class HomeView extends GetView<HomeController> {
       title: event.title,
       description: event.description ?? '',
       exclusiveEvent: true,
-      buttonText: "Details & Registration",
+      buttonText: "eventDetailsRegistration".tr,
       onButtonTap: () => eventsController.showEventDetailsModal(event),
       labels: [
         EventLabel(text: eventsController.formatEventDate(event.eventDate)),

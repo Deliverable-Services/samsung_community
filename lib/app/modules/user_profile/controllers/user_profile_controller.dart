@@ -242,7 +242,7 @@ class UserProfileController extends GetxController {
   Future<void> toggleLike(String contentId) async {
     final currentUserId = SupabaseService.currentUser?.id;
     if (currentUserId == null) {
-      CommonSnackbar.error('Please login to like content');
+      CommonSnackbar.error('please_login_to_like_content'.tr);
       return;
     }
 
@@ -350,12 +350,12 @@ class UserProfileController extends GetxController {
   Future<void> addComment(String contentId, String commentText) async {
     final currentUserId = SupabaseService.currentUser?.id;
     if (currentUserId == null) {
-      CommonSnackbar.error('Please login to comment');
+      CommonSnackbar.error('please_login_to_comment'.tr);
       return;
     }
 
     if (commentText.trim().isEmpty) {
-      CommonSnackbar.error('Comment cannot be empty');
+      CommonSnackbar.error('comment_cannot_be_empty'.tr);
       return;
     }
 
@@ -374,9 +374,9 @@ class UserProfileController extends GetxController {
               post.copyWith(commentsCount: post.commentsCount + 1);
         }
 
-        CommonSnackbar.success('Comment added successfully');
+        CommonSnackbar.success('comment_added_successfully'.tr);
       } else {
-        _showError(result.errorOrNull ?? 'Failed to add comment');
+        _showError(result.errorOrNull ?? 'failed_to_add_comment'.tr);
       }
     } catch (_) {
       _showError('somethingWentWrong'.tr);
@@ -455,7 +455,7 @@ class UserProfileController extends GetxController {
                   contentId,
                   externalSharePlatforms: ['INSTAGRAM'],
                 );
-                CommonSnackbar.success('Shared to Instagram');
+                CommonSnackbar.success('shared_to_instagram'.tr);
               }
             },
             onFacebookTap: () async {
@@ -467,7 +467,7 @@ class UserProfileController extends GetxController {
                   contentId,
                   externalSharePlatforms: ['FACEBOOK'],
                 );
-                CommonSnackbar.success('Shared to Facebook');
+                CommonSnackbar.success('shared_to_facebook'.tr);
               }
             },
             onTikTokTap: () async {
@@ -479,7 +479,7 @@ class UserProfileController extends GetxController {
                   contentId,
                   externalSharePlatforms: ['TIKTOK'],
                 );
-                CommonSnackbar.success('Shared to TikTok');
+                CommonSnackbar.success('shared_to_tiktok'.tr);
               }
             },
             onCommunityFeedTap: () async {
@@ -491,7 +491,7 @@ class UserProfileController extends GetxController {
                   contentId,
                   externalSharePlatforms: ['COMMUNITY_FEED'],
                 );
-                CommonSnackbar.success('Shared to Community Feed');
+                CommonSnackbar.success('shared_to_community_feed'.tr);
               }
             },
           ),
@@ -504,7 +504,7 @@ class UserProfileController extends GetxController {
   Future<void> navigateToChat() async {
     final currentUserId = SupabaseService.currentUser?.id;
     if (currentUserId == null || targetUserId.isEmpty) {
-      _showError('User not found');
+      _showError('user_not_found'.tr);
       return;
     }
 

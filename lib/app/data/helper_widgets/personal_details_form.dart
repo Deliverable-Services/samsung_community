@@ -54,7 +54,7 @@ class PersonalDetailsForm extends StatelessWidget {
           textController: fullNameController,
           validator: (value) {
             if (value == null || value.trim().isEmpty) {
-              return 'fullName'.tr + ' is required';
+              return 'fullName'.tr + ' is_required'.tr;
             }
             return null;
           },
@@ -71,7 +71,7 @@ class PersonalDetailsForm extends StatelessWidget {
           textController: birthdayController,
           validator: (value) {
             if (value == null || value.trim().isEmpty) {
-              return 'birthday'.tr + ' is required';
+              return 'birthday'.tr + ' is_required'.tr;
             }
             return null;
           },
@@ -88,7 +88,7 @@ class PersonalDetailsForm extends StatelessWidget {
           textController: emailController,
           validator: (value) {
             if (value == null || value.trim().isEmpty) {
-              return 'emailAddress'.tr + ' is required';
+              return 'emailAddress'.tr + ' is_required'.tr;
             }
             final emailRegex = RegExp(
               r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
@@ -111,7 +111,7 @@ class PersonalDetailsForm extends StatelessWidget {
           textController: cityController,
           validator: (value) {
             if (value == null || value.trim().isEmpty) {
-              return 'city'.tr + ' is required';
+              return 'city'.tr + ' is_required'.tr;
             }
             return null;
           },

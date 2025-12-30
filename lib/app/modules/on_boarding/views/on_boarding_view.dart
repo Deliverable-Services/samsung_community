@@ -29,12 +29,11 @@ class OnBoardingView extends GetView<OnBoardingController> {
         backgroundColor: AppColors.primary,
         body: Stack(
           children: [
-            SizedBox(
-              width: 390.w,
-              height: 585.h,
-              child: Image.asset(AppImages.tintBackground2, fit: BoxFit.cover),
+            Image(
+              image: AssetImage(AppImages.imageOnBoarding),
+              height: double.infinity,
+              width: double.infinity,
             ),
-            // Content
             SafeArea(
               top: true,
               bottom: true,
@@ -42,94 +41,26 @@ class OnBoardingView extends GetView<OnBoardingController> {
                 alignment: const AlignmentDirectional(0, 0),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: 390.w,
-                      height: 545.h,
-                      child: SizedBox(
-                        width: 390.w,
-                        height: 585.h,
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Positioned(
-                              top: 67.h,
-                              left: 95.w,
-                              child: SizedBox(
-                                height: 58.h,
-                                child: Center(
-                                  child: Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: 'welcomeToOur'.tr,
-                                          style: TextStyle(
-                                            fontSize: 26.sp,
-                                            fontWeight: FontWeight.w400,
-                                            letterSpacing: 0,
-                                            color: AppColors.white,
-                                            height: 40 / 26,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: 'sCommunity'.tr,
-                                          style: TextStyle(
-                                            fontSize: 30.sp,
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 0,
-                                            color: AppColors.white,
-                                            height: 40 / 30,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    textAlign: TextAlign.center,
-                                    textScaler: const TextScaler.linear(1.0),
-                                    overflow: TextOverflow.visible,
-                                    maxLines: 2,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              top: 239.55.h,
-                              left: 35.w,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(24.r),
-                                child: Image(
-                                  image: AssetImage(AppImages.appLogo),
-                                  width: 266.w,
-                                  height: 248.h,
-                                  fit: BoxFit.fitHeight,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 43.h),
-                    Padding(
-                      padding: EdgeInsets.only(),
-                      child: SizedBox(
-                        width: 313.w,
-                        height: 32.h,
-                        child: Center(
-                          child: Text(
-                            'welcomeDescription'.tr,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 0,
-                              color: AppColors.white,
-                              height: 22 / 14,
-                            ),
-                            textScaler: const TextScaler.linear(1.0),
-                            maxLines: 2,
-                            overflow: TextOverflow.visible,
+                      width: 313.w,
+                      height: 32.h,
+                      child: Center(
+                        child: Text(
+                          'welcomeDescription'.tr,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 0,
+                            color: AppColors.white,
+                            height: 22 / 14,
                           ),
+                          textScaler: const TextScaler.linear(1.0),
+                          maxLines: 2,
+                          overflow: TextOverflow.visible,
                         ),
                       ),
                     ),
@@ -181,6 +112,7 @@ class OnBoardingView extends GetView<OnBoardingController> {
                         ],
                       ),
                     ),
+                    SizedBox(height: 20.h),
                   ],
                 ),
               ),

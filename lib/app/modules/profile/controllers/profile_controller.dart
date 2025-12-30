@@ -176,7 +176,7 @@ class ProfileController extends BaseController {
           );
         }
         _profileService.likedByUsersMap[contentId] = previousLikedByUsers;
-        CommonSnackbar.error(result.errorOrNull ?? 'Failed to like post');
+        CommonSnackbar.error(result.errorOrNull ?? 'failed_to_like_post'.tr);
       }
     }).catchError((error) {
       // Revert on exception
@@ -213,7 +213,7 @@ class ProfileController extends BaseController {
       }
       CommonSnackbar.success('Comment added');
     } else {
-      CommonSnackbar.error(result.errorOrNull ?? 'Failed to add comment');
+      CommonSnackbar.error(result.errorOrNull ?? 'failed_to_add_comment'.tr);
     }
   }
 
@@ -290,7 +290,7 @@ class ProfileController extends BaseController {
                   contentId,
                   externalSharePlatforms: ['INSTAGRAM'],
                 );
-                CommonSnackbar.success('Shared to Instagram');
+                CommonSnackbar.success('shared_to_instagram'.tr);
               }
             },
             onFacebookTap: () async {
@@ -302,7 +302,7 @@ class ProfileController extends BaseController {
                   contentId,
                   externalSharePlatforms: ['FACEBOOK'],
                 );
-                CommonSnackbar.success('Shared to Facebook');
+                CommonSnackbar.success('shared_to_facebook'.tr);
               }
             },
             onTikTokTap: () async {
@@ -314,7 +314,7 @@ class ProfileController extends BaseController {
                   contentId,
                   externalSharePlatforms: ['TIKTOK'],
                 );
-                CommonSnackbar.success('Shared to TikTok');
+                CommonSnackbar.success('shared_to_tiktok'.tr);
               }
             },
             onCommunityFeedTap: () async {
@@ -326,7 +326,7 @@ class ProfileController extends BaseController {
                   contentId,
                   externalSharePlatforms: ['COMMUNITY_FEED'],
                 );
-                CommonSnackbar.success('Shared to Community Feed');
+                CommonSnackbar.success('shared_to_community_feed'.tr);
               }
             },
           ),
@@ -344,7 +344,7 @@ class ProfileController extends BaseController {
       final result = await _contentService.deleteContent(contentId);
 
       if (result.isSuccess) {
-        CommonSnackbar.success('Post deleted successfully');
+        CommonSnackbar.success('post_deleted_successfully'.tr);
         Future.delayed(const Duration(seconds: 1), () {
           _profileService.loadUserPosts();
           _profileService.loadUserProfile();
@@ -369,7 +369,7 @@ class ProfileController extends BaseController {
         await _uploadProfilePicture(File(pickedFile.path));
       }
     } catch (e) {
-      CommonSnackbar.error('Failed to select image');
+      CommonSnackbar.error('failed_to_select_image'.tr);
     }
   }
 
@@ -422,7 +422,7 @@ class ProfileController extends BaseController {
   Future<void> _uploadProfilePicture(File imageFile) async {
     final currentUser = _authRepo.currentUser.value;
     if (currentUser == null || currentUser.id.isEmpty) {
-      CommonSnackbar.error('User not found');
+      CommonSnackbar.error('user_not_found'.tr);
       return;
     }
 
@@ -436,13 +436,13 @@ class ProfileController extends BaseController {
 
       if (url != null) {
         await _updateUserProfilePicture(url);
-        CommonSnackbar.success('Profile picture updated');
+        CommonSnackbar.success('profile_picture_updated'.tr);
       } else {
-        CommonSnackbar.error('Failed to upload profile picture');
+        CommonSnackbar.error('failed_to_upload_profile_picture'.tr);
       }
     } catch (e) {
       debugPrint('Error uploading profile picture: $e');
-      CommonSnackbar.error('Failed to upload profile picture');
+      CommonSnackbar.error('failed_to_upload_profile_picture'.tr);
     } finally {
       isUploadingImage.value = false;
     }

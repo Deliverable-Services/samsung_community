@@ -144,7 +144,7 @@ class PersonalDetailsController extends GetxController {
         await _uploadProfilePicture();
       }
     } catch (e) {
-      CommonSnackbar.error('Failed to select image');
+      CommonSnackbar.error('failed_to_select_image'.tr);
     }
   }
 
@@ -206,11 +206,11 @@ class PersonalDetailsController extends GetxController {
       if (url != null) {
         profilePictureUrl.value = url;
       } else {
-        CommonSnackbar.error('Failed to upload profile picture');
+        CommonSnackbar.error('failed_to_upload_profile_picture'.tr);
         selectedImagePath.value = null;
       }
     } catch (e) {
-      CommonSnackbar.error('Failed to upload profile picture');
+      CommonSnackbar.error('failed_to_upload_profile_picture'.tr);
       selectedImagePath.value = null;
     } finally {
       isUploadingImage.value = false;
@@ -227,19 +227,19 @@ class PersonalDetailsController extends GetxController {
       // Also show specific toasters for better UX
       final fullName = fullNameController.text.trim();
       if (fullName.isEmpty) {
-        CommonSnackbar.error('${'fullName'.tr} is required');
+        CommonSnackbar.error('${'fullName'.tr} is_required'.tr);
         return;
       }
 
       final birthday = birthdayController.text.trim();
       if (birthday.isEmpty) {
-        CommonSnackbar.error('${'birthday'.tr} is required');
+        CommonSnackbar.error('${'birthday'.tr} is_required'.tr);
         return;
       }
 
       final email = emailController.text.trim();
       if (email.isEmpty) {
-        CommonSnackbar.error('${'emailAddress'.tr} is required');
+        CommonSnackbar.error('${'emailAddress'.tr} is_required'.tr);
         return;
       } else {
         final emailRegex = RegExp(
@@ -253,27 +253,27 @@ class PersonalDetailsController extends GetxController {
 
       final city = cityController.text.trim();
       if (city.isEmpty) {
-        CommonSnackbar.error('${'city'.tr} is required');
+        CommonSnackbar.error('${'city'.tr} is_required'.tr);
         return;
       }
     }
 
     // Validate dropdowns
     if (selectedGender.value == null || selectedGender.value!.isEmpty) {
-      CommonSnackbar.error('${'gender'.tr} is required');
-      genderError.value = '${'gender'.tr} is required';
+      CommonSnackbar.error('${'gender'.tr} is_required'.tr);
+      genderError.value = '${'gender'.tr} is_required'.tr;
       return;
     }
 
     if (selectedDeviceModel.value == null ||
         selectedDeviceModel.value!.isEmpty) {
-      CommonSnackbar.error('${'deviceModel'.tr} is required');
-      deviceModelError.value = '${'deviceModel'.tr} is required';
+      CommonSnackbar.error('${'deviceModel'.tr} is_required'.tr);
+      deviceModelError.value = '${'deviceModel'.tr} is_required'.tr;
       return;
     }
 
     if (phoneNumber.value.isEmpty) {
-      CommonSnackbar.error('${'mobile_number'.tr} is required');
+      CommonSnackbar.error('${'mobile_number'.tr} is_required'.tr);
       return;
     }
 

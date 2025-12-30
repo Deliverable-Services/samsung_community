@@ -119,7 +119,7 @@ class VerificationCodeController extends GetxController {
     final otpCode = verificationCodeController.text.trim();
 
     if (otpCode.isEmpty) {
-      otpError.value = 'verificationCode'.tr + ' is required';
+      otpError.value = 'verificationCode'.tr + ' is_required'.tr;
       formKey.currentState?.validate();
       return;
     }
@@ -195,12 +195,11 @@ class VerificationCodeController extends GetxController {
                     );
 
                     if (!success) {
-                      debugPrint('Failed to save language preference');
                       final errorMessage = authRepo.errorMessage.value;
                       CommonSnackbar.error(
                         errorMessage.isNotEmpty
                             ? errorMessage
-                            : 'Failed to save language preference',
+                            : 'failed_to_save_language_preference'.tr,
                       );
                       return;
                     }

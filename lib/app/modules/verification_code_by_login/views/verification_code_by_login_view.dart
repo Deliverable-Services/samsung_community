@@ -142,7 +142,7 @@ class VerificationCodeByLoginView
                                 return controller.otpError.value;
                               }
                               if (value == null || value.trim().isEmpty) {
-                                return 'verificationCode'.tr + ' is required';
+                                return 'verificationCode'.tr + ' is_required'.tr;
                               }
                               return null;
                             },
