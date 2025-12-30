@@ -6,7 +6,7 @@ import '../../vod/controllers/vod_controller.dart';
 class BottomBarBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<BottomBarController>(() => BottomBarController());
+    Get.put<BottomBarController>(BottomBarController(), permanent: true);
     Get.lazyPut<VodController>(() => VodController(), fenix: true);
   }
 }

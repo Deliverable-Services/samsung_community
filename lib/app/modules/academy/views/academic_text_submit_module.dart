@@ -117,13 +117,13 @@ class AcademicTextSubmitModule extends StatelessWidget {
             text: 'submitAnswer'.tr,
             width: double.infinity,
             height: 48.h,
+            isEnabled: controller.isConfirmChecked.value,
           ),
         ],
       ),
     );
   }
 }
-
 
 class AcademicMcqSubmitModule extends StatefulWidget {
   final String title;
@@ -146,8 +146,7 @@ class AcademicMcqSubmitModule extends StatefulWidget {
       _AcademicMcqSubmitModuleState();
 }
 
-class _AcademicMcqSubmitModuleState
-    extends State<AcademicMcqSubmitModule> {
+class _AcademicMcqSubmitModuleState extends State<AcademicMcqSubmitModule> {
   final RxnInt selectedIndex = RxnInt();
 
   @override
@@ -157,15 +156,10 @@ class _AcademicMcqSubmitModuleState
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-
           /// Points
           Row(
             children: [
-              SvgPicture.asset(
-                AppImages.pointsIcon,
-                width: 18.w,
-                height: 18.h,
-              ),
+              SvgPicture.asset(AppImages.pointsIcon, width: 18.w, height: 18.h),
               SizedBox(width: 4.w),
               Text(
                 '+${widget.pointsToEarn ?? 0}',
@@ -204,60 +198,43 @@ class _AcademicMcqSubmitModuleState
           SizedBox(height: 20.h),
 
           /// MCQ Options
-          ...List.generate(
-            widget.options.length,
-                (index) {
-              final optionMap = widget.options[index];
-              final optionText =
-              (optionMap as Map<String, dynamic>)
-                  .values
-                  .first
-                  .toString();
+          ...List.generate(widget.options.length, (index) {
+            final optionMap = widget.options[index];
+            final optionText = (optionMap as Map<String, dynamic>).values.first
+                .toString();
 
-              return GestureDetector(
-                onTap: () => selectedIndex.value = index,
-                child: Container(
-                  margin: EdgeInsets.only(bottom: 12.h),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 14.h,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16.r),
-                    gradient: LinearGradient(
-                      colors: selectedIndex.value == index
-                          ? const [
-                        Color(0xFF3B82F6),
-                        Color(0xFF2563EB),
-                      ]
-                          : const [
-                        Color(0xFF3A3F45),
-                        Color(0xFF2F3439),
-                      ],
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      _RadioCircle(
-                        isSelected: selectedIndex.value == index,
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: Text(
-                          optionText,
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
+            return GestureDetector(
+              onTap: () => selectedIndex.value = index,
+              child: Container(
+                margin: EdgeInsets.only(bottom: 12.h),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16.r),
+                  gradient: LinearGradient(
+                    colors: selectedIndex.value == index
+                        ? const [Color(0xFF3B82F6), Color(0xFF2563EB)]
+                        : const [Color(0xFF3A3F45), Color(0xFF2F3439)],
                   ),
                 ),
-              );
-            },
-          ),
+                child: Row(
+                  children: [
+                    _RadioCircle(isSelected: selectedIndex.value == index),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Text(
+                        optionText,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
 
           SizedBox(height: 24.h),
 
@@ -292,25 +269,22 @@ class _RadioCircle extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: isSelected
-              ? Colors.white
-              : Colors.white.withOpacity(0.4),
+          color: isSelected ? Colors.white : Colors.white.withOpacity(0.4),
           width: 2,
         ),
       ),
       child: isSelected
           ? Center(
-        child: Container(
-          width: 10.w,
-          height: 10.w,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white,
-          ),
-        ),
-      )
+              child: Container(
+                width: 10.w,
+                height: 10.w,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                ),
+              ),
+            )
           : null,
     );
   }
 }
-

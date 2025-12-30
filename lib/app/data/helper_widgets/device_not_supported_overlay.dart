@@ -1,27 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../common/services/analytics_service.dart';
 import '../constants/app_button.dart';
 import '../constants/app_images.dart';
 
-class DeviceNotSupportedOverlay extends StatelessWidget {
+class DeviceNotSupportedOverlay extends StatefulWidget {
   const DeviceNotSupportedOverlay({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Log screen view event when modal appears
-    AnalyticsService.trackScreenView(
-      screenName: 'Popup device not approved',
-      screenClass: 'DeviceNotSupportedOverlay',
-    );
-    // Also log custom event as specified
-    AnalyticsService.logEvent(
-      eventName: 'Popup_device_not_approved_click',
-      parameters: {'screen_name': 'Popup device not approved'},
-    );
+  State<DeviceNotSupportedOverlay> createState() =>
+      _DeviceNotSupportedOverlayState();
+}
 
+class _DeviceNotSupportedOverlayState extends State<DeviceNotSupportedOverlay> {
+  bool _hasLoggedAnalytics = false;
+
+  Future<void> _openPlayStore() async {
+    try {
+      // Play Store search URL format
+      const searchQuery = 'S Society';
+      final encodedQuery = Uri.encodeComponent(searchQuery);
+      final playStoreUrl = Uri.parse(
+        'https://play.google.com/store/search?q=$encodedQuery&c=apps',
+      );
+
+      // Try to open with Play Store app first (market:// scheme)
+      final marketUrl = Uri.parse('market://search?q=$encodedQuery');
+      
+      if (await canLaunchUrl(marketUrl)) {
+        await launchUrl(marketUrl, mode: LaunchMode.externalApplication);
+      } else if (await canLaunchUrl(playStoreUrl)) {
+        // Fallback to web Play Store
+        await launchUrl(playStoreUrl, mode: LaunchMode.externalApplication);
+      } else {
+        debugPrint('Could not launch Play Store URL');
+      }
+    } catch (e) {
+      debugPrint('Error opening Play Store: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Log analytics once when modal first appears
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_hasLoggedAnalytics) {
+        _hasLoggedAnalytics = true;
+        // Log screen view event when modal appears
+        AnalyticsService.logScreenView(
+          screenName: 'Popup device not approved',
+          screenClass: 'DeviceNotSupportedOverlay',
+        );
+        // Also log custom event as specified
+        AnalyticsService.logEvent(
+          eventName: 'Popup_device_not_approved_click',
+          parameters: {'screen_name': 'Popup device not approved'},
+        );
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -135,14 +179,15 @@ class DeviceNotSupportedOverlay extends StatelessWidget {
           ),
           SizedBox(height: 30.h),
           AppButton(
-            onTap: () {
+            onTap: () async {
               // Log button click event
               AnalyticsService.logButtonClick(
                 screenName: 'Popup device not approved',
                 buttonName: 'Go to store',
                 eventName: 'Popup_device_not_approved_click',
               );
-              // TODO: Handle go to store action
+              // Open Play Store and search for "S Society"
+              await _openPlayStore();
             },
             text: 'goToStore'.tr,
             width: 350.w,

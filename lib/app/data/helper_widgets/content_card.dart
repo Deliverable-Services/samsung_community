@@ -23,6 +23,7 @@ class ContentCard1 extends StatelessWidget {
   final String? contentId;
   final VoidCallback? onButtonTap;
   final VoidCallback? onTap;
+  final bool showSolutionButton;
 
   const ContentCard1({
     super.key,
@@ -39,6 +40,7 @@ class ContentCard1 extends StatelessWidget {
     this.contentId,
     this.onButtonTap,
     this.onTap,
+    this.showSolutionButton = true,
   });
 
   @override
@@ -235,18 +237,19 @@ class ContentCard1 extends StatelessWidget {
                   ? 'audio_$contentId'
                   : audioUrl ?? 'audio_${title.hashCode}',
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IntrinsicWidth(
-                  child: EventTablet(
-                    text: 'sendSolution'.tr,
-                    extraPadding: EdgeInsets.symmetric(horizontal: 36.w),
-                    onTap: onButtonTap,
+            if (showSolutionButton)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IntrinsicWidth(
+                    child: EventTablet(
+                      text: 'sendSolution'.tr,
+                      extraPadding: EdgeInsets.symmetric(horizontal: 36.w),
+                      onTap: onButtonTap,
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
           ],
           if (!showVideoPlayer && !showAudioPlayer) ...[
             SizedBox(height: 20.h),

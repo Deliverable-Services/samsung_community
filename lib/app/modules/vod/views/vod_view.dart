@@ -301,6 +301,7 @@ class _VodViewState extends State<VodView> {
       thumbnailUrl: content.thumbnailUrl,
       thumbnailImage: content.thumbnailUrl,
       contentId: content.id,
+      showSolutionButton: false,
     );
   }
 }
