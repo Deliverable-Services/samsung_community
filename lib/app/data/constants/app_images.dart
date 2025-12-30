@@ -53,5 +53,6 @@ class AppImages {
       reportIcon = '$baseUrl/report.svg',
       reportedIcon = '$baseUrl/reported.svg',
       notEnoughPointsIcon = '$baseUrl/not_enough_points.svg',
-      verifiedIcon = '$baseUrl/verify.svg';
+      verifiedIcon = '$baseUrl/verify.svg',
+      vodIcon = '$baseUrl/vod.svg';
 }

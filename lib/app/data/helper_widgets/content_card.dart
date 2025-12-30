@@ -24,7 +24,7 @@ class ContentCard1 extends StatelessWidget {
   final VoidCallback? onButtonTap;
   final VoidCallback? onTap;
   final bool showSolutionButton;
-
+  final bool showTopIcon;
   const ContentCard1({
     super.key,
     this.imagePath,
@@ -41,6 +41,7 @@ class ContentCard1 extends StatelessWidget {
     this.onButtonTap,
     this.onTap,
     this.showSolutionButton = true,
+    this.showTopIcon = false,
   });
 
   @override
@@ -68,6 +69,14 @@ class ContentCard1 extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (showTopIcon == true) ...[
+            SvgPicture.asset(
+              AppImages.vodIcon,
+              width: 16.w,
+              height: 16.h,
+              fit: BoxFit.contain,
+            ),
+          ],
           if (showAudioPlayer && pointsToEarn != null)
             Column(
               children: [

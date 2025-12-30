@@ -34,10 +34,9 @@ class BottomBarView extends GetView<BottomBarController> {
         top: true,
         bottom: true,
         child: Obx(() {
-          final shouldShowOverlay = false;
-          // final shouldShowOverlay =
-          //     !controller.isSamsungDevice.value &&
-          //     !controller.isCheckingDevice.value;
+          final shouldShowOverlay =
+              !controller.isSamsungDevice.value &&
+              !controller.isCheckingDevice.value;
 
           return Stack(
             children: [
@@ -85,7 +84,7 @@ class BottomBarView extends GetView<BottomBarController> {
                   ),
                 ],
               ),
-              if (shouldShowOverlay)
+              if (!shouldShowOverlay)
                 Positioned.fill(
                   child: Stack(
                     children: [
