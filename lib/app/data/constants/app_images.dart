@@ -1,6 +1,7 @@
 class AppImages {
   static const String baseUrl = 'asset/images',
       appLogo = '$baseUrl/app_logo.png',
+      logo = '$baseUrl/Logo.svg',
       forwardIcon = '$baseUrl/forward_icon.svg',
       backArrow = '$baseUrl/Path.png',
       addIcon = '$baseUrl/Add.svg',
@@ -54,5 +55,9 @@ class AppImages {
       reportedIcon = '$baseUrl/reported.svg',
       notEnoughPointsIcon = '$baseUrl/not_enough_points.svg',
       verifiedIcon = '$baseUrl/verify.svg',
-      vodIcon = '$baseUrl/vod.svg';
+      vodIcon = '$baseUrl/vod.svg',
+      tintBackground = '$baseUrl/Bg.svg',
+      tintBackground2 = '$baseUrl/Bg.png',
+      correctAnswerRiddleIcon = '$baseUrl/correct_answer_riddle.svg',
+      incorrectAnswerRiddleIcon = '$baseUrl/incorrect_answer_riddle.svg';
 }

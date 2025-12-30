@@ -7,8 +7,10 @@ import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../data/helper_widgets/audio_player/audio_player_widget.dart';
 import '../../../data/helper_widgets/event_tablet.dart';
+import '../../../data/models/weekly_riddle_model.dart';
 
 class AssignmentCard extends StatelessWidget {
+  final AssignmentCardType type;
   final String? imagePath;
   final String? audioUrl;
   final int? pointsToEarn;
@@ -18,9 +20,11 @@ class AssignmentCard extends StatelessWidget {
   final String? contentId;
   final VoidCallback? onButtonTap;
   final bool isAudio;
+  final bool isSubmitted;
 
   const AssignmentCard({
     super.key,
+    required this.type,
     this.imagePath,
     this.audioUrl,
     this.pointsToEarn,
@@ -30,6 +34,7 @@ class AssignmentCard extends StatelessWidget {
     this.contentId,
     this.onButtonTap,
     this.isAudio = false,
+    this.isSubmitted = false,
   });
 
   @override
@@ -162,9 +167,9 @@ class AssignmentCard extends StatelessWidget {
                   alignment: Alignment.centerRight,
                   child: IntrinsicWidth(
                     child: EventTablet(
-                      text: 'sendSolution'.tr,
+                      text: isSubmitted ? 'Submitted' : 'sendSolution'.tr,
                       extraPadding: EdgeInsets.symmetric(horizontal: 36.w),
-                      onTap: onButtonTap,
+                      onTap: isSubmitted ? null : onButtonTap,
                     ),
                   ),
                 ),

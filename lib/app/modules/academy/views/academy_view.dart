@@ -12,6 +12,7 @@ import '../../../data/helper_widgets/content_card.dart';
 import '../../../data/helper_widgets/event_launch_card.dart';
 import '../../../data/helper_widgets/filter_component.dart';
 import '../../../data/models/academy_content_model.dart';
+import '../../../data/models/weekly_riddle_model.dart';
 import '../controllers/academy_controller.dart';
 import 'assignment_card.dart';
 
@@ -360,6 +361,7 @@ class AcademyView extends GetView<AcademyController> {
       return Padding(
         padding: EdgeInsets.only(bottom: 20.h),
         child: AssignmentCard(
+          type: AssignmentCardType.assignment,
           title: content.title,
           description: content.description ?? '',
           showAudioPlayer: isAssignment && hasMedia,

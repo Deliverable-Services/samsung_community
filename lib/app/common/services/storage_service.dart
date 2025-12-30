@@ -156,7 +156,7 @@ class StorageService {
       case MediaType.video:
         return 'video/mp4';
       case MediaType.audio:
-        return 'audio/mp3';
+        return 'audio/mpeg'; // Correct MIME type for MP3 files
     }
   }
 }
