@@ -4,12 +4,9 @@ import 'package:get/get.dart';
 
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
-import '../../../data/helper_widgets/bottom_sheet_modal.dart';
 import '../../../data/helper_widgets/event_launch_card.dart';
 import '../../../data/models/event_model.dart';
-import '../../store/local_widgets/product_detail.dart';
 import '../controllers/events_controller.dart';
-import '../local_widgets/event_email_modal.dart';
 
 class EventsView extends GetView<EventsController> {
   const EventsView({super.key});
@@ -96,7 +93,7 @@ class EventsView extends GetView<EventsController> {
                     description: event.description ?? '',
                     exclusiveEvent: true,
                     buttonText: "Details & Registration",
-                    onButtonTap: () => _showEventDetailsModal(event),
+                    onButtonTap: () => controller.showEventDetailsModal(event),
                     labels: [
                       EventLabel(
                         text: controller.formatEventDate(event.eventDate),
@@ -163,7 +160,7 @@ class EventsView extends GetView<EventsController> {
                     buttonText: 'details'.tr,
                     showButton: true,
                     exclusiveEvent: event.eventType == EventType.liveEvent,
-                    onButtonTap: () => _showEventDetailsModal(event),
+                    onButtonTap: () => controller.showEventDetailsModal(event),
                   ),
                   SizedBox(height: 16.h),
                 ],
@@ -368,71 +365,6 @@ class EventsView extends GetView<EventsController> {
             }),
           ],
         ),
-      ),
-    );
-  }
-
-  void _showEventDetailsModal(EventModel event) {
-    final context = Get.context;
-    if (context == null) return;
-
-    // Build description with event details
-    String description = event.description ?? '';
-
-    // Top tablets - date
-    final List<String> topTablets = [
-      controller.formatEventDate(event.eventDate),
-    ];
-
-    // Middle tablets - points and credit
-    final List<String> middleTablets = [];
-    if (event.costCreditCents != null && event.costCreditCents! > 0) {
-      middleTablets.add(
-        'Credits: ${(event.costCreditCents! / 100).toStringAsFixed(0)}',
-      );
-    }
-    if (event.costPoints != null && event.costPoints! > 0) {
-      middleTablets.add('Points: ${event.costPoints}');
-    }
-
-    // Media URL - prefer video, then image
-    final String? mediaUrl =
-        event.videoUrl != null && event.videoUrl!.isNotEmpty
-        ? event.videoUrl
-        : event.imageUrl;
-    final bool isVideo = event.videoUrl != null && event.videoUrl!.isNotEmpty;
-
-    // Bottom button
-    String? buttonText;
-    VoidCallback? buttonOnTap;
-    if ((event.costPoints != null && event.costPoints! > 0) ||
-        (event.costCreditCents != null && event.costCreditCents! > 0)) {
-      buttonText = 'Buying';
-      buttonOnTap = () {
-        // Close the product detail modal first
-        Get.back();
-        // Show email input modal
-        EventEmailModal.show(
-          context,
-          eventId: event.id,
-        );
-      };
-    }
-
-    BottomSheetModal.show(
-      context,
-      buttonType: BottomSheetButtonType.close,
-      content: ProductDetail(
-        topTablets: topTablets,
-        title: event.title,
-        description: description,
-        middleTablets: middleTablets.isNotEmpty ? middleTablets : null,
-        mediaUrl: mediaUrl,
-        isVideo: isVideo,
-        bottomButtonText: buttonText,
-        bottomButtonOnTap: buttonOnTap,
-        isButtonEnabled: true,
-        tag: 'event_${event.id}',
       ),
     );
   }

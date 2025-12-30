@@ -6,6 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
+import '../../../common/services/content_service.dart';
+import '../../../common/services/event_service.dart';
 import '../../../common/services/storage_service.dart';
 import '../../../common/services/storage_service.dart' show MediaType;
 import '../../../common/services/supabase_service.dart';
@@ -17,17 +19,37 @@ import '../../../data/constants/app_images.dart';
 import '../../../data/helper_widgets/alert_modal.dart';
 import '../../../data/helper_widgets/bottom_sheet_modal.dart';
 import '../../../data/helper_widgets/reusable_submission_modules.dart';
+import '../../../data/models/content_model.dart';
+import '../../../data/models/event_model.dart';
+import '../../../data/models/home_item_model.dart';
 import '../../../data/models/weekly_riddle_model.dart';
 import '../../../repository/auth_repo/auth_repo.dart';
 
 class HomeController extends GetxController {
   final AuthRepo _authRepo = Get.find<AuthRepo>();
   final WeeklyRiddleService _weeklyRiddleService = WeeklyRiddleService();
+  final EventService _eventService = EventService();
+  final ContentService _contentService = ContentService();
 
-  // Weekly Riddle State
+  // Latest Items State
+  final Rxn<EventModel> latestEvent = Rxn<EventModel>();
   final Rxn<WeeklyRiddleModel> weeklyRiddle = Rxn<WeeklyRiddleModel>();
+  final Rxn<ContentModel> latestVod = Rxn<ContentModel>();
+  final Rxn<ContentModel> latestPodcast = Rxn<ContentModel>();
+
+  // Infinite Scroll Items
+  final RxList<HomeItem> allItems = <HomeItem>[].obs;
+  final RxBool isLoadingLatestItems = false.obs;
+  final RxBool isLoadingMore = false.obs;
+  final RxBool hasMoreData = true.obs;
   final RxBool isLoadingRiddle = false.obs;
   final RxBool hasSubmittedRiddle = false.obs;
+
+  static const int _pageSize = 10;
+  int _itemsLoaded = 0;
+
+  // Scroll Controller
+  ScrollController? scrollController;
 
   // Submission State
   final TextEditingController textController = TextEditingController();
@@ -40,7 +62,199 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadWeeklyRiddle();
+    scrollController = ScrollController();
+    scrollController?.addListener(_onScroll);
+    loadLatestItems().then((_) {
+      loadAllItems();
+    });
+  }
+
+  void _onScroll() {
+    if (scrollController != null &&
+        scrollController!.position.pixels >=
+            scrollController!.position.maxScrollExtent * 0.8) {
+      loadMoreItems();
+    }
+  }
+
+  /// Load all latest items
+  Future<void> loadLatestItems() async {
+    isLoadingLatestItems.value = true;
+    await Future.wait([
+      loadWeeklyRiddle(),
+      loadLatestEvent(),
+      loadLatestVod(),
+      loadLatestPodcast(),
+    ]);
+    isLoadingLatestItems.value = false;
+  }
+
+  /// Load latest event
+  Future<void> loadLatestEvent() async {
+    try {
+      final result = await _eventService.getEvents(isPublished: true, limit: 1);
+      if (result.isSuccess) {
+        final events = result.dataOrNull ?? [];
+        latestEvent.value = events.isNotEmpty ? events.first : null;
+      }
+    } catch (e) {
+      debugPrint('Error loading latest event: $e');
+    }
+  }
+
+  /// Load latest VOD
+  Future<void> loadLatestVod() async {
+    try {
+      final result = await _contentService.getContent(
+        contentType: ContentType.vod,
+        isPublished: true,
+        limit: 1,
+      );
+      if (result.isSuccess) {
+        final content = result.dataOrNull ?? [];
+        latestVod.value = content.isNotEmpty ? content.first : null;
+      }
+    } catch (e) {
+      debugPrint('Error loading latest VOD: $e');
+    }
+  }
+
+  /// Load latest podcast
+  Future<void> loadLatestPodcast() async {
+    try {
+      final result = await _contentService.getContent(
+        contentType: ContentType.podcast,
+        isPublished: true,
+        limit: 1,
+      );
+      if (result.isSuccess) {
+        final content = result.dataOrNull ?? [];
+        latestPodcast.value = content.isNotEmpty ? content.first : null;
+      }
+    } catch (e) {
+      debugPrint('Error loading latest podcast: $e');
+    }
+  }
+
+  /// Load all items for infinite scroll (merged and sorted by createdAt)
+  Future<void> loadAllItems({bool loadMore = false}) async {
+    if (loadMore) {
+      if (isLoadingMore.value || !hasMoreData.value) return;
+      isLoadingMore.value = true;
+    } else {
+      _itemsLoaded = 0;
+      allItems.clear();
+      hasMoreData.value = true;
+    }
+
+    try {
+      // Fetch from all tables in parallel (excluding store products)
+      final results = await Future.wait([
+        _eventService.getEvents(isPublished: true, limit: 100),
+        _fetchAllRiddles(),
+        _contentService.getContent(
+          contentType: ContentType.vod,
+          isPublished: true,
+          limit: 100,
+        ),
+        _contentService.getContent(
+          contentType: ContentType.podcast,
+          isPublished: true,
+          limit: 100,
+        ),
+      ]);
+
+      // Combine all items
+      final List<HomeItem> combinedItems = [];
+
+      // Add events
+      if (results[0].isSuccess) {
+        final events = (results[0] as Success<List<EventModel>>).data;
+        combinedItems.addAll(events.map((e) => HomeItem.fromEvent(e)));
+      }
+
+      // Add weekly riddles
+      if (results[1].isSuccess) {
+        final riddles = (results[1] as Success<List<WeeklyRiddleModel>>).data;
+        combinedItems.addAll(riddles.map((r) => HomeItem.fromRiddle(r)));
+      }
+
+      // Add VODs
+      if (results[2].isSuccess) {
+        final vods = (results[2] as Success<List<ContentModel>>).data;
+        combinedItems.addAll(vods.map((v) => HomeItem.fromVod(v)));
+      }
+
+      // Add podcasts
+      if (results[3].isSuccess) {
+        final podcasts = (results[3] as Success<List<ContentModel>>).data;
+        combinedItems.addAll(podcasts.map((p) => HomeItem.fromPodcast(p)));
+      }
+
+      // Sort by createdAt descending
+      combinedItems.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      // Exclude the 4 latest items that are shown at the top
+      final latestIds = <String>{};
+      if (latestEvent.value != null) latestIds.add(latestEvent.value!.id);
+      if (weeklyRiddle.value != null) latestIds.add(weeklyRiddle.value!.id);
+      if (latestVod.value != null) latestIds.add(latestVod.value!.id);
+      if (latestPodcast.value != null) latestIds.add(latestPodcast.value!.id);
+
+      final filteredItems = combinedItems
+          .where((item) => !latestIds.contains(item.id))
+          .toList();
+
+      // Apply pagination
+      final startIndex = _itemsLoaded;
+      final endIndex = startIndex + _pageSize;
+      final pageItems = startIndex < filteredItems.length
+          ? (endIndex <= filteredItems.length
+                ? filteredItems.sublist(startIndex, endIndex)
+                : filteredItems.sublist(startIndex))
+          : <HomeItem>[];
+
+      if (loadMore) {
+        allItems.addAll(pageItems);
+      } else {
+        allItems.value = pageItems;
+      }
+
+      _itemsLoaded += pageItems.length;
+      hasMoreData.value = _itemsLoaded < filteredItems.length;
+    } catch (e) {
+      debugPrint('Error loading all items: $e');
+    } finally {
+      isLoadingMore.value = false;
+    }
+  }
+
+  /// Fetch all weekly riddles
+  Future<Result<List<WeeklyRiddleModel>>> _fetchAllRiddles() async {
+    try {
+      final response = await SupabaseService.client
+          .from('weekly_riddles')
+          .select('*, question')
+          .eq('is_active', true)
+          .order('created_at', ascending: false)
+          .limit(100);
+
+      final riddles = (response as List)
+          .map(
+            (json) => WeeklyRiddleModel.fromJson(json as Map<String, dynamic>),
+          )
+          .toList();
+
+      return Success(riddles);
+    } catch (e) {
+      debugPrint('Error fetching all riddles: $e');
+      return Failure(e.toString());
+    }
+  }
+
+  /// Load more items for infinite scroll
+  Future<void> loadMoreItems() async {
+    await loadAllItems(loadMore: true);
   }
 
   @override
@@ -55,6 +269,8 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
+    scrollController?.removeListener(_onScroll);
+    scrollController?.dispose();
     textController.dispose();
     super.onClose();
   }

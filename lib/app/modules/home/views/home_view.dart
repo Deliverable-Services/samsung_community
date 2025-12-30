@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
+import '../../../data/helper_widgets/content_card.dart';
 import '../../../data/helper_widgets/event_launch_card.dart';
-import '../../../data/helper_widgets/store_card.dart';
+import '../../../data/models/content_model.dart';
+import '../../../data/models/event_model.dart';
+import '../../../data/models/home_item_model.dart';
+import '../../../data/models/store_product_model.dart';
 import '../../../data/models/weekly_riddle_model.dart';
 import '../../academy/views/assignment_card.dart';
+import '../../events/controllers/events_controller.dart';
 
 import '../controllers/home_controller.dart';
 
@@ -18,135 +22,297 @@ class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: () => controller.loadWeeklyRiddle(),
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: DefaultTextStyle(
-          style: const TextStyle(decoration: TextDecoration.none),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 22.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                EventLaunchCard(
-                  imagePath: AppImages.eventLaunchCard,
-                  title: 'homeExclusiveLaunchEvent'.tr,
-                  description: 'homeLoramDescription'.tr,
-                  text: '08.12.2025',
-                  showButton: true,
-                  onButtonTap: () {
-                    // TODO: Handle button tap
-                  },
-                  exclusiveEvent: true,
-                ),
-                SizedBox(height: 16.h),
-                Obx(() {
-                  if (controller.isLoadingRiddle.value) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  final riddle = controller.weeklyRiddle.value;
-                  if (riddle == null) {
-                    return const SizedBox.shrink();
-                  }
-                  return AssignmentCard(
-                    type: AssignmentCardType.riddle,
-                    title: riddle.title,
-                    description: riddle.description ?? '',
-                    pointsToEarn: riddle.pointsToEarn,
-                    isAudio: riddle.solutionType == RiddleSolutionType.audio,
-                    audioUrl: riddle.solutionType == RiddleSolutionType.audio
-                        ? riddle.answer
-                        : null,
-                    isSubmitted: controller.hasSubmittedRiddle.value,
-                    onButtonTap: controller.onRiddleSubmitTap,
-                  );
-                }),
-                SizedBox(height: 16.h),
-                Container(
-                  padding: EdgeInsets.all(16.w),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16.r),
-                    gradient: const LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color.fromRGBO(214, 214, 214, 0.14),
-                        Color.fromRGBO(112, 112, 112, 0.14),
-                      ],
-                      stops: [0.0, 1.0],
+      onRefresh: () async {
+        await controller.loadLatestItems();
+        await controller.loadAllItems();
+      },
+      child: Obx(() {
+        if (controller.isLoadingLatestItems.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return ListView(
+          controller: controller.scrollController ?? ScrollController(),
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 22.h),
+          children: [
+            DefaultTextStyle(
+              style: const TextStyle(decoration: TextDecoration.none),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Latest Event
+                  if (controller.latestEvent.value != null) ...[
+                    _buildEventCard(controller.latestEvent.value!),
+                    SizedBox(height: 16.h),
+                  ],
+
+                  // Weekly Riddle
+                  if (controller.weeklyRiddle.value != null) ...[
+                    AssignmentCard(
+                      type: AssignmentCardType.riddle,
+                      title: controller.weeklyRiddle.value!.title,
+                      description:
+                          controller.weeklyRiddle.value!.description ?? '',
+                      pointsToEarn: controller.weeklyRiddle.value!.pointsToEarn,
+                      isAudio:
+                          controller.weeklyRiddle.value!.solutionType ==
+                          RiddleSolutionType.audio,
+                      audioUrl:
+                          controller.weeklyRiddle.value!.solutionType ==
+                              RiddleSolutionType.audio
+                          ? controller.weeklyRiddle.value!.answer
+                          : null,
+                      isSubmitted: controller.hasSubmittedRiddle.value,
+                      onButtonTap: controller.onRiddleSubmitTap,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0x1A000000),
-                        offset: Offset(0, 7.43.h),
-                        blurRadius: 16.6.r,
-                        spreadRadius: 0,
-                      ),
-                    ],
-                  ),
-                  child: EventLaunchCard(
-                    imagePath: AppImages.eventRegisteration,
-                    title: 'homeLiveEventRegistration'.tr,
-                    description: 'homeLiveEventDescription'.tr,
-                    text: 'homeMoreDetails'.tr,
-                    showButton: true,
-                    onButtonTap: () {
-                      // TODO: Navigate to Eventer payment screen
-                    },
-                    exclusiveEvent: false,
-                    extraPaddingForButton: EdgeInsets.symmetric(
-                      horizontal: 16.w,
+                    SizedBox(height: 16.h),
+                  ],
+
+                  // Latest VOD
+                  if (controller.latestVod.value != null) ...[
+                    _buildVodCard(controller.latestVod.value!),
+                    SizedBox(height: 16.h),
+                  ],
+
+                  // Latest Podcast
+                  if (controller.latestPodcast.value != null) ...[
+                    _buildPodcastCard(controller.latestPodcast.value!),
+                    SizedBox(height: 16.h),
+                  ],
+
+                  // Infinite Scroll List
+                  ...controller.allItems.map(
+                    (item) => Padding(
+                      padding: EdgeInsets.only(bottom: 16.h),
+                      child: _buildItemCard(item),
                     ),
-                    labels: [
-                      EventLabel(
-                        widget: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(
-                              child: SvgPicture.asset(
-                                AppImages.pointsIcon,
-                                width: 18.w,
-                                height: 18.h,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            SizedBox(width: 3.w),
-                            Text(
-                              'homePoints'.tr,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12.sp,
-                                letterSpacing: 0,
-                                color: AppColors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        extraPadding: EdgeInsets.symmetric(vertical: -2.5.w),
-                        onTap: () {
-                          // TODO: Handle button tap
-                        },
-                      ),
-                      EventLabel(
-                        text: '08.12.2025',
-                        onTap: () {
-                          // TODO: Handle button tap
-                        },
-                      ),
-                    ],
                   ),
-                ),
-                SizedBox(height: 16.h),
-                StoreCard(
-                  imagePath: AppImages.eventLaunchCard,
-                  title: 'homePodcastsLuxuryStores'.tr,
-                  description: 'homeLoremDescription'.tr,
-                ),
-              ],
+
+                  // Loading indicator for infinite scroll
+                  if (controller.isLoadingMore.value)
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
+          ],
+        );
+      }),
+    );
+  }
+
+  Widget _buildEventCard(EventModel event) {
+    // Safely get EventsController - create if not found
+    EventsController eventsController;
+    try {
+      eventsController = Get.find<EventsController>();
+    } catch (_) {
+      eventsController = Get.put(EventsController());
+    }
+
+    return AllEventLaunchCard(
+      imagePath: AppImages.eventLaunchCard,
+      imagePathNetwork: event.imageUrl,
+      title: event.title,
+      description: event.description ?? '',
+      exclusiveEvent: true,
+      buttonText: "Details & Registration",
+      onButtonTap: () => eventsController.showEventDetailsModal(event),
+      labels: [
+        EventLabel(text: eventsController.formatEventDate(event.eventDate)),
+        EventLabel(
+          text: event.maxTickets != null
+              ? '${eventsController.getRemainingTickets(event)} ${'remaining'.tr}'
+              : 'Unlimited',
         ),
+      ],
+    );
+  }
+
+  Widget _buildVodCard(ContentModel vod) {
+    final mediaUrl =
+        vod.mediaFileUrl ??
+        (vod.mediaFiles != null && vod.mediaFiles!.isNotEmpty
+            ? vod.mediaFiles!.first
+            : null);
+    final hasMedia = mediaUrl != null && mediaUrl.isNotEmpty;
+
+    return ContentCard1(
+      title: vod.title ?? '',
+      description: vod.description ?? '',
+      videoUrl: hasMedia ? mediaUrl : null,
+      thumbnailUrl: vod.thumbnailUrl,
+      thumbnailImage: vod.thumbnailUrl,
+      showVideoPlayer: hasMedia,
+      showSolutionButton: false,
+      onTap: () {
+        // TODO: Navigate to VOD details
+      },
+    );
+  }
+
+  Widget _buildPodcastCard(ContentModel podcast) {
+    final mediaUrl =
+        podcast.mediaFileUrl ??
+        (podcast.mediaFiles != null && podcast.mediaFiles!.isNotEmpty
+            ? podcast.mediaFiles!.first
+            : null);
+    final hasMedia = mediaUrl != null && mediaUrl.isNotEmpty;
+
+    return ContentCard1(
+      title: podcast.title ?? '',
+      description: podcast.description ?? '',
+      audioUrl: hasMedia ? mediaUrl : null,
+      thumbnailUrl: podcast.thumbnailUrl,
+      thumbnailImage: podcast.thumbnailUrl,
+      showAudioPlayer: hasMedia,
+      showSolutionButton: false,
+      onTap: () {
+        // TODO: Navigate to podcast details
+      },
+    );
+  }
+
+  Widget _buildStoreCard(StoreProductModel product) {
+    // StoreCard expects asset path, but we have network URL
+    // Use CachedNetworkImage or similar for network images
+    return Container(
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16.r),
+        gradient: const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [AppColors.cardGradientStart, AppColors.cardGradientEnd],
+          stops: [0.0, 1.0],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.cardShadow,
+            offset: Offset(0, 7.43.h),
+            blurRadius: 16.6.r,
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image
+              Container(
+                width: 68.w,
+                height: 86.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6.r),
+                  border: Border.all(
+                    width: 2,
+                    color: AppColors.textWhiteOpacity60,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6.r),
+                  child: product.imageUrl != null
+                      ? Image.network(
+                          product.imageUrl!,
+                          width: 68.w,
+                          height: 86.h,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Image.asset(
+                                AppImages.eventLaunchCard,
+                                width: 68.w,
+                                height: 86.h,
+                                fit: BoxFit.cover,
+                              ),
+                        )
+                      : Image.asset(
+                          AppImages.eventLaunchCard,
+                          width: 68.w,
+                          height: 86.h,
+                          fit: BoxFit.cover,
+                        ),
+                ),
+              ),
+              SizedBox(width: 12.w),
+              // Title and Description
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      product.name,
+                      style: TextStyle(
+                        fontFamily: 'Samsung Sharp Sans',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16.sp,
+                        height: 24 / 16,
+                        letterSpacing: 0,
+                        color: AppColors.textWhite,
+                      ),
+                      textScaler: const TextScaler.linear(1.0),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 4.h),
+                    SizedBox(
+                      width: 250.w,
+                      child: Text(
+                        product.description ?? '',
+                        style: TextStyle(
+                          fontFamily: 'Samsung Sharp Sans',
+                          fontSize: 14.sp,
+                          height: 22 / 14,
+                          letterSpacing: 0,
+                          color: AppColors.textWhiteSecondary,
+                        ),
+                        textScaler: const TextScaler.linear(1.0),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
+  }
+
+  Widget _buildItemCard(HomeItem item) {
+    switch (item.type) {
+      case HomeItemType.event:
+        return _buildEventCard(item.event!);
+      case HomeItemType.weeklyRiddle:
+        return AssignmentCard(
+          type: AssignmentCardType.riddle,
+          title: item.riddle!.title,
+          description: item.riddle!.description ?? '',
+          pointsToEarn: item.riddle!.pointsToEarn,
+          isAudio: item.riddle!.solutionType == RiddleSolutionType.audio,
+          audioUrl: item.riddle!.solutionType == RiddleSolutionType.audio
+              ? item.riddle!.answer
+              : null,
+          isSubmitted: false, // Check if needed
+          onButtonTap: controller.onRiddleSubmitTap,
+        );
+      case HomeItemType.vod:
+        return _buildVodCard(item.vod!);
+      case HomeItemType.podcast:
+        return _buildPodcastCard(item.podcast!);
+      case HomeItemType.storeProduct:
+        return _buildStoreCard(item.storeProduct!);
+    }
   }
 }
