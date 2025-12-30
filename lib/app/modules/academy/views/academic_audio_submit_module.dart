@@ -30,18 +30,14 @@ class AcademicAudioSubmitModule extends StatelessWidget {
     final controller = Get.find<AcademyController>();
 
     return Obx(
-          () => Column(
+      () => Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           /// Points
           Row(
             children: [
-              SvgPicture.asset(
-                AppImages.pointsIcon,
-                width: 18.w,
-                height: 18.h,
-              ),
+              SvgPicture.asset(AppImages.pointsIcon, width: 18.w, height: 18.h),
               SizedBox(width: 4.w),
               Text(
                 "${pointsToEarn ?? 0}",
@@ -100,14 +96,13 @@ class AcademicAudioSubmitModule extends StatelessWidget {
               Checkbox(
                 value: controller.isConfirmChecked.value,
                 onChanged: (value) =>
-                controller.isConfirmChecked.value = value ?? false,
+                    controller.isConfirmChecked.value = value ?? false,
                 activeColor: AppColors.white,
                 checkColor: AppColors.primary,
               ),
               Expanded(
                 child: GestureDetector(
-                  onTap: () =>
-                      controller.isConfirmChecked.toggle(),
+                  onTap: () => controller.isConfirmChecked.toggle(),
                   child: Text(
                     'iConfirmGranting'.tr,
                     style: TextStyle(
@@ -130,6 +125,7 @@ class AcademicAudioSubmitModule extends StatelessWidget {
             text: 'submitAnswer'.tr,
             width: double.infinity,
             height: 48.h,
+            isEnabled: controller.isConfirmChecked.value,
           ),
         ],
       ),

@@ -23,7 +23,8 @@ class ContentCard1 extends StatelessWidget {
   final String? contentId;
   final VoidCallback? onButtonTap;
   final VoidCallback? onTap;
-
+  final bool showSolutionButton;
+  final bool showTopIcon;
   const ContentCard1({
     super.key,
     this.imagePath,
@@ -39,6 +40,8 @@ class ContentCard1 extends StatelessWidget {
     this.contentId,
     this.onButtonTap,
     this.onTap,
+    this.showSolutionButton = true,
+    this.showTopIcon = false,
   });
 
   @override
@@ -66,6 +69,15 @@ class ContentCard1 extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (showTopIcon == true) ...[
+            SvgPicture.asset(
+              AppImages.vodIcon,
+              width: 16.w,
+              height: 16.h,
+              fit: BoxFit.contain,
+            ),
+            SizedBox(height: 8.h),
+          ],
           if (showAudioPlayer && pointsToEarn != null)
             Column(
               children: [
@@ -235,18 +247,19 @@ class ContentCard1 extends StatelessWidget {
                   ? 'audio_$contentId'
                   : audioUrl ?? 'audio_${title.hashCode}',
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IntrinsicWidth(
-                  child: EventTablet(
-                    text: 'sendSolution'.tr,
-                    extraPadding: EdgeInsets.symmetric(horizontal: 36.w),
-                    onTap: onButtonTap,
+            if (showSolutionButton)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IntrinsicWidth(
+                    child: EventTablet(
+                      text: 'sendSolution'.tr,
+                      extraPadding: EdgeInsets.symmetric(horizontal: 36.w),
+                      onTap: onButtonTap,
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
           ],
           if (!showVideoPlayer && !showAudioPlayer) ...[
             SizedBox(height: 20.h),

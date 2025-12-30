@@ -8,7 +8,10 @@ import '../../../common/services/supabase_service.dart';
 import '../../../data/core/base/base_controller.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/core/utils/result.dart';
+import '../../../data/helper_widgets/bottom_sheet_modal.dart';
 import '../../../data/models/event_model.dart';
+import '../../store/local_widgets/product_detail.dart';
+import '../local_widgets/event_email_modal.dart';
 
 class EventsController extends BaseController {
   final EventService eventService;
@@ -187,5 +190,66 @@ class EventsController extends BaseController {
       return 0; // Unlimited
     }
     return (event.maxTickets! - event.ticketsSold).clamp(0, event.maxTickets!);
+  }
+
+  /// Show event details modal - reusable method
+  void showEventDetailsModal(EventModel event) {
+    final context = Get.context;
+    if (context == null) return;
+
+    // Build description with event details
+    String description = event.description ?? '';
+
+    // Top tablets - date
+    final List<String> topTablets = [formatEventDate(event.eventDate)];
+
+    // Middle tablets - points and credit
+    final List<String> middleTablets = [];
+    if (event.costCreditCents != null && event.costCreditCents! > 0) {
+      middleTablets.add(
+        'Credits: ${(event.costCreditCents! / 100).toStringAsFixed(0)}',
+      );
+    }
+    if (event.costPoints != null && event.costPoints! > 0) {
+      middleTablets.add('Points: ${event.costPoints}');
+    }
+
+    // Media URL - prefer video, then image
+    final String? mediaUrl =
+        event.videoUrl != null && event.videoUrl!.isNotEmpty
+            ? event.videoUrl
+            : event.imageUrl;
+    final bool isVideo = event.videoUrl != null && event.videoUrl!.isNotEmpty;
+
+    // Bottom button
+    String? buttonText;
+    VoidCallback? buttonOnTap;
+    if ((event.costPoints != null && event.costPoints! > 0) ||
+        (event.costCreditCents != null && event.costCreditCents! > 0)) {
+      buttonText = 'Buying';
+      buttonOnTap = () {
+        // Close the product detail modal first
+        Get.back();
+        // Show email input modal
+        EventEmailModal.show(context, eventId: event.id);
+      };
+    }
+
+    BottomSheetModal.show(
+      context,
+      buttonType: BottomSheetButtonType.close,
+      content: ProductDetail(
+        topTablets: topTablets,
+        title: event.title,
+        description: description,
+        middleTablets: middleTablets.isNotEmpty ? middleTablets : null,
+        mediaUrl: mediaUrl,
+        isVideo: isVideo,
+        bottomButtonText: buttonText,
+        bottomButtonOnTap: buttonOnTap,
+        isButtonEnabled: true,
+        tag: 'event_${event.id}',
+      ),
+    );
   }
 }

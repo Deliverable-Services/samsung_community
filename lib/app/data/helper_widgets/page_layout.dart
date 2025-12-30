@@ -34,23 +34,35 @@ class _PageLayoutState extends State<PageLayout> {
   @override
   void initState() {
     super.initState();
+    debugPrint('PageLayout: initState called');
     _checkDevice();
   }
 
   Future<void> _checkDevice() async {
-    final isSamsung = await DeviceService.isSamsungDevice();
-    if (mounted) {
-      setState(() {
-        _isSamsungDevice = isSamsung;
-        _isCheckingDevice = false;
-      });
+    try {
+      final isSamsung = await DeviceService.isSamsungDevice();
+      if (mounted) {
+        setState(() {
+          _isSamsungDevice = isSamsung;
+          _isCheckingDevice = false;
+        });
+      }
+    } catch (e, stackTrace) {
+      debugPrint('PageLayout: Error in _checkDevice: $e');
+      debugPrint('PageLayout: Stack trace: $stackTrace');
+      if (mounted) {
+        setState(() {
+          _isSamsungDevice = false;
+          _isCheckingDevice = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // final shouldShowOverlay =  widget.showOverlay && !_isSamsungDevice;
-    final shouldShowOverlay = false;
+    final shouldShowOverlay = widget.showOverlay && !_isSamsungDevice;
+    // final shouldShowOverlay = false;
 
     return Scaffold(
       backgroundColor: AppColors.primary,

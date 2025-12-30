@@ -13,6 +13,7 @@ class AlertModal extends StatelessWidget {
   final double? iconHeight;
   final String title;
   final String? description;
+  final Widget? descriptionWidget;
   final String buttonText;
   final VoidCallback? onButtonTap;
 
@@ -24,6 +25,7 @@ class AlertModal extends StatelessWidget {
     this.iconHeight,
     required this.title,
     this.description,
+    this.descriptionWidget,
     required this.buttonText,
     this.onButtonTap,
   }) : assert(
@@ -31,6 +33,12 @@ class AlertModal extends StatelessWidget {
              (icon == null && iconPath != null) ||
              (icon == null && iconPath == null),
          'Either provide icon widget or iconPath, or neither',
+       ),
+       assert(
+         (description != null && descriptionWidget == null) ||
+             (description == null && descriptionWidget != null) ||
+             (description == null && descriptionWidget == null),
+         'Either provide description string or descriptionWidget, or neither',
        );
 
   static void show(
@@ -41,6 +49,7 @@ class AlertModal extends StatelessWidget {
     double? iconHeight,
     required String title,
     String? description,
+    Widget? descriptionWidget,
     required String buttonText,
     VoidCallback? onButtonTap,
     bool isScrollControlled = false,
@@ -54,6 +63,7 @@ class AlertModal extends StatelessWidget {
         iconHeight: iconHeight,
         title: title,
         description: description,
+        descriptionWidget: descriptionWidget,
         buttonText: buttonText,
         onButtonTap: onButtonTap,
       ),
@@ -92,14 +102,24 @@ class AlertModal extends StatelessWidget {
         ),
         if (description != null) ...[
           SizedBox(height: 16.h),
-          Text(
-            description!,
-            style: TextStyle(
-              fontWeight: FontWeight.w400,
-              fontSize: 14.sp,
-              color: AppColors.textWhiteOpacity70,
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 240.w),
+            child: Text(
+              description!,
+              style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 14.sp,
+                color: AppColors.textWhiteOpacity70,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
+          ),
+        ],
+        if (descriptionWidget != null) ...[
+          SizedBox(height: 8.h),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 240.w),
+            child: descriptionWidget!,
           ),
         ],
         SizedBox(height: 30.h),

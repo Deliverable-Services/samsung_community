@@ -3,30 +3,34 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-import '../../../data/constants/app_button.dart';
-import '../../../data/constants/app_colors.dart';
-import '../../../data/constants/app_images.dart';
-import '../../../data/helper_widgets/custom_text_field.dart';
-import '../controllers/academy_controller.dart';
+import '../constants/app_button.dart';
+import '../constants/app_colors.dart';
+import '../constants/app_images.dart';
+import 'custom_text_field.dart';
+import 'upload_file_field.dart';
 
-class AcademicTextSubmitModule extends StatelessWidget {
+/// Reusable Text Submission Module
+/// Can be used for both academy assignments and weekly riddles
+class ReusableTextSubmitModule extends StatelessWidget {
   final String title;
   final String description;
   final VoidCallback? onPublish;
   final int? pointsToEarn;
+  final TextEditingController textController;
+  final RxBool isConfirmChecked;
 
-  const AcademicTextSubmitModule({
+  const ReusableTextSubmitModule({
     super.key,
     required this.title,
     required this.description,
     this.onPublish,
     this.pointsToEarn,
+    required this.textController,
+    required this.isConfirmChecked,
   });
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<AcademyController>();
-
     return Obx(
       () => Column(
         mainAxisSize: MainAxisSize.min,
@@ -75,8 +79,135 @@ class AcademicTextSubmitModule extends StatelessWidget {
 
           CustomTextField(
             label: 'text'.tr,
-            controller: controller.textController,
+            controller: textController,
             placeholder: 'type'.tr,
+          ),
+
+          SizedBox(height: 10.h),
+
+          /// Checkbox
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Checkbox(
+                value: isConfirmChecked.value,
+                onChanged: (value) => isConfirmChecked.value = value ?? false,
+                activeColor: AppColors.white,
+                checkColor: AppColors.primary,
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => isConfirmChecked.toggle(),
+                  child: Text(
+                    'iConfirmGranting'.tr,
+                    style: TextStyle(
+                      fontFamily: 'Samsung Sharp Sans',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12.sp,
+                      color: AppColors.textWhite,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 10.h),
+
+          /// Submit Button (disabled until checked)
+          AppButton(
+            onTap: onPublish,
+            text: 'submitAnswer'.tr,
+            width: double.infinity,
+            height: 48.h,
+            isEnabled: isConfirmChecked.value,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Reusable Audio Submission Module
+/// Can be used for both academy assignments and weekly riddles
+class ReusableAudioSubmitModule extends StatelessWidget {
+  final String title;
+  final String description;
+  final VoidCallback? onPublish;
+  final VoidCallback? onPublish1;
+  final VoidCallback? onRemove;
+  final int? pointsToEarn;
+  final RxBool isConfirmChecked;
+  final Rxn<String> uploadedFileName;
+  final RxBool isUploadingMedia;
+
+  const ReusableAudioSubmitModule({
+    super.key,
+    required this.title,
+    required this.description,
+    this.onPublish,
+    this.onPublish1,
+    this.onRemove,
+    this.pointsToEarn,
+    required this.isConfirmChecked,
+    required this.uploadedFileName,
+    required this.isUploadingMedia,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(
+      () => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// Points
+          Row(
+            children: [
+              SvgPicture.asset(AppImages.pointsIcon, width: 18.w, height: 18.h),
+              SizedBox(width: 4.w),
+              Text(
+                "${pointsToEarn ?? 0}",
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12.sp,
+                  color: AppColors.white,
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 14.h),
+
+          /// Title
+          Text(
+            title,
+            style: TextStyle(
+              fontFamily: 'Samsung Sharp Sans',
+              fontWeight: FontWeight.w700,
+              fontSize: 16.sp,
+              color: AppColors.textWhite,
+            ),
+          ),
+
+          /// Description
+          Text(
+            description,
+            style: TextStyle(
+              fontFamily: 'Samsung Sharp Sans',
+              fontSize: 14.sp,
+              color: AppColors.textWhite,
+            ),
+          ),
+
+          SizedBox(height: 20.h),
+
+          /// Upload file
+          UploadFileField(
+            onTap: onPublish1,
+            onRemove: onRemove,
+            uploadedFileName: uploadedFileName.value,
+            isUploadingMedia: isUploadingMedia.value,
           ),
 
           SizedBox(height: 24.h),
@@ -86,15 +217,14 @@ class AcademicTextSubmitModule extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Checkbox(
-                value: controller.isConfirmChecked.value,
-                onChanged: (value) =>
-                    controller.isConfirmChecked.value = value ?? false,
+                value: isConfirmChecked.value,
+                onChanged: (value) => isConfirmChecked.value = value ?? false,
                 activeColor: AppColors.white,
                 checkColor: AppColors.primary,
               ),
               Expanded(
                 child: GestureDetector(
-                  onTap: () => controller.isConfirmChecked.toggle(),
+                  onTap: () => isConfirmChecked.toggle(),
                   child: Text(
                     'iConfirmGranting'.tr,
                     style: TextStyle(
@@ -117,7 +247,7 @@ class AcademicTextSubmitModule extends StatelessWidget {
             text: 'submitAnswer'.tr,
             width: double.infinity,
             height: 48.h,
-            isEnabled: controller.isConfirmChecked.value,
+            isEnabled: isConfirmChecked.value,
           ),
         ],
       ),
@@ -125,14 +255,16 @@ class AcademicTextSubmitModule extends StatelessWidget {
   }
 }
 
-class AcademicMcqSubmitModule extends StatefulWidget {
+/// Reusable MCQ Submission Module
+/// Can be used for both academy assignments and weekly riddles
+class ReusableMcqSubmitModule extends StatefulWidget {
   final String title;
   final String description;
   final int? pointsToEarn;
   final List<dynamic> options;
   final ValueChanged<int> onSubmit;
 
-  const AcademicMcqSubmitModule({
+  const ReusableMcqSubmitModule({
     super.key,
     required this.title,
     required this.description,
@@ -142,11 +274,11 @@ class AcademicMcqSubmitModule extends StatefulWidget {
   });
 
   @override
-  State<AcademicMcqSubmitModule> createState() =>
-      _AcademicMcqSubmitModuleState();
+  State<ReusableMcqSubmitModule> createState() =>
+      _ReusableMcqSubmitModuleState();
 }
 
-class _AcademicMcqSubmitModuleState extends State<AcademicMcqSubmitModule> {
+class _ReusableMcqSubmitModuleState extends State<ReusableMcqSubmitModule> {
   final RxnInt selectedIndex = RxnInt();
 
   @override
@@ -242,7 +374,7 @@ class _AcademicMcqSubmitModuleState extends State<AcademicMcqSubmitModule> {
           Opacity(
             opacity: selectedIndex.value != null ? 1 : 0.5,
             child: AppButton(
-              text: 'Submit answer',
+              text: 'submitAnswer'.tr,
               width: double.infinity,
               height: 48.h,
               onTap: selectedIndex.value != null

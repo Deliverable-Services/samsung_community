@@ -509,10 +509,10 @@ class FeedController extends BaseController {
 
     // Store previous state for potential revert
     final previousIsLiked = likedStatusMap[contentId] ?? false;
-    final contentIndex = contentList.indexWhere((c) => c.id == contentId);
+        final contentIndex = contentList.indexWhere((c) => c.id == contentId);
     if (contentIndex == -1) return;
 
-    final content = contentList[contentIndex];
+          final content = contentList[contentIndex];
     final previousLikesCount = content.likesCount;
     final previousLikedByUsers = List<UserModel>.from(
       likedByUsersMap[contentId] ?? [],
@@ -526,16 +526,16 @@ class FeedController extends BaseController {
         ? previousLikesCount + 1
         : (previousLikesCount > 0 ? previousLikesCount - 1 : 0);
 
-    contentList[contentIndex] = content.copyWith(
-      likesCount: newLikesCount,
-    );
+          contentList[contentIndex] = content.copyWith(
+            likesCount: newLikesCount,
+          );
 
-    final filteredIndex = filteredContentList.indexWhere(
-      (c) => c.id == contentId,
-    );
-    if (filteredIndex != -1) {
-      filteredContentList[filteredIndex] = contentList[contentIndex];
-    }
+          final filteredIndex = filteredContentList.indexWhere(
+            (c) => c.id == contentId,
+          );
+          if (filteredIndex != -1) {
+            filteredContentList[filteredIndex] = contentList[contentIndex];
+          }
 
     // Update likedByUsers optimistically
     if (newIsLiked) {

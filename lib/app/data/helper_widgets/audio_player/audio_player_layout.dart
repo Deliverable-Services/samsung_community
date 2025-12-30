@@ -59,7 +59,7 @@ class _AudioPlayerLayoutState extends State<AudioPlayerLayout> {
   void _updateSliderWidth() {
     final RenderBox? renderBox =
         _sliderKey.currentContext?.findRenderObject() as RenderBox?;
-    if (renderBox != null && mounted) {
+    if (renderBox != null && renderBox.hasSize && mounted) {
       setState(() {
         _sliderWidth = renderBox.size.width;
       });

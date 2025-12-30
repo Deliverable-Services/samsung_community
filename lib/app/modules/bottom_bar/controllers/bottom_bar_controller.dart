@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
 import '../../../data/helper_widgets/audio_player/audio_player_manager.dart';
+import '../../../data/helper_widgets/device_service.dart';
 import '../../../data/helper_widgets/video_player/video_player_manager.dart';
 import '../../../repository/auth_repo/auth_repo.dart';
 
@@ -13,6 +15,40 @@ class BottomBarController extends GetxController {
     super.onInit();
     _setupPointsListener();
     _loadPointsBalance();
+    // Start device check
+    _checkDevice();
+    // Fallback: if check doesn't complete in 6 seconds, force it
+    Future.delayed(const Duration(seconds: 6), () {
+      if (isCheckingDevice.value) {
+        isSamsungDevice.value = false;
+        isCheckingDevice.value = false;
+        update();
+      }
+    });
+  }
+
+  Future<void> _checkDevice() async {
+    try {
+      final isSamsung = await DeviceService.isSamsungDevice().timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          return false;
+        },
+      );
+      // Update both values together to ensure consistency
+      // Use update() to ensure reactive widgets rebuild
+      isSamsungDevice.value = isSamsung;
+      isCheckingDevice.value = false;
+      update(); // Force update to ensure all reactive widgets rebuild
+    } catch (e, stackTrace) {
+      // On error, assume not Samsung and stop checking
+      isSamsungDevice.value = false;
+      isCheckingDevice.value = false;
+      update(); // Force update to ensure all reactive widgets rebuild
+      debugPrint(
+        'BottomBarController: Error state - isSamsungDevice: ${isSamsungDevice.value}, isCheckingDevice: ${isCheckingDevice.value}',
+      );
+    }
   }
 
   @override
@@ -30,6 +66,8 @@ class BottomBarController extends GetxController {
 
   final RxInt currentIndex = 0.obs;
   final RxInt totalPoints = 0.obs;
+  final RxBool isSamsungDevice = false.obs;
+  final RxBool isCheckingDevice = true.obs;
 
   void _loadPointsBalance() {
     try {
