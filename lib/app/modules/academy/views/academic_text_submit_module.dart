@@ -242,7 +242,7 @@ class _AcademicMcqSubmitModuleState extends State<AcademicMcqSubmitModule> {
           Opacity(
             opacity: selectedIndex.value != null ? 1 : 0.5,
             child: AppButton(
-              text: 'Submit answer',
+              text: 'submitAnswer'.tr,
               width: double.infinity,
               height: 48.h,
               onTap: selectedIndex.value != null

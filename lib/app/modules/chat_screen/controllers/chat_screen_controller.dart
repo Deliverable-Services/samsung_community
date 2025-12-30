@@ -240,10 +240,10 @@ class ChatScreenController extends GetxController {
           .eq('blocked_id', otherUser.value!.id);
       
       isBlocked.value = false;
-      Get.snackbar('Success', 'User unblocked successfully');
+      Get.snackbar('Success', 'user_unblocked_successfully'.tr);
     } catch (e) {
       print('Error unblocking user: $e');
-      Get.snackbar('Error', 'Failed to unblock user');
+      Get.snackbar('Error', 'failed_to_unblock_user'.tr);
     }
   }
 

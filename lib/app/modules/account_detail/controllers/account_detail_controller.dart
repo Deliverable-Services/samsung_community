@@ -125,7 +125,7 @@ class AccountDetailController extends GetxController {
     }
 
     if (errors.isNotEmpty) {
-      final errorMessage = '${errors.join(', ')} is required';
+      final errorMessage = '${errors.join(', ')} is_required'.tr;
       CommonSnackbar.error(errorMessage);
       return;
     }
@@ -207,7 +207,7 @@ class AccountDetailController extends GetxController {
       }
     } catch (e) {
       isSaving.value = false;
-      CommonSnackbar.error('Failed to save profile. Please try again.');
+      CommonSnackbar.error('failed_to_save_profile'.tr);
     }
   }
 

@@ -200,7 +200,7 @@ class AcademyController extends BaseController {
 
     /// 🔒 Assignment guard
     if (content.assignmentId == null) {
-      CommonSnackbar.error('This content does not accept submissions');
+      CommonSnackbar.error('content_does_not_accept_submissions'.tr);
       return;
     }
 
@@ -244,11 +244,11 @@ class AcademyController extends BaseController {
   void clickOnSendAudio({required AcademyContentModel content}) async {
     if (!(uploadedMediaUrl.value != null &&
         uploadedMediaUrl.value!.isNotEmpty)) {
-      CommonSnackbar.error('Please select audio file');
+      CommonSnackbar.error('please_select_audio_file'.tr);
       return;
     }
     if (!isConfirmChecked.value) {
-      CommonSnackbar.error('Please enable check box');
+      CommonSnackbar.error('please_enable_checkbox'.tr);
       return;
     }
 
@@ -256,7 +256,7 @@ class AcademyController extends BaseController {
 
     final user = SupabaseService.currentUser;
     if (user == null) {
-      CommonSnackbar.error('User not found');
+      CommonSnackbar.error('user_not_found'.tr);
       return;
     }
 
@@ -271,19 +271,19 @@ class AcademyController extends BaseController {
     if (result is Success<Map<String, dynamic>>) {
       clearFields();
 
-      CommonSnackbar.success('Audio published successfully');
+      CommonSnackbar.success('audio_published_successfully'.tr);
     } else {
-      CommonSnackbar.error('Failed to publish audio');
+      CommonSnackbar.error('failed_to_publish_audio'.tr);
     }
   }
 
   void clickOnText({required AcademyContentModel content}) async {
     if (!(textController.text.trim().isNotEmpty)) {
-      CommonSnackbar.error('Please enter text');
+      CommonSnackbar.error('please_enter_text'.tr);
       return;
     }
     if (!isConfirmChecked.value) {
-      CommonSnackbar.error('Please enable check box');
+      CommonSnackbar.error('please_enable_checkbox'.tr);
       return;
     }
 
@@ -291,7 +291,7 @@ class AcademyController extends BaseController {
 
     final user = SupabaseService.currentUser;
     if (user == null) {
-      CommonSnackbar.error('User not found');
+      CommonSnackbar.error('user_not_found'.tr);
       return;
     }
 
@@ -305,9 +305,9 @@ class AcademyController extends BaseController {
 
     if (result is Success<Map<String, dynamic>>) {
       clearFields();
-      CommonSnackbar.success('Text published successfully');
+      CommonSnackbar.success('text_published_successfully'.tr);
     } else {
-      CommonSnackbar.error('Failed to publish text');
+      CommonSnackbar.error('failed_to_publish_text'.tr);
     }
   }
 
@@ -319,7 +319,7 @@ class AcademyController extends BaseController {
 
     final user = SupabaseService.currentUser;
     if (user == null) {
-      CommonSnackbar.error('User not found');
+      CommonSnackbar.error('user_not_found'.tr);
       return;
     }
 
@@ -336,9 +336,9 @@ class AcademyController extends BaseController {
 
     if (result is Success<Map<String, dynamic>>) {
       clearFields();
-      CommonSnackbar.success('Answer submitted successfully');
+      CommonSnackbar.success('answer_submitted_successfully'.tr);
     } else {
-      CommonSnackbar.error('Failed to submit answer');
+      CommonSnackbar.error('failed_to_submit_answer'.tr);
     }
   }
 
@@ -348,7 +348,7 @@ class AcademyController extends BaseController {
 
     /// 🔒 Assignment guard
     if (content.assignmentId == null) {
-      CommonSnackbar.error('This content does not accept submissions');
+      CommonSnackbar.error('content_does_not_accept_submissions'.tr);
       return;
     }
 
@@ -365,11 +365,11 @@ class AcademyController extends BaseController {
         pointsToEarn: content.pointsToEarn,
         onPublish: () async {
           if (!(textController.text.trim().isNotEmpty)) {
-            CommonSnackbar.error('Please enter text');
+            CommonSnackbar.error('please_enter_text'.tr);
             return;
           }
           if (!isConfirmChecked.value) {
-            CommonSnackbar.error('Please enable check box');
+            CommonSnackbar.error('please_enable_checkbox'.tr);
             return;
           }
 
@@ -377,7 +377,7 @@ class AcademyController extends BaseController {
 
           final user = SupabaseService.currentUser;
           if (user == null) {
-            CommonSnackbar.error('User not found');
+            CommonSnackbar.error('user_not_found'.tr);
             return;
           }
 
@@ -393,9 +393,9 @@ class AcademyController extends BaseController {
 
           if (result is Success<Map<String, dynamic>>) {
             clearFields();
-            CommonSnackbar.success('Text published successfully');
+            CommonSnackbar.success('text_published_successfully'.tr);
           } else {
-            CommonSnackbar.error('Failed to publish text');
+            CommonSnackbar.error('failed_to_publish_text'.tr);
           }
         },
       ),
@@ -411,7 +411,7 @@ class AcademyController extends BaseController {
         await _uploadMediaFile(mediaType: MediaType.audio);
       }
     } catch (e) {
-      CommonSnackbar.error('Failed to select file');
+      CommonSnackbar.error('failed_to_select_file'.tr);
     }
   }
 
@@ -422,7 +422,7 @@ class AcademyController extends BaseController {
     try {
       final currentUser = SupabaseService.currentUser;
       if (currentUser == null) {
-        CommonSnackbar.error('User not found');
+        CommonSnackbar.error('user_not_found'.tr);
         return;
       }
 
@@ -438,11 +438,11 @@ class AcademyController extends BaseController {
       if (url != null) {
         uploadedMediaUrl.value = url;
       } else {
-        CommonSnackbar.error('Failed to upload file');
+        CommonSnackbar.error('failed_to_upload_file'.tr);
         clearFields();
       }
     } catch (e) {
-      CommonSnackbar.error('Failed to upload file');
+      CommonSnackbar.error('failed_to_upload_file'.tr);
       clearFields();
     } finally {
       isUploadingMedia.value = false;
@@ -464,7 +464,7 @@ class AcademyController extends BaseController {
 
     /// 🔒 Assignment guard
     if (content.zoomLink == null) {
-      CommonSnackbar.error('This content does not accept submissions');
+      CommonSnackbar.error('content_does_not_accept_submissions'.tr);
       return;
     }
     BottomSheetModal.show(
@@ -497,7 +497,7 @@ class AcademyController extends BaseController {
 
     /// 🔒 Assignment guard
     if (content.zoomLink == null) {
-      CommonSnackbar.error('This content does not accept submissions');
+      CommonSnackbar.error('content_does_not_accept_submissions'.tr);
       return;
     }
     BottomSheetModal.show(
@@ -526,7 +526,7 @@ class AcademyController extends BaseController {
 
     /// 🔒 Assignment guard
     if (content.zoomLink == null) {
-      CommonSnackbar.error('This content does not accept submissions');
+      CommonSnackbar.error('content_does_not_accept_submissions'.tr);
       return;
     }
     BottomSheetModal.show(
@@ -555,7 +555,7 @@ class AcademyController extends BaseController {
 
     /// 🔒 Assignment guard
     if (content.zoomLink == null) {
-      CommonSnackbar.error('This content does not accept submissions');
+      CommonSnackbar.error('content_does_not_accept_submissions'.tr);
       return;
     }
     BottomSheetModal.show(

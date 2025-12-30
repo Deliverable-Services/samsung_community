@@ -60,7 +60,7 @@ class CreatePostService {
 
             final user = SupabaseService.currentUser;
             if (user == null) {
-              CommonSnackbar.error('User not found');
+              CommonSnackbar.error('user_not_found'.tr);
               onFailure();
               return;
             }
@@ -99,10 +99,10 @@ class CreatePostService {
                     "${titleController.text}\n${descriptionController.text}",
               );
               clearFields();
-              CommonSnackbar.success('Post published successfully');
+              CommonSnackbar.success('post_published_successfully'.tr);
               onSuccess();
             } else {
-              CommonSnackbar.error('Failed to publish post');
+              CommonSnackbar.error('failed_to_publish_post'.tr);
               onFailure();
             }
           },
@@ -161,7 +161,7 @@ class CreatePostService {
         await _uploadMediaFile();
       }
     } catch (e) {
-      CommonSnackbar.error('Failed to select file');
+      CommonSnackbar.error('failed_to_select_file'.tr);
     }
   }
 
@@ -264,7 +264,7 @@ class CreatePostService {
     try {
       final currentUser = SupabaseService.currentUser;
       if (currentUser == null) {
-        CommonSnackbar.error('User not found');
+        CommonSnackbar.error('user_not_found'.tr);
         return;
       }
 
@@ -285,13 +285,13 @@ class CreatePostService {
       if (url != null) {
         uploadedMediaUrl.value = url;
       } else {
-        CommonSnackbar.error('Failed to upload file');
+        CommonSnackbar.error('failed_to_upload_file'.tr);
         selectedMediaFile.value = null;
         uploadedFileName.value = null;
       }
     } catch (e) {
       debugPrint('Error uploading media: $e');
-      CommonSnackbar.error('Failed to upload file');
+      CommonSnackbar.error('failed_to_upload_file'.tr);
       selectedMediaFile.value = null;
       uploadedFileName.value = null;
     } finally {

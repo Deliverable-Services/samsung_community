@@ -241,7 +241,7 @@ class StoreController extends GetxController {
       final authRepo = Get.find<AuthRepo>();
       final currentUser = authRepo.currentUser.value;
       if (currentUser == null) {
-        CommonSnackbar.error('User not found');
+        CommonSnackbar.error('user_not_found'.tr);
         return false;
       }
 

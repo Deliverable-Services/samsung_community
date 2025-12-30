@@ -1,15 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
+import '../../common/services/app_lifecycle_service.dart';
+import '../../common/services/auth_service.dart';
+import '../../common/services/supabase_service.dart';
 import '../../data/core/base/base_controller.dart';
+import '../../data/core/utils/common_snackbar.dart';
 import '../../data/core/utils/result.dart';
 import '../../data/localization/get_prefs.dart';
 import '../../data/models/user_model.dart';
 import '../../routes/app_pages.dart';
-import '../../common/services/app_lifecycle_service.dart';
-import '../../common/services/auth_service.dart';
-import '../../common/services/supabase_service.dart';
-import '../../data/core/utils/common_snackbar.dart';
 
 class AuthRepo extends BaseController {
   final AuthService _authService;
@@ -138,15 +138,15 @@ class AuthRepo extends BaseController {
     final result = await _authService.generateOTPForLogin(phoneNumber);
     final otp = result.dataOrNull;
     if (otp != null) {
-      debugPrint('OTP for login: $otp');
-      CommonSnackbar.success('OTP for login: $otp');
+      CommonSnackbar.success('${'otp_for_login'.tr}: $otp');
     }
     setLoading(false);
 
     if (result.isSuccess) {
       return result.dataOrNull;
     } else {
-      final error = result.errorOrNull ?? 'Failed to generate OTP for login';
+      final error =
+          result.errorOrNull ?? 'Failed to generate ${'otp_for_login'.tr}';
       debugPrint('Error in generateOTPForLogin: $error');
 
       if (error.toString().contains('USER_SUSPENDED')) {
@@ -236,7 +236,7 @@ class AuthRepo extends BaseController {
     final result = await _authService.generateOTP(phoneNumber);
     final otp = result.dataOrNull;
     if (otp != null) {
-      CommonSnackbar.success('OTP for signup: $otp');
+      CommonSnackbar.success('${'otp_for_signup'.tr}: $otp');
     }
     setLoading(false);
 

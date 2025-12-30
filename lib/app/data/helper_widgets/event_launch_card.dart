@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 
 import '../constants/app_colors.dart';
 import '../constants/app_images.dart';
@@ -23,7 +24,7 @@ class EventLaunchCard extends StatelessWidget {
   String? imagePathNetwork;
   final String title;
   final String description;
-  final String buttonText;
+  final String? buttonText;
   final String? text;
   final bool showButton;
   final VoidCallback? onButtonTap;
@@ -37,7 +38,7 @@ class EventLaunchCard extends StatelessWidget {
     this.imagePathNetwork,
     required this.title,
     required this.description,
-    this.buttonText = 'Details & Registration',
+    this.buttonText,
     this.text,
     this.showButton = false,
     this.onButtonTap,
@@ -170,7 +171,7 @@ class EventLaunchCard extends StatelessWidget {
                                     ).createShader(bounds);
                                   },
                                   child: Text(
-                                    buttonText,
+                                    buttonText ?? "eventDetailsRegistration".tr,
                                     style: TextStyle(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 14.sp,
@@ -282,7 +283,7 @@ class AllEventLaunchCard extends StatelessWidget {
   String? imagePathNetwork;
   final String title;
   final String description;
-  final String buttonText;
+  final String? buttonText;
   final List<EventLabel>? labels;
   final bool exclusiveEvent;
   final VoidCallback? onButtonTap;
@@ -294,7 +295,7 @@ class AllEventLaunchCard extends StatelessWidget {
     this.exclusiveEvent = false,
     required this.title,
     required this.description,
-    this.buttonText = 'Details & Registration',
+    this.buttonText,
     this.labels,
     this.onButtonTap,
   });
@@ -468,7 +469,7 @@ class AllEventLaunchCard extends StatelessWidget {
                                       ).createShader(bounds);
                                     },
                                     child: Text(
-                                      buttonText,
+                                      buttonText ?? "eventDetailsRegistration".tr,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w700,
                                         fontSize: 14.sp,

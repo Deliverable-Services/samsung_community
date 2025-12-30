@@ -33,7 +33,7 @@ class FollowersFollowingController extends BaseController {
       targetUserId = paramUserId;
     } else {
       if (currentUser == null) {
-        handleError('User not found');
+        handleError('user_not_found'.tr);
         return;
       }
       targetUserId = currentUser.id;
@@ -219,7 +219,7 @@ class FollowersFollowingController extends BaseController {
     try {
       final currentUser = SupabaseService.currentUser;
       if (currentUser == null) {
-        CommonSnackbar.error('User not found');
+        CommonSnackbar.error('user_not_found'.tr);
         return;
       }
 
@@ -229,7 +229,7 @@ class FollowersFollowingController extends BaseController {
       });
 
       isFollowingMap[userId] = true;
-      CommonSnackbar.success('User followed');
+      CommonSnackbar.success('user_followed'.tr);
       await loadData();
     } catch (e) {
       debugPrint('Error following user: $e');
@@ -241,7 +241,7 @@ class FollowersFollowingController extends BaseController {
     try {
       final currentUser = SupabaseService.currentUser;
       if (currentUser == null) {
-        CommonSnackbar.error('User not found');
+        CommonSnackbar.error('user_not_found'.tr);
         return;
       }
 
@@ -254,7 +254,7 @@ class FollowersFollowingController extends BaseController {
       isFollowingMap[userId] = false;
       following.removeWhere((user) => user.id == userId);
       filteredFollowing.removeWhere((user) => user.id == userId);
-      CommonSnackbar.success('User unfollowed');
+      CommonSnackbar.success('user_unfollowed'.tr);
     } catch (e) {
       debugPrint('Error unfollowing user: $e');
       CommonSnackbar.error('Failed to unfollow user');
@@ -264,7 +264,7 @@ class FollowersFollowingController extends BaseController {
   Future<void> navigateToChat(String otherUserId) async {
     final currentUser = SupabaseService.currentUser;
     if (currentUser == null) {
-      CommonSnackbar.error('User not found');
+      CommonSnackbar.error('user_not_found'.tr);
       return;
     }
 

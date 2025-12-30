@@ -143,7 +143,7 @@ class EditProfileController extends BaseController {
       isSaving.value = true;
       final currentUser = _authRepo.currentUser.value;
       if (currentUser == null) {
-        CommonSnackbar.error('User not found');
+        CommonSnackbar.error('user_not_found'.tr);
         return;
       }
 
@@ -230,7 +230,7 @@ class EditProfileController extends BaseController {
       setLoading(true);
       final currentUser = _authRepo.currentUser.value;
       if (currentUser == null) {
-        handleError('User not found');
+        handleError('user_not_found'.tr);
         return;
       }
 
@@ -277,7 +277,7 @@ class EditProfileController extends BaseController {
         await _uploadProfilePicture(File(pickedFile.path));
       }
     } catch (e) {
-      CommonSnackbar.error('Failed to select image');
+      CommonSnackbar.error('failed_to_select_image'.tr);
     }
   }
 
@@ -330,7 +330,7 @@ class EditProfileController extends BaseController {
   Future<void> _uploadProfilePicture(File imageFile) async {
     final currentUser = _authRepo.currentUser.value;
     if (currentUser == null || currentUser.id.isEmpty) {
-      CommonSnackbar.error('User not found');
+      CommonSnackbar.error('user_not_found'.tr);
       return;
     }
 
@@ -345,13 +345,13 @@ class EditProfileController extends BaseController {
       if (url != null) {
         await _updateUserProfilePicture(url);
         profilePictureUrl.value = url;
-        CommonSnackbar.success('Profile picture updated');
+        CommonSnackbar.success('profile_picture_updated'.tr);
       } else {
-        CommonSnackbar.error('Failed to upload profile picture');
+        CommonSnackbar.error('failed_to_upload_profile_picture'.tr);
       }
     } catch (e) {
       debugPrint('Error uploading profile picture: $e');
-      CommonSnackbar.error('Failed to upload profile picture');
+      CommonSnackbar.error('failed_to_upload_profile_picture'.tr);
     } finally {
       isUploadingImage.value = false;
     }

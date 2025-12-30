@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:samsung_community_mobile/app/modules/bottom_bar/controllers/bottom_bar_controller.dart';
 
 import 'app_images.dart';
@@ -27,7 +28,7 @@ class BottomNavItems {
     return [
       BottomNavItem(
         imagePath: AppImages.homeNavIcon,
-        label: 'Home',
+        label: 'home'.tr,
         onTap: () {
           controller.changeTab(0, isBottomBar);
         },
@@ -40,7 +41,7 @@ class BottomNavItems {
       ),
       BottomNavItem(
         imagePath: AppImages.vodNavIcon,
-        label: 'Vod',
+        label: 'vod'.tr,
         onTap: () {
           controller.changeTab(1, isBottomBar);
         },
@@ -53,7 +54,7 @@ class BottomNavItems {
       ),
       BottomNavItem(
         imagePath: AppImages.academyNavIcon,
-        label: 'Academy',
+        label: 'academy'.tr,
         onTap: () {
           controller.changeTab(2, isBottomBar);
         },
@@ -66,7 +67,7 @@ class BottomNavItems {
       ),
       BottomNavItem(
         imagePath: AppImages.feedNavIcon,
-        label: 'Feed',
+        label: 'feed'.tr,
         onTap: () {
           controller.changeTab(3, isBottomBar);
         },
@@ -79,7 +80,7 @@ class BottomNavItems {
       ),
       BottomNavItem(
         imagePath: AppImages.eventsNavIcon,
-        label: 'Events',
+        label: 'events'.tr,
         onTap: () {
           controller.changeTab(4, isBottomBar);
         },

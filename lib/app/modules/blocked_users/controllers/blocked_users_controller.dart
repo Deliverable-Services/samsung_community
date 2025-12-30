@@ -48,7 +48,7 @@ class BlockedUsersController extends BaseController {
       setLoading(true);
       final currentUser = SupabaseService.currentUser;
       if (currentUser == null) {
-        handleError('User not found');
+        handleError('user_not_found'.tr);
         return;
       }
 
@@ -106,7 +106,7 @@ class BlockedUsersController extends BaseController {
     try {
       final currentUser = SupabaseService.currentUser;
       if (currentUser == null) {
-        CommonSnackbar.error('User not found');
+        CommonSnackbar.error('user_not_found'.tr);
         return;
       }
 
@@ -119,10 +119,10 @@ class BlockedUsersController extends BaseController {
       blockedUsers.removeWhere((user) => user.id == userId);
       filteredBlockedUsers.removeWhere((user) => user.id == userId);
 
-      CommonSnackbar.success('User unblocked successfully');
+      CommonSnackbar.success('user_unblocked_successfully'.tr);
     } catch (e) {
       debugPrint('Error unblocking user: $e');
-      CommonSnackbar.error('Failed to unblock user');
+      CommonSnackbar.error('failed_to_unblock_user'.tr);
     }
   }
 }

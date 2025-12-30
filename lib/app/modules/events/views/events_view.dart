@@ -92,7 +92,7 @@ class EventsView extends GetView<EventsController> {
                     title: event.title,
                     description: event.description ?? '',
                     exclusiveEvent: true,
-                    buttonText: "Details & Registration",
+                    buttonText: "eventDetailsRegistration".tr,
                     onButtonTap: () => controller.showEventDetailsModal(event),
                     labels: [
                       EventLabel(
