@@ -51,17 +51,17 @@ class HomeView extends GetView<HomeController> {
                   if (controller.weeklyRiddle.value != null) ...[
                     AssignmentCard(
                       type: AssignmentCardType.riddle,
-                      title: controller.weeklyRiddle.value!.title,
+                      title: controller.weeklyRiddle.value?.title ?? "",
                       description:
-                          controller.weeklyRiddle.value!.description ?? '',
-                      pointsToEarn: controller.weeklyRiddle.value!.pointsToEarn,
+                          controller.weeklyRiddle.value?.description ?? '',
+                      pointsToEarn: controller.weeklyRiddle.value?.pointsToEarn,
                       isAudio:
-                          controller.weeklyRiddle.value!.solutionType ==
+                          controller.weeklyRiddle.value?.solutionType ==
                           RiddleSolutionType.audio,
                       audioUrl:
-                          controller.weeklyRiddle.value!.solutionType ==
+                          controller.weeklyRiddle.value?.solutionType ==
                               RiddleSolutionType.audio
-                          ? controller.weeklyRiddle.value!.answer
+                          ? controller.weeklyRiddle.value?.answer
                           : null,
                       isSubmitted: controller.hasSubmittedRiddle.value,
                       onButtonTap: controller.onRiddleSubmitTap,
