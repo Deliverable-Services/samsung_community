@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -33,7 +34,9 @@ class VideoThumbnailService {
         return thumbnailPath;
       }
     } catch (e) {
-      print('Error generating video thumbnail: $e');
+      // Handle MissingPluginException and other errors gracefully
+      debugPrint('Error generating video thumbnail for $videoUrl: $e');
+      // Don't cache failed attempts to allow retry
     }
 
     return null;

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../constants/app_images.dart';
 import 'video_player_thumbnail_controller.dart';
 
 class VideoPlayerThumbnail extends StatelessWidget {
@@ -71,7 +72,8 @@ class VideoPlayerThumbnail extends StatelessWidget {
         );
       }
 
-      return Container(color: const Color(0xFF2A2A2A));
+      // Fallback: Show app logo when thumbnail generation fails
+      return _buildAppLogoFallback();
     });
   }
 
@@ -87,7 +89,7 @@ class VideoPlayerThumbnail extends StatelessWidget {
           child: const Center(child: CircularProgressIndicator()),
         ),
         errorWidget: (context, url, error) {
-          return Container(color: const Color(0xFF2A2A2A));
+          return _buildAppLogoFallback();
         },
       );
     } else if (url.startsWith('/') || url.contains('\\')) {
@@ -97,7 +99,7 @@ class VideoPlayerThumbnail extends StatelessWidget {
         width: double.infinity,
         height: double.infinity,
         errorBuilder: (context, error, stackTrace) {
-          return Container(color: const Color(0xFF2A2A2A));
+          return _buildAppLogoFallback();
         },
       );
     } else {
@@ -107,9 +109,26 @@ class VideoPlayerThumbnail extends StatelessWidget {
         width: double.infinity,
         height: double.infinity,
         errorBuilder: (context, error, stackTrace) {
-          return Container(color: const Color(0xFF2A2A2A));
+          return _buildAppLogoFallback();
         },
       );
     }
+  }
+
+  Widget _buildAppLogoFallback() {
+    return Container(
+      color: const Color(0xFF2A2A2A),
+      child: Center(
+        child: Image.asset(
+          AppImages.appLogo,
+          fit: BoxFit.contain,
+          width: 120,
+          height: 120,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(color: const Color(0xFF2A2A2A));
+          },
+        ),
+      ),
+    );
   }
 }

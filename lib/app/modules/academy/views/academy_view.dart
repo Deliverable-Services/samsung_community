@@ -384,8 +384,9 @@ class AcademyView extends GetView<AcademyController> {
           showAudioPlayer: isAssignment && hasMedia,
           videoUrl: isVideo && hasMedia ? mediaUrl : null,
           audioUrl: isAssignment && hasMedia ? mediaUrl : null,
-          thumbnailUrl: content.mediaFileUrl,
-          thumbnailImage: content.mediaFileUrl,
+          // Pass null for thumbnails when it's a video - let VideoPlayerThumbnail generate it
+          thumbnailUrl: isVideo ? null : content.mediaFileUrl,
+          thumbnailImage: isVideo ? null : content.mediaFileUrl,
           contentId: content.academyContentId,
         ),
       );

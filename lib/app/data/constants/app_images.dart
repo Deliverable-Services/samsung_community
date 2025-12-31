@@ -63,5 +63,6 @@ class AppImages {
       tintBackground = '$baseUrl/Bg.svg',
       tintBackground2 = '$baseUrl/Bg.png',
       correctAnswerRiddleIcon = '$baseUrl/correct_answer_riddle.svg',
-      incorrectAnswerRiddleIcon = '$baseUrl/incorrect_answer_riddle.svg';
+      incorrectAnswerRiddleIcon = '$baseUrl/incorrect_answer_riddle.svg',
+      logoNew = '$baseUrl/Society_Logo_Blue.svg';
 }
