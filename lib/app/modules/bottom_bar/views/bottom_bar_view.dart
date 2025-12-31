@@ -84,7 +84,7 @@ class BottomBarView extends GetView<BottomBarController> {
                   ),
                 ],
               ),
-              if (shouldShowOverlay)
+              if (!shouldShowOverlay)
                 Positioned.fill(
                   child: Stack(
                     children: [

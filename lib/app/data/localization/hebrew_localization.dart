@@ -146,6 +146,7 @@ class HebrewiLocalization {
     "academyVideos": "סרטונים",
     "academyReels": "רילס",
     "academyZoomWorkshops": "סדנאות זום",
+    "skillChallenges": "אתגרי סיכום",
     "academyAssignments": "משימות",
     "searchForInspiration": "חיפוש השראה...",
     "sendSolution": "שלח פתרון",
@@ -320,5 +321,7 @@ class HebrewiLocalization {
     "answerSubmitted": "התשובה שלך נשלחה!",
     "reviewingAnswer": "אנחנו בודקים את התשובה שלך ונעדכן אותך בקרוב.",
     "submitted": "נשלח",
+    "pleaseEnterTitle": "אנא הזן כותרת",
+    "pleaseEnterDescription": "אנא הזן תיאור",
   };
 }

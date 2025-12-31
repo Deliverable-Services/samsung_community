@@ -152,6 +152,7 @@ class EnLocalization {
     "academyVideos": "Videos",
     "academyReels": "Reels",
     "academyZoomWorkshops": "Zoom Workshops",
+    "skillChallenges": "Skill Challenges",
     "academyAssignments": "Assignments",
     "searchForInspiration": "Search for inspiration ...",
     "sendSolution": "Send Solution",
@@ -332,5 +333,7 @@ class EnLocalization {
     "reviewingAnswer":
         "We're reviewing your answer and will update you shortly.",
     "submitted": "Submitted",
+    "pleaseEnterTitle": "Please enter a title",
+    "pleaseEnterDescription": "Please enter a description",
   };
 }

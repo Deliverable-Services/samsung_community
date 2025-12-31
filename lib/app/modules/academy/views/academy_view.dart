@@ -192,7 +192,7 @@ class AcademyView extends GetView<AcademyController> {
           onTap: () => controller.setFilter(3),
         ),
         FilterItem(
-          text: 'academyAssignments'.tr,
+          text: 'skillChallenges'.tr,
           isSelected: index == 4,
           onTap: () => controller.setFilter(4),
         ),

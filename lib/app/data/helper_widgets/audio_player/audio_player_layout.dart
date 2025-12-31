@@ -74,11 +74,52 @@ class _AudioPlayerLayoutState extends State<AudioPlayerLayout> {
 
   double _getCurrentTimePosition() {
     if (_sliderWidth == 0) return 0;
+
+    // Calculate the width of the total duration text
+    final totalDurationText = _formatDuration(widget.totalDuration);
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: totalDurationText,
+        style: TextStyle(
+          fontSize: 14.sp,
+          fontFamily: 'Samsung Sharp Sans',
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+    final totalDurationWidth = textPainter.size.width;
+
+    // Calculate the width of the current time text
+    final currentTimeText = _formatDuration(widget.currentPosition);
+    final currentTimePainter = TextPainter(
+      text: TextSpan(
+        text: currentTimeText,
+        style: TextStyle(
+          fontSize: 14.sp,
+          fontFamily: 'Samsung Sharp Sans',
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    currentTimePainter.layout();
+    final currentTimeWidth = currentTimePainter.size.width;
+
+    // Reserve space for total duration on the right (with some padding)
+    final reservedRightSpace = totalDurationWidth + 8.0; // 8px padding
+
+    // Calculate the maximum left position to avoid overlap
+    final maxLeftPosition =
+        _sliderWidth - reservedRightSpace - currentTimeWidth;
+
     final sliderValue = widget.sliderValue.clamp(0.0, 1.0);
     final thumbCenter = sliderValue * _sliderWidth;
-    final currentTimeWidth = 50.0;
     final position = thumbCenter - (currentTimeWidth / 2);
-    return position.clamp(0.0, _sliderWidth - currentTimeWidth);
+
+    // Clamp to prevent overlap with total duration
+    return position.clamp(0.0, maxLeftPosition);
   }
 
   @override

@@ -50,9 +50,15 @@ class CreatePostService {
           uploadedFileName: uploadedFileName.value,
           isUploadingMedia: isUploadingMedia.value,
           onPublish: () async {
-            if (titleController.text.trim().isEmpty &&
-                descriptionController.text.trim().isEmpty) {
-              Get.snackbar('Error', 'Please enter title or description');
+            // Validate title
+            if (titleController.text.trim().isEmpty) {
+              CommonSnackbar.error('pleaseEnterTitle'.tr);
+              return;
+            }
+            
+            // Validate description (required)
+            if (descriptionController.text.trim().isEmpty) {
+              CommonSnackbar.error('pleaseEnterDescription'.tr);
               return;
             }
 
