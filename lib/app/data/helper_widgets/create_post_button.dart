@@ -47,13 +47,26 @@ class _CreatePostButtonState extends State<CreatePostButton> {
     return Positioned(
       bottom: widget.bottomOffset ?? -70.h,
       right: -50.w,
-      child: GestureDetector(
-        onTap: _handleTap,
-        child: SizedBox(
-          width: 250.w,
-          height: 250.h,
-          child: Image.asset(AppImages.createPostIcon),
-        ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // BIG IMAGE (visual only)
+          SizedBox(
+            width: 250.w,
+            height: 250.h,
+            child: Image.asset(AppImages.createPostIcon),
+          ),
+
+          // SMALL TAP AREA (50x50)
+          GestureDetector(
+            onTap: _handleTap,
+            child: Container(
+              width: 34.w,
+              height: 34.h,
+              color: Colors.transparent, // important
+            ),
+          ),
+        ],
       ),
     );
   }

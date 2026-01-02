@@ -4,12 +4,14 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/services/academy_service.dart';
 import '../../../common/services/storage_service.dart';
 import '../../../common/services/supabase_service.dart';
+import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../data/core/base/base_controller.dart';
 import '../../../data/core/utils/common_snackbar.dart';
@@ -220,7 +222,7 @@ class AcademyController extends BaseController {
               title: content.title,
               description: content.description ?? '',
               pointsToEarn: content.pointsToEarn,
-              onPublish1: selectMediaFile,
+              onPublish1: showUploadTypeDialog,
               onPublish: () => clickOnSendAudio(content: content),
             )
           : isText
@@ -398,6 +400,116 @@ class AcademyController extends BaseController {
             CommonSnackbar.error('failed_to_publish_text'.tr);
           }
         },
+      ),
+    );
+  }
+
+  Future<void> showUploadTypeDialog() async {
+    await Get.dialog(
+      Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.image, color: AppColors.white),
+                title: const Text(
+                  'Upload Image',
+                  style: TextStyle(color: AppColors.white),
+                ),
+                onTap: () {
+                  Get.back();
+                  selectImageFile();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.audiotrack, color: AppColors.white),
+                title: const Text(
+                  'Upload Audio',
+                  style: TextStyle(color: AppColors.white),
+                ),
+                onTap: () {
+                  Get.back();
+                  selectMediaFile(); // your existing audio function
+                },
+              ),
+              TextButton(
+                onPressed: () => Get.back(),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(color: AppColors.white),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> selectImageFile() async {
+    try {
+      final source = await _showImageSourceDialog();
+      if (source == null) return;
+
+      final XFile? pickedFile =
+      await StorageService.pickImage(source: source);
+
+      if (pickedFile != null) {
+        selectedMediaFile.value = File(pickedFile.path);
+        uploadedFileName.value = pickedFile.name;
+        await _uploadMediaFile(mediaType: MediaType.image);
+      }
+    } catch (e) {
+      CommonSnackbar.error('failed_to_select_image'.tr);
+    }
+  }
+
+  Future<ImageSource?> _showImageSourceDialog() async {
+    return await Get.dialog<ImageSource>(
+      Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(
+                  Icons.photo_library,
+                  color: AppColors.white,
+                ),
+                title: Text(
+                  'Choose from Gallery',
+                  style: TextStyle(color: AppColors.white),
+                ),
+                onTap: () => Get.back(result: ImageSource.gallery),
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt, color: AppColors.white),
+                title: Text(
+                  'Take Photo',
+                  style: TextStyle(color: AppColors.white),
+                ),
+                onTap: () => Get.back(result: ImageSource.camera),
+              ),
+              TextButton(
+                onPressed: () => Get.back(),
+                child: Text('Cancel', style: TextStyle(color: AppColors.white)),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

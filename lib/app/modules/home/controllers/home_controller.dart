@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../common/services/content_service.dart';
 import '../../../common/services/event_service.dart';
@@ -503,6 +504,21 @@ class HomeController extends GetxController {
           break;
       }
     }
+    submissionWidget = ReusableAudioSubmitModule(
+      title: riddle.title,
+      description: riddle.description ?? '',
+      pointsToEarn: riddle.pointsToEarn,
+      isConfirmChecked: isConfirmChecked,
+      uploadedFileName: uploadedFileName,
+      isUploadingMedia: isUploadingMedia,
+      onPublish1: showUploadTypeDialog,
+      onRemove: () {
+        selectedMediaFile.value = null;
+        uploadedMediaUrl.value = null;
+        uploadedFileName.value = null;
+      },
+      onPublish: () => submitAudioSolution(riddle),
+    );
 
     BottomSheetModal.show(
       context,
@@ -770,7 +786,8 @@ class HomeController extends GetxController {
 
     AlertModal.show(
       context,
-      iconPath: AppImages.incorrectAnswerRiddleIcon, // Using failed icon
+      iconPath: AppImages.incorrectAnswerRiddleIcon,
+      // Using failed icon
       iconWidth: 50.w,
       iconHeight: 50.h,
       title: 'answerNotQuiteRight'.tr,
@@ -786,7 +803,8 @@ class HomeController extends GetxController {
 
     AlertModal.show(
       context,
-      iconPath: AppImages.icVerify, // Using verify icon for submitted
+      iconPath: AppImages.icVerify,
+      // Using verify icon for submitted
       iconWidth: 60.w,
       iconHeight: 60.h,
       title: 'answerSubmitted'.tr,
@@ -795,25 +813,130 @@ class HomeController extends GetxController {
     );
   }
 
-  /// Select media file (audio or video)
-  Future<void> selectMediaFile({bool isVideo = false}) async {
+
+  Future<void> showUploadTypeDialog() async {
+    await Get.dialog(
+      Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.image, color: AppColors.white),
+                title: const Text(
+                  'Upload Image',
+                  style: TextStyle(color: AppColors.white),
+                ),
+                onTap: () {
+                  Get.back();
+                  selectImageFile();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.audiotrack, color: AppColors.white),
+                title: const Text(
+                  'Upload Audio',
+                  style: TextStyle(color: AppColors.white),
+                ),
+                onTap: () {
+                  Get.back();
+                  selectMediaFile(); // your existing audio function
+                },
+              ),
+              TextButton(
+                onPressed: () => Get.back(),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(color: AppColors.white),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> selectImageFile() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
-        type: isVideo ? FileType.video : FileType.audio,
-      );
-      if (result != null && result.files.single.path != null) {
-        selectedMediaFile.value = File(result.files.single.path!);
-        uploadedFileName.value = result.files.single.name;
-        await _uploadMediaFile(
-          mediaType: isVideo ? MediaType.video : MediaType.audio,
-        );
+      final source = await _showImageSourceDialog();
+      if (source == null) return;
+
+      final XFile? pickedFile =
+      await StorageService.pickImage(source: source);
+
+      if (pickedFile != null) {
+        selectedMediaFile.value = File(pickedFile.path);
+        uploadedFileName.value = pickedFile.name;
+        await _uploadMediaFile(mediaType: MediaType.image);
       }
     } catch (e) {
-      CommonSnackbar.error('failedToSelectFile'.tr);
+      CommonSnackbar.error('failed_to_select_image'.tr);
     }
   }
 
-  /// Upload media file to storage
+  Future<ImageSource?> _showImageSourceDialog() async {
+    return await Get.dialog<ImageSource>(
+      Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(
+                  Icons.photo_library,
+                  color: AppColors.white,
+                ),
+                title: Text(
+                  'Choose from Gallery',
+                  style: TextStyle(color: AppColors.white),
+                ),
+                onTap: () => Get.back(result: ImageSource.gallery),
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt, color: AppColors.white),
+                title: Text(
+                  'Take Photo',
+                  style: TextStyle(color: AppColors.white),
+                ),
+                onTap: () => Get.back(result: ImageSource.camera),
+              ),
+              TextButton(
+                onPressed: () => Get.back(),
+                child: Text('Cancel', style: TextStyle(color: AppColors.white)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> selectMediaFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(type: FileType.audio);
+      if (result != null && result.files.single.path != null) {
+        selectedMediaFile.value = File(result.files.single.path!);
+        uploadedFileName.value = result.files.single.name;
+        await _uploadMediaFile(mediaType: MediaType.audio);
+      }
+    } catch (e) {
+      CommonSnackbar.error('failed_to_select_file'.tr);
+    }
+  }
+
   Future<void> _uploadMediaFile({required MediaType mediaType}) async {
     if (selectedMediaFile.value == null) return;
 
@@ -821,7 +944,7 @@ class HomeController extends GetxController {
     try {
       final currentUser = SupabaseService.currentUser;
       if (currentUser == null) {
-        CommonSnackbar.error('userNotFound'.tr);
+        CommonSnackbar.error('user_not_found'.tr);
         return;
       }
 
@@ -830,23 +953,84 @@ class HomeController extends GetxController {
       final url = await StorageService.uploadMedia(
         mediaFile: file,
         userId: currentUser.id,
-        bucketName: 'weekly_riddle_files', // Use weekly_riddle_files bucket
-        mediaType: mediaType,
+        bucketName: 'weekly_riddle_files',
+        mediaType: mediaType, // image / video / audio
       );
 
       if (url != null) {
         uploadedMediaUrl.value = url;
       } else {
-        CommonSnackbar.error('failedToUploadFile'.tr);
+        CommonSnackbar.error('failed_to_upload_file'.tr);
         clearFields();
       }
     } catch (e) {
-      CommonSnackbar.error('failedToUploadFile'.tr);
+      CommonSnackbar.error('failed_to_upload_file'.tr);
       clearFields();
     } finally {
       isUploadingMedia.value = false;
     }
   }
+
+  void clearFields() {
+    selectedMediaFile.value = null;
+    uploadedMediaUrl.value = '';
+    textController.clear();
+    uploadedFileName.value = null;
+    isConfirmChecked.value = false;
+  }
+
+  // /// Select media file (audio or video)
+  // Future<void> selectMediaFile({bool isVideo = false}) async {
+  //   try {
+  //     final result = await FilePicker.platform.pickFiles(
+  //       type: isVideo ? FileType.video : FileType.audio,
+  //     );
+  //     if (result != null && result.files.single.path != null) {
+  //       selectedMediaFile.value = File(result.files.single.path!);
+  //       uploadedFileName.value = result.files.single.name;
+  //       await _uploadMediaFile(
+  //         mediaType: isVideo ? MediaType.video : MediaType.audio,
+  //       );
+  //     }
+  //   } catch (e) {
+  //     CommonSnackbar.error('failedToSelectFile'.tr);
+  //   }
+  // }
+  //
+  // /// Upload media file to storage
+  // Future<void> _uploadMediaFile({required MediaType mediaType}) async {
+  //   if (selectedMediaFile.value == null) return;
+  //
+  //   isUploadingMedia.value = true;
+  //   try {
+  //     final currentUser = SupabaseService.currentUser;
+  //     if (currentUser == null) {
+  //       CommonSnackbar.error('userNotFound'.tr);
+  //       return;
+  //     }
+  //
+  //     final file = selectedMediaFile.value!;
+  //
+  //     final url = await StorageService.uploadMedia(
+  //       mediaFile: file,
+  //       userId: currentUser.id,
+  //       bucketName: 'weekly_riddle_files', // Use weekly_riddle_files bucket
+  //       mediaType: mediaType,
+  //     );
+  //
+  //     if (url != null) {
+  //       uploadedMediaUrl.value = url;
+  //     } else {
+  //       CommonSnackbar.error('failedToUploadFile'.tr);
+  //       clearFields();
+  //     }
+  //   } catch (e) {
+  //     CommonSnackbar.error('failedToUploadFile'.tr);
+  //     clearFields();
+  //   } finally {
+  //     isUploadingMedia.value = false;
+  //   }
+  // }
 
   /// Award points to user for correct riddle answer
   Future<void> _awardPoints({
@@ -891,11 +1075,11 @@ class HomeController extends GetxController {
   }
 
   /// Clear all submission fields
-  void clearFields() {
-    selectedMediaFile.value = null;
-    uploadedMediaUrl.value = null;
-    textController.clear();
-    uploadedFileName.value = null;
-    isConfirmChecked.value = false;
-  }
+  // void clearFields() {
+  //   selectedMediaFile.value = null;
+  //   uploadedMediaUrl.value = null;
+  //   textController.clear();
+  //   uploadedFileName.value = null;
+  //   isConfirmChecked.value = false;
+  // }
 }
