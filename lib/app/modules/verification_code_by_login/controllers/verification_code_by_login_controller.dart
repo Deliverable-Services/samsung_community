@@ -127,8 +127,6 @@ class VerificationCodeByLoginController extends GetxController {
     Get.offAllNamed(Routes.BOTTOM_BAR);
   }
 
-
-
   Future<void> _initFCM() async {
     final messaging = FirebaseMessaging.instance;
     await messaging.requestPermission();
