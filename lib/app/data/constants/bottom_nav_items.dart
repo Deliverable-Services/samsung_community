@@ -27,7 +27,7 @@ class BottomNavItems {
   ) {
     return [
       BottomNavItem(
-        imagePath: AppImages.homeNavIcon,
+        imagePath: AppImages.homeNavIconSvg,
         label: 'home'.tr,
         onTap: () {
           controller.changeTab(0, isBottomBar);
@@ -40,7 +40,7 @@ class BottomNavItems {
         },
       ),
       BottomNavItem(
-        imagePath: AppImages.vodNavIcon,
+        imagePath: AppImages.vodNavIconSvg,
         label: 'vod'.tr,
         onTap: () {
           controller.changeTab(1, isBottomBar);
@@ -53,7 +53,7 @@ class BottomNavItems {
         },
       ),
       BottomNavItem(
-        imagePath: AppImages.academyNavIcon,
+        imagePath: AppImages.academyNavIconSvg,
         label: 'academy'.tr,
         onTap: () {
           controller.changeTab(2, isBottomBar);
@@ -66,7 +66,7 @@ class BottomNavItems {
         },
       ),
       BottomNavItem(
-        imagePath: AppImages.feedNavIcon,
+        imagePath: AppImages.feedNavIconSvg,
         label: 'feed'.tr,
         onTap: () {
           controller.changeTab(3, isBottomBar);
@@ -79,7 +79,7 @@ class BottomNavItems {
         },
       ),
       BottomNavItem(
-        imagePath: AppImages.eventsNavIcon,
+        imagePath: AppImages.eventsNavIconSvg,
         label: 'events'.tr,
         onTap: () {
           controller.changeTab(4, isBottomBar);

@@ -16,6 +16,16 @@ import 'app/data/localization/language_controller.dart';
 import 'app/data/localization/local_string.dart';
 import 'app/repository/auth_repo/auth_repo.dart';
 import 'app/routes/app_pages.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//     FlutterLocalNotificationsPlugin();
+//
+// /// 🔹 Background handler
+// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//   await Firebase.initializeApp();
+//   debugPrint('Background Message: ${message.notification?.title}');
+// }
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
@@ -35,6 +45,8 @@ Future<void> main() async {
   } catch (e) {
     debugPrint('Warning: Failed to initialize Firebase: $e');
   }
+
+  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   try {
     await dotenv.load(fileName: '.env');

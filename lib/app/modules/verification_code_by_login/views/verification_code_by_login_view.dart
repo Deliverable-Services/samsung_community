@@ -260,28 +260,55 @@ class VerificationCodeByLoginView
                   controller.count.value;
                   return AppButton(
                     onTap:
-                        (controller.isVerifying.value ||
-                            !controller.isFormValid)
+                    (controller.isVerifying.value)
                         ? null
                         : () {
-                            // Log button click event
-                            AnalyticsService.logButtonClick(
-                              screenName: 'Login screen verification code',
-                              buttonName: 'Approval',
-                              eventName: 'login_verification_code_click',
-                            );
-                            controller.handleApproval();
-                          },
+                      AnalyticsService.logButtonClick(
+                        screenName: 'Login screen verification code',
+                        buttonName: 'Approval',
+                        eventName: 'login_verification_code_click',
+                      );
+                      controller.handleApproval();
+                    },
                     text: controller.isVerifying.value
                         ? 'verifying'.tr
                         : 'approval'.tr,
                     width: 350.w,
                     height: 48.h,
                     isEnabled:
-                        !controller.isVerifying.value && controller.isFormValid,
+                    !controller.isVerifying.value,
                   );
                 }),
               ),
+              // Positioned(
+              //   top: 680.h,
+              //   left: 20.w,
+              //   child: Obx(() {
+              //     controller.count.value;
+              //     return AppButton(
+              //       onTap:
+              //           (controller.isVerifying.value ||
+              //               !controller.isFormValid)
+              //           ? null
+              //           : () {
+              //               // Log button click event
+              //               AnalyticsService.logButtonClick(
+              //                 screenName: 'Login screen verification code',
+              //                 buttonName: 'Approval',
+              //                 eventName: 'login_verification_code_click',
+              //               );
+              //               controller.handleApproval();
+              //             },
+              //       text: controller.isVerifying.value
+              //           ? 'verifying'.tr
+              //           : 'approval'.tr,
+              //       width: 350.w,
+              //       height: 48.h,
+              //       isEnabled:
+              //           !controller.isVerifying.value && controller.isFormValid,
+              //     );
+              //   }),
+              // ),
               Positioned(
                 top: 758.h,
                 left: 0,

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../common/services/app_lifecycle_service.dart';
 import '../../common/services/auth_service.dart';
@@ -201,6 +202,39 @@ class AuthRepo extends BaseController {
       handleError(error);
       return null;
     }
+  }
+
+  Future<void> deactivateToken(String fcmToken) async {
+    final supabase = Supabase.instance.client;
+
+    await supabase
+        .from('user_push_tokens')
+        .update({'is_active': false})
+        .eq('fcm_token', fcmToken);
+  }
+
+  Future<void> saveOrUpdatePushToken({
+    required String fcmToken,
+    required String platform, // android / ios / web
+    String? deviceId,
+  }) async {
+    final supabase = Supabase.instance.client;
+
+    final userId = supabase.auth.currentUser?.id;
+
+    if (userId == null) return;
+
+    await supabase.from('user_push_tokens').upsert(
+      {
+        'user_id': userId,
+        'fcm_token': fcmToken,
+        'platform': platform,
+        'device_id': deviceId,
+        'is_active': true,
+        'last_used_at': DateTime.now().toIso8601String(),
+      },
+      onConflict: 'fcm_token', // 🔑 UNIQUE constraint
+    );
   }
 
   Future<bool> createOrUpdatePublicUser({

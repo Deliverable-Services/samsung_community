@@ -89,16 +89,18 @@ class AppButton extends StatelessWidget {
                 left: 18.w,
               ),
               child: Center(
-                child: Text(
-                  text,
-                  style: TextStyle(
-                    color: textColor,
-                    letterSpacing: 0,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14.sp,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                child: !isEnabled
+                    ? SizedBox(height: 24,width: 24,child: CircularProgressIndicator())
+                    : Text(
+                        text,
+                        style: TextStyle(
+                          color: textColor,
+                          letterSpacing: 0,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14.sp,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
               ),
             ),
           ),

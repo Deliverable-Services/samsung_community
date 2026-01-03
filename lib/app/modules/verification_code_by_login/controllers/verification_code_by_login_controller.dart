@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
@@ -121,7 +123,32 @@ class VerificationCodeByLoginController extends GetxController {
     }
     // User is approved, navigate to main layout
     CommonSnackbar.success('signInSuccessful'.tr);
+    _initFCM();
     Get.offAllNamed(Routes.BOTTOM_BAR);
+  }
+
+
+
+  Future<void> _initFCM() async {
+    final messaging = FirebaseMessaging.instance;
+    await messaging.requestPermission();
+
+    final token = await messaging.getToken();
+    if (token != null) {
+      await AuthRepo().saveOrUpdatePushToken(
+        fcmToken: token,
+        platform: Platform.isAndroid ? 'android' : 'ios',
+        deviceId: '',
+      );
+    }
+
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+      AuthRepo().saveOrUpdatePushToken(
+        fcmToken: newToken,
+        platform: Platform.isAndroid ? 'android' : 'ios',
+        deviceId: '',
+      );
+    });
   }
 
   @override

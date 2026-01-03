@@ -50,6 +50,8 @@ dependencies:
   firebase_analytics: ^11.3.3
   url_launcher:
   share_plus:
+  firebase_messaging:
+#  flutter_local_notifications:
 
 dev_dependencies:
   flutter_test:
