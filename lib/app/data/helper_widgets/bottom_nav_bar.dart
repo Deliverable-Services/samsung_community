@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/modules/bottom_bar/controllers/bottom_bar_controller.dart';
 
@@ -33,7 +34,7 @@ class BottomNavBar extends StatelessWidget {
               child: Obx(() {
                 controller.count.value;
                 return BottomNavMenuItem(
-                  icon: Image.asset(
+                  icon: SvgPicture.asset(
                     items[i].imagePath,
                     width: 26.w,
                     height: 26.h,

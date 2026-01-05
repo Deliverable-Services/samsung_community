@@ -45,7 +45,7 @@ class AssignmentCard extends StatelessWidget {
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           image: DecorationImage(fit: BoxFit.cover,
-            image: AssetImage(AppImages.imageCardBackgroundPng),
+            image: AssetImage(AppImages.imageCardBackground),
           ),
         ),
         child: Column(
