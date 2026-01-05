@@ -281,6 +281,17 @@ class AcademyView extends GetView<AcademyController> {
       return SizedBox();
     }
     if (isZoomWorkshop) {
+      // Debug: Print image URL info
+      debugPrint('🖼️ [AcademyView] Rendering zoomWorkshop: ${content.title}');
+      debugPrint('🖼️ [AcademyView] content.imageUrl: ${content.imageUrl}');
+      debugPrint(
+        '🖼️ [AcademyView] content.imageUrl is null: ${content.imageUrl == null}',
+      );
+      debugPrint(
+        '🖼️ [AcademyView] content.imageUrl isEmpty: ${content.imageUrl?.isEmpty ?? true}',
+      );
+      debugPrint('🖼️ [AcademyView] content.eventId: ${content.eventId}');
+
       return Padding(
         padding: EdgeInsets.only(bottom: 20.h),
         child: Container(
@@ -307,6 +318,7 @@ class AcademyView extends GetView<AcademyController> {
           ),
           child: EventLaunchCard(
             imagePath: AppImages.eventRegisteration,
+            imagePathNetwork: content.imageUrl,
             title: content.title,
             description: content.description ?? '',
             text: 'homeMoreDetails'.tr,

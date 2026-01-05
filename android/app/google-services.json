@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "420519811486",
+    "project_id": "fir-app-10146",
+    "storage_bucket": "fir-app-10146.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:420519811486:android:018d0091399aceadd91e8f",
+        "android_client_info": {
+          "package_name": "com.example.samsung_community_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqkJKUgmyVHp2GzS4-JdVfOdtWVwCjKDw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

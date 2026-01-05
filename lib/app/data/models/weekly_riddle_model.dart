@@ -80,7 +80,7 @@ class WeeklyRiddleModel {
       description: json['description']?.toString(),
       rules: json['rules']?.toString(),
       solutionType: RiddleSolutionType.fromString(
-        json['type']?.toString() ?? 'text',
+        (json['riddle_solution_type'] ?? json['type'])?.toString() ?? 'text',
       ),
       question: _parseJsonField(json['question']),
       answer: json['answer']?.toString(),

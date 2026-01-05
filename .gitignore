@@ -162,11 +162,6 @@ app.*.symbols
 *.backup
 *~
 
-# Firebase
-**/google-services.json
-**/GoogleService-Info.plist
-firebase_options.dart
-
 # Fastlane
 **/fastlane/report.xml
 **/fastlane/Preview.html

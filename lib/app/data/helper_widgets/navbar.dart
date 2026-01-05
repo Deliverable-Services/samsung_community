@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-
+import 'package:flutter_svg/svg.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_images.dart';
 import 'animated_press.dart';
@@ -31,8 +31,8 @@ class Navbar extends StatelessWidget {
         SizedBox(
           width: 36.w,
           height: 33.559242248535156.h,
-          child: Image.asset(
-            AppImages.appLogo,
+          child: SvgPicture.asset(
+            AppImages.logo,
             width: 36.w,
             height: 33.559242248535156.h,
             fit: BoxFit.contain,

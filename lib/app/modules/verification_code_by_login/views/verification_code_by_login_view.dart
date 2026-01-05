@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
-
+import 'package:flutter_svg/svg.dart';
 import '../../../common/services/analytics_service.dart';
 import '../../../data/constants/app_button.dart';
 import '../../../data/constants/app_colors.dart';
@@ -48,8 +48,8 @@ class VerificationCodeByLoginView
                       child: Center(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8.r),
-                          child: Image.asset(
-                            AppImages.appLogo,
+                          child: SvgPicture.asset(
+                            AppImages.logo,
                             width: 84.w,
                             height: 78.h,
                             fit: BoxFit.fitHeight,
@@ -94,7 +94,7 @@ class VerificationCodeByLoginView
                         ),
                       ),
                     ),
-                    SizedBox(height: 30.h),
+                    SizedBox(height: 40.h),
                     SizedBox(
                       width: 304.w,
                       height: 32.h,
@@ -142,7 +142,8 @@ class VerificationCodeByLoginView
                                 return controller.otpError.value;
                               }
                               if (value == null || value.trim().isEmpty) {
-                                return 'verificationCode'.tr + ' is_required'.tr;
+                                return 'verificationCode'.tr +
+                                    ' is_required'.tr;
                               }
                               return null;
                             },
@@ -259,24 +260,22 @@ class VerificationCodeByLoginView
                 child: Obx(() {
                   controller.count.value;
                   return AppButton(
-                    onTap:
-                    (controller.isVerifying.value)
+                    onTap: (controller.isVerifying.value)
                         ? null
                         : () {
-                      AnalyticsService.logButtonClick(
-                        screenName: 'Login screen verification code',
-                        buttonName: 'Approval',
-                        eventName: 'login_verification_code_click',
-                      );
-                      controller.handleApproval();
-                    },
+                            AnalyticsService.logButtonClick(
+                              screenName: 'Login screen verification code',
+                              buttonName: 'Approval',
+                              eventName: 'login_verification_code_click',
+                            );
+                            controller.handleApproval();
+                          },
                     text: controller.isVerifying.value
                         ? 'verifying'.tr
                         : 'approval'.tr,
                     width: 350.w,
                     height: 48.h,
-                    isEnabled:
-                    !controller.isVerifying.value,
+                    isEnabled: !controller.isVerifying.value,
                   );
                 }),
               ),

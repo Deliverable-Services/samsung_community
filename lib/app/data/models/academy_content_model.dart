@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 /// Academy Content Model based on Supabase schema
 
 enum AcademyFileType {
@@ -14,7 +16,7 @@ enum AcademyFileType {
   // }
   static AcademyFileType fromString(String value) {
     return AcademyFileType.values.firstWhere(
-          (e) => e.toJson() == value,
+      (e) => e.toJson() == value,
       orElse: () => AcademyFileType.video,
     );
   }
@@ -130,11 +132,6 @@ class AcademyContentModel {
 }
 */
 
-
-
-
-
-
 class AcademyContentModel {
   /// ---------------------------
   /// Academy Content
@@ -167,6 +164,7 @@ class AcademyContentModel {
   final DateTime? eventDate;
   final int? durationMinutes;
   final String? zoomLink;
+  final String? imageUrl;
 
   /// ---------------------------
   /// Assignment / Mission Challenge
@@ -214,6 +212,7 @@ class AcademyContentModel {
     this.eventDate,
     this.durationMinutes,
     this.zoomLink,
+    this.imageUrl,
 
     // Assignment
     this.assignmentId,
@@ -237,6 +236,19 @@ class AcademyContentModel {
   /// From JSON
   /// ---------------------------
   factory AcademyContentModel.fromJson(Map<String, dynamic> json) {
+    // Debug: Print all keys and image_url value
+    if (json['file_type'] == 'zoom_workshop') {
+      debugPrint('🔍 [AcademyContentModel] Parsing zoomWorkshop');
+      debugPrint('🔍 [AcademyContentModel] JSON keys: ${json.keys.toList()}');
+      debugPrint(
+        '🔍 [AcademyContentModel] image_url value: ${json['image_url']}',
+      );
+      debugPrint(
+        '🔍 [AcademyContentModel] image_url type: ${json['image_url'].runtimeType}',
+      );
+      debugPrint('🔍 [AcademyContentModel] event_id: ${json['event_id']}');
+    }
+
     return AcademyContentModel(
       academyContentId: json['academy_content_id'],
       title: json['title'] ?? '',
@@ -264,6 +276,7 @@ class AcademyContentModel {
           : null,
       durationMinutes: json['duration_minutes'],
       zoomLink: json['zoom_link'],
+      imageUrl: json['image_url'],
 
       // Assignment
       assignmentId: json['assignment_id'],
@@ -323,6 +336,7 @@ class AcademyContentModel {
       'event_date': eventDate?.toIso8601String(),
       'duration_minutes': durationMinutes,
       'zoom_link': zoomLink,
+      'image_url': imageUrl,
 
       // Assignment
       'assignment_id': assignmentId,

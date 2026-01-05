@@ -11,43 +11,53 @@ class EventerPaymentView extends GetView<EventerPaymentController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.primary,
-      appBar: AppBar(
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          controller.handleBackButton();
+        }
+      },
+      child: Scaffold(
         backgroundColor: AppColors.primary,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white),
-          onPressed: () => Get.back(),
+        appBar: AppBar(
+          backgroundColor: AppColors.primary,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.white),
+            onPressed: () => controller.handleBackButton(),
+          ),
+          title: const Text(
+            'Event Registration',
+            style: TextStyle(color: AppColors.white),
+          ),
         ),
-        title: const Text(
-          'Event Registration',
-          style: TextStyle(color: AppColors.white),
-        ),
-      ),
-      body: Obx(
-        () => Stack(
-          children: [
-            if (controller.errorMessage.value.isNotEmpty)
-              _buildErrorWidget()
-            else if (controller.webViewController != null)
-              WebViewWidget(controller: controller.webViewController!)
-            else
-              const Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
-      ),
-              ),
-            if (controller.isLoading.value)
-              Container(
-                color: AppColors.primary,
-                child: const Center(
+        body: Obx(
+          () => Stack(
+            children: [
+              if (controller.errorMessage.value.isNotEmpty)
+                _buildErrorWidget()
+              else if (controller.webViewController != null)
+                WebViewWidget(controller: controller.webViewController!)
+              else
+                const Center(
                   child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
                   ),
                 ),
-              ),
-          ],
+              if (controller.isLoading.value)
+                Container(
+                  color: AppColors.primary,
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.white,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -60,11 +70,7 @@ class EventerPaymentView extends GetView<EventerPaymentController> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.error_outline,
-              color: Colors.red,
-              size: 48,
-            ),
+            const Icon(Icons.error_outline, color: Colors.red, size: 48),
             SizedBox(height: 16.h),
             Text(
               'Error loading payment page',

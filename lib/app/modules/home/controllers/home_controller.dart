@@ -504,21 +504,6 @@ class HomeController extends GetxController {
           break;
       }
     }
-    submissionWidget = ReusableAudioSubmitModule(
-      title: riddle.title,
-      description: riddle.description ?? '',
-      pointsToEarn: riddle.pointsToEarn,
-      isConfirmChecked: isConfirmChecked,
-      uploadedFileName: uploadedFileName,
-      isUploadingMedia: isUploadingMedia,
-      onPublish1: showUploadTypeDialog,
-      onRemove: () {
-        selectedMediaFile.value = null;
-        uploadedMediaUrl.value = null;
-        uploadedFileName.value = null;
-      },
-      onPublish: () => submitAudioSolution(riddle),
-    );
 
     BottomSheetModal.show(
       context,
@@ -813,7 +798,6 @@ class HomeController extends GetxController {
     );
   }
 
-
   Future<void> showUploadTypeDialog() async {
     await Get.dialog(
       Dialog(
@@ -868,8 +852,7 @@ class HomeController extends GetxController {
       final source = await _showImageSourceDialog();
       if (source == null) return;
 
-      final XFile? pickedFile =
-      await StorageService.pickImage(source: source);
+      final XFile? pickedFile = await StorageService.pickImage(source: source);
 
       if (pickedFile != null) {
         selectedMediaFile.value = File(pickedFile.path);

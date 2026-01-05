@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
+import 'package:flutter_svg/svg.dart';
 import '../../../common/services/analytics_service.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
@@ -38,8 +38,8 @@ class RequestSentView extends GetView<RequestSentController> {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.max,
               children: [
-                Image.asset(
-                  AppImages.appLogo,
+                SvgPicture.asset(
+                  AppImages.logo,
                   width: 84.w,
                   height: 78.h,
                   fit: BoxFit.fitHeight,

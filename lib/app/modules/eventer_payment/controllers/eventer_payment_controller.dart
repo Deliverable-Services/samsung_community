@@ -5,12 +5,14 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../common/services/eventer_service.dart';
 import '../../../data/constants/app_colors.dart';
+import '../local_widgets/registration_modals.dart';
 
 class EventerPaymentController extends GetxController {
   WebViewController? webViewController;
   final RxBool isLoading = true.obs;
   final RxString errorMessage = ''.obs;
   final RxBool penpalReady = false.obs;
+  final RxBool registrationCompleted = false.obs;
 
   String? eventId;
   String? email;
@@ -50,7 +52,8 @@ class EventerPaymentController extends GetxController {
       showBanner: initialConfig?['showBanner'] ?? false,
       showEventDetails: initialConfig?['showEventDetails'] ?? false,
       showBackground: initialConfig?['showBackground'] ?? true,
-      showLocationDescription: initialConfig?['showLocationDescription'] ?? false,
+      showLocationDescription:
+          initialConfig?['showLocationDescription'] ?? false,
       showSeller: initialConfig?['showSeller'] ?? false,
       showPoweredBy: initialConfig?['showPoweredBy'] ?? false,
     );
@@ -179,9 +182,7 @@ class EventerPaymentController extends GetxController {
   void _prefillGuestDetailsIfAvailable() {
     if (email != null && email!.isNotEmpty) {
       _callEventerMethod('setGuestDetails', [
-        {
-          'email': email,
-        },
+        {'email': email},
         false, // isLock - set to false to allow editing
       ]);
     }
@@ -266,26 +267,49 @@ class EventerPaymentController extends GetxController {
     Map<String, dynamic>? data, {
     String? error,
   }) {
-    Get.dialog(
-      AlertDialog(
-        title: Text(success ? 'Payment Successful' : 'Payment Failed'),
-        content: Text(
-          success
-              ? 'Your payment has been processed successfully.'
-              : error ?? 'Payment processing failed. Please try again.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Get.back(); // Close dialog
-              Get.back(); // Return to previous screen
-            },
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-      barrierDismissible: false,
-    );
+    final context = Get.context;
+    if (context == null) return;
+
+    if (success) {
+      registrationCompleted.value = true;
+      // Close payment screen first, then show success modal
+      Get.back();
+      // Show success modal after a small delay to ensure navigation is complete
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (Get.context != null) {
+          RegistrationSuccessModal.show(Get.context!);
+        }
+      });
+    } else {
+      // For errors, show cancelled modal
+      Get.back();
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (Get.context != null) {
+          RegistrationCancelledModal.show(Get.context!);
+        }
+      });
+    }
+  }
+
+  /// Handle back button press - show cancelled modal if registration not completed
+  void handleBackButton() {
+    if (!registrationCompleted.value) {
+      final context = Get.context;
+      if (context != null) {
+        // Close payment screen first
+        Get.back();
+        // Show cancelled modal after a small delay
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (Get.context != null) {
+            RegistrationCancelledModal.show(Get.context!);
+          }
+        });
+      } else {
+        Get.back();
+      }
+    } else {
+      Get.back();
+    }
   }
 
   Future<void> _callEventerMethod(

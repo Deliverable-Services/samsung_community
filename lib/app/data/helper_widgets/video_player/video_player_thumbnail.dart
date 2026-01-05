@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../constants/app_images.dart';
 import 'video_player_thumbnail_controller.dart';
+import 'package:flutter_svg/svg.dart';
 
 class VideoPlayerThumbnail extends StatelessWidget {
   final String? thumbnailUrl;
@@ -119,8 +120,8 @@ class VideoPlayerThumbnail extends StatelessWidget {
     return Container(
       color: const Color(0xFF2A2A2A),
       child: Center(
-        child: Image.asset(
-          AppImages.appLogo,
+        child: SvgPicture.asset(
+          AppImages.logo,
           fit: BoxFit.contain,
           width: 120,
           height: 120,

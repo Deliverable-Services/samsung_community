@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
-
+import 'package:flutter_svg/svg.dart';
 import '../../../common/services/analytics_service.dart';
 import '../../../data/constants/app_button.dart';
 import '../../../data/constants/app_colors.dart';
@@ -45,8 +45,8 @@ class SignUpView extends GetView<SignUpController> {
                       child: Center(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8.r),
-                          child: Image.asset(
-                            AppImages.appLogo,
+                          child: SvgPicture.asset(
+                            AppImages.logo,
                             width: 84.w,
                             height: 78.h,
                             fit: BoxFit.fitHeight,
@@ -91,7 +91,7 @@ class SignUpView extends GetView<SignUpController> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 30.h),
+                    SizedBox(height: 40.h),
                     SizedBox(
                       width: 304.w,
                       height: 32.h,

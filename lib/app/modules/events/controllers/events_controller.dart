@@ -33,7 +33,7 @@ class EventsController extends BaseController {
   Timer? searchDebounceTimer;
 
   EventsController({EventService? eventService})
-      : eventService = eventService ?? EventService();
+    : eventService = eventService ?? EventService();
 
   late final ScrollController allEventsScrollController;
   late final ScrollController myEventsScrollController;
@@ -217,8 +217,8 @@ class EventsController extends BaseController {
     // Media URL - prefer video, then image
     final String? mediaUrl =
         event.videoUrl != null && event.videoUrl!.isNotEmpty
-            ? event.videoUrl
-            : event.imageUrl;
+        ? event.videoUrl
+        : event.imageUrl;
     final bool isVideo = event.videoUrl != null && event.videoUrl!.isNotEmpty;
 
     // Bottom button
@@ -231,7 +231,8 @@ class EventsController extends BaseController {
         // Close the product detail modal first
         Get.back();
         // Show email input modal
-        EventEmailModal.show(context, eventId: event.id);
+        // EventEmailModal.show(context, eventId: event.id);
+        EventEmailModal.show(context, eventId: "8p93f");
       };
     }
 

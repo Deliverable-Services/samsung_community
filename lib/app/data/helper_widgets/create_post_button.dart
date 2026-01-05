@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:flutter_svg/svg.dart';
 import '../../common/services/create_post_service.dart';
 import '../constants/app_images.dart';
 
@@ -45,24 +45,24 @@ class _CreatePostButtonState extends State<CreatePostButton> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: widget.bottomOffset ?? -70.h,
-      right: -50.w,
+      bottom: widget.bottomOffset ?? -40.h,
+      right: -40.w,
       child: Stack(
         alignment: Alignment.center,
         children: [
           // BIG IMAGE (visual only)
           SizedBox(
-            width: 250.w,
-            height: 250.h,
+            width: 170.w,
+            height: 170.h,
             child: Image.asset(AppImages.createPostIcon),
           ),
 
-          // SMALL TAP AREA (50x50)
+          // SMALL TAP AREA 66x50)
           GestureDetector(
             onTap: _handleTap,
             child: Container(
-              width: 34.w,
-              height: 34.h,
+              width: 66.w,
+              height: 66.h,
               color: Colors.transparent, // important
             ),
           ),
