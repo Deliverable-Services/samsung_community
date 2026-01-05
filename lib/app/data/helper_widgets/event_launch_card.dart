@@ -58,6 +58,25 @@ class EventLaunchCard extends StatelessWidget {
                   imagePathNetwork!,
                   fit: BoxFit.cover,
                   width: double.infinity,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      height: 180.h,
+                      width: double.infinity,
+                      color: AppColors.black.withOpacity(0.1),
+                      child: const Center(
+                        child:  CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 180.h,
+                      width: double.infinity,
+                      color: AppColors.black.withOpacity(0.1),
+                      child: const Icon(Icons.error, color: AppColors.white),
+                    );
+                  },
                 )
               : Image.asset(
                   imagePath,
@@ -315,6 +334,21 @@ class AllEventLaunchCard extends StatelessWidget {
                     fit: BoxFit.cover,
                     width: double.infinity,
                     height: double.infinity,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(
+                        color: AppColors.black.withOpacity(0.1),
+                        child: const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                       return Container(
+                        color: AppColors.black.withOpacity(0.1),
+                        child: const Icon(Icons.error, color: AppColors.white),
+                      );
+                    },
                   )
                 : Image.asset(
                     imagePath,

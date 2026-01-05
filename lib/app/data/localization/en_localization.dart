@@ -162,6 +162,7 @@ class EnLocalization {
         "An exclusive live session is about to go live. Tune in shortly to catch all the action!",
     "liveVideoStartingSoon": "Live Video Starting Soon",
     "joinLive": "Join Live",
+    "copyZoomLink": "Copy Zoom Link",
 
     // Events Screen
     "communityEvents": "Community Events",

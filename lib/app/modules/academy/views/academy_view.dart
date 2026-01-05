@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
+import '../../../data/core/utils/common_snackbar.dart';
 import '../../../common/services/supabase_service.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
@@ -13,6 +14,7 @@ import '../../../data/helper_widgets/event_launch_card.dart';
 import '../../../data/helper_widgets/filter_component.dart';
 import '../../../data/models/academy_content_model.dart';
 import '../../../data/models/weekly_riddle_model.dart';
+import '../../../data/models/event_model.dart';
 import '../controllers/academy_controller.dart';
 import 'assignment_card.dart';
 
@@ -270,19 +272,20 @@ class AcademyView extends GetView<AcademyController> {
 
   Widget _buildContentCard(AcademyContentModel content) {
     final currentUserId = SupabaseService.currentUser?.id;
-    final isSubmitted =
-        currentUserId != null &&
-        (content.submissionUserIds?.contains(currentUserId) ?? false);
+    final isSubmitted = currentUserId != null &&
+        ((content.submissionUserIds?.contains(currentUserId) ?? false) ||
+         (content.eventId != null && controller.registeredEventIds.contains(content.eventId!)));
     final isAssignment = content.fileType == AcademyFileType.assignment;
-
-    if (!isAssignment && isSubmitted) {
-      return const SizedBox.shrink();
-    }
 
     final isVideo = content.fileType == AcademyFileType.video;
     final isZoomWorkshop = content.fileType == AcademyFileType.zoomWorkshop;
     final mediaUrl = content.mediaFileUrl;
     final hasMedia = mediaUrl != null && mediaUrl.isNotEmpty;
+
+    final event = isZoomWorkshop && content.eventId != null 
+        ? controller.workshopEvents[content.eventId] 
+        : null;
+
     if (isZoomWorkshop) {
       return Padding(
         key: ValueKey('zoom_workshop_${content.academyContentId}'),
@@ -311,12 +314,22 @@ class AcademyView extends GetView<AcademyController> {
           ),
           child: EventLaunchCard(
             imagePath: AppImages.eventRegisteration,
-            imagePathNetwork: content.mediaFileUrl,
-            title: content.title,
-            description: content.description ?? '',
-            text: 'homeMoreDetails'.tr,
+            imagePathNetwork: event?.imageUrl ?? content.mediaFileUrl,
+            title: event?.title ?? content.title,
+            description: event?.description ?? content.description ?? '',
+            text: isSubmitted ? 'copyZoomLink'.tr : 'homeMoreDetails'.tr,
             showButton: true,
-            onButtonTap: () => controller.clickOnMoreDetails(content: content),
+            onButtonTap: isSubmitted
+                ? () {
+                    final link = event?.zoomLink ?? content.zoomLink ?? '';
+                    if (link.isNotEmpty) {
+                      Clipboard.setData(ClipboardData(text: link));
+                      CommonSnackbar.success('Zoom link copied to clipboard');
+                    } else {
+                      CommonSnackbar.error('Zoom link not available');
+                    }
+                  }
+                : () => controller.clickOnMoreDetails(content: content),
             exclusiveEvent: false,
             extraPaddingForButton: EdgeInsets.symmetric(horizontal: 16.w),
             labels: [
@@ -334,7 +347,7 @@ class AcademyView extends GetView<AcademyController> {
                     ),
                     SizedBox(width: 3.w),
                     Text(
-                      "${'homePoints'.tr} ${content.pointsToEarn}",
+                      "${'homePoints'.tr} ${event?.costPoints ?? content.pointsToEarn}",
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 12.sp,

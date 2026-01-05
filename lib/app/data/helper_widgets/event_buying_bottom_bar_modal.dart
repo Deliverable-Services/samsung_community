@@ -186,7 +186,7 @@ class EventBuyingBottomBarModal extends StatelessWidget {
               child: Center(
                 child: AppButton(
                   onTap: onButtonTap,
-                  text: 'registration'.tr,
+                  text: text ?? 'registration'.tr,
                   width: double.infinity,
                   height: 48.h,
                 ),
