@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
@@ -125,6 +126,10 @@ class LoginView extends GetView<LoginController> {
                             controller: controller.mobileController,
                             keyboardType: TextInputType.phone,
                             placeholder: 'type'.tr,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(10),
+                            ],
                             validator: (value) {
                               // Only validate if button has been clicked
                               if (!controller.hasValidated.value) return null;
