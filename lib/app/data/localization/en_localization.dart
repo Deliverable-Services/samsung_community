@@ -29,7 +29,6 @@ class EnLocalization {
     "please_login_to_like_content": "Please login to like content",
     "please_login_to_comment": "Please login to comment",
     "comment_cannot_be_empty": "Comment cannot be empty",
-    "user_not_found": "User not found",
     "failed_to_publish_post": "Failed to publish post",
     "failed_to_select_file": "Failed to select file",
     "failed_to_upload_file": "Failed to upload file",
@@ -44,7 +43,6 @@ class EnLocalization {
     "failed_to_save_profile": "Failed to save profile. Please try again.",
     "failed_to_unblock_user": "Failed to unblock user",
     "is_required": "is required",
-    "please_enter_valid": "Please enter a valid value",
     "failed_to_like_post": "Failed to like post",
     "failed_to_add_comment": "Failed to add comment",
     "failed_to_save_language_preference": "Failed to save language preference",
@@ -69,9 +67,7 @@ class EnLocalization {
     "loginDescription":
         "To log in to the app, please fill in the following details.",
     "mobile_number": "Mobile Number",
-    "password": "Password",
     "type": "Type...",
-    "forgotPassword": "I forgot my password.",
     "mobile_number_required": "Mobile number is required",
     "invalid_phone_number": "Please enter a valid phone number",
     "user_not_found": "User not found. Please sign up first.",
@@ -79,8 +75,6 @@ class EnLocalization {
     "Success": "Success",
     "failedToGenerateVerificationCode": "Failed to generate verification code",
     "somethingWentWrong": "Something went wrong. Please try again.",
-    "user_already_registered":
-        "User already registered. Please log in instead.",
     "user_already_signed_up":
         "User is already signed up. Please log in instead.",
     "userSuspended": "Your account is suspended. Please contact support.",
@@ -103,7 +97,6 @@ class EnLocalization {
     // Sign Up Screen
     "signUpDescription":
         "To sign up for the app, please fill in the following details.",
-    "confirmPassword": "Confirm Password",
     "alreadyHaveAccount": "I already have an account ",
     // Personal Details Screen
     "addProfilePicture": "Add a profile picture",
@@ -150,15 +143,12 @@ class EnLocalization {
         "Exclusive videos, lives, and articles,all in one inspiring space.",
     "academyAll": "All",
     "academyVideos": "Videos",
-    "academyReels": "Reels",
     "academyZoomWorkshops": "Zoom Workshops",
     "skillChallenges": "Skill Challenges",
-    "academyAssignments": "Assignments",
     "searchForInspiration": "Search for inspiration ...",
     "sendSolution": "Send Solution",
     "submitAnswer": "Submit answer",
     "iConfirmGranting": "I confirm granting publication rights",
-    "whichOneCorrect": "Which one's correct? Pick one.",
     "registration": "Registration",
     "youDoNotHaveEnoughPoints": "You don't have enough points.",
     "yourBalanceIsTooLowToCompleteThisAction":
@@ -186,20 +176,10 @@ class EnLocalization {
     "buying": 'Buying',
 
     // Home Screen
-    "homeExclusiveLaunchEvent": "Exclusive Launch Event",
-    "homeLiveEventRegistration": "Live Event Registration",
-    "homeLiveEventDescription":
-        "Be part of an exclusive live. Register now to secure your spot ldcklkc fkvkc.....",
     "homeMoreDetails": "More Details",
     "homePoints": "Points: -",
-    "homePodcastsLuxuryStores": "Podcasts Luxury Stores",
-    "homeLoramDescription":
-        "Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....",
-    "homeLoremDescription":
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....",
     // Filter Component
     "filterExploreLibrary": "Explore our library.....",
-    "searchForInspirationFilter": "Search for inspiration .....",
     // Content Card
     "contentCardViewing": "Viewing",
     // Store Card
@@ -215,7 +195,6 @@ class EnLocalization {
     "typeADescription": "Type a description",
     "uploadFile": "Upload File",
     "publish": "Publish",
-    "selectSocialMedia": "Select Social Media",
     "instagram": "Instagram",
     "facebook": "Facebook",
     "communityFeed": "Community Feed",
@@ -237,7 +216,6 @@ class EnLocalization {
     "viewAllCommentsSuffix": "comments",
     "addComment": "Add comment...",
     // Side Menu
-    "menu": "Menu",
     "messages": "Messages",
     "store": "Store",
     "exploreStore": "Explore the Store",
@@ -286,7 +264,6 @@ class EnLocalization {
         "No internet connection. Please check your network.",
     "isRequired": "is required",
     "messagesSubtitle": "Unique experiences for our members.",
-    "chat": "Chat",
     "active": "Active",
     "inactive": "Inactive",
     "seeProfile": "See Profile",

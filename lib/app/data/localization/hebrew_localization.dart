@@ -20,7 +20,6 @@ class HebrewiLocalization {
     "user_unblocked_successfully": "המשתמש בוטל מחסימה בהצלחה",
     "user_followed": "המשתמש נמצא במעקב",
     "user_unfollowed": "המעקב אחר המשתמש בוטל",
-    "feed": "פיד",
     "otp_for_login": "קוד אימות להתחברות",
     "otp_for_signup": "קוד אימות להרשמה",
 
@@ -30,7 +29,6 @@ class HebrewiLocalization {
     "please_login_to_like_content": "אנא התחבר כדי לעשות לייק",
     "please_login_to_comment": "אנא התחבר כדי להגיב",
     "comment_cannot_be_empty": "התגובה לא יכולה להיות ריקה",
-    "user_not_found": "המשתמש לא נמצא",
     "failed_to_publish_post": "פרסום הפוסט נכשל",
     "failed_to_select_file": "בחירת הקובץ נכשלה",
     "failed_to_upload_file": "העלאת הקובץ נכשלה",
@@ -44,7 +42,6 @@ class HebrewiLocalization {
     "failed_to_save_profile": "שמירת הפרופיל נכשלה. אנא נסה שוב.",
     "failed_to_unblock_user": "ביטול חסימת המשתמש נכשל",
     "is_required": "הוא שדה חובה",
-    "please_enter_valid": "אנא הזן ערך תקין",
     "failed_to_like_post": "הוספת לייק לפוסט נכשלה",
     "failed_to_add_comment": "הוספת תגובה נכשלה",
     "failed_to_save_language_preference": "שמירת העדפת השפה נכשלה",
@@ -68,9 +65,7 @@ class HebrewiLocalization {
     // Login Screen
     "loginDescription": "כדי להתחבר לאפליקציה, אנא מלא את הפרטים הבאים.",
     "mobile_number": "מספר נייד",
-    "password": "סיסמה",
     "type": "הקלד...",
-    "forgotPassword": "שכחתי את הסיסמה שלי.",
     "mobile_number_required": "מספר נייד נדרש",
     "invalid_phone_number": "אנא הזן מספר טלפון תקין",
     "user_not_found": "משתמש לא נמצא. אנא הירשם תחילה.",
@@ -78,7 +73,6 @@ class HebrewiLocalization {
     "Success": "הצלחה",
     "failedToGenerateVerificationCode": "נכשל ביצירת קוד אימות",
     "somethingWentWrong": "משהו השתבש. אנא נסה שוב.",
-    "user_already_registered": "משתמש כבר רשום. אנא התחבר במקום זאת.",
     "user_already_signed_up": "המשתמש כבר נרשם. אנא התחבר במקום זאת.",
     "userSuspended": "החשבון שלך מושעה. אנא פנה לתמיכה.",
     "userRejected": "בקשת החשבון שלך נדחתה. אנא פנה לתמיכה.",
@@ -97,7 +91,6 @@ class HebrewiLocalization {
     "saving": "שומר...",
     // Sign Up Screen
     "signUpDescription": "כדי להירשם לאפליקציה, אנא מלא את הפרטים הבאים.",
-    "confirmPassword": "אישור סיסמה",
     "alreadyHaveAccount": "יש לי כבר חשבון ",
     // Personal Details Screen
     "addProfilePicture": "הוסף תמונת פרופיל",
@@ -144,15 +137,12 @@ class HebrewiLocalization {
         "סרטונים בלעדיים, שידורים חיים ומאמרים – הכל במקום אחד מעורר השראה.",
     "academyAll": "הכול",
     "academyVideos": "סרטונים",
-    "academyReels": "רילס",
     "academyZoomWorkshops": "סדנאות זום",
     "skillChallenges": "אתגרי סיכום",
-    "academyAssignments": "משימות",
     "searchForInspiration": "חיפוש השראה...",
     "sendSolution": "שלח פתרון",
     "submitAnswer": "שלח תשובה",
     "iConfirmGranting": "אני מאשר הענקת זכויות פרסום",
-    "whichOneCorrect": "איזו תשובה נכונה? בחר אחת.",
     "registration": "הרשמה",
     "youDoNotHaveEnoughPoints": "אין לך מספיק נקודות.",
     "yourBalanceIsTooLowToCompleteThisAction":
@@ -168,20 +158,10 @@ class HebrewiLocalization {
     "joinLive": "הצטרף לשידור החי",
 
     // Home Screen
-    "homeExclusiveLaunchEvent": "אירוע השקה בלעדי",
-    "homeLiveEventRegistration": "רישום לאירוע חי",
-    "homeLiveEventDescription":
-        "היה חלק מאירוע חי בלעדי. הירשם עכשיו כדי להבטיח את המקום שלך ldcklkc fkvkc.....",
     "homeMoreDetails": "פרטים נוספים",
     "homePoints": "נקודות: -",
-    "homePodcastsLuxuryStores": "חנויות יוקרה פודקאסטים",
-    "homeLoramDescription":
-        "לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אליט. סד דו איוסמוד טמפור....",
-    "homeLoremDescription":
-        "לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אליט. סד דו איוסמוד טמפור....",
     // Filter Component
     "filterExploreLibrary": "חקור את הספרייה שלנו.....",
-    "searchForInspirationFilter": "חפש השראה .....",
     // Content Card
     "contentCardViewing": "צפייה",
     // Store Card
@@ -197,7 +177,6 @@ class HebrewiLocalization {
     "typeADescription": "הקלד תיאור",
     "uploadFile": "העלה קובץ",
     "publish": "פרסם",
-    "selectSocialMedia": "בחר מדיה חברתית",
     "instagram": "אינסטגרם",
     "facebook": "פייסבוק",
     "communityFeed": "פיד הקהילה",
@@ -232,7 +211,6 @@ class HebrewiLocalization {
     "buying": "רכישה",
 
     // Side Menu
-    "menu": "תפריט",
     "messages": "הודעות",
     "store": "חנות",
     "exploreStore": "חקור את החנות",
@@ -279,7 +257,6 @@ class HebrewiLocalization {
     "noInternetConnection": "אין חיבור לאינטרנט. אנא בדוק את הרשת שלך.",
     "isRequired": "נדרש",
     "messagesSubtitle": "חוויות ייחודיות לחברים שלנו.",
-    "chat": "צ'אט",
     "active": "פעיל",
     "inactive": "לא פעיל",
     "seeProfile": "צפה בפרופיל",
