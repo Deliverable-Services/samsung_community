@@ -9,7 +9,8 @@ enum EventType {
     // Handle snake_case from database
     final normalizedValue = value.replaceAll('_', '');
     return EventType.values.firstWhere(
-      (e) => e.name.toLowerCase() == normalizedValue.toLowerCase() ||
+      (e) =>
+          e.name.toLowerCase() == normalizedValue.toLowerCase() ||
           e.name == value,
       orElse: () => EventType.zoomWorkshop,
     );
@@ -165,4 +166,3 @@ class EventModel {
     );
   }
 }
-

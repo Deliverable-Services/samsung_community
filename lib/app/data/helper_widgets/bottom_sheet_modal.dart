@@ -5,7 +5,7 @@ import '../constants/app_colors.dart';
 import 'back_button.dart';
 import 'close_button.dart';
 
-enum BottomSheetButtonType { back, close }
+enum BottomSheetButtonType { back, close, none }
 
 class BottomSheetModal extends StatelessWidget {
   final Widget content;
@@ -81,19 +81,21 @@ class BottomSheetModal extends StatelessWidget {
               Positioned(
                 top: 0.w,
                 right: 20.w,
-                child: buttonType == BottomSheetButtonType.close
-                    ? CustomCloseButton(
-                        onTap: () {
-                          Navigator.of(context, rootNavigator: true).pop();
-                          onClose?.call();
-                        },
-                      )
-                    : CustomBackButton(
-                        onTap: () {
-                          Navigator.of(context, rootNavigator: true).pop();
-                          onClose?.call();
-                        },
-                      ),
+                child: buttonType == BottomSheetButtonType.none
+                    ? const SizedBox.shrink()
+                    : buttonType == BottomSheetButtonType.close
+                        ? CustomCloseButton(
+                            onTap: () {
+                              Navigator.of(context, rootNavigator: true).pop();
+                              onClose?.call();
+                            },
+                          )
+                        : CustomBackButton(
+                            onTap: () {
+                              Navigator.of(context, rootNavigator: true).pop();
+                              onClose?.call();
+                            },
+                          ),
               ),
             ],
           ),

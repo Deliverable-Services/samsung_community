@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
 import '../../../common/services/event_service.dart';
 import '../../../common/services/supabase_service.dart';
 import '../../../data/core/base/base_controller.dart';
@@ -12,6 +11,7 @@ import '../../../data/helper_widgets/bottom_sheet_modal.dart';
 import '../../../data/models/event_model.dart';
 import '../../store/local_widgets/product_detail.dart';
 import '../local_widgets/event_email_modal.dart';
+import '../../../data/constants/app_images.dart';
 
 class EventsController extends BaseController {
   final EventService eventService;
@@ -214,27 +214,35 @@ class EventsController extends BaseController {
       middleTablets.add('Points: ${event.costPoints}');
     }
 
-    // Media URL - prefer video, then image
-    final String? mediaUrl =
-        event.videoUrl != null && event.videoUrl!.isNotEmpty
-        ? event.videoUrl
-        : event.imageUrl;
-    final bool isVideo = event.videoUrl != null && event.videoUrl!.isNotEmpty;
+    // Media URL - prefer video, then image, then fallback asset
+    final bool hasVideo =
+        event.videoUrl != null && event.videoUrl!.trim().isNotEmpty;
+
+    final String mediaUrl = hasVideo
+        ? event.videoUrl!
+        : (event.imageUrl != null && event.imageUrl!.trim().isNotEmpty)
+        ? event.imageUrl!
+        : AppImages.eventLaunchCard;
+
+    final bool isVideo = hasVideo;
 
     // Bottom button
-    String? buttonText;
-    VoidCallback? buttonOnTap;
-    if ((event.costPoints != null && event.costPoints! > 0) ||
-        (event.costCreditCents != null && event.costCreditCents! > 0)) {
-      buttonText = 'Buying';
-      buttonOnTap = () {
-        // Close the product detail modal first
-        Get.back();
-        // Show email input modal
-        // EventEmailModal.show(context, eventId: event.id);
-        EventEmailModal.show(context, eventId: "8p93f");
-      };
-    }
+    final bool hasCost =
+        (event.costPoints != null && event.costPoints! > 0) ||
+        (event.costCreditCents != null && event.costCreditCents! > 0);
+
+    final String buttonText = hasCost ? 'Buying' : 'Register';
+
+    final VoidCallback buttonOnTap = () {
+      // Close the product detail modal first
+      Get.back();
+      // Show email input modal
+      EventEmailModal.show(
+        context,
+        eventId: "8p93f",
+        costPoints: event.costPoints,
+      );
+    };
 
     BottomSheetModal.show(
       context,
