@@ -95,37 +95,58 @@ class AccountDetailController extends GetxController {
 
   Future<void> handleSubmit() async {
     final List<String> errors = [];
+    final List<String> requiredErrors = [];
 
-    final socialMediaUrl = socialMediaController.text.trim();
-    String? platform;
+    final socialMediaInput = socialMediaController.text.trim();
+    final Map<String, String> socialMediaMap = {};
 
-    if (socialMediaUrl.isNotEmpty) {
-      if (!isValidUrl(socialMediaUrl)) {
-        errors.add('social_media'.tr + ' (invalid URL)');
-      } else {
-        platform = parseSocialMediaPlatform(socialMediaUrl);
-        if (platform == null) {
-          errors.add('social_media'.tr + ' (invalid platform)');
+    if (socialMediaInput.isNotEmpty) {
+      final urls = socialMediaInput
+          .split(',')
+          .map((url) => url.trim())
+          .where((url) => url.isNotEmpty)
+          .toList();
+
+      for (var url in urls) {
+        if (!isValidUrl(url)) {
+          errors.add('Invalid URL: $url');
+          continue;
         }
+        final platform = parseSocialMediaPlatform(url);
+        if (platform == null) {
+          errors.add('Unsupported platform: $url');
+          continue;
+        }
+        // Use platform as key, or add index if platform already exists
+        final key = socialMediaMap.containsKey(platform)
+            ? '${platform}_${socialMediaMap.length}'
+            : platform;
+        socialMediaMap[key] = url;
       }
+    }
+
+    // Show social media validation errors first
+    if (errors.isNotEmpty) {
+      CommonSnackbar.error(errors.join(', '));
+      return;
     }
 
     if (selectedStudent.value == 'yes') {
       if (selectedCollege.value == null || selectedCollege.value!.isEmpty) {
-        errors.add('choose_college'.tr);
+        requiredErrors.add('choose_college'.tr);
       }
 
       if (classController.text.trim().isEmpty) {
-        errors.add('name_of_class'.tr);
+        requiredErrors.add('name_of_class'.tr);
       }
     }
 
     if (phoneNumber.value.isEmpty) {
-      errors.add('mobile_number'.tr);
+      requiredErrors.add('mobile_number'.tr);
     }
 
-    if (errors.isNotEmpty) {
-      final errorMessage = '${errors.join(', ')} is_required'.tr;
+    if (requiredErrors.isNotEmpty) {
+      final errorMessage = '${requiredErrors.join(', ')} is_required'.tr;
       CommonSnackbar.error(errorMessage);
       return;
     }
@@ -185,8 +206,8 @@ class AccountDetailController extends GetxController {
       profileData['bio'] = bio;
     }
 
-    if (socialMediaUrl.isNotEmpty && platform != null) {
-      profileData['socialMediaLinks'] = {platform: socialMediaUrl};
+    if (socialMediaMap.isNotEmpty) {
+      profileData['socialMediaLinks'] = socialMediaMap;
     }
 
     if (selectedStudent.value == 'yes') {

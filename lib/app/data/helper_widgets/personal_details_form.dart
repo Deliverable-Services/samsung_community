@@ -132,6 +132,12 @@ class PersonalDetailsForm extends StatelessWidget {
           type: FormFieldType.deviceModel,
           label: 'deviceModel'.tr,
           dropdownNotifier: selectedDeviceModel,
+          validator: (value) {
+            if (value == null || value.toString().isEmpty) {
+              return 'deviceModel'.tr + ' is_required'.tr;
+            }
+            return null;
+          },
           spacing: 20.h,
         ),
       ],

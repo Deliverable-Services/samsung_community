@@ -144,7 +144,35 @@ class EditProfileController extends BaseController {
       final currentUser = _authRepo.currentUser.value;
       if (currentUser == null) {
         CommonSnackbar.error('user_not_found'.tr);
+        isSaving.value = false;
         return;
+      }
+
+      // Validate social media before saving
+      if (_pendingChanges.containsKey('socialMedia')) {
+        final socialMedia = _pendingChanges['socialMedia'] as String?;
+        if (socialMedia != null && socialMedia.isNotEmpty) {
+          final urls = socialMedia.split(',').map((url) => url.trim()).where((url) => url.isNotEmpty).toList();
+          final List<String> errors = [];
+          
+          for (var url in urls) {
+            if (!_isValidUrl(url)) {
+              errors.add('Invalid URL: $url');
+              continue;
+            }
+            final platform = _parseSocialMediaPlatform(url);
+            if (platform == null) {
+              errors.add('Unsupported platform: $url');
+            }
+          }
+          
+          if (errors.isNotEmpty) {
+            CommonSnackbar.error(errors.join(', '));
+            isSaving.value = false;
+            // Don't clear pending changes on validation error
+            return;
+          }
+        }
       }
 
       final profileData = Map<String, dynamic>.from(_pendingChanges);
@@ -187,7 +215,27 @@ class EditProfileController extends BaseController {
       if (profileData.containsKey('socialMedia')) {
         final socialMedia = profileData['socialMedia'] as String?;
         if (socialMedia != null && socialMedia.isNotEmpty) {
-          updateData['social_media_links'] = {'default': socialMedia};
+          // Parse comma-separated URLs (already validated above)
+          final urls = socialMedia.split(',').map((url) => url.trim()).where((url) => url.isNotEmpty).toList();
+          final socialMediaMap = <String, String>{};
+          
+          for (var url in urls) {
+            final platform = _parseSocialMediaPlatform(url);
+            if (platform != null) {
+              // Use platform as key, or add index if platform already exists
+              final key = socialMediaMap.containsKey(platform) 
+                  ? '${platform}_${socialMediaMap.length}'
+                  : platform;
+              socialMediaMap[key] = url;
+            }
+          }
+          
+          if (socialMediaMap.isNotEmpty) {
+            updateData['social_media_links'] = socialMediaMap;
+          }
+        } else {
+          // Clear social media links if empty
+          updateData['social_media_links'] = {};
         }
       }
 
@@ -255,6 +303,17 @@ class EditProfileController extends BaseController {
       classController.text = '';
       selectedCollege.value = null;
       selectedStudent.value = 'no';
+
+      // Load social media links - convert Map to comma-separated string
+      if (user.socialMediaLinks.isNotEmpty) {
+        final socialMediaUrls = user.socialMediaLinks.values
+            .where((url) => url != null && url.toString().isNotEmpty)
+            .map((url) => url.toString())
+            .toList();
+        socialMediaController.text = socialMediaUrls.join(', ');
+      } else {
+        socialMediaController.text = '';
+      }
 
       await _loadAdditionalFields(currentUser.id);
 
@@ -376,5 +435,39 @@ class EditProfileController extends BaseController {
 
   void changeTab(int index) {
     selectedTab.value = index;
+  }
+
+  String? _parseSocialMediaPlatform(String url) {
+    if (url.isEmpty) return null;
+
+    final uri = Uri.tryParse(url);
+    if (uri == null || uri.host.isEmpty) return null;
+
+    final host = uri.host.toLowerCase();
+    final cleanHost = host.replaceFirst(RegExp(r'^www\.'), '');
+
+    if (cleanHost.contains('instagram.com')) {
+      return 'instagram';
+    } else if (cleanHost.contains('facebook.com')) {
+      return 'facebook';
+    } else if (cleanHost.contains('twitter.com') || cleanHost.contains('x.com')) {
+      return 'twitter';
+    } else if (cleanHost.contains('linkedin.com')) {
+      return 'linkedin';
+    } else if (cleanHost.contains('youtube.com')) {
+      return 'youtube';
+    } else if (cleanHost.contains('tiktok.com')) {
+      return 'tiktok';
+    }
+
+    return null;
+  }
+
+  bool _isValidUrl(String url) {
+    if (url.isEmpty) return false;
+    final uri = Uri.tryParse(url);
+    return uri != null &&
+        (uri.scheme == 'http' || uri.scheme == 'https') &&
+        uri.host.isNotEmpty;
   }
 }

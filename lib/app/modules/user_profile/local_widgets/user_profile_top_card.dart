@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../data/helper_widgets/profile_picture_widget.dart';
+import '../../../data/helper_widgets/read_more_text.dart';
 import '../../../data/helper_widgets/stat_card.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/user_profile_controller.dart';
@@ -170,9 +171,10 @@ class UserProfileTopCard extends GetView<UserProfileController> {
             ),
             SizedBox(height: 6.h),
             if ((user?.bio ?? '').isNotEmpty)
-              Text(
-                user!.bio!,
-                style: TextStyle(
+              ReadMoreText(
+                text: user!.bio!,
+                maxLines: 2,
+                textStyle: TextStyle(
                   color: AppColors.textWhiteOpacity70,
                   fontSize: 13.sp,
                 ),

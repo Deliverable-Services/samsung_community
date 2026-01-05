@@ -150,8 +150,6 @@ class AuthRepo extends BaseController {
           result.errorOrNull ?? 'Failed to generate ${'otp_for_login'.tr}';
       debugPrint('Error in generateOTPForLogin: $error');
 
-      // Use setError instead of handleError to avoid showing snackbar here
-      // Controller will handle showing the error message
       if (error.toString().contains('USER_SUSPENDED')) {
         setError('userSuspended'.tr);
         return null;

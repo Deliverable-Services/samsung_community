@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
@@ -64,18 +63,17 @@ class SignUpController extends GetxController {
       final userDetails = await _authRepo.checkUserForSignup(normalizedPhone);
       final checkUserError = _authRepo.errorMessage.value;
 
-      // Check for USER_ALREADY_SIGNED_UP error early and return
-      if (userDetails == null && checkUserError.contains('USER_ALREADY_SIGNED_UP')) {
+      if (userDetails == null &&
+          checkUserError.contains('USER_ALREADY_SIGNED_UP')) {
         isValidating.value = false;
-        _authRepo.clearError(); // Clear error after showing
+        _authRepo.clearError();
         CommonSnackbar.error('user_already_signed_up'.tr);
         return;
       }
 
-      // If there was an error in checkUserForSignup but not USER_ALREADY_SIGNED_UP, show it and return
       if (userDetails == null && checkUserError.isNotEmpty) {
         isValidating.value = false;
-        _authRepo.clearError(); // Clear error after showing
+        _authRepo.clearError();
         CommonSnackbar.error(checkUserError);
         return;
       }
@@ -84,8 +82,7 @@ class SignUpController extends GetxController {
       if (authUserId == null) {
         isValidating.value = false;
         final errorMessage = _authRepo.errorMessage.value;
-        _authRepo.clearError(); // Clear error after showing
-        // Don't show error if it's USER_ALREADY_SIGNED_UP (already shown above)
+        _authRepo.clearError();
         if (!errorMessage.contains('USER_ALREADY_SIGNED_UP')) {
           CommonSnackbar.error(
             errorMessage.isNotEmpty
@@ -105,8 +102,7 @@ class SignUpController extends GetxController {
       if (!userCreated) {
         isValidating.value = false;
         final errorMessage = _authRepo.errorMessage.value;
-        _authRepo.clearError(); // Clear error after showing
-        // Don't show error if it's USER_ALREADY_SIGNED_UP (already shown above)
+        _authRepo.clearError();
         if (!errorMessage.contains('USER_ALREADY_SIGNED_UP')) {
           CommonSnackbar.error(
             errorMessage.isNotEmpty
@@ -123,10 +119,9 @@ class SignUpController extends GetxController {
 
       if (otpCode == null) {
         final errorMessage = _authRepo.errorMessage.value;
-        _authRepo.clearError(); // Clear error after showing
-        // Don't show error if it's USER_ALREADY_SIGNED_UP (already shown above)
+        _authRepo.clearError();
         if (errorMessage.contains('USER_ALREADY_SIGNED_UP')) {
-          return; // Already shown, don't show again
+          return;
         }
 
         if (errorMessage.contains('WAIT_FOR_APPROVAL') ||
@@ -140,10 +135,10 @@ class SignUpController extends GetxController {
         return;
       }
 
-    Get.toNamed(
-      Routes.VERIFICATION_CODE,
+      Get.toNamed(
+        Routes.VERIFICATION_CODE,
         parameters: {'phoneNumber': normalizedPhone},
-    );
+      );
     } catch (e) {
       isValidating.value = false;
       debugPrint('Error in handleSignUp: $e');

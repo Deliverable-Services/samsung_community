@@ -40,7 +40,6 @@ class _ReadMoreTextState extends State<ReadMoreText> {
     );
 
     final textStyle = widget.textStyle ?? defaultStyle;
-    final linkColor = widget.linkColor ?? AppColors.primary;
 
     return LayoutBuilder(
       builder: (context, constraints) {

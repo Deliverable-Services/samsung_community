@@ -279,6 +279,7 @@ class AcademyController extends BaseController {
 
     if (result is Success<Map<String, dynamic>>) {
       clearFields();
+      _updateSubmissionStatus(content.academyContentId, user.id);
       CommonSnackbar.success('audio_published_successfully'.tr);
       loadContent();
     } else {
@@ -314,6 +315,7 @@ class AcademyController extends BaseController {
 
     if (result is Success<Map<String, dynamic>>) {
       clearFields();
+      _updateSubmissionStatus(content.academyContentId, user.id);
       CommonSnackbar.success('text_published_successfully'.tr);
       loadContent();
     } else {
@@ -346,6 +348,7 @@ class AcademyController extends BaseController {
 
     if (result is Success<Map<String, dynamic>>) {
       clearFields();
+      _updateSubmissionStatus(content.academyContentId, user.id);
       CommonSnackbar.success('answer_submitted_successfully'.tr);
       loadContent();
     } else {
@@ -404,7 +407,12 @@ class AcademyController extends BaseController {
 
           if (result is Success<Map<String, dynamic>>) {
             clearFields();
+            final user = SupabaseService.currentUser;
+            if (user != null) {
+              _updateSubmissionStatus(content.academyContentId, user.id);
+            }
             CommonSnackbar.success('text_published_successfully'.tr);
+            loadContent();
           } else {
             CommonSnackbar.error('failed_to_publish_text'.tr);
           }
@@ -576,6 +584,58 @@ class AcademyController extends BaseController {
     uploadedFileName.value = null;
     isConfirmChecked.value = false;
     loadMoreContent();
+  }
+
+  void _updateSubmissionStatus(String contentId, String userId) {
+    final index = contentList.indexWhere(
+      (content) => content.academyContentId == contentId,
+    );
+    if (index != -1) {
+      final content = contentList[index];
+      final currentSubmissionIds = List<String>.from(
+        content.submissionUserIds ?? [],
+      );
+      if (!currentSubmissionIds.contains(userId)) {
+        currentSubmissionIds.add(userId);
+        final updatedContent = AcademyContentModel(
+          academyContentId: content.academyContentId,
+          title: content.title,
+          description: content.description,
+          fileType: content.fileType,
+          mediaFileUrl: content.mediaFileUrl,
+          pointsToEarn: content.pointsToEarn,
+          isPublished: content.isPublished,
+          createdAt: content.createdAt,
+          updatedAt: content.updatedAt,
+          createdBy: content.createdBy,
+          creatorUserId: content.creatorUserId,
+          creatorFullName: content.creatorFullName,
+          creatorPhoneNumber: content.creatorPhoneNumber,
+          creatorProfilePictureUrl: content.creatorProfilePictureUrl,
+          creatorRole: content.creatorRole,
+          creatorStatus: content.creatorStatus,
+          eventId: content.eventId,
+          eventDate: content.eventDate,
+          durationMinutes: content.durationMinutes,
+          zoomLink: content.zoomLink,
+          imageUrl: content.imageUrl,
+          assignmentId: content.assignmentId,
+          taskName: content.taskName,
+          taskType: content.taskType,
+          assignmentDescription: content.assignmentDescription,
+          taskStartDate: content.taskStartDate,
+          taskEndDate: content.taskEndDate,
+          taskEndTime: content.taskEndTime,
+          totalPointsToWin: content.totalPointsToWin,
+          answers: content.answers,
+          assignmentCreatorUserId: content.assignmentCreatorUserId,
+          assignmentCreatedAt: content.assignmentCreatedAt,
+          assignmentUpdatedAt: content.assignmentUpdatedAt,
+          submissionUserIds: currentSubmissionIds,
+        );
+        contentList[index] = updatedContent;
+      }
+    }
   }
 
   void clickOnMoreDetails({required AcademyContentModel content}) {

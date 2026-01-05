@@ -46,7 +46,7 @@ class BottomSheetModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       top: true,
-      bottom: true,
+      bottom: false,
       child: GestureDetector(
         onTap: () {}, // Prevent tap from closing when tapping inside modal
         child: Container(
