@@ -124,6 +124,7 @@ class NotificationsHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+
         Text(
           'notifications'.tr,
           style: TextStyle(
