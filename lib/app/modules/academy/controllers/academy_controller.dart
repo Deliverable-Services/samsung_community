@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -24,6 +25,7 @@ import '../../../data/models/academy_content_model.dart';
 import '../../../repository/auth_repo/auth_repo.dart';
 import '../views/academic_audio_submit_module.dart';
 import '../views/academic_text_submit_module.dart';
+import '../../../data/models/event_model.dart';
 
 class AcademyController extends BaseController {
   final AcademyService academyService;
@@ -37,6 +39,9 @@ class AcademyController extends BaseController {
   final TextEditingController searchController = TextEditingController();
   final TextEditingController textController = TextEditingController();
   final RxString searchQuery = ''.obs;
+  final RxBool isPurchasing = false.obs;
+  final RxSet<String> registeredEventIds = <String>{}.obs;
+  final RxMap<String, EventModel> workshopEvents = <String, EventModel>{}.obs;
 
   Timer? searchDebounceTimer;
 
@@ -61,7 +66,32 @@ class AcademyController extends BaseController {
     scrollController = ScrollController();
     scrollController.addListener(_onScroll);
     searchController.addListener(_onSearchChanged);
+    fetchRegisteredWorkshops();
     loadContent();
+  }
+
+  Future<void> fetchRegisteredWorkshops() async {
+    final user = SupabaseService.currentUser;
+    if (user == null) {
+      registeredEventIds.clear();
+      return;
+    }
+
+    try {
+      final response = await SupabaseService.client
+          .from('event_registrations')
+          .select('event_id')
+          .eq('user_id', user.id);
+
+      final ids = (response as List)
+          .map((item) => item['event_id'] as String)
+          .toSet();
+      
+      registeredEventIds.assignAll(ids);
+      debugPrint('Fetched ${ids.length} registered event IDs for Academy');
+    } catch (e) {
+      debugPrint('Error fetching registered workshops: $e');
+    }
   }
 
   @override
@@ -130,6 +160,7 @@ class AcademyController extends BaseController {
       hasMoreData.value = true;
       isLoadingContent.value = true;
       setLoading(true);
+      fetchRegisteredWorkshops(); // Sync registrations on refresh
     }
 
     try {
@@ -180,6 +211,16 @@ class AcademyController extends BaseController {
         } else {
           currentOffset = contentList.length;
         }
+
+        // Fetch detailed event data for Zoom Workshops
+        final workshopEventIds = newContent
+            .where((e) => e.fileType == AcademyFileType.zoomWorkshop && e.eventId != null)
+            .map((e) => e.eventId!)
+            .toList();
+        
+        if (workshopEventIds.isNotEmpty) {
+          await _fetchWorkshopEvents(workshopEventIds);
+        }
       } else {
         handleError(result.errorOrNull ?? 'somethingWentWrong'.tr);
       }
@@ -192,6 +233,26 @@ class AcademyController extends BaseController {
         isLoadingContent.value = false;
         setLoading(false);
       }
+    }
+  }
+
+  Future<void> _fetchWorkshopEvents(List<String> eventIds) async {
+    try {
+      final response = await SupabaseService.client
+          .from('events')
+          .select()
+          .inFilter('id', eventIds);
+
+      final events = (response as List)
+          .map((json) => EventModel.fromJson(json as Map<String, dynamic>))
+          .toList();
+
+      for (var event in events) {
+        workshopEvents[event.id] = event;
+      }
+      debugPrint('Fetched ${events.length} detailed events for Academy');
+    } catch (e) {
+      debugPrint('Error fetching detailed events: $e');
     }
   }
 
@@ -642,61 +703,226 @@ class AcademyController extends BaseController {
     final context = Get.context;
     if (context == null) return;
 
-    /// 🔒 Assignment guard
-    if (content.zoomLink == null) {
+    final event = content.eventId != null ? workshopEvents[content.eventId] : null;
+
+    /// 🔒 Zoom link guard (checks both content and associated event)
+    if (content.zoomLink == null && (event == null || event.zoomLink == null)) {
       CommonSnackbar.error('content_does_not_accept_submissions'.tr);
       return;
     }
+    
+    final user = SupabaseService.currentUser;
+    final bool isRegistered = user != null && 
+        ((content.submissionUserIds?.contains(user.id) ?? false) ||
+         (content.eventId != null && registeredEventIds.contains(content.eventId!)));
+
+    // Format timing
+    String timingString = '';
+    if (event != null && (event.zoomStartTime != null || event.zoomEndTime != null)) {
+      timingString = "${event.zoomStartTime ?? ''}${event.zoomEndTime != null ? ' - ${event.zoomEndTime}' : ''}";
+    } else {
+      timingString = content.taskEndTime ?? '';
+    }
+
     BottomSheetModal.show(
       context,
       buttonType: BottomSheetButtonType.close,
       onClose: () {
         clearFields();
-        Get.back();
       },
       content: EventBuyingBottomBarModal(
-        text: content.title,
-        title: content.title,
-        description: content.description ?? '',
-        points: "${content.pointsToEarn}",
-        date: DateFormat(
-          'dd.MM.yyyy',
-        ).format(DateTime.parse("${content.eventDate}")),
-        timing: content.taskEndTime ?? '',
-        mediaUrl: content.mediaFileUrl,
-        isVideo: false, // Workshop images are not videos
+        text: isRegistered ? 'copyZoomLink'.tr : 'registration'.tr,
+        title: event?.title ?? content.title,
+        description: event?.description ?? content.description ?? '',
+        points: "${event?.costPoints ?? content.pointsToEarn}",
+        date: event?.eventDate != null 
+            ? DateFormat('dd.MM.yyyy').format(event!.eventDate) 
+            : (content.eventDate != null ? DateFormat('dd.MM.yyyy').format(content.eventDate!) : ''),
+        timing: timingString,
+        mediaUrl: event?.imageUrl ?? content.mediaFileUrl,
+        isVideo: false,
         onButtonTap: () {
-          Get.back();
-          clickOnRegistration(content: content);
+          if (isRegistered) {
+            final link = event?.zoomLink ?? content.zoomLink ?? '';
+            if (link.isNotEmpty) {
+              Clipboard.setData(ClipboardData(text: link));
+              CommonSnackbar.success('Zoom link copied to clipboard');
+            } else {
+              CommonSnackbar.error('Zoom link not available');
+            }
+          } else {
+            Get.back();
+            clickOnRegistration(content: content);
+          }
         },
       ),
     );
   }
 
-  void clickOnRegistration({required AcademyContentModel content}) {
+  void clickOnRegistration({required AcademyContentModel content}) async {
     final context = Get.context;
     if (context == null) return;
 
-    /// 🔒 Assignment guard
-    if (content.zoomLink == null) {
-      CommonSnackbar.error('content_does_not_accept_submissions'.tr);
+    if (isPurchasing.value) return;
+
+    final user = SupabaseService.currentUser;
+    if (user == null) {
+      CommonSnackbar.error('user_not_found'.tr);
       return;
     }
+
+    final currentUser = _authRepo.currentUser.value;
+    if (currentUser == null) return;
+
+    final event = content.eventId != null ? workshopEvents[content.eventId] : null;
+    final cost = event?.costPoints ?? content.pointsToEarn;
+
+    if (currentUser.pointsBalance >= cost) {
+      await registerWorkshopWithPoints(content);
+    } else {
+      // Close detail modal if open
+      if (Get.isBottomSheetOpen ?? false) Get.back();
+      
+      clickOnInsufficientPoints(content: content);
+    }
+  }
+
+  Future<void> registerWorkshopWithPoints(AcademyContentModel content) async {
+    if (isPurchasing.value) return;
+
+    final workshopEventId = content.eventId;
+    if (workshopEventId == null) {
+      CommonSnackbar.error('This workshop does not have an associated event ID.');
+      return;
+    }
+
+    isPurchasing.value = true;
+
+    try {
+      final user = SupabaseService.currentUser;
+      if (user == null) return;
+
+      final currentUser = _authRepo.currentUser.value;
+      if (currentUser == null) return;
+
+      final event = content.eventId != null ? workshopEvents[content.eventId] : null;
+      final cost = event?.costPoints ?? content.pointsToEarn;
+      final balanceAfter = currentUser.pointsBalance - cost;
+
+      // Check if already registered
+      final existingRegistration = await SupabaseService.client
+          .from('event_registrations')
+          .select('id')
+          .eq('event_id', workshopEventId)
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+      if (existingRegistration != null) {
+        _updateSubmissionStatus(content.academyContentId, user.id);
+        CommonSnackbar.success('You are already registered for this workshop');
+        if (Get.isBottomSheetOpen ?? false) Get.back();
+        clickOnSuccess(content: content);
+        return;
+      }
+
+      // 1. Create Event Registration
+      final registrationResponse = await SupabaseService.client
+          .from('event_registrations')
+          .insert({
+            'event_id': workshopEventId,
+            'user_id': user.id,
+            'payment_method': 'points',
+            'points_paid': cost,
+            'status': 'registered',
+            'registered_at': DateTime.now().toUtc().toIso8601String(),
+          })
+          .select('id')
+          .single();
+      
+      final registrationId = registrationResponse['id'] as String;
+
+      // 2. Create Points Transaction
+      await SupabaseService.client.from('points_transactions').insert({
+        'user_id': user.id,
+        'transaction_type': 'spent',
+        'amount': -cost,
+        'balance_after': balanceAfter,
+        'description': 'Workshop Registration: ${event?.title ?? content.title}',
+        'related_entity_type': 'event_registration',
+        'related_entity_id': registrationId,
+      });
+
+      // 3. Update User Balance
+      await SupabaseService.client
+          .from('users')
+          .update({'points_balance': balanceAfter})
+          .eq('id', user.id);
+
+      // 4. Mark as registered (using existing submission status logic for local UI update)
+      _updateSubmissionStatus(content.academyContentId, user.id);
+      if (content.eventId != null) {
+        registeredEventIds.add(content.eventId!);
+      }
+
+      // 5. Refresh Data
+      await fetchRegisteredWorkshops();
+      await _refreshUserData();
+      // Reload content to ensure everything is in sync
+      loadContent();
+
+      // Show success
+      if (Get.isBottomSheetOpen ?? false) Get.back();
+      clickOnSuccess(content: content);
+    } catch (e) {
+      debugPrint('Error registering workshop: $e');
+      CommonSnackbar.error('Error: $e');
+      // Show unsuccessful
+      if (Get.isBottomSheetOpen ?? false) Get.back();
+      clickOnUnsuccessful(content: content);
+    } finally {
+      isPurchasing.value = false;
+    }
+  }
+
+  void clickOnInsufficientPoints({required AcademyContentModel content}) {
+    final context = Get.context;
+    if (context == null) return;
+
     BottomSheetModal.show(
       context,
       buttonType: BottomSheetButtonType.close,
       onClose: () {
-        clearFields();
-        Get.back();
+        clickOnUnsuccessful(content: content);
       },
       content: RegistrationSuccessModal(
-        icon: AppImages.icFailed,
+        icon: AppImages.notEnoughPointsIcon,
         title: "youDoNotHaveEnoughPoints".tr,
         text: "payByCreditCard".tr,
         description: 'yourBalanceIsTooLowToCompleteThisAction'.tr,
         onButtonTap: () {
+          // Close insufficient modal
           Get.back();
+          // Mock credit card success for now as per instructions (or direct to success)
           clickOnSuccess(content: content);
+        },
+      ),
+    );
+  }
+
+  void clickOnUnsuccessful({required AcademyContentModel content}) {
+    final context = Get.context;
+    if (context == null) return;
+
+    BottomSheetModal.show(
+      context,
+      buttonType: BottomSheetButtonType.close,
+      content: RegistrationSuccessModal(
+        icon: AppImages.icFailed,
+        title: "Registration Unsuccessful",
+        text: "close".tr,
+        description: "The registration process was cancelled or failed.",
+        onButtonTap: () {
+          Get.back();
         },
       ),
     );
@@ -706,18 +932,9 @@ class AcademyController extends BaseController {
     final context = Get.context;
     if (context == null) return;
 
-    /// 🔒 Assignment guard
-    if (content.zoomLink == null) {
-      CommonSnackbar.error('content_does_not_accept_submissions'.tr);
-      return;
-    }
     BottomSheetModal.show(
       context,
       buttonType: BottomSheetButtonType.close,
-      onClose: () {
-        clearFields();
-        Get.back();
-      },
       content: RegistrationSuccessModal(
         icon: AppImages.icVerify,
         title: "registrationSuccessful".tr,
@@ -725,7 +942,8 @@ class AcademyController extends BaseController {
         description: 'theZoomLinkWillBeUpdatedPriorToTheLiveSession'.tr,
         onButtonTap: () {
           Get.back();
-          clickOnLiveVideo(content: content);
+          // Future: may show starting soon based on date
+          // clickOnLiveVideo(content: content);
         },
       ),
     );

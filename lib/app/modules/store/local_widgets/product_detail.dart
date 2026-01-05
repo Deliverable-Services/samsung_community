@@ -100,7 +100,7 @@ class ProductDetail extends StatelessWidget {
                                 'product_detail_${DateTime.now().millisecondsSinceEpoch}',
                           ),
                         )
-                      else
+                      else if (mediaUrl!.startsWith('http'))
                         ClipRRect(
                           borderRadius: BorderRadius.circular(16.r),
                           child: CachedNetworkImage(
@@ -121,6 +121,28 @@ class ProductDetail extends StatelessWidget {
                                 child: Center(
                                   child: Icon(
                                     Icons.image_not_supported,
+                                    color: AppColors.textWhiteOpacity60,
+                                    size: 48.sp,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        )
+                      else
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16.r),
+                          child: Image.asset(
+                            mediaUrl!,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                height: 200.h,
+                                color: AppColors.backgroundDark,
+                                child: Center(
+                                  child: Icon(
+                                    Icons.broken_image,
                                     color: AppColors.textWhiteOpacity60,
                                     size: 48.sp,
                                   ),

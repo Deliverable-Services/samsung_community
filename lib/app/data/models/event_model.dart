@@ -9,7 +9,8 @@ enum EventType {
     // Handle snake_case from database
     final normalizedValue = value.replaceAll('_', '');
     return EventType.values.firstWhere(
-      (e) => e.name.toLowerCase() == normalizedValue.toLowerCase() ||
+      (e) =>
+          e.name.toLowerCase() == normalizedValue.toLowerCase() ||
           e.name == value,
       orElse: () => EventType.zoomWorkshop,
     );
@@ -48,6 +49,8 @@ class EventModel {
   final String? createdBy;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? zoomStartTime;
+  final String? zoomEndTime;
 
   EventModel({
     required this.id,
@@ -69,6 +72,8 @@ class EventModel {
     this.createdBy,
     required this.createdAt,
     required this.updatedAt,
+    this.zoomStartTime,
+    this.zoomEndTime,
   });
 
   Map<String, dynamic> toJson() {
@@ -92,6 +97,8 @@ class EventModel {
       'created_by': createdBy,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
+      'zoom_start_time': zoomStartTime,
+      'zoom_end_time': zoomEndTime,
     };
   }
 
@@ -118,6 +125,8 @@ class EventModel {
       createdBy: json['created_by'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
+      zoomStartTime: json['zoom_start_time'] as String?,
+      zoomEndTime: json['zoom_end_time'] as String?,
     );
   }
 
@@ -141,6 +150,8 @@ class EventModel {
     String? createdBy,
     DateTime? createdAt,
     DateTime? updatedAt,
+    String? zoomStartTime,
+    String? zoomEndTime,
   }) {
     return EventModel(
       id: id ?? this.id,
@@ -162,7 +173,8 @@ class EventModel {
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      zoomStartTime: zoomStartTime ?? this.zoomStartTime,
+      zoomEndTime: zoomEndTime ?? this.zoomEndTime,
     );
   }
 }
-

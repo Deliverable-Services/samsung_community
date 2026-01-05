@@ -1,8 +1,7 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
 import '../helper_widgets/animated_press.dart';
 import 'app_colors.dart';
 
@@ -14,6 +13,7 @@ class AppButton extends StatelessWidget {
   final double? height;
   final bool isEnabled;
   final bool isLoading;
+  final String? iconPath;
 
   const AppButton({
     super.key,
@@ -24,6 +24,7 @@ class AppButton extends StatelessWidget {
     this.height,
     this.isEnabled = true,
     this.isLoading = false,
+    this.iconPath,
   });
 
   @override
@@ -100,15 +101,32 @@ class AppButton extends StatelessWidget {
                           valueColor: AlwaysStoppedAnimation<Color>(textColor),
                         ),
                       )
-                    : Text(
-                        text,
-                        style: TextStyle(
-                          color: textColor,
-                          letterSpacing: 0,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14.sp,
-                        ),
-                        textAlign: TextAlign.center,
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (iconPath != null) ...[
+                            if (iconPath!.toLowerCase().endsWith('.svg'))
+                              SvgPicture.asset(
+                                iconPath!,
+                                width: 24.w,
+                                height: 24.h,
+                              )
+                            else
+                              Image.asset(iconPath!, width: 24.w, height: 24.h),
+                            SizedBox(width: 8.w),
+                          ],
+                          Text(
+                            text,
+                            style: TextStyle(
+                              color: textColor,
+                              letterSpacing: 0,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14.sp,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
               ),
             ),

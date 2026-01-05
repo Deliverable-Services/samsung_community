@@ -66,18 +66,28 @@ class EventsView extends GetView<EventsController> {
         }
 
         if (controller.allEventsList.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: EdgeInsets.all(32.w),
-              child: Text(
-                'noEventsFound'.tr,
-                style: const TextStyle(color: Colors.white),
+          return ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+            children: [
+              _buildSearchBarForAllEvent(),
+              SizedBox(height: 200.h),
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.all(32.w),
+                  child: Text(
+                    'noEventsFound'.tr,
+                    style: const TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
-            ),
+            ],
           );
         }
 
         return ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
           controller: controller.allEventsScrollController,
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
           children: [
@@ -131,18 +141,28 @@ class EventsView extends GetView<EventsController> {
         }
 
         if (controller.myEventsList.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: EdgeInsets.all(32.w),
-              child: Text(
-                'noMyEventsFound'.tr,
-                style: const TextStyle(color: Colors.white),
+          return ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+            children: [
+              _buildSearchBar(),
+              SizedBox(height: 200.h),
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.all(32.w),
+                  child: Text(
+                    'noMyEventsFound'.tr,
+                    style: const TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
-            ),
+            ],
           );
         }
 
         return ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
           controller: controller.myEventsScrollController,
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
           children: [
@@ -151,16 +171,19 @@ class EventsView extends GetView<EventsController> {
             ...controller.myEventsList.map((event) {
               return Column(
                 children: [
-                  EventLaunchCard(
+                  AllEventLaunchCard(
                     imagePath: AppImages.eventLaunchCard,
                     imagePathNetwork: event.imageUrl,
                     title: event.title,
                     description: event.description ?? '',
-                    text: controller.formatEventDate(event.eventDate),
+                    exclusiveEvent: true,
                     buttonText: 'details'.tr,
-                    showButton: true,
-                    exclusiveEvent: event.eventType == EventType.liveEvent,
                     onButtonTap: () => controller.showEventDetailsModal(event),
+                    labels: [
+                      EventLabel(
+                        text: controller.formatEventDate(event.eventDate),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 16.h),
                 ],
