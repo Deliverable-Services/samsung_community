@@ -5,6 +5,16 @@ class HebrewiLocalization {
     "yes": "כֵּן",
     "no": "לֹא",
 
+    //Notification and channel
+    "notifications": "התראות",
+    "notificationsSubtitle": "כל ההתראות",
+    "searchNotifications": "חיפוש בהתראות",
+    "noNotificationsFound": "לא נמצאו התראות",
+    "accountNotApproved": "החשבון לא אושר",
+    "yourAccountIsNotApprovedYet": "החשבון שלך עדיין לא אושר.",
+    "pleaseWaitForAdminApprovalOrContactSupport":
+        "אנא המתן לאישור מנהל או פנה לתמיכה.",
+
     //SUCCESS
     "comment_added_successfully": "התגובה נוספה בהצלחה",
     "shared_to_instagram": "שותף לאינסטגרם",

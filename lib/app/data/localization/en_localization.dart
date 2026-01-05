@@ -5,6 +5,15 @@ class EnLocalization {
     "yes": "Yes",
     "no": "No",
 
+    //Notification and channel
+    "notifications": "Notifications",
+    "notificationsSubtitle": "All Notifications",
+    "searchNotifications": "Search Notifications",
+    "noNotificationsFound": "No Notifications Found",
+    "accountNotApproved": "Account Not Approved",
+    "yourAccountIsNotApprovedYet": "Your account is not approved yet.",
+    "pleaseWaitForAdminApprovalOrContactSupport": "Please wait for admin approval or contact support.",
+
     //SUCCESS
     "comment_added_successfully": "Comment added successfully",
     "shared_to_instagram": "Shared to Instagram",
