@@ -10,6 +10,7 @@ class AppImages {
       imageCardBackground = '$baseUrl/imageCardBackground.png',
       icLiveVideoStartingSoon = '$baseUrl/icLiveVideoStartingSoon.svg',
       notificationIcon = '$baseUrl/notification_icon.png',
+      notification = '$baseUrl/notification.svg',
       hamburgerIcon = '$baseUrl/hamburger_icon.png',
       notSupportedIcon = '$baseUrl/not_supported.png',
       pointsIcon = '$baseUrl/points.svg',

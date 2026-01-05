@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:samsung_community_mobile/app/routes/app_pages.dart';
+import '../../modules/notifications/controllers/notifications_controller.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_images.dart';
 import 'animated_press.dart';
@@ -90,21 +92,51 @@ class Navbar extends StatelessWidget {
   }
 
   Widget _buildRightContainer(BuildContext context) {
+    final notificationsController = Get.find<NotificationsController>();
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildAnimatedIconContainer(
-          child: Image.asset(
-            AppImages.notificationIcon,
-            width: 24.w,
-            height: 24.h,
-            fit: BoxFit.contain,
-          ),
-          onTap: () {
-            // TODO: Handle notification tap
-          },
-        ),
+        Obx(() {
+          return Stack(
+            children: [
+              _buildAnimatedIconContainer(
+                onTap: () {
+                  Get.toNamed(Routes.NOTIFICATIONS);
+                },
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Image.asset(
+                      AppImages.notificationIcon,
+                      width: 24.w,
+                      height: 24.h,
+                      fit: BoxFit.contain,
+                    ),
+
+                  ],
+                ),
+              ),
+              // 🔴 Unread Dot
+              if (notificationsController.hasUnreadNotifications)
+                Positioned(
+                  top: -.2,
+                  right: -.2,
+                  child: Container(
+                    width: 10.w,
+                    height: 10.w,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.unfollowPink,
+                    ),
+                  ),
+                ),
+            ],
+          );
+        }),
+
         SizedBox(width: 12.w),
+
         _buildAnimatedIconContainer(
           child: Image.asset(
             AppImages.hamburgerIcon,
