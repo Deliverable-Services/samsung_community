@@ -56,6 +56,7 @@ class _FeedViewState extends State<FeedView> {
                 : CustomScrollView(
                     controller: _scrollController,
                     physics: const AlwaysScrollableScrollPhysics(),
+                    cacheExtent: 500,
                     slivers: [
                       SliverPadding(
                         padding: EdgeInsets.only(
@@ -101,67 +102,74 @@ class _FeedViewState extends State<FeedView> {
                                 content.id,
                               );
 
-                              return Padding(
-                                padding: EdgeInsets.only(bottom: 20.h),
-                                child: FeedCard(
-                                  contentId: content.id,
-                                  authorName: content.userModel?.fullName ?? '',
-                                  authorAvatar:
-                                      content.userModel?.profilePictureUrl ??
-                                      '',
-                                  isVerified: content.isPublished,
-                                  publishedDate: DateFormat(
-                                    'dd/MM/yy',
-                                  ).format(content.createdAt),
-                                  title: content.title ?? '',
-                                  description: content.description ?? '',
-                                  mediaUrl:
-                                      content.mediaFileUrl ??
-                                      (content.mediaFiles != null &&
-                                              content.mediaFiles!.isNotEmpty
-                                          ? content.mediaFiles!.first
-                                          : null),
-                                  thumbnailUrl: content.thumbnailUrl,
-                                  isLiked: _controller.isLiked(content.id),
-                                  likesCount: content.likesCount,
-                                  likedByUsers: likedUsers.isNotEmpty
-                                      ? likedUsers
-                                      : null,
-                                  commentsCount: content.commentsCount,
-                                  onLike: () =>
-                                      _controller.toggleLike(content.id),
-                                  onComment: () =>
-                                      _controller.showCommentsModal(content.id),
-                                  onViewComments: () =>
-                                      _controller.showCommentsModal(content.id),
-                                  onMenuTap: () => _controller
-                                      .showFeedActionModal(content.id),
-                                  onAddComment: (contentId, commentText) =>
-                                      _controller.addComment(
-                                        contentId,
-                                        commentText,
-                                      ),
-                                  onAvatarTap: () {
-                                    final userId = content.userId;
-                                    if (userId.isEmpty) return;
-                                    final currentId =
-                                        SupabaseService.currentUser?.id;
-                                    if (currentId != null &&
-                                        currentId == userId) {
-                                      Get.toNamed(Routes.PROFILE);
-                                    } else {
-                                      Get.toNamed(
-                                        Routes.USER_PROFILE,
-                                        parameters: {'userId': userId},
-                                      );
-                                    }
-                                  },
+                              return RepaintBoundary(
+                                key: ValueKey('feed_card_${content.id}'),
+                                child: Padding(
+                                  padding: EdgeInsets.only(bottom: 20.h),
+                                  child: FeedCard(
+                                    contentId: content.id,
+                                    authorName:
+                                        content.userModel?.fullName ?? '',
+                                    authorAvatar:
+                                        content.userModel?.profilePictureUrl ??
+                                        '',
+                                    isVerified: content.isPublished,
+                                    publishedDate: DateFormat(
+                                      'dd/MM/yy',
+                                    ).format(content.createdAt),
+                                    title: content.title ?? '',
+                                    description: content.description ?? '',
+                                    mediaUrl:
+                                        content.mediaFileUrl ??
+                                        (content.mediaFiles != null &&
+                                                content.mediaFiles!.isNotEmpty
+                                            ? content.mediaFiles!.first
+                                            : null),
+                                    thumbnailUrl: content.thumbnailUrl,
+                                    isLiked: _controller.isLiked(content.id),
+                                    likesCount: content.likesCount,
+                                    likedByUsers: likedUsers.isNotEmpty
+                                        ? likedUsers
+                                        : null,
+                                    commentsCount: content.commentsCount,
+                                    onLike: () =>
+                                        _controller.toggleLike(content.id),
+                                    onComment: () => _controller
+                                        .showCommentsModal(content.id),
+                                    onViewComments: () => _controller
+                                        .showCommentsModal(content.id),
+                                    onMenuTap: () => _controller
+                                        .showFeedActionModal(content.id),
+                                    onAddComment: (contentId, commentText) =>
+                                        _controller.addComment(
+                                          contentId,
+                                          commentText,
+                                        ),
+                                    onAvatarTap: () {
+                                      final userId = content.userId;
+                                      if (userId.isEmpty) return;
+                                      final currentId =
+                                          SupabaseService.currentUser?.id;
+                                      if (currentId != null &&
+                                          currentId == userId) {
+                                        Get.toNamed(Routes.PROFILE);
+                                      } else {
+                                        Get.toNamed(
+                                          Routes.USER_PROFILE,
+                                          parameters: {'userId': userId},
+                                        );
+                                      }
+                                    },
+                                  ),
                                 ),
                               );
                             },
                             childCount:
                                 _controller.filteredContentList.length +
                                 (_controller.isLoadingMore.value ? 1 : 0),
+                            addAutomaticKeepAlives: false,
+                            addRepaintBoundaries:
+                                false, // We're adding RepaintBoundary manually
                           ),
                         ),
                       ),

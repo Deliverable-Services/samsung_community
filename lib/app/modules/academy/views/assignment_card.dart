@@ -44,7 +44,8 @@ class AssignmentCard extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          image: DecorationImage(fit: BoxFit.cover,
+          image: DecorationImage(
+            fit: BoxFit.cover,
             image: AssetImage(AppImages.imageCardBackground),
           ),
         ),
@@ -57,11 +58,18 @@ class AssignmentCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SvgPicture.asset(
-                    AppImages.magicIcon,
-                    width: 44.w,
-                    height: 44.h,
-                  ),
+                  if (type == AssignmentCardType.assignment)
+                    SvgPicture.asset(
+                      AppImages.magicIcon,
+                      width: 44.w,
+                      height: 44.h,
+                    ),
+                  if (type == AssignmentCardType.riddle)
+                    SvgPicture.asset(
+                      AppImages.assignmentIcon,
+                      width: 44.w,
+                      height: 44.h,
+                    ),
                   Row(
                     children: [
                       SvgPicture.asset(

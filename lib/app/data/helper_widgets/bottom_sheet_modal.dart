@@ -44,55 +44,59 @@ class BottomSheetModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {}, // Prevent tap from closing when tapping inside modal
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: AppColors.overlayContainerBackground,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30.r),
-            topRight: Radius.circular(30.r),
-          ),
-          boxShadow: [
-            BoxShadow(
-              offset: Offset(0, -6.h),
-              blurRadius: 50.r,
-              spreadRadius: 0,
-              color: AppColors.overlayContainerShadow,
+    return SafeArea(
+      top: true,
+      bottom: false,
+      child: GestureDetector(
+        onTap: () {}, // Prevent tap from closing when tapping inside modal
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: AppColors.overlayContainerBackground,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30.r),
+              topRight: Radius.circular(30.r),
             ),
-          ],
-        ),
-        padding: EdgeInsets.only(top: 14.w),
-        child: Stack(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(
-                top: 19.h,
-                left: 20.w,
-                right: 20.w,
-                bottom: 20.h,
+            boxShadow: [
+              BoxShadow(
+                offset: Offset(0, -6.h),
+                blurRadius: 50.r,
+                spreadRadius: 0,
+                color: AppColors.overlayContainerShadow,
               ),
-              child: content,
-            ),
-            Positioned(
-              top: 0.w,
-              right: 20.w,
-              child: buttonType == BottomSheetButtonType.close
-                  ? CustomCloseButton(
-                      onTap: () {
-                        Navigator.of(context, rootNavigator: true).pop();
-                        onClose?.call();
-                      },
-                    )
-                  : CustomBackButton(
-                      onTap: () {
-                        Navigator.of(context, rootNavigator: true).pop();
-                        onClose?.call();
-                      },
-                    ),
-            ),
-          ],
+            ],
+          ),
+          padding: EdgeInsets.only(top: 14.w),
+          child: Stack(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(
+                  top: 19.h,
+                  left: 20.w,
+                  right: 20.w,
+                  bottom: 20.h,
+                ),
+                child: content,
+              ),
+              Positioned(
+                top: 0.w,
+                right: 20.w,
+                child: buttonType == BottomSheetButtonType.close
+                    ? CustomCloseButton(
+                        onTap: () {
+                          Navigator.of(context, rootNavigator: true).pop();
+                          onClose?.call();
+                        },
+                      )
+                    : CustomBackButton(
+                        onTap: () {
+                          Navigator.of(context, rootNavigator: true).pop();
+                          onClose?.call();
+                        },
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );

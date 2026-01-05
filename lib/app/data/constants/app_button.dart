@@ -13,6 +13,7 @@ class AppButton extends StatelessWidget {
   final double? width;
   final double? height;
   final bool isEnabled;
+  final bool isLoading;
 
   const AppButton({
     super.key,
@@ -22,6 +23,7 @@ class AppButton extends StatelessWidget {
     this.width,
     this.height,
     this.isEnabled = true,
+    this.isLoading = false,
   });
 
   @override
@@ -89,8 +91,15 @@ class AppButton extends StatelessWidget {
                 left: 18.w,
               ),
               child: Center(
-                child: !isEnabled
-                    ? SizedBox(height: 24,width: 24,child: CircularProgressIndicator())
+                child: isLoading
+                    ? SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(textColor),
+                        ),
+                      )
                     : Text(
                         text,
                         style: TextStyle(
@@ -108,7 +117,10 @@ class AppButton extends StatelessWidget {
       ),
     );
 
-    if (isEnabled) {
+    // Disable button if not enabled OR if loading
+    final isButtonEnabled = isEnabled && !isLoading;
+
+    if (isButtonEnabled) {
       return AnimatedPress(
         onTap: onTap,
         scaleFactor: 0.95,

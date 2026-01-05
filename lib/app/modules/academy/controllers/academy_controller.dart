@@ -41,6 +41,7 @@ class AcademyController extends BaseController {
   Timer? searchDebounceTimer;
 
   static const int pageSize = 10;
+  static const int maxCachedItems = 50;
   int currentOffset = 0;
 
   AcademyController({AcademyService? academyService})
@@ -164,6 +165,12 @@ class AcademyController extends BaseController {
 
         if (loadMore) {
           contentList.addAll(newContent);
+          if (contentList.length > maxCachedItems) {
+            contentList.value = contentList.sublist(
+              contentList.length - maxCachedItems,
+            );
+            currentOffset = contentList.length;
+          }
         } else {
           contentList.value = newContent;
         }
@@ -272,8 +279,9 @@ class AcademyController extends BaseController {
 
     if (result is Success<Map<String, dynamic>>) {
       clearFields();
-
+      _updateSubmissionStatus(content.academyContentId, user.id);
       CommonSnackbar.success('audio_published_successfully'.tr);
+      loadContent();
     } else {
       CommonSnackbar.error('failed_to_publish_audio'.tr);
     }
@@ -307,7 +315,9 @@ class AcademyController extends BaseController {
 
     if (result is Success<Map<String, dynamic>>) {
       clearFields();
+      _updateSubmissionStatus(content.academyContentId, user.id);
       CommonSnackbar.success('text_published_successfully'.tr);
+      loadContent();
     } else {
       CommonSnackbar.error('failed_to_publish_text'.tr);
     }
@@ -338,7 +348,9 @@ class AcademyController extends BaseController {
 
     if (result is Success<Map<String, dynamic>>) {
       clearFields();
+      _updateSubmissionStatus(content.academyContentId, user.id);
       CommonSnackbar.success('answer_submitted_successfully'.tr);
+      loadContent();
     } else {
       CommonSnackbar.error('failed_to_submit_answer'.tr);
     }
@@ -395,7 +407,12 @@ class AcademyController extends BaseController {
 
           if (result is Success<Map<String, dynamic>>) {
             clearFields();
+            final user = SupabaseService.currentUser;
+            if (user != null) {
+              _updateSubmissionStatus(content.academyContentId, user.id);
+            }
             CommonSnackbar.success('text_published_successfully'.tr);
+            loadContent();
           } else {
             CommonSnackbar.error('failed_to_publish_text'.tr);
           }
@@ -458,8 +475,7 @@ class AcademyController extends BaseController {
       final source = await _showImageSourceDialog();
       if (source == null) return;
 
-      final XFile? pickedFile =
-      await StorageService.pickImage(source: source);
+      final XFile? pickedFile = await StorageService.pickImage(source: source);
 
       if (pickedFile != null) {
         selectedMediaFile.value = File(pickedFile.path);
@@ -570,6 +586,58 @@ class AcademyController extends BaseController {
     loadMoreContent();
   }
 
+  void _updateSubmissionStatus(String contentId, String userId) {
+    final index = contentList.indexWhere(
+      (content) => content.academyContentId == contentId,
+    );
+    if (index != -1) {
+      final content = contentList[index];
+      final currentSubmissionIds = List<String>.from(
+        content.submissionUserIds ?? [],
+      );
+      if (!currentSubmissionIds.contains(userId)) {
+        currentSubmissionIds.add(userId);
+        final updatedContent = AcademyContentModel(
+          academyContentId: content.academyContentId,
+          title: content.title,
+          description: content.description,
+          fileType: content.fileType,
+          mediaFileUrl: content.mediaFileUrl,
+          pointsToEarn: content.pointsToEarn,
+          isPublished: content.isPublished,
+          createdAt: content.createdAt,
+          updatedAt: content.updatedAt,
+          createdBy: content.createdBy,
+          creatorUserId: content.creatorUserId,
+          creatorFullName: content.creatorFullName,
+          creatorPhoneNumber: content.creatorPhoneNumber,
+          creatorProfilePictureUrl: content.creatorProfilePictureUrl,
+          creatorRole: content.creatorRole,
+          creatorStatus: content.creatorStatus,
+          eventId: content.eventId,
+          eventDate: content.eventDate,
+          durationMinutes: content.durationMinutes,
+          zoomLink: content.zoomLink,
+          imageUrl: content.imageUrl,
+          assignmentId: content.assignmentId,
+          taskName: content.taskName,
+          taskType: content.taskType,
+          assignmentDescription: content.assignmentDescription,
+          taskStartDate: content.taskStartDate,
+          taskEndDate: content.taskEndDate,
+          taskEndTime: content.taskEndTime,
+          totalPointsToWin: content.totalPointsToWin,
+          answers: content.answers,
+          assignmentCreatorUserId: content.assignmentCreatorUserId,
+          assignmentCreatedAt: content.assignmentCreatedAt,
+          assignmentUpdatedAt: content.assignmentUpdatedAt,
+          submissionUserIds: currentSubmissionIds,
+        );
+        contentList[index] = updatedContent;
+      }
+    }
+  }
+
   void clickOnMoreDetails({required AcademyContentModel content}) {
     final context = Get.context;
     if (context == null) return;
@@ -595,6 +663,8 @@ class AcademyController extends BaseController {
           'dd.MM.yyyy',
         ).format(DateTime.parse("${content.eventDate}")),
         timing: content.taskEndTime ?? '',
+        mediaUrl: content.mediaFileUrl,
+        isVideo: false, // Workshop images are not videos
         onButtonTap: () {
           Get.back();
           clickOnRegistration(content: content);

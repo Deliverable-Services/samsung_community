@@ -32,7 +32,7 @@ class EventService {
         query = query.ilike('title', searchTerm);
       }
 
-      var transformQuery = query.order('event_date', ascending: true);
+      var transformQuery = query.order('created_at', ascending: false);
 
       if (offset != null) {
         transformQuery = transformQuery.range(
@@ -84,9 +84,7 @@ class EventService {
       }
 
       // Build OR conditions for event IDs
-      final orConditions = eventIds
-          .map((id) => 'id.eq.$id')
-          .join(',');
+      final orConditions = eventIds.map((id) => 'id.eq.$id').join(',');
 
       // Now get the events
       var query = SupabaseService.client
@@ -104,7 +102,7 @@ class EventService {
         query = query.ilike('title', searchTerm);
       }
 
-      var transformQuery = query.order('event_date', ascending: true);
+      var transformQuery = query.order('created_at', ascending: false);
 
       if (offset != null) {
         transformQuery = transformQuery.range(
@@ -149,4 +147,3 @@ class EventService {
     }
   }
 }
-

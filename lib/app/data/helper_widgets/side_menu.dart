@@ -59,7 +59,7 @@ class SideMenu extends StatelessWidget {
             'logout'.tr,
             style: TextStyle(
               color: AppColors.white,
-              fontSize: 20.sp,
+              fontSize: 16.sp,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -67,7 +67,7 @@ class SideMenu extends StatelessWidget {
             'wantLogout'.tr,
             style: TextStyle(
               color: AppColors.white,
-              fontSize: 16.sp,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w400,
             ),
           ),

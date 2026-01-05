@@ -15,6 +15,7 @@ class AppImages {
       pointsIcon = '$baseUrl/points.svg',
       creditIcon = '$baseUrl/credit.svg',
       magicIcon = '$baseUrl/magic.svg',
+      assignmentIcon = '$baseUrl/assignment_icon.svg',
       star3Icon = '$baseUrl/star_3.png',
       eventLaunchCard = '$baseUrl/exclusive_event.png',
       arrowIcon = '$baseUrl/arrow.png',

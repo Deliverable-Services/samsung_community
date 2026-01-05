@@ -65,6 +65,7 @@ class LoginController extends BaseController {
 
     if (otpCode == null) {
       final errorMessage = _authRepo.errorMessage.value;
+      _authRepo.clearError();
       if (errorMessage.isNotEmpty) {
         CommonSnackbar.error(errorMessage);
       } else {

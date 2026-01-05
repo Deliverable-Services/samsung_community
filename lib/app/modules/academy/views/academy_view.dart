@@ -28,6 +28,7 @@ class AcademyView extends GetView<AcademyController> {
         child: CustomScrollView(
           controller: controller.scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
+          cacheExtent: 500,
           slivers: [
             SliverPadding(
               padding: EdgeInsets.only(
@@ -181,11 +182,6 @@ class AcademyView extends GetView<AcademyController> {
           isSelected: index == 1,
           onTap: () => controller.setFilter(1),
         ),
-        // FilterItem(
-        //   text: 'academyReels'.tr,
-        //   isSelected: index == 2,
-        //   onTap: () => controller.setFilter(2),
-        // ),
         FilterItem(
           text: 'academyZoomWorkshops'.tr,
           isSelected: index == 3,
@@ -248,7 +244,11 @@ class AcademyView extends GetView<AcademyController> {
           delegate: SliverChildBuilderDelegate(
             (context, index) {
               if (index < content.length) {
-                return _buildContentCard(content[index]);
+                final item = content[index];
+                return RepaintBoundary(
+                  key: ValueKey('academy_content_${item.academyContentId}'),
+                  child: _buildContentCard(item),
+                );
               }
               if (index == content.length && controller.isLoadingMore.value) {
                 return Padding(
@@ -260,6 +260,8 @@ class AcademyView extends GetView<AcademyController> {
             },
             childCount:
                 content.length + (controller.isLoadingMore.value ? 1 : 0),
+            addAutomaticKeepAlives: false,
+            addRepaintBoundaries: false,
           ),
         ),
       );
@@ -267,32 +269,23 @@ class AcademyView extends GetView<AcademyController> {
   }
 
   Widget _buildContentCard(AcademyContentModel content) {
-    final isReel = content.fileType == AcademyFileType.reel;
-    final isVideo = content.fileType == AcademyFileType.video;
+    final currentUserId = SupabaseService.currentUser?.id;
+    final isSubmitted =
+        currentUserId != null &&
+        (content.submissionUserIds?.contains(currentUserId) ?? false);
     final isAssignment = content.fileType == AcademyFileType.assignment;
+
+    if (!isAssignment && isSubmitted) {
+      return const SizedBox.shrink();
+    }
+
+    final isVideo = content.fileType == AcademyFileType.video;
     final isZoomWorkshop = content.fileType == AcademyFileType.zoomWorkshop;
     final mediaUrl = content.mediaFileUrl;
     final hasMedia = mediaUrl != null && mediaUrl.isNotEmpty;
-    bool userIdMatched =
-        content.submissionUserIds?.contains(SupabaseService.currentUser?.id) ??
-        false;
-
-    if (userIdMatched) {
-      return SizedBox();
-    }
     if (isZoomWorkshop) {
-      // Debug: Print image URL info
-      debugPrint('🖼️ [AcademyView] Rendering zoomWorkshop: ${content.title}');
-      debugPrint('🖼️ [AcademyView] content.imageUrl: ${content.imageUrl}');
-      debugPrint(
-        '🖼️ [AcademyView] content.imageUrl is null: ${content.imageUrl == null}',
-      );
-      debugPrint(
-        '🖼️ [AcademyView] content.imageUrl isEmpty: ${content.imageUrl?.isEmpty ?? true}',
-      );
-      debugPrint('🖼️ [AcademyView] content.eventId: ${content.eventId}');
-
       return Padding(
+        key: ValueKey('zoom_workshop_${content.academyContentId}'),
         padding: EdgeInsets.only(bottom: 20.h),
         child: Container(
           padding: EdgeInsets.all(16.w),
@@ -318,7 +311,7 @@ class AcademyView extends GetView<AcademyController> {
           ),
           child: EventLaunchCard(
             imagePath: AppImages.eventRegisteration,
-            imagePathNetwork: content.imageUrl,
+            imagePathNetwork: content.mediaFileUrl,
             title: content.title,
             description: content.description ?? '',
             text: 'homeMoreDetails'.tr,
@@ -371,6 +364,7 @@ class AcademyView extends GetView<AcademyController> {
     } else if (isAssignment) {
       final isAudio = content.taskType?.toUpperCase() == 'Audio'.toUpperCase();
       return Padding(
+        key: ValueKey('assignment_${content.academyContentId}'),
         padding: EdgeInsets.only(bottom: 20.h),
         child: AssignmentCard(
           type: AssignmentCardType.assignment,
@@ -381,11 +375,13 @@ class AcademyView extends GetView<AcademyController> {
           contentId: content.academyContentId,
           pointsToEarn: content.pointsToEarn,
           isAudio: isAudio,
+          isSubmitted: isSubmitted,
           onButtonTap: () => controller.clickOnButtonTap(content: content),
         ),
       );
     } else {
       return Padding(
+        key: ValueKey('content_${content.academyContentId}'),
         padding: EdgeInsets.only(bottom: 20.h),
         child: ContentCard1(
           showTopIcon: true,
@@ -396,7 +392,6 @@ class AcademyView extends GetView<AcademyController> {
           showAudioPlayer: isAssignment && hasMedia,
           videoUrl: isVideo && hasMedia ? mediaUrl : null,
           audioUrl: isAssignment && hasMedia ? mediaUrl : null,
-          // Pass null for thumbnails when it's a video - let VideoPlayerThumbnail generate it
           thumbnailUrl: isVideo ? null : content.mediaFileUrl,
           thumbnailImage: isVideo ? null : content.mediaFileUrl,
           contentId: content.academyContentId,

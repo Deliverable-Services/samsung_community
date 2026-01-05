@@ -134,38 +134,48 @@ class _ReusableFormState extends State<ReusableForm> {
   }
 
   Future<void> _handleSave() async {
-    if (!_formKey.currentState!.validate()) {
-      // Find the first field with validation error and show toaster
-      for (final field in widget.fields) {
-        if (field.validator != null) {
-          String? errorMessage;
-          switch (field.type) {
-            case FormFieldType.text:
-            case FormFieldType.email:
-            case FormFieldType.multiline:
-            case FormFieldType.date:
-              final controller = _controllers[field.key];
-              if (controller != null) {
-                errorMessage = field.validator!(controller.text);
-                if (errorMessage != null) {
-                  Get.snackbar(
-                    'Error',
-                    errorMessage,
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.red,
-                    colorText: Colors.white,
-                    duration: const Duration(seconds: 2),
-                    margin: EdgeInsets.all(16.w),
-                  );
-                  return;
-                }
-              }
-              break;
-            default:
-              break;
-          }
+    // Validate all fields including dropdowns
+    for (final field in widget.fields) {
+      if (field.validator != null) {
+        String? errorMessage;
+        switch (field.type) {
+          case FormFieldType.text:
+          case FormFieldType.email:
+          case FormFieldType.multiline:
+          case FormFieldType.date:
+            final controller = _controllers[field.key];
+            if (controller != null) {
+              errorMessage = field.validator!(controller.text);
+            }
+            break;
+          case FormFieldType.dropdown:
+          case FormFieldType.gender:
+          case FormFieldType.deviceModel:
+          case FormFieldType.college:
+            final notifier = _dropdownNotifiers[field.key];
+            if (notifier != null) {
+              errorMessage = field.validator!(notifier.value);
+            }
+            break;
+          default:
+            break;
+        }
+        if (errorMessage != null) {
+          Get.snackbar(
+            'Error',
+            errorMessage,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 2),
+            margin: EdgeInsets.all(16.w),
+          );
+          return;
         }
       }
+    }
+
+    if (!_formKey.currentState!.validate()) {
       return;
     }
 
