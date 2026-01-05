@@ -62,11 +62,21 @@ class SignUpController extends GetxController {
 
     try {
       final userDetails = await _authRepo.checkUserForSignup(normalizedPhone);
+      final checkUserError = _authRepo.errorMessage.value;
 
-      if (userDetails == null &&
-          _authRepo.errorMessage.value.contains('USER_ALREADY_SIGNED_UP')) {
+      // Check for USER_ALREADY_SIGNED_UP error early and return
+      if (userDetails == null && checkUserError.contains('USER_ALREADY_SIGNED_UP')) {
         isValidating.value = false;
+        _authRepo.clearError(); // Clear error after showing
         CommonSnackbar.error('user_already_signed_up'.tr);
+        return;
+      }
+
+      // If there was an error in checkUserForSignup but not USER_ALREADY_SIGNED_UP, show it and return
+      if (userDetails == null && checkUserError.isNotEmpty) {
+        isValidating.value = false;
+        _authRepo.clearError(); // Clear error after showing
+        CommonSnackbar.error(checkUserError);
         return;
       }
 
@@ -74,11 +84,15 @@ class SignUpController extends GetxController {
       if (authUserId == null) {
         isValidating.value = false;
         final errorMessage = _authRepo.errorMessage.value;
-        CommonSnackbar.error(
-          errorMessage.isNotEmpty
-              ? errorMessage
-              : 'failedToGenerateVerificationCode'.tr,
-        );
+        _authRepo.clearError(); // Clear error after showing
+        // Don't show error if it's USER_ALREADY_SIGNED_UP (already shown above)
+        if (!errorMessage.contains('USER_ALREADY_SIGNED_UP')) {
+          CommonSnackbar.error(
+            errorMessage.isNotEmpty
+                ? errorMessage
+                : 'failedToGenerateVerificationCode'.tr,
+          );
+        }
         return;
       }
 
@@ -91,31 +105,40 @@ class SignUpController extends GetxController {
       if (!userCreated) {
         isValidating.value = false;
         final errorMessage = _authRepo.errorMessage.value;
-        CommonSnackbar.error(
-          errorMessage.isNotEmpty
-              ? errorMessage
-              : 'failedToGenerateVerificationCode'.tr,
-        );
+        _authRepo.clearError(); // Clear error after showing
+        // Don't show error if it's USER_ALREADY_SIGNED_UP (already shown above)
+        if (!errorMessage.contains('USER_ALREADY_SIGNED_UP')) {
+          CommonSnackbar.error(
+            errorMessage.isNotEmpty
+                ? errorMessage
+                : 'failedToGenerateVerificationCode'.tr,
+          );
+        }
         return;
       }
 
       final otpCode = await _authRepo.generateOTP(normalizedPhone);
 
-    isValidating.value = false;
+      isValidating.value = false;
 
-    if (otpCode == null) {
+      if (otpCode == null) {
         final errorMessage = _authRepo.errorMessage.value;
+        _authRepo.clearError(); // Clear error after showing
+        // Don't show error if it's USER_ALREADY_SIGNED_UP (already shown above)
+        if (errorMessage.contains('USER_ALREADY_SIGNED_UP')) {
+          return; // Already shown, don't show again
+        }
 
         if (errorMessage.contains('WAIT_FOR_APPROVAL') ||
             errorMessage.contains('wait_for_approval')) {
           CommonSnackbar.error('wait_for_approval'.tr);
         } else if (errorMessage.isNotEmpty) {
           CommonSnackbar.error(errorMessage);
-      } else {
+        } else {
           CommonSnackbar.error('failedToGenerateVerificationCode'.tr);
+        }
+        return;
       }
-      return;
-    }
 
     Get.toNamed(
       Routes.VERIFICATION_CODE,

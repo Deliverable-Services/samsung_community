@@ -150,20 +150,22 @@ class AuthRepo extends BaseController {
           result.errorOrNull ?? 'Failed to generate ${'otp_for_login'.tr}';
       debugPrint('Error in generateOTPForLogin: $error');
 
+      // Use setError instead of handleError to avoid showing snackbar here
+      // Controller will handle showing the error message
       if (error.toString().contains('USER_SUSPENDED')) {
-        handleError('userSuspended'.tr);
+        setError('userSuspended'.tr);
         return null;
       }
       if (error.toString().contains('WAIT_FOR_APPROVAL')) {
-        handleError('wait_for_approval'.tr);
+        setError('wait_for_approval'.tr);
         return null;
       }
       if (error.toString().contains('USER_REJECTED')) {
-        handleError('userRejected'.tr);
+        setError('userRejected'.tr);
         return null;
       }
 
-      handleError(error);
+      setError(error);
       return null;
     }
   }
@@ -181,7 +183,9 @@ class AuthRepo extends BaseController {
     } else {
       final error = result.errorOrNull ?? 'Failed to check user';
       debugPrint('Error in checkUserForSignup: $error');
-      handleError(error);
+      // Use setError instead of handleError to avoid showing snackbar here
+      // Controller will handle showing the error message
+      setError(error);
       return null;
     }
   }
@@ -199,7 +203,9 @@ class AuthRepo extends BaseController {
     } else {
       final error = result.errorOrNull ?? 'Failed to create/get auth user';
       debugPrint('Error in createOrGetAuthUser: $error');
-      handleError(error);
+      // Use setError instead of handleError to avoid showing snackbar here
+      // Controller will handle showing the error message
+      setError(error);
       return null;
     }
   }
@@ -258,7 +264,9 @@ class AuthRepo extends BaseController {
     } else {
       final error = result.errorOrNull ?? 'Failed to create/update public user';
       debugPrint('Error in createOrUpdatePublicUser: $error');
-      handleError(error);
+      // Use setError instead of handleError to avoid showing snackbar here
+      // Controller will handle showing the error message
+      setError(error);
       return false;
     }
   }
@@ -279,7 +287,9 @@ class AuthRepo extends BaseController {
     } else {
       final error = result.errorOrNull ?? 'Failed to generate OTP';
       debugPrint('Error in generateOTP: $error');
-      handleError(error);
+      // Use setError instead of handleError to avoid showing snackbar here
+      // Controller will handle showing the error message
+      setError(error);
       return null;
     }
   }
