@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import '../../../data/constants/app_button.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
@@ -11,6 +10,7 @@ class PaymentMethodModal extends StatelessWidget {
   final int costPoints;
   final VoidCallback? onPayWithPoints;
   final VoidCallback onPayWithCreditCard;
+  final bool isLoading;
 
   const PaymentMethodModal({
     super.key,
@@ -18,6 +18,7 @@ class PaymentMethodModal extends StatelessWidget {
     required this.costPoints,
     this.onPayWithPoints,
     required this.onPayWithCreditCard,
+    this.isLoading = false,
   });
 
   @override
@@ -50,7 +51,9 @@ class PaymentMethodModal extends StatelessWidget {
               right: 0,
               top: 0,
               child: CustomBackButton(
-                onTap: () => Navigator.of(context, rootNavigator: true).pop(),
+                onTap: isLoading
+                    ? () {}
+                    : () => Navigator.of(context, rootNavigator: true).pop(),
                 rotation: 0,
               ),
             ),
@@ -62,7 +65,7 @@ class PaymentMethodModal extends StatelessWidget {
             text: 'You currently have ',
             style: TextStyle(
               fontSize: 14.sp,
-              color: AppColors.textWhiteOpacity60,
+              color: Color(0xFF6EA8FF),
               fontFamily: 'Samsung Sharp Sans',
             ),
             children: [
@@ -81,8 +84,9 @@ class PaymentMethodModal extends StatelessWidget {
         AppButton(
           text: 'Pay with Points',
           iconPath: AppImages.pointsIcon,
-          onTap: canPayWithPoints ? onPayWithPoints : () {},
-          isEnabled: canPayWithPoints,
+          onTap: (canPayWithPoints && !isLoading) ? onPayWithPoints : () {},
+          isEnabled: canPayWithPoints && !isLoading,
+          isLoading: isLoading,
           width: double.infinity,
           height: 56.h,
         ),
@@ -92,8 +96,8 @@ class PaymentMethodModal extends StatelessWidget {
         AppButton(
           text: 'Pay with Credit Card',
           iconPath: AppImages.creditIcon,
-          onTap: onPayWithCreditCard,
-          isEnabled: true,
+          onTap: isLoading ? () {} : onPayWithCreditCard,
+          isEnabled: !isLoading,
           width: double.infinity,
           height: 56.h,
         ),
