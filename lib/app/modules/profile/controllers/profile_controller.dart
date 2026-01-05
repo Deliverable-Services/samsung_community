@@ -103,14 +103,12 @@ class ProfileController extends BaseController {
     );
     if (post == null) return;
 
-    // Store previous state for potential revert
     final previousIsLiked = _profileService.likedStatusMap[contentId] ?? false;
     final previousLikesCount = post.likesCount;
     final previousLikedByUsers = List<UserModel>.from(
       _profileService.likedByUsersMap[contentId] ?? [],
     );
 
-    // Optimistic update - update UI immediately
     final newIsLiked = !previousIsLiked;
     _profileService.likedStatusMap[contentId] = newIsLiked;
 
@@ -119,11 +117,8 @@ class ProfileController extends BaseController {
         ? previousLikesCount + 1
         : (previousLikesCount > 0 ? previousLikesCount - 1 : 0);
 
-    _profileService.postsList[index] = post.copyWith(
-      likesCount: newLikesCount,
-    );
+    _profileService.postsList[index] = post.copyWith(likesCount: newLikesCount);
 
-    // Update likedByUsers optimistically
     final currentUser = _authRepo.currentUser.value;
     if (currentUser != null && newIsLiked) {
       final existingLikedBy = _profileService.likedByUsersMap[contentId] ?? [];
@@ -132,7 +127,9 @@ class ProfileController extends BaseController {
         final userJson = currentUser.toJson();
         final convertedUser = UserModel.fromJson(userJson);
         final updatedList = <UserModel>[convertedUser, ...existingLikedBy];
-        _profileService.likedByUsersMap[contentId] = updatedList.take(3).toList();
+        _profileService.likedByUsersMap[contentId] = updatedList
+            .take(3)
+            .toList();
       }
     } else if (!newIsLiked) {
       final existingLikedBy = _profileService.likedByUsersMap[contentId] ?? [];
@@ -141,54 +138,51 @@ class ProfileController extends BaseController {
           .toList();
     }
 
-    // Run API call in background
     _interactionService
-        .toggleLike(
-      contentId: contentId,
-      userId: currentUserSupabase.id,
-    )
+        .toggleLike(contentId: contentId, userId: currentUserSupabase.id)
         .then((result) async {
-      if (result.isSuccess) {
-        final serverIsLiked = result.dataOrNull ?? false;
-        _profileService.likedStatusMap[contentId] = serverIsLiked;
+          if (result.isSuccess) {
+            final serverIsLiked = result.dataOrNull ?? false;
+            _profileService.likedStatusMap[contentId] = serverIsLiked;
 
-        final updatedPost = _profileService.postsList.firstWhereOrNull(
-          (p) => p.id == contentId,
-        );
-        if (updatedPost != null) {
-          final postIndex = _profileService.postsList.indexOf(updatedPost);
-          _profileService.postsList[postIndex] = updatedPost.copyWith(
-            likesCount: serverIsLiked
-                ? updatedPost.likesCount + (newIsLiked ? 0 : 1)
-                : (updatedPost.likesCount > 0
-                    ? updatedPost.likesCount - (newIsLiked ? 1 : 0)
-                    : 0),
-          );
-        }
+            final updatedPost = _profileService.postsList.firstWhereOrNull(
+              (p) => p.id == contentId,
+            );
+            if (updatedPost != null) {
+              final postIndex = _profileService.postsList.indexOf(updatedPost);
+              _profileService.postsList[postIndex] = updatedPost.copyWith(
+                likesCount: serverIsLiked
+                    ? updatedPost.likesCount + (newIsLiked ? 0 : 1)
+                    : (updatedPost.likesCount > 0
+                          ? updatedPost.likesCount - (newIsLiked ? 1 : 0)
+                          : 0),
+              );
+            }
 
-        await _profileService.refreshLikedByUsers(contentId);
-      } else {
-        // Revert on error
-        _profileService.likedStatusMap[contentId] = previousIsLiked;
-        if (index < _profileService.postsList.length) {
-          _profileService.postsList[index] = post.copyWith(
-            likesCount: previousLikesCount,
-          );
-        }
-        _profileService.likedByUsersMap[contentId] = previousLikedByUsers;
-        CommonSnackbar.error(result.errorOrNull ?? 'failed_to_like_post'.tr);
-      }
-    }).catchError((error) {
-      // Revert on exception
-      _profileService.likedStatusMap[contentId] = previousIsLiked;
-      if (index < _profileService.postsList.length) {
-        _profileService.postsList[index] = post.copyWith(
-          likesCount: previousLikesCount,
-        );
-      }
-      _profileService.likedByUsersMap[contentId] = previousLikedByUsers;
-      CommonSnackbar.error('somethingWentWrong'.tr);
-    });
+            await _profileService.refreshLikedByUsers(contentId);
+          } else {
+            _profileService.likedStatusMap[contentId] = previousIsLiked;
+            if (index < _profileService.postsList.length) {
+              _profileService.postsList[index] = post.copyWith(
+                likesCount: previousLikesCount,
+              );
+            }
+            _profileService.likedByUsersMap[contentId] = previousLikedByUsers;
+            CommonSnackbar.error(
+              result.errorOrNull ?? 'failed_to_like_post'.tr,
+            );
+          }
+        })
+        .catchError((error) {
+          _profileService.likedStatusMap[contentId] = previousIsLiked;
+          if (index < _profileService.postsList.length) {
+            _profileService.postsList[index] = post.copyWith(
+              likesCount: previousLikesCount,
+            );
+          }
+          _profileService.likedByUsersMap[contentId] = previousLikedByUsers;
+          CommonSnackbar.error('somethingWentWrong'.tr);
+        });
   }
 
   Future<void> addComment(String contentId, String commentText) async {

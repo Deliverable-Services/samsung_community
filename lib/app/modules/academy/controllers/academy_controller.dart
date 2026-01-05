@@ -41,6 +41,7 @@ class AcademyController extends BaseController {
   Timer? searchDebounceTimer;
 
   static const int pageSize = 10;
+  static const int maxCachedItems = 50;
   int currentOffset = 0;
 
   AcademyController({AcademyService? academyService})
@@ -164,6 +165,12 @@ class AcademyController extends BaseController {
 
         if (loadMore) {
           contentList.addAll(newContent);
+          if (contentList.length > maxCachedItems) {
+            contentList.value = contentList.sublist(
+              contentList.length - maxCachedItems,
+            );
+            currentOffset = contentList.length;
+          }
         } else {
           contentList.value = newContent;
         }
@@ -272,8 +279,8 @@ class AcademyController extends BaseController {
 
     if (result is Success<Map<String, dynamic>>) {
       clearFields();
-
       CommonSnackbar.success('audio_published_successfully'.tr);
+      loadContent();
     } else {
       CommonSnackbar.error('failed_to_publish_audio'.tr);
     }
@@ -308,6 +315,7 @@ class AcademyController extends BaseController {
     if (result is Success<Map<String, dynamic>>) {
       clearFields();
       CommonSnackbar.success('text_published_successfully'.tr);
+      loadContent();
     } else {
       CommonSnackbar.error('failed_to_publish_text'.tr);
     }
@@ -339,6 +347,7 @@ class AcademyController extends BaseController {
     if (result is Success<Map<String, dynamic>>) {
       clearFields();
       CommonSnackbar.success('answer_submitted_successfully'.tr);
+      loadContent();
     } else {
       CommonSnackbar.error('failed_to_submit_answer'.tr);
     }
@@ -458,8 +467,7 @@ class AcademyController extends BaseController {
       final source = await _showImageSourceDialog();
       if (source == null) return;
 
-      final XFile? pickedFile =
-      await StorageService.pickImage(source: source);
+      final XFile? pickedFile = await StorageService.pickImage(source: source);
 
       if (pickedFile != null) {
         selectedMediaFile.value = File(pickedFile.path);
@@ -595,6 +603,8 @@ class AcademyController extends BaseController {
           'dd.MM.yyyy',
         ).format(DateTime.parse("${content.eventDate}")),
         timing: content.taskEndTime ?? '',
+        mediaUrl: content.mediaFileUrl,
+        isVideo: false, // Workshop images are not videos
         onButtonTap: () {
           Get.back();
           clickOnRegistration(content: content);

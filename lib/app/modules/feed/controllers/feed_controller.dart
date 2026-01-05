@@ -38,6 +38,8 @@ class FeedController extends BaseController {
       <String, List<UserModel>>{}.obs;
 
   static const int _pageSize = 10;
+  static const int maxCachedItems =
+      50; // Limit cached items to prevent memory issues
   int _currentOffset = 0;
   bool _isDeleting = false;
 
@@ -178,6 +180,12 @@ class FeedController extends BaseController {
 
         if (loadMore) {
           contentList.addAll(updatedList);
+          if (contentList.length > maxCachedItems) {
+            contentList.value = contentList.sublist(
+              contentList.length - maxCachedItems,
+            );
+            _currentOffset = contentList.length;
+          }
         } else {
           contentList.value = updatedList;
         }
@@ -507,18 +515,16 @@ class FeedController extends BaseController {
       return;
     }
 
-    // Store previous state for potential revert
     final previousIsLiked = likedStatusMap[contentId] ?? false;
-        final contentIndex = contentList.indexWhere((c) => c.id == contentId);
+    final contentIndex = contentList.indexWhere((c) => c.id == contentId);
     if (contentIndex == -1) return;
 
-          final content = contentList[contentIndex];
+    final content = contentList[contentIndex];
     final previousLikesCount = content.likesCount;
     final previousLikedByUsers = List<UserModel>.from(
       likedByUsersMap[contentId] ?? [],
     );
 
-    // Optimistic update - update UI immediately
     final newIsLiked = !previousIsLiked;
     likedStatusMap[contentId] = newIsLiked;
 
@@ -526,18 +532,15 @@ class FeedController extends BaseController {
         ? previousLikesCount + 1
         : (previousLikesCount > 0 ? previousLikesCount - 1 : 0);
 
-          contentList[contentIndex] = content.copyWith(
-            likesCount: newLikesCount,
-          );
+    contentList[contentIndex] = content.copyWith(likesCount: newLikesCount);
 
-          final filteredIndex = filteredContentList.indexWhere(
-            (c) => c.id == contentId,
-          );
-          if (filteredIndex != -1) {
-            filteredContentList[filteredIndex] = contentList[contentIndex];
-          }
+    final filteredIndex = filteredContentList.indexWhere(
+      (c) => c.id == contentId,
+    );
+    if (filteredIndex != -1) {
+      filteredContentList[filteredIndex] = contentList[contentIndex];
+    }
 
-    // Update likedByUsers optimistically
     if (newIsLiked) {
       final currentUser = _authRepo.currentUser.value;
       if (currentUser != null) {
@@ -557,70 +560,66 @@ class FeedController extends BaseController {
           .toList();
     }
 
-    // Run API call in background
     _interactionService
-        .toggleLike(
-      contentId: contentId,
-      userId: currentUserId,
-    )
+        .toggleLike(contentId: contentId, userId: currentUserId)
         .then((result) async {
-      if (result.isSuccess) {
-        final serverIsLiked = result.dataOrNull ?? false;
-        // Update with server response
-        likedStatusMap[contentId] = serverIsLiked;
+          if (result.isSuccess) {
+            final serverIsLiked = result.dataOrNull ?? false;
+            likedStatusMap[contentId] = serverIsLiked;
 
-        if (contentIndex != -1 && contentIndex < contentList.length) {
-          final currentContent = contentList[contentIndex];
-          // Calculate correct likes count based on server response
-          final serverLikesCount = serverIsLiked
-              ? previousLikesCount + (previousIsLiked ? 0 : 1)
-              : (previousLikesCount > 0 ? previousLikesCount - 1 : 0);
+            if (contentIndex != -1 && contentIndex < contentList.length) {
+              final currentContent = contentList[contentIndex];
+              final serverLikesCount = serverIsLiked
+                  ? previousLikesCount + (previousIsLiked ? 0 : 1)
+                  : (previousLikesCount > 0 ? previousLikesCount - 1 : 0);
 
-          contentList[contentIndex] = currentContent.copyWith(
-            likesCount: serverLikesCount,
-          );
+              contentList[contentIndex] = currentContent.copyWith(
+                likesCount: serverLikesCount,
+              );
 
-          if (filteredIndex != -1 && filteredIndex < filteredContentList.length) {
-            filteredContentList[filteredIndex] = contentList[contentIndex];
-          }
+              if (filteredIndex != -1 &&
+                  filteredIndex < filteredContentList.length) {
+                filteredContentList[filteredIndex] = contentList[contentIndex];
+              }
 
-          if (serverIsLiked) {
-            await _loadLikedByUsers([contentList[contentIndex]]);
+              if (serverIsLiked) {
+                await _loadLikedByUsers([contentList[contentIndex]]);
+              } else {
+                final existingLikedBy = likedByUsersMap[contentId] ?? [];
+                likedByUsersMap[contentId] = existingLikedBy
+                    .where((u) => u.id != currentUserId)
+                    .toList();
+              }
+            }
           } else {
-            final existingLikedBy = likedByUsersMap[contentId] ?? [];
-            likedByUsersMap[contentId] = existingLikedBy
-                .where((u) => u.id != currentUserId)
-                .toList();
+            likedStatusMap[contentId] = previousIsLiked;
+            if (contentIndex != -1 && contentIndex < contentList.length) {
+              contentList[contentIndex] = content.copyWith(
+                likesCount: previousLikesCount,
+              );
+              if (filteredIndex != -1 &&
+                  filteredIndex < filteredContentList.length) {
+                filteredContentList[filteredIndex] = contentList[contentIndex];
+              }
+            }
+            likedByUsersMap[contentId] = previousLikedByUsers;
+            handleError(result.errorOrNull ?? 'Failed to like content');
           }
-        }
-      } else {
-        // Revert on error
-        likedStatusMap[contentId] = previousIsLiked;
-        if (contentIndex != -1 && contentIndex < contentList.length) {
-          contentList[contentIndex] = content.copyWith(
-            likesCount: previousLikesCount,
-          );
-          if (filteredIndex != -1 && filteredIndex < filteredContentList.length) {
-            filteredContentList[filteredIndex] = contentList[contentIndex];
+        })
+        .catchError((error) {
+          likedStatusMap[contentId] = previousIsLiked;
+          if (contentIndex != -1 && contentIndex < contentList.length) {
+            contentList[contentIndex] = content.copyWith(
+              likesCount: previousLikesCount,
+            );
+            if (filteredIndex != -1 &&
+                filteredIndex < filteredContentList.length) {
+              filteredContentList[filteredIndex] = contentList[contentIndex];
+            }
           }
-        }
-        likedByUsersMap[contentId] = previousLikedByUsers;
-        handleError(result.errorOrNull ?? 'Failed to like content');
-      }
-    }).catchError((error) {
-      // Revert on exception
-      likedStatusMap[contentId] = previousIsLiked;
-      if (contentIndex != -1 && contentIndex < contentList.length) {
-        contentList[contentIndex] = content.copyWith(
-          likesCount: previousLikesCount,
-        );
-        if (filteredIndex != -1 && filteredIndex < filteredContentList.length) {
-          filteredContentList[filteredIndex] = contentList[contentIndex];
-        }
-      }
-      likedByUsersMap[contentId] = previousLikedByUsers;
-      handleError('somethingWentWrong'.tr);
-    });
+          likedByUsersMap[contentId] = previousLikedByUsers;
+          handleError('somethingWentWrong'.tr);
+        });
   }
 
   Future<void> addComment(String contentId, String commentText) async {
