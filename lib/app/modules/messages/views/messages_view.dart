@@ -87,6 +87,8 @@ class MessagesView extends GetView<MessagesController> {
                       hasUnread: conv.unreadCount > 0,
                       conversationId: conv.conversationId,
                       userId: conv.otherUserId,
+                      avatarUrl: conv.otherUserAvatar,
+                      unreadCount: conv.unreadCount,
                     );
                   },
                 );

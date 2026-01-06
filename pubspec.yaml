@@ -52,6 +52,7 @@ dependencies:
   share_plus:
   firebase_messaging:
   flutter_local_notifications:
+  lottie: ^3.3.2
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +78,7 @@ flutter:
 
   assets:
     - asset/images/
+    - asset/lottie/
     - .env
 
   fonts:
@@ -91,7 +93,7 @@ flutter:
 
 flutter_launcher_icons:
   android: true
-  ios: false
-  image_path: "asset/images/app_logo.png"
-  adaptive_icon_background: "#000000"
-  adaptive_icon_foreground: "asset/images/app_logo.png"
+  ios: true
+  image_path: "asset/images/logo.svg"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "asset/images/logo.svg"

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../data/constants/app_colors.dart';
+import '../../../data/helper_widgets/title_app_bar.dart';
 import '../controllers/notifications_controller.dart';
 import 'notification_list_item.dart';
 
@@ -13,8 +14,10 @@ class NotificationsView extends GetView<NotificationsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: TitleAppBar(text: 'Notifications', isLeading: false),
       backgroundColor: AppColors.primary,
       body: SafeArea(
+        top: false, // TitleAppBar already handles top padding
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -24,8 +27,7 @@ class NotificationsView extends GetView<NotificationsController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const NotificationsHeader(),
-                  SizedBox(height: 16.h),
+                  NotificationsHeader(controller: controller),
                   NotificationsSearchBar(controller: controller),
                   SizedBox(height: 20.h),
                 ],
@@ -38,9 +40,7 @@ class NotificationsView extends GetView<NotificationsController> {
                 if (controller.isLoading.value) {
                   return Center(
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        AppColors.linkBlue,
-                      ),
+                      color: AppColors.linkBlue,
                     ),
                   );
                 }
@@ -60,9 +60,18 @@ class NotificationsView extends GetView<NotificationsController> {
                 }
 
                 return ListView.builder(
+                  controller: controller.scrollController,
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  itemCount: list.length,
+                  itemCount: list.length + (controller.hasMoreData.value ? 1 : 0),
                   itemBuilder: (_, index) {
+                    if (index == list.length) {
+                      return controller.isLoadingMore.value 
+                          ? Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20.h),
+                              child: Center(child: CircularProgressIndicator(color: AppColors.linkBlue)),
+                            )
+                          : const SizedBox.shrink();
+                    }
                     return NotificationListItem(item: list[index]);
                   },
                 );
@@ -117,31 +126,23 @@ class NotificationsSearchBar extends StatelessWidget {
 }
 
 class NotificationsHeader extends StatelessWidget {
-  const NotificationsHeader({super.key});
+  final NotificationsController controller;
+  const NotificationsHeader({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-
-        Text(
-          'notifications'.tr,
-          style: TextStyle(
-            fontFamily: 'Samsung Sharp Sans',
-            fontWeight: FontWeight.w700,
-            fontSize: 20.sp,
-            color: AppColors.white,
-          ),
-        ),
-        SizedBox(height: 8.h),
-        Text(
-          'notificationsSubtitle'.tr,
-          style: TextStyle(
-            fontFamily: 'Samsung Sharp Sans',
-            fontWeight: FontWeight.w400,
-            fontSize: 14.sp,
-            color: AppColors.textWhiteOpacity70,
+        TextButton(
+          onPressed: () => controller.markAllAsRead(),
+          child: Text(
+            'markAllAsRead'.tr,
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: AppColors.linkBlue,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
       ],

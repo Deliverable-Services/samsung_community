@@ -96,7 +96,7 @@ class BlockedUsersController extends BaseController {
       filteredBlockedUsers.value = users;
     } catch (e) {
       debugPrint('Error loading blocked users: $e');
-      handleError('Failed to load blocked users');
+      handleError('failed_to_load_blocked_users'.tr);
     } finally {
       setLoading(false);
     }

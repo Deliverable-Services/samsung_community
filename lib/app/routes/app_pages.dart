@@ -175,11 +175,13 @@ class AppPages {
       page: () => const FollowersFollowingView(),
       binding: FollowersFollowingBinding(),
       middlewares: [AuthGuard()],
+      preventDuplicates: false,
     ),
     GetPage(
       name: _Paths.USER_PROFILE,
       page: () => const UserProfileView(),
       binding: UserProfileBinding(),
+      preventDuplicates: false,
     ),
     GetPage(
       name: _Paths.MESSAGES,

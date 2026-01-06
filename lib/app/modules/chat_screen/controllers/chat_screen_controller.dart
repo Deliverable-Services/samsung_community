@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../data/models/user_model.dart';
 import '../../../common/services/supabase_service.dart';
+import '../../../data/core/utils/common_snackbar.dart';
 import '../local_widgets/chat_options_modal.dart';
 import '../local_widgets/report_success_modal.dart';
 
@@ -85,7 +86,7 @@ class ChatScreenController extends GetxController {
       otherUser.value = UserModel.fromJson(response);
       await _checkBlockStatus(userId);
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load user data');
+      CommonSnackbar.error('failed_to_load_user_data'.tr);
     } finally {
       isLoading.value = false;
     }
@@ -161,7 +162,7 @@ class ChatScreenController extends GetxController {
       await loadMessages();
       markAsRead();
     } catch (e) {
-      Get.snackbar('Error', 'Failed to send message');
+      CommonSnackbar.error('failed_to_send_message'.tr);
     } finally {
       isSending.value = false;
     }
@@ -214,18 +215,26 @@ class ChatScreenController extends GetxController {
     if (otherUser.value == null || currentUserId.value.isEmpty) return;
     
     try {
+      final now = DateTime.now().toUtc().toIso8601String();
+
+      // 1. Create or Reactivate block record
+      await SupabaseService.client.from('user_blocks').upsert({
+        'blocker_id': currentUserId.value,
+        'blocked_id': otherUser.value!.id,
+        'deleted_at': null,
+      }, onConflict: 'blocker_id,blocked_id');
+
+      // 2. Remove any follow relationships in both directions
       await SupabaseService.client
-          .from('user_blocks')
-          .insert({
-            'blocker_id': currentUserId.value,
-            'blocked_id': otherUser.value!.id,
-          });
-      
+          .from('user_follows')
+          .update({'deleted_at': now})
+          .or('and(follower_id.eq.${currentUserId.value},following_id.eq.${otherUser.value!.id}),and(follower_id.eq.${otherUser.value!.id},following_id.eq.${currentUserId.value})');
+
       isBlocked.value = true;
-      Get.snackbar('Success', 'User blocked successfully');
+      CommonSnackbar.success('user_blocked_successfully'.tr);
     } catch (e) {
-      print('Error blocking user: $e');
-      Get.snackbar('Error', 'Failed to block user');
+      debugPrint('Error blocking user: $e');
+      CommonSnackbar.error('failed_to_block_user'.tr);
     }
   }
 
@@ -240,10 +249,10 @@ class ChatScreenController extends GetxController {
           .eq('blocked_id', otherUser.value!.id);
       
       isBlocked.value = false;
-      Get.snackbar('Success', 'user_unblocked_successfully'.tr);
+      CommonSnackbar.success('user_unblocked_successfully'.tr);
     } catch (e) {
       print('Error unblocking user: $e');
-      Get.snackbar('Error', 'failed_to_unblock_user'.tr);
+      CommonSnackbar.error('failed_to_unblock_user'.tr);
     }
   }
 

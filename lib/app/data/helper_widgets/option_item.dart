@@ -10,6 +10,7 @@ class OptionItem extends StatefulWidget {
   final Widget? boxTextWidget;
   final bool isSelected;
   final VoidCallback? onTap;
+  final int? badgeCount;
 
   const OptionItem({
     super.key,
@@ -19,6 +20,7 @@ class OptionItem extends StatefulWidget {
     this.boxTextWidget,
     this.isSelected = false,
     this.onTap,
+    this.badgeCount,
   }) : assert(
          (text != null || textWidget != null) &&
              (boxText != null || boxTextWidget != null),
@@ -44,7 +46,6 @@ class _OptionItemState extends State<OptionItem> {
         setState(() {
           _isPressed = false;
         });
-        widget.onTap?.call();
       },
       onPointerCancel: (_) {
         setState(() {
@@ -67,64 +68,97 @@ class _OptionItemState extends State<OptionItem> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  width: 24.w,
-                  // height: 24.h,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6.r),
-                    gradient: const LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color.fromRGBO(214, 214, 214, 0.2),
-                        Color.fromRGBO(112, 112, 112, 0.2),
-                      ],
-                      stops: [0.0, 1.0],
-                    ),
-                    border: Border.all(
-                      width: 1,
-                      color: Colors.white.withOpacity(0.2),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        offset: Offset(0, 3.57.h),
-                        blurRadius: 7.97.r,
-                        spreadRadius: 0,
-                        color: AppColors.optionBoxShadow,
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      width: 24.w,
+                      // height: 24.h,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6.r),
+                        gradient: const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color.fromRGBO(214, 214, 214, 0.2),
+                            Color.fromRGBO(112, 112, 112, 0.2),
+                          ],
+                          stops: [0.0, 1.0],
+                        ),
+                        border: Border.all(
+                          width: 1,
+                          color: Colors.white.withOpacity(0.2),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            offset: Offset(0, 3.57.h),
+                            blurRadius: 7.97.r,
+                            spreadRadius: 0,
+                            color: AppColors.optionBoxShadow,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(4.w),
-                      child:
-                          widget.boxTextWidget ??
-                          (widget.boxText != null
-                              ? ShaderMask(
-                                  shaderCallback: (bounds) =>
-                                      const LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [
-                                          AppColors.optionTextGradientStart,
-                                          AppColors.optionTextGradientEnd,
-                                        ],
-                                        stops: [0.0, 1.0],
-                                      ).createShader(bounds),
-                                  child: Text(
-                                    widget.boxText!,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16.sp,
-                                      letterSpacing: 0,
-                                      color: Colors.white,
-                                      height: 1,
-                                    ),
-                                  ),
-                                )
-                              : const SizedBox.shrink()),
+                      child: Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(4.w),
+                          child:
+                              widget.boxTextWidget ??
+                              (widget.boxText != null
+                                  ? ShaderMask(
+                                      shaderCallback: (bounds) =>
+                                          const LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              AppColors
+                                                  .optionTextGradientStart,
+                                              AppColors.optionTextGradientEnd,
+                                            ],
+                                            stops: [0.0, 1.0],
+                                          ).createShader(bounds),
+                                      child: Text(
+                                        widget.boxText!,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 16.sp,
+                                          letterSpacing: 0,
+                                          color: Colors.white,
+                                          height: 1,
+                                        ),
+                                      ),
+                                    )
+                                  : const SizedBox.shrink()),
+                        ),
+                      ),
                     ),
-                  ),
+                    if (widget.badgeCount != null && widget.badgeCount! > 0)
+                      Positioned(
+                        top: -5.h,
+                        right: -5.w,
+                        child: Container(
+                          padding: EdgeInsets.all(4.w),
+                          decoration: const BoxDecoration(
+                            color: AppColors.unfollowPink,
+                            shape: BoxShape.circle,
+                          ),
+                          constraints: BoxConstraints(
+                            minWidth: 14.w,
+                            minHeight: 14.w,
+                          ),
+                          child: Center(
+                            child: Text(
+                              widget.badgeCount!.toString(),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 8.sp,
+                                fontWeight: FontWeight.bold,
+                                height: 1,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
                 SizedBox(width: 11.w),
                 Expanded(

@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import '../../../common/services/app_lifecycle_service.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/helper_widgets/profile_picture_widget.dart';
+import '../../../data/helper_widgets/read_more_text.dart';
 import '../controllers/chat_screen_controller.dart';
 
 class ChatProfileSection extends StatelessWidget {
@@ -84,14 +85,17 @@ class ChatProfileSection extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
             if (user.bio != null && user.bio!.isNotEmpty)
-              Text(
-                user.bio!,
-                style: TextStyle(
+              ReadMoreText(
+                text: user.bio!,
+                maxLines: 2,
+                textAlign: TextAlign.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                textStyle: TextStyle(
+                  fontFamily: 'Samsung Sharp Sans',
                   fontWeight: FontWeight.w400,
                   fontSize: 14.sp,
                   color: AppColors.textWhiteOpacity70,
                 ),
-                textAlign: TextAlign.center,
               ),
             SizedBox(height: 16.h),
             GestureDetector(

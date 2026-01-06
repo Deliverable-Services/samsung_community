@@ -18,4 +18,39 @@ class NotificationItem {
     this.relatedEntityType,
     this.relatedEntityId,
   });
+
+  factory NotificationItem.fromJson(Map<String, dynamic> json) {
+    return NotificationItem(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      message: json['message'] as String,
+      isRead: json['is_read'] as bool,
+      notificationType: json['notification_type'] as String,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      relatedEntityType: json['related_entity_type'] as String?,
+      relatedEntityId: json['related_entity_id'] as String?,
+    );
+  }
+
+  NotificationItem copyWith({
+    String? id,
+    String? title,
+    String? message,
+    bool? isRead,
+    String? notificationType,
+    DateTime? createdAt,
+    String? relatedEntityType,
+    String? relatedEntityId,
+  }) {
+    return NotificationItem(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      message: message ?? this.message,
+      isRead: isRead ?? this.isRead,
+      notificationType: notificationType ?? this.notificationType,
+      createdAt: createdAt ?? this.createdAt,
+      relatedEntityType: relatedEntityType ?? this.relatedEntityType,
+      relatedEntityId: relatedEntityId ?? this.relatedEntityId,
+    );
+  }
 }

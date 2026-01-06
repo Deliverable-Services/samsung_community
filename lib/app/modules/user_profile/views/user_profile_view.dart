@@ -14,6 +14,9 @@ class UserProfileView extends GetView<UserProfileController> {
   const UserProfileView({super.key});
 
   @override
+  String? get tag => Get.parameters['userId'] ?? 'unknown_user';
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: TitleAppBar(text: '', isLeading: false),

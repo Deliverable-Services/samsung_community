@@ -11,6 +11,8 @@ class ReadMoreText extends StatefulWidget {
   final String readMoreText;
   final String showLessText;
   final Color? linkColor;
+  final TextAlign textAlign;
+  final CrossAxisAlignment crossAxisAlignment;
 
   const ReadMoreText({
     super.key,
@@ -20,6 +22,8 @@ class ReadMoreText extends StatefulWidget {
     this.readMoreText = 'readMore',
     this.showLessText = 'showLess',
     this.linkColor,
+    this.textAlign = TextAlign.start,
+    this.crossAxisAlignment = CrossAxisAlignment.start,
   });
 
   @override
@@ -54,19 +58,19 @@ class _ReadMoreTextState extends State<ReadMoreText> {
 
         if (!needsTruncation) {
           // Text is short enough, no need for read more
-          return Text(widget.text, style: textStyle);
+          return Text(widget.text, style: textStyle, textAlign: widget.textAlign);
         }
 
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: widget.crossAxisAlignment,
           children: [
             Text(
               widget.text,
               style: textStyle,
               maxLines: _isExpanded ? null : widget.maxLines,
-              overflow: _isExpanded
-                  ? TextOverflow.visible
-                  : TextOverflow.ellipsis,
+              overflow:
+                  _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+              textAlign: widget.textAlign,
             ),
             SizedBox(height: 4.h),
             GestureDetector(

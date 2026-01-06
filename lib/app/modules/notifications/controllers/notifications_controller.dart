@@ -1,36 +1,86 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../../common/services/supabase_service.dart';
+import '../../../data/core/base/base_controller.dart';
 import '../repo/notifications_model.dart';
 
-class NotificationsController extends GetxController {
-  final RxBool isLoading = false.obs;
+class NotificationsController extends BaseController {
+  final RxBool isLoadingMore = false.obs;
+  final RxBool hasMoreData = true.obs;
   final RxList<NotificationItem> notifications = <NotificationItem>[].obs;
   final RxString currentUserId = ''.obs;
   final RxString searchQuery = ''.obs;
   final TextEditingController searchController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
+  Timer? _pollingTimer;
+
+  static const int pageSize = 15;
+  int currentOffset = 0;
 
   @override
   void onInit() {
     super.onInit();
-    _getCurrentUserId();
+    _getCurrentUserId().then((_) {
+      loadNotifications();
+      _startPollingNotifications();
+    });
     searchController.addListener(_onSearchChanged);
-    loadNotifications();
+    scrollController.addListener(_scrollListener);
   }
 
-  @override
-  void onReady() {
-    loadNotifications();
+  void _startPollingNotifications() {
+    _pollingTimer?.cancel();
+    _pollingTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (currentUserId.value.isNotEmpty && !isLoading.value && searchQuery.value.isEmpty) {
+        fetchLatestNotifications();
+      }
+    });
+  }
+
+  Future<void> fetchLatestNotifications() async {
+    if (notifications.isEmpty) return;
+
+    final latestTimestamp = notifications.first.createdAt.toIso8601String();
+
+    try {
+      final response = await SupabaseService.client
+          .from('notifications')
+          .select()
+          .eq('user_id', currentUserId.value)
+          .isFilter('deleted_at', null)
+          .gt('created_at', latestTimestamp)
+          .order('created_at', ascending: false);
+
+      final latestItems = (response as List).map((e) => NotificationItem.fromJson(e)).toList();
+
+      if (latestItems.isNotEmpty) {
+        notifications.insertAll(0, latestItems);
+        currentOffset += latestItems.length;
+        // Mark these new items as read since they are now on screen
+        _markUnreadAsReadInDB(latestItems);
+      }
+    } catch (e) {
+      debugPrint('Error polling notifications: $e');
+    }
   }
 
   bool get hasUnreadNotifications {
     return notifications.any((n) => !n.isRead);
   }
 
-
   void _onSearchChanged() {
     searchQuery.value = searchController.text;
+  }
+
+  void _scrollListener() {
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200 &&
+        !isLoadingMore.value &&
+        hasMoreData.value &&
+        searchQuery.value.isEmpty) {
+      loadMoreNotifications();
+    }
   }
 
   List<NotificationItem> get filteredNotifications {
@@ -49,7 +99,9 @@ class NotificationsController extends GetxController {
 
   @override
   void onClose() {
+    _pollingTimer?.cancel();
     searchController.dispose();
+    scrollController.dispose();
     super.onClose();
   }
 
@@ -61,55 +113,130 @@ class NotificationsController extends GetxController {
   }
 
   Future<void> loadNotifications() async {
+    if (currentUserId.value.isEmpty) {
+      await _getCurrentUserId();
+    }
     if (currentUserId.value.isEmpty) return;
 
     try {
-      isLoading.value = true;
+      setLoading(true);
+      currentOffset = 0;
+      hasMoreData.value = true;
 
       final response = await SupabaseService.client
           .from('notifications')
           .select()
           .eq('user_id', currentUserId.value)
           .isFilter('deleted_at', null)
-          .order('created_at', ascending: false);
+          .order('created_at', ascending: false)
+          .range(0, pageSize - 1);
 
-      notifications.value = (response as List).map((e) {
-        return NotificationItem(
-          id: e['id'],
-          title: e['title'],
-          message: e['message'],
-          isRead: e['is_read'],
-          notificationType: e['notification_type'],
-          createdAt: DateTime.parse(e['created_at']),
-          relatedEntityType: e['related_entity_type'],
-          relatedEntityId: e['related_entity_id'],
-        );
-      }).toList();
+      final newItems = (response as List).map((e) => NotificationItem.fromJson(e)).toList();
+      notifications.assignAll(newItems);
+      hasMoreData.value = newItems.length == pageSize;
+      currentOffset = newItems.length;
+
+      // Mark unread as read if any
+      _markUnreadAsReadInDB(newItems);
     } catch (e) {
-      print('Notification error: $e');
+      handleError(e);
     } finally {
-      isLoading.value = false;
+      setLoading(false);
+    }
+  }
+
+  Future<void> loadMoreNotifications() async {
+    if (isLoadingMore.value || !hasMoreData.value || currentUserId.value.isEmpty) return;
+
+    try {
+      isLoadingMore.value = true;
+
+      final response = await SupabaseService.client
+          .from('notifications')
+          .select()
+          .eq('user_id', currentUserId.value)
+          .isFilter('deleted_at', null)
+          .order('created_at', ascending: false)
+          .range(currentOffset, currentOffset + pageSize - 1);
+
+      final nextItems = (response as List).map((e) => NotificationItem.fromJson(e)).toList();
+      
+      if (nextItems.isNotEmpty) {
+        notifications.addAll(nextItems);
+        currentOffset += nextItems.length;
+        hasMoreData.value = nextItems.length == pageSize;
+        
+        // Mark unread as read if any
+        _markUnreadAsReadInDB(nextItems);
+      } else {
+        hasMoreData.value = false;
+      }
+    } catch (e) {
+      debugPrint('Notification load more error: $e');
+    } finally {
+      isLoadingMore.value = false;
+    }
+  }
+
+  Future<void> markAllAsRead() async {
+    if (currentUserId.value.isEmpty) return;
+
+    try {
+      await SupabaseService.client
+          .from('notifications')
+          .update({'is_read': true})
+          .eq('user_id', currentUserId.value)
+          .eq('is_read', false);
+
+      // Locally update all
+      for (var i = 0; i < notifications.length; i++) {
+        if (!notifications[i].isRead) {
+          notifications[i] = notifications[i].copyWith(isRead: true);
+        }
+      }
+      notifications.refresh();
+    } catch (e) {
+      debugPrint('Mark all as read error: $e');
     }
   }
 
   Future<void> markAsRead(String id) async {
-    await SupabaseService.client
-        .from('notifications')
-        .update({'is_read': true})
-        .eq('id', id);
+    try {
+      await SupabaseService.client
+          .from('notifications')
+          .update({'is_read': true})
+          .eq('id', id);
 
-    final index = notifications.indexWhere((n) => n.id == id);
-    if (index != -1) {
-      notifications[index] = NotificationItem(
-        id: notifications[index].id,
-        title: notifications[index].title,
-        message: notifications[index].message,
-        isRead: true,
-        notificationType: notifications[index].notificationType,
-        createdAt: notifications[index].createdAt,
-        relatedEntityType: notifications[index].relatedEntityType,
-        relatedEntityId: notifications[index].relatedEntityId,
-      );
+      final index = notifications.indexWhere((n) => n.id == id);
+      if (index != -1) {
+        notifications[index] = notifications[index].copyWith(isRead: true);
+        notifications.refresh();
+      }
+    } catch (e) {
+      debugPrint('Mark as read error: $e');
+    }
+  }
+
+  Future<void> _markUnreadAsReadInDB(List<NotificationItem> items) async {
+    final unreadIds = items.where((n) => !n.isRead).map((n) => n.id).toList();
+    if (unreadIds.isEmpty) return;
+
+    try {
+      await SupabaseService.client
+          .from('notifications')
+          .update({'is_read': true})
+          .inFilter('id', unreadIds);
+      
+      // Update local state for these specific items
+      for (var id in unreadIds) {
+        final index = notifications.indexWhere((n) => n.id == id);
+        if (index != -1) {
+          notifications[index] = notifications[index].copyWith(isRead: true);
+        }
+      }
+      notifications.refresh();
+    } catch (e) {
+      debugPrint('Auto mark read error: $e');
     }
   }
 

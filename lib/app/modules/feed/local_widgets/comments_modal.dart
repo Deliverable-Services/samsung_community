@@ -15,7 +15,7 @@ import '../../../data/models/user_model copy.dart';
 
 class CommentsModal extends StatefulWidget {
   final String contentId;
-  final Function(String) onAddComment;
+  final Future<void> Function(String) onAddComment;
 
   const CommentsModal({
     super.key,
@@ -96,7 +96,7 @@ class _CommentsModalState extends State<CommentsModal> {
 
     _isSubmitting.value = true;
     try {
-      widget.onAddComment(_commentController.text.trim());
+      await widget.onAddComment(_commentController.text.trim());
       _commentController.clear();
       await _loadComments();
     } finally {

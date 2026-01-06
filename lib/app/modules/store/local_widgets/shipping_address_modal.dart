@@ -98,6 +98,9 @@ class _ShippingAddressModalState extends State<ShippingAddressModal> {
     if (!RegExp(r'^\d+$').hasMatch(trimmed)) {
       return 'Contact number must contain only digits';
     }
+    if (trimmed.length < 10) {
+      return 'Contact number must be at least 10 digits';
+    }
     if (trimmed.length > 10) {
       return 'Contact number must not exceed 10 digits';
     }

@@ -14,6 +14,9 @@ class FollowersFollowingView extends GetView<FollowersFollowingController> {
   const FollowersFollowingView({super.key});
 
   @override
+  String? get tag => Get.parameters['userId'] ?? 'current_user';
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primary,

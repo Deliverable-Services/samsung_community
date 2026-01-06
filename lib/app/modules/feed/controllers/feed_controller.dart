@@ -280,7 +280,7 @@ class FeedController extends BaseController {
                   color: AppColors.white,
                 ),
                 title: Text(
-                  'Choose from Gallery',
+                  'choose_from_gallery'.tr,
                   style: TextStyle(color: AppColors.white),
                 ),
                 onTap: () => Get.back(result: ImageSource.gallery),
@@ -288,14 +288,14 @@ class FeedController extends BaseController {
               ListTile(
                 leading: const Icon(Icons.camera_alt, color: AppColors.white),
                 title: Text(
-                  'Take Photo',
+                  'take_photo'.tr,
                   style: TextStyle(color: AppColors.white),
                 ),
                 onTap: () => Get.back(result: ImageSource.camera),
               ),
               TextButton(
                 onPressed: () => Get.back(),
-                child: Text('Cancel', style: TextStyle(color: AppColors.white)),
+                child: Text('cancel'.tr, style: TextStyle(color: AppColors.white)),
               ),
             ],
           ),
@@ -471,7 +471,7 @@ class FeedController extends BaseController {
           onInit();
         });
       } else {
-        handleError(result.errorOrNull ?? 'Failed to delete post');
+        handleError(result.errorOrNull ?? 'failed_to_delete_post'.tr);
       }
     } catch (e) {
       handleError('somethingWentWrong'.tr);
@@ -603,7 +603,7 @@ class FeedController extends BaseController {
               }
             }
             likedByUsersMap[contentId] = previousLikedByUsers;
-            handleError(result.errorOrNull ?? 'Failed to like content');
+            handleError(result.errorOrNull ?? 'failed_to_like_content'.tr);
           }
         })
         .catchError((error) {
