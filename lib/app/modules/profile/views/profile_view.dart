@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../data/constants/app_colors.dart';
+import '../../../data/constants/app_images.dart';
 import '../../../data/helper_widgets/bottom_nav_bar.dart';
 import '../../../data/helper_widgets/common_loader.dart';
 import '../../../data/helper_widgets/create_post_button.dart';
@@ -43,59 +44,69 @@ class _ProfileViewState extends State<ProfileView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primary,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: Stack(
+        children: [
+          Image(
+            image: AssetImage(AppImages.imageProfileBg),
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
+          ),
+          SafeArea(
+            child: Stack(
               children: [
-                Expanded(
-                  child: Obx(() {
-                    final isLoading = controller.isLoading.value;
-                    final user = controller.userRx.value;
-
-                    return CustomScrollView(
-                      key: ValueKey('profile_scroll_${user?.id ?? 'loading'}'),
-                      slivers: [
-                        const ProfileHeader(),
-                        if (isLoading || user == null)
-                          const CommonSliverFillLoader()
-                        else ...[
-                          SliverToBoxAdapter(
-                            key: const ValueKey('profile_section'),
-                            child: const ProfileSection(),
-                          ),
-                          SliverToBoxAdapter(
-                            key: const ValueKey('stats_section'),
-                            child: const StatsSection(),
-                          ),
-                          const PostsList(),
-                        ],
-                      ],
-                    );
-                  }),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: Obx(() {
+                        final isLoading = controller.isLoading.value;
+                        final user = controller.userRx.value;
+            
+                        return CustomScrollView(
+                          key: ValueKey('profile_scroll_${user?.id ?? 'loading'}'),
+                          slivers: [
+                            const ProfileHeader(),
+                            if (isLoading || user == null)
+                              const CommonSliverFillLoader()
+                            else ...[
+                              SliverToBoxAdapter(
+                                key: const ValueKey('profile_section'),
+                                child: const ProfileSection(),
+                              ),
+                              SliverToBoxAdapter(
+                                key: const ValueKey('stats_section'),
+                                child: const StatsSection(),
+                              ),
+                              const PostsList(),
+                            ],
+                          ],
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+                CreatePostButton(
+                  onSuccess: () {
+                    controller.loadUserPosts();
+                    controller.loadUserProfile();
+                  },
+                  onFailure: () {},
+                  bottomOffset: 52.h,
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 16.h),
+                    child: BottomNavBar(isBottomBar: false),
+                  ),
                 ),
               ],
             ),
-            CreatePostButton(
-              onSuccess: () {
-                controller.loadUserPosts();
-                controller.loadUserProfile();
-              },
-              onFailure: () {},
-              bottomOffset: 52.h,
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 16.h),
-                child: BottomNavBar(isBottomBar: false),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

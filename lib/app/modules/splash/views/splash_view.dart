@@ -13,7 +13,7 @@ class SplashView extends GetView<SplashController> {
       backgroundColor: Colors.black,
       body: Center(
         child: Lottie.asset(
-          'asset/lottie/flow.json',
+          'assets/lottie/flow.json',
           controller: controller.animationController,
           onLoaded: controller.onAnimationLoaded,
           fit: BoxFit.cover,
