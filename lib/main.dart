@@ -16,6 +16,7 @@ import 'app/data/constants/app_consts.dart';
 import 'app/data/localization/get_prefs.dart';
 import 'app/data/localization/language_controller.dart';
 import 'app/data/localization/local_string.dart';
+import 'app/modules/notifications/controllers/notifications_controller.dart';
 import 'app/repository/auth_repo/auth_repo.dart';
 import 'app/routes/app_pages.dart';
 
@@ -183,6 +184,7 @@ Future<void> main() async {
       builder: (_, __) {
         return GetMaterialApp(
           title: 'Application',
+          initialBinding: AppBinding(),
           navigatorKey: navigatorKey,
           initialRoute: AppPages.INITIAL,
           getPages: AppPages.routes,
@@ -204,3 +206,14 @@ Future<void> main() async {
     ),
   );
 }
+
+class AppBinding extends Bindings {
+  @override
+  void dependencies() {
+    Get.put<NotificationsController>(
+      NotificationsController(),
+      permanent: true,
+    );
+  }
+}
+

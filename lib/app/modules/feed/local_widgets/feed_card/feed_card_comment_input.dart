@@ -11,7 +11,7 @@ import '../../../../data/constants/app_images.dart';
 class FeedCardCommentInput extends StatefulWidget {
   final String contentId;
   final VoidCallback? onComment;
-  final Function(String, String)? onAddComment;
+  final Future<void> Function(String, String)? onAddComment;
 
   const FeedCardCommentInput({
     super.key,
@@ -45,11 +45,11 @@ class _FeedCardCommentInputState extends State<FeedCardCommentInput> {
     super.dispose();
   }
 
-  void _submitComment() {
+  Future<void> _submitComment() async {
     if (_commentController.text.trim().isNotEmpty) {
       final commentText = _commentController.text.trim();
       _commentController.clear();
-      widget.onAddComment?.call(widget.contentId, commentText);
+      await widget.onAddComment?.call(widget.contentId, commentText);
       widget.onComment?.call();
     }
   }

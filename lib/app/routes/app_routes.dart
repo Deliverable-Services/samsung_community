@@ -27,6 +27,7 @@ abstract class Routes {
   static const CHAT_SCREEN = _Paths.CHAT_SCREEN;
   static const STORE = _Paths.STORE;
   static const EVENTER_PAYMENT = _Paths.EVENTER_PAYMENT;
+  static const NOTIFICATIONS = _Paths.NOTIFICATIONS;
 }
 
 abstract class _Paths {
@@ -55,4 +56,5 @@ abstract class _Paths {
   static const CHAT_SCREEN = '/chat-screen';
   static const STORE = '/store';
   static const EVENTER_PAYMENT = '/eventer-payment';
+  static const NOTIFICATIONS = '/notifications';
 }

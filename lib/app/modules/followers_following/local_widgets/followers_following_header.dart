@@ -16,6 +16,9 @@ class FollowersFollowingHeader extends GetView<FollowersFollowingController> {
   });
 
   @override
+  String? get tag => Get.parameters['userId'] ?? 'current_user';
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),

@@ -5,6 +5,16 @@ class EnLocalization {
     "yes": "Yes",
     "no": "No",
 
+    //Notification and channel
+    "notifications": "Notifications",
+    "notificationsSubtitle": "All Notifications",
+    "searchNotifications": "Search Notifications",
+    "noNotificationsFound": "No Notifications Found",
+    "markAllAsRead": "Mark all as read",
+    "accountNotApproved": "Account Not Approved",
+    "yourAccountIsNotApprovedYet": "Your account is not approved yet.",
+    "pleaseWaitForAdminApprovalOrContactSupport": "Please wait for admin approval or contact support.",
+
     //SUCCESS
     "comment_added_successfully": "Comment added successfully",
     "shared_to_instagram": "Shared to Instagram",
@@ -46,6 +56,19 @@ class EnLocalization {
     "failed_to_like_post": "Failed to like post",
     "failed_to_add_comment": "Failed to add comment",
     "failed_to_save_language_preference": "Failed to save language preference",
+    "failed_to_load_data": "Failed to load data",
+    "failed_to_follow_user": "Failed to follow user",
+    "failed_to_unfollow_user": "Failed to unfollow user",
+    "failed_to_create_conversation": "Failed to create conversation",
+    "failed_to_open_chat": "Failed to open chat",
+    "failed_to_load_user_data": "Failed to load user data",
+    "failed_to_send_message": "Failed to send message",
+    "choose_from_gallery": "Choose from Gallery",
+    "take_photo": "Take Photo",
+    "failed_to_delete_post": "Failed to delete post",
+    "failed_to_like_content": "Failed to like content",
+    "failed_to_load_blocked_users": "Failed to load blocked users",
+    "cancel": "Cancel",
 
     //BOTTOM BAR
     "home": "Home",
@@ -73,6 +96,8 @@ class EnLocalization {
     "user_not_found": "User not found. Please sign up first.",
     "error": "Error",
     "Success": "Success",
+    "user_blocked_successfully": "User blocked successfully",
+    "failed_to_block_user": "Failed to block user",
     "failedToGenerateVerificationCode": "Failed to generate verification code",
     "somethingWentWrong": "Something went wrong. Please try again.",
     "user_already_signed_up":

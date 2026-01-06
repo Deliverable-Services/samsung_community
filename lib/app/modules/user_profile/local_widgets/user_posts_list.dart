@@ -11,6 +11,9 @@ class UserPostsList extends GetView<UserProfileController> {
   const UserPostsList({super.key});
 
   @override
+  String? get tag => Get.parameters['userId'] ?? 'unknown_user';
+
+  @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingPosts.value) {

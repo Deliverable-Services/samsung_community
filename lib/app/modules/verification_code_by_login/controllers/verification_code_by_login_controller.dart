@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../repository/auth_repo/auth_repo.dart';
@@ -19,6 +20,12 @@ class VerificationCodeByLoginController extends GetxController {
   final otpError = ''.obs;
   Timer? resendTimer;
   final resendCountdown = 0.obs;
+
+  final supabase = Supabase.instance.client;
+
+  RealtimeChannel? _userStatusChannel;
+  String? _currentUserStatus;
+  bool _isDialogOpen = false;
 
   /// Check if form is valid
   bool get isFormValid {
@@ -60,6 +67,94 @@ class VerificationCodeByLoginController extends GetxController {
       startResendTimer();
       // Trigger form validation to clear the error display
       formKey.currentState?.validate();
+    }
+  }
+
+  Future<void> stopUserStatusListener() async {
+    if (_userStatusChannel != null) {
+      debugPrint('🛑 Stop user status listener');
+      await supabase.removeChannel(_userStatusChannel!);
+      _userStatusChannel = null;
+    }
+  }
+
+  Future<void> startUserStatusListener() async {
+    final userId = supabase.auth.currentUser?.id;
+    if (userId == null) return;
+
+    debugPrint('👂 Listening user status for: $userId');
+
+    _userStatusChannel = supabase
+        .channel('user-status-$userId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: 'users',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'id',
+            value: userId,
+          ),
+          callback: (payload) async {
+            final newStatus = payload.newRecord['status'] as String?;
+            if (newStatus == null) return;
+
+            _currentUserStatus = newStatus;
+            debugPrint('🔔 Status changed → $newStatus');
+
+            // ✅ Approved
+            if (newStatus == 'approved') {
+              if (_isDialogOpen) {
+                _isDialogOpen = false;
+                Get.back();
+              }
+              return;
+            }
+
+            // ❌ Pending / Rejected / 'suspended'
+            if ((newStatus == 'pending' ||
+                    newStatus == 'rejected' ||
+                    newStatus == 'suspended') &&
+                !_isDialogOpen) {
+              _isDialogOpen = true;
+
+              await Get.dialog(
+                CupertinoAlertDialog(
+                  title: Text('accountNotApproved'.tr),
+                  content: Text(
+                    "${'yourAccountIsNotApprovedYet'.tr}\n\n${'pleaseWaitForAdminApprovalOrContactSupport'.tr}",
+                  ),
+                  actions: [
+                    CupertinoDialogAction(
+                      isDefaultAction: true,
+                      child: const Text('OK'),
+                      onPressed: () async {
+                        _isDialogOpen = false;
+
+                        if (_currentUserStatus != 'approved') {
+                          Get.back();
+                          await _performLogout();
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                barrierDismissible: false,
+              );
+            }
+          },
+        )
+        .subscribe();
+  }
+
+  Future<void> _performLogout() async {
+    try {
+      final authRepo = Get.find<AuthRepo>();
+      await stopUserStatusListener();
+      await authRepo.signOut();
+    } catch (e) {
+      debugPrint('Error during logout: $e');
+      Get.offAllNamed(Routes.LOGIN);
     }
   }
 
@@ -124,6 +219,7 @@ class VerificationCodeByLoginController extends GetxController {
     // User is approved, navigate to main layout
     CommonSnackbar.success('signInSuccessful'.tr);
     _initFCM();
+    await startUserStatusListener();
     Get.offAllNamed(Routes.BOTTOM_BAR);
   }
 

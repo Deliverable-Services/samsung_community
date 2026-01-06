@@ -5,6 +5,16 @@ class HebrewiLocalization {
     "yes": "כֵּן",
     "no": "לֹא",
 
+    //Notification and channel
+    "notifications": "התראות",
+    "notificationsSubtitle": "כל ההתראות",
+    "searchNotifications": "חיפוש בהתראות",
+    "noNotificationsFound": "לא נמצאו התראות",
+    "accountNotApproved": "החשבון לא אושר",
+    "yourAccountIsNotApprovedYet": "החשבון שלך עדיין לא אושר.",
+    "pleaseWaitForAdminApprovalOrContactSupport":
+        "אנא המתן לאישור מנהל או פנה לתמיכה.",
+
     //SUCCESS
     "comment_added_successfully": "התגובה נוספה בהצלחה",
     "shared_to_instagram": "שותף לאינסטגרם",
@@ -45,6 +55,19 @@ class HebrewiLocalization {
     "failed_to_like_post": "הוספת לייק לפוסט נכשלה",
     "failed_to_add_comment": "הוספת תגובה נכשלה",
     "failed_to_save_language_preference": "שמירת העדפת השפה נכשלה",
+    "failed_to_load_data": "טעינת הנתונים נכשלה",
+    "failed_to_follow_user": "המעקב אחר המשתמש נכשל",
+    "failed_to_unfollow_user": "ביטול המעקב אחר המשתמש נכשל",
+    "failed_to_create_conversation": "יצירת שיחה נכשלה",
+    "failed_to_open_chat": "פתיחת הצ'אט נכשלה",
+    "failed_to_load_user_data": "טעינת נתוני המשתמש נכשלה",
+    "failed_to_send_message": "שליחת ההודעה נכשלה",
+    "choose_from_gallery": "בחר מהגלריה",
+    "take_photo": "צלם תמונה",
+    "failed_to_delete_post": "מחיקת הפוסט נכשלה",
+    "failed_to_like_content": "הוספת לייק לתוכן נכשלה",
+    "cancel": "ביטול",
+    "failed_to_load_blocked_users": "טעינת משתמשים חסומים נכשלה",
 
     //BOTTOM BAR
     "home": "בית",
@@ -71,6 +94,8 @@ class HebrewiLocalization {
     "user_not_found": "משתמש לא נמצא. אנא הירשם תחילה.",
     "error": "שגיאה",
     "Success": "הצלחה",
+    "user_blocked_successfully": "המשתמש נחסם בהצלחה",
+    "failed_to_block_user": "חסימת המשתמש נכשלה",
     "failedToGenerateVerificationCode": "נכשל ביצירת קוד אימות",
     "somethingWentWrong": "משהו השתבש. אנא נסה שוב.",
     "user_already_signed_up": "המשתמש כבר נרשם. אנא התחבר במקום זאת.",

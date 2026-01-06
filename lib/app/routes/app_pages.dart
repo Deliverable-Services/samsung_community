@@ -28,6 +28,8 @@ import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/messages/bindings/messages_binding.dart';
 import '../modules/messages/views/messages_view.dart';
+import '../modules/notifications/bindings/notifications_binding.dart';
+import '../modules/notifications/views/notifications_view.dart';
 import '../modules/on_boarding/bindings/on_boarding_binding.dart';
 import '../modules/on_boarding/views/on_boarding_view.dart';
 import '../modules/personal_details/bindings/personal_details_binding.dart';
@@ -173,11 +175,13 @@ class AppPages {
       page: () => const FollowersFollowingView(),
       binding: FollowersFollowingBinding(),
       middlewares: [AuthGuard()],
+      preventDuplicates: false,
     ),
     GetPage(
       name: _Paths.USER_PROFILE,
       page: () => const UserProfileView(),
       binding: UserProfileBinding(),
+      preventDuplicates: false,
     ),
     GetPage(
       name: _Paths.MESSAGES,
@@ -199,6 +203,11 @@ class AppPages {
       name: _Paths.EVENTER_PAYMENT,
       page: () => const EventerPaymentView(),
       binding: EventerPaymentBinding(),
+    ),
+    GetPage(
+      name: _Paths.NOTIFICATIONS,
+      page: () => const NotificationsView(),
+      binding: NotificationsBinding(),
     ),
   ];
 

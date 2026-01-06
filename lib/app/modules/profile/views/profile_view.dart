@@ -59,7 +59,7 @@ class _ProfileViewState extends State<ProfileView> {
                       slivers: [
                         const ProfileHeader(),
                         if (isLoading || user == null)
-                          const CommonSliverLoader()
+                          const CommonSliverFillLoader()
                         else ...[
                           SliverToBoxAdapter(
                             key: const ValueKey('profile_section'),

@@ -17,37 +17,43 @@ class StatsSection extends GetView<ProfileController> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Obx(() => Expanded(
-            child: StatCard(
-              icon: AppImages.profilePostIcon,
-              count: controller.postsCount,
-              label: 'posts'.tr,
-            ),
-          )),
-          SizedBox(width: 8.w),
-          Obx(() => Expanded(
-            child: StatCard(
-              icon: AppImages.profileFollowersIcon,
-              count: controller.followersCount,
-              label: 'followers'.tr,
-              onTap: () => Get.toNamed(
-                Routes.FOLLOWERS_FOLLOWING,
-                parameters: {'tab': 'followers'},
+          Obx(
+            () => Expanded(
+              child: StatCard(
+                icon: AppImages.profilePostIcon,
+                count: controller.postsCount,
+                label: 'posts'.tr,
               ),
             ),
-          )),
+          ),
           SizedBox(width: 8.w),
-          Obx(() => Expanded(
-            child: StatCard(
-              icon: AppImages.profileFollowingIcon,
-              count: controller.followingCount,
-              label: 'following'.tr,
-              onTap: () => Get.toNamed(
-                Routes.FOLLOWERS_FOLLOWING,
-                parameters: {'tab': 'following'},
+          Obx(
+            () => Expanded(
+              child: StatCard(
+                icon: AppImages.profileFollowersIcon,
+                count: controller.followersCount,
+                label: 'followers'.tr,
+                onTap: () => Get.toNamed(
+                  Routes.FOLLOWERS_FOLLOWING,
+                  parameters: {'tab': 'followers'},
+                ),
               ),
             ),
-          )),
+          ),
+          SizedBox(width: 8.w),
+          Obx(
+            () => Expanded(
+              child: StatCard(
+                icon: AppImages.profileFollowingIcon,
+                count: controller.followingCount,
+                label: 'following'.tr,
+                onTap: () => Get.toNamed(
+                  Routes.FOLLOWERS_FOLLOWING,
+                  parameters: {'tab': 'following'},
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

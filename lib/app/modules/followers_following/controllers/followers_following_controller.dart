@@ -7,6 +7,7 @@ import '../../../data/core/base/base_controller.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/models/user_model copy.dart';
 import '../../../routes/app_pages.dart';
+import '../../chat_screen/local_widgets/report_success_modal.dart';
 
 class FollowersFollowingController extends BaseController {
   final RxInt selectedTab = 0.obs;
@@ -17,7 +18,7 @@ class FollowersFollowingController extends BaseController {
   final RxString searchQuery = ''.obs;
   final TextEditingController searchController = TextEditingController();
   final RxMap<String, bool> isFollowingMap = <String, bool>{}.obs;
-  final RxMap<String, bool> isFollowingBackMap = <String, bool>{}.obs;
+  final RxMap<String, bool> isFollowedByMap = <String, bool>{}.obs;
   late final String targetUserId;
 
   @override
@@ -84,7 +85,7 @@ class FollowersFollowingController extends BaseController {
       ]);
     } catch (e) {
       debugPrint('Error loading followers/following: $e');
-      handleError('Failed to load data');
+      handleError('failed_to_load_data'.tr);
     } finally {
       setLoading(false);
     }
@@ -136,7 +137,7 @@ class FollowersFollowingController extends BaseController {
       filteredFollowers.value = users;
 
       for (final user in users) {
-        await _checkFollowStatus(userId, user.id);
+        await _checkFollowStatuses(user.id);
       }
     } catch (e) {
       debugPrint('Error loading followers: $e');
@@ -186,14 +187,22 @@ class FollowersFollowingController extends BaseController {
 
       following.value = users;
       filteredFollowing.value = users;
+
+      for (final user in users) {
+        await _checkFollowStatuses(user.id);
+      }
     } catch (e) {
       debugPrint('Error loading following: $e');
     }
   }
 
-  Future<void> _checkFollowStatus(String currentUserId, String otherUserId) async {
+  Future<void> _checkFollowStatuses(String otherUserId) async {
+    final currentUserId = SupabaseService.currentUser?.id;
+    if (currentUserId == null || currentUserId == otherUserId) return;
+
     try {
-      final response = await SupabaseService.client
+      // Check if I follow them
+      final followingResponse = await SupabaseService.client
           .from('user_follows')
           .select()
           .eq('follower_id', currentUserId)
@@ -201,9 +210,20 @@ class FollowersFollowingController extends BaseController {
           .isFilter('deleted_at', null)
           .maybeSingle();
 
-      isFollowingMap[otherUserId] = response != null;
+      isFollowingMap[otherUserId] = followingResponse != null;
+
+      // Check if they follow me
+      final followedByResponse = await SupabaseService.client
+          .from('user_follows')
+          .select()
+          .eq('follower_id', otherUserId)
+          .eq('following_id', currentUserId)
+          .isFilter('deleted_at', null)
+          .maybeSingle();
+
+      isFollowedByMap[otherUserId] = followedByResponse != null;
     } catch (e) {
-      debugPrint('Error checking follow status: $e');
+      debugPrint('Error checking follow status for $otherUserId: $e');
     }
   }
 
@@ -211,8 +231,8 @@ class FollowersFollowingController extends BaseController {
     return isFollowingMap[userId] ?? false;
   }
 
-  bool isFollowingBack(String userId) {
-    return isFollowingBackMap[userId] ?? false;
+  bool isFollowedBy(String userId) {
+    return isFollowedByMap[userId] ?? false;
   }
 
   Future<void> followUser(String userId) async {
@@ -233,7 +253,7 @@ class FollowersFollowingController extends BaseController {
       await loadData();
     } catch (e) {
       debugPrint('Error following user: $e');
-      CommonSnackbar.error('Failed to follow user');
+      CommonSnackbar.error('failed_to_follow_user'.tr);
     }
   }
 
@@ -257,7 +277,42 @@ class FollowersFollowingController extends BaseController {
       CommonSnackbar.success('user_unfollowed'.tr);
     } catch (e) {
       debugPrint('Error unfollowing user: $e');
-      CommonSnackbar.error('Failed to unfollow user');
+      CommonSnackbar.error('failed_to_unfollow_user'.tr);
+    }
+  }
+
+  Future<void> blockUser(String userId) async {
+    try {
+      final currentUser = SupabaseService.currentUser;
+      if (currentUser == null) {
+        CommonSnackbar.error('user_not_found'.tr);
+        return;
+      }
+
+      final now = DateTime.now().toUtc().toIso8601String();
+
+      // 1. Create or Reactivate block record
+      await SupabaseService.client.from('user_blocks').upsert({
+        'blocker_id': currentUser.id,
+        'blocked_id': userId,
+        'deleted_at': null,
+      }, onConflict: 'blocker_id,blocked_id');
+
+      // 2. Remove any follow relationships in both directions
+      await SupabaseService.client
+          .from('user_follows')
+          .update({'deleted_at': now})
+          .or('and(follower_id.eq.${currentUser.id},following_id.eq.$userId),and(follower_id.eq.$userId,following_id.eq.${currentUser.id})');
+
+      // Remove from followers/following lists locally
+      followers.removeWhere((u) => u.id == userId);
+      following.removeWhere((u) => u.id == userId);
+      _filterUsers();
+
+      CommonSnackbar.success('user_blocked_successfully'.tr);
+    } catch (e) {
+      debugPrint('Error blocking user: $e');
+      CommonSnackbar.error('failed_to_block_user'.tr);
     }
   }
 
@@ -283,10 +338,10 @@ class FollowersFollowingController extends BaseController {
           },
         );
       } else {
-        CommonSnackbar.error('Failed to create conversation');
+        CommonSnackbar.error('failed_to_create_conversation'.tr);
       }
     } catch (e) {
-      CommonSnackbar.error('Failed to open chat');
+      CommonSnackbar.error('failed_to_open_chat'.tr);
     }
   }
 
@@ -351,5 +406,11 @@ class FollowersFollowingController extends BaseController {
       debugPrint('Error creating conversation: $e');
       return null;
     }
+  }
+
+  void showReportSuccessModal() {
+    final context = Get.context;
+    if (context == null) return;
+    ReportSuccessModal.show(context);
   }
 }

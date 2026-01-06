@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
@@ -13,6 +14,8 @@ class MessageListItem extends StatelessWidget {
   final bool hasUnread;
   final String? conversationId;
   final String? userId;
+  final String? avatarUrl;
+  final int unreadCount;
 
   const MessageListItem({
     super.key,
@@ -21,6 +24,8 @@ class MessageListItem extends StatelessWidget {
     required this.hasUnread,
     this.conversationId,
     this.userId,
+    this.avatarUrl,
+    this.unreadCount = 0,
   });
 
   @override
@@ -52,7 +57,16 @@ class MessageListItem extends StatelessWidget {
                 color: AppColors.overlayContainerBackground,
               ),
               child: ClipOval(
-                child: Image.asset(AppImages.avatar, fit: BoxFit.cover),
+                child: avatarUrl != null && avatarUrl!.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: avatarUrl!,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            Image.asset(AppImages.avatar, fit: BoxFit.cover),
+                        errorWidget: (context, url, error) =>
+                            Image.asset(AppImages.avatar, fit: BoxFit.cover),
+                      )
+                    : Image.asset(AppImages.avatar, fit: BoxFit.cover),
               ),
             ),
             SizedBox(width: 12.w),
@@ -95,7 +109,7 @@ class MessageListItem extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    '1',
+                    unreadCount.toString(),
                     style: TextStyle(
                       fontFamily: 'Samsung Sharp Sans',
                       fontWeight: FontWeight.w700,

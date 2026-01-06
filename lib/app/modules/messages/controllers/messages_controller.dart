@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../common/services/supabase_service.dart';
 
@@ -29,13 +30,19 @@ class MessagesController extends GetxController {
   final RxList<ConversationItem> conversations = <ConversationItem>[].obs;
   final RxBool isLoading = false.obs;
   final RxString currentUserId = ''.obs;
+  RealtimeChannel? _messagesChannel;
 
   @override
   void onInit() {
     super.onInit();
     searchController.addListener(_onSearchChanged);
-    _getCurrentUserId();
-    loadConversations();
+    _initData();
+  }
+
+  Future<void> _initData() async {
+    await _getCurrentUserId();
+    await loadConversations();
+    _setupRealtimeSubscription();
   }
 
   @override
@@ -207,9 +214,28 @@ class MessagesController extends GetxController {
     }).toList();
   }
 
+  void _setupRealtimeSubscription() {
+    if (currentUserId.value.isEmpty) return;
+
+    _messagesChannel = SupabaseService.client
+        .channel('public:conversation_messages')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'conversation_messages',
+          callback: (payload) {
+            loadConversations();
+          },
+        )
+        .subscribe();
+  }
+
   @override
   void onClose() {
     searchController.dispose();
+    if (_messagesChannel != null) {
+      SupabaseService.client.removeChannel(_messagesChannel!);
+    }
     super.onClose();
   }
 }

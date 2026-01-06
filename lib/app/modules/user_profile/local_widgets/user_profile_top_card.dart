@@ -16,6 +16,9 @@ class UserProfileTopCard extends GetView<UserProfileController> {
   const UserProfileTopCard({super.key});
 
   @override
+  String? get tag => Get.parameters['userId'] ?? 'unknown_user';
+
+  @override
   Widget build(BuildContext context) {
     return Obx(() {
       final user = controller.user.value;
@@ -210,6 +213,31 @@ class UserProfileTopCard extends GetView<UserProfileController> {
         ),
       );
     });
+  }
+
+  void _showMoreOptions() {
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.all(20.w),
+        decoration: BoxDecoration(
+          color: AppColors.primary,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.block, color: AppColors.white),
+              title: Text('block'.tr, style: TextStyle(color: AppColors.white)),
+              onTap: () {
+                Get.back();
+                controller.blockUser();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

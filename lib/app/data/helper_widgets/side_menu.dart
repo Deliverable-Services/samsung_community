@@ -10,6 +10,7 @@ import '../constants/app_images.dart';
 import '../constants/language_options.dart';
 import '../localization/language_controller.dart';
 import '../../repository/auth_repo/auth_repo.dart';
+import '../../common/controllers/unread_controller.dart';
 import 'bottom_sheet_modal.dart';
 import 'option_item.dart';
 
@@ -168,17 +169,20 @@ class SideMenu extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        OptionItem(
-          text: 'messages'.tr,
-          boxTextWidget: SvgPicture.asset(
-            AppImages.messagesIcon,
-            width: 14.w,
-            height: 14.h,
-            fit: BoxFit.contain,
-          ),
-          // boxText: 'M',
-          onTap: () => _handleMessages(context),
-        ),
+        Obx(() {
+          final unreadController = Get.find<UnreadController>();
+          return OptionItem(
+            text: 'messages'.tr,
+            badgeCount: unreadController.totalUnreadCount.value,
+            boxTextWidget: SvgPicture.asset(
+              AppImages.messagesIcon,
+              width: 14.w,
+              height: 14.h,
+              fit: BoxFit.contain,
+            ),
+            onTap: () => _handleMessages(context),
+          );
+        }),
         SizedBox(height: 15.h),
         OptionItem(
           text: 'store'.tr,

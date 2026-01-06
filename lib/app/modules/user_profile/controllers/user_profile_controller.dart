@@ -239,6 +239,34 @@ class UserProfileController extends GetxController {
     }
   }
 
+  Future<void> blockUser() async {
+    final currentUserId = SupabaseService.currentUser?.id;
+    if (currentUserId == null || targetUserId.isEmpty) return;
+    
+    try {
+      final now = DateTime.now().toUtc().toIso8601String();
+
+      // 1. Create or Reactivate block record
+      await SupabaseService.client.from('user_blocks').upsert({
+        'blocker_id': currentUserId,
+        'blocked_id': targetUserId,
+        'deleted_at': null,
+      }, onConflict: 'blocker_id,blocked_id');
+
+      // 2. Remove any follow relationships in both directions
+      await SupabaseService.client
+          .from('user_follows')
+          .update({'deleted_at': now})
+          .or('and(follower_id.eq.$currentUserId,following_id.eq.$targetUserId),and(follower_id.eq.$targetUserId,following_id.eq.$currentUserId)');
+
+      CommonSnackbar.success('user_blocked_successfully'.tr);
+      Get.back(); // Go back from profile
+    } catch (e) {
+      debugPrint('Error blocking user: $e');
+      CommonSnackbar.error('failed_to_block_user'.tr);
+    }
+  }
+
   Future<void> toggleLike(String contentId) async {
     final currentUserId = SupabaseService.currentUser?.id;
     if (currentUserId == null) {
@@ -334,7 +362,7 @@ class UserProfileController extends GetxController {
           postsList[index] = post.copyWith(likesCount: previousLikesCount);
         }
         likedByUsersMap[contentId] = previousLikedByUsers;
-        _showError(result.errorOrNull ?? 'Failed to like content');
+        _showError(result.errorOrNull ?? 'failed_to_like_content'.tr);
       }
     }).catchError((error) {
       // Revert on exception
@@ -523,10 +551,10 @@ class UserProfileController extends GetxController {
           },
         );
       } else {
-        _showError('Failed to create conversation');
+        _showError('failed_to_create_conversation'.tr);
       }
     } catch (e) {
-      _showError('Failed to open chat');
+      _showError('failed_to_open_chat'.tr);
     }
   }
 

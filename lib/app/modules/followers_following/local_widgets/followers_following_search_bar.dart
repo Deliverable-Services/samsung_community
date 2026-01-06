@@ -11,6 +11,9 @@ class FollowersFollowingSearchBar
   const FollowersFollowingSearchBar({super.key});
 
   @override
+  String? get tag => Get.parameters['userId'] ?? 'current_user';
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,

@@ -30,7 +30,7 @@ class FeedCard extends StatelessWidget {
   final VoidCallback? onComment;
   final VoidCallback? onViewComments;
   final VoidCallback? onMenuTap;
-  final Function(String, String)? onAddComment;
+  final Future<void> Function(String, String)? onAddComment;
   final VoidCallback? onAvatarTap;
 
   const FeedCard({

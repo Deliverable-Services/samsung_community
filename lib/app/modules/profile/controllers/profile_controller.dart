@@ -217,8 +217,8 @@ class ProfileController extends BaseController {
       buttonType: BottomSheetButtonType.close,
       content: CommentsModal(
         contentId: contentId,
-        onAddComment: (String commentId) {
-          loadUserPosts();
+        onAddComment: (String commentText) async {
+          await loadUserPosts();
         },
       ),
     );
