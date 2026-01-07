@@ -1,8 +1,7 @@
 class AppImages {
-  static const String baseUrl = 'assets/images',
+  static const String baseUrl = 'asset/images',
       logo = '$baseUrl/logo.svg',
       imageSplash = '$baseUrl/imageSplash.png',
-      imageProfileBg = '$baseUrl/image_profile_bg.png',
       imageOnBoarding = '$baseUrl/imageOnBoarding.png',
       backArrow = '$baseUrl/Path.png',
       addIcon = '$baseUrl/addUser.svg',
