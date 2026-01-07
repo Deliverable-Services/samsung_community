@@ -66,6 +66,18 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.13.1
 
+flutter_launcher_icons:
+  image_path: "assets/icon/icon.png"
+  android:
+    adaptive_icon_background: "#FFFFFF"
+    adaptive_icon_foreground: "assets/icon/icon.png"
+    round_icon: true
+  ios:
+    image_path: "assets/icon/icon.png"
+    is_rounded: true
+    precomposed: true
+
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -77,23 +89,17 @@ flutter:
   uses-material-design: true
 
   assets:
-    - asset/images/
-    - asset/lottie/
+    - assets/images/
+    - assets/lottie/
     - .env
 
   fonts:
     - family: Samsung Sharp Sans
       fonts:
-        - asset: asset/fonts/samsungsharpsans.otf
+        - asset: assets/fonts/samsungsharpsans.otf
           weight: 400
-        - asset: asset/fonts/samsungsharpsans-medium.otf
+        - asset: assets/fonts/samsungsharpsans-medium.otf
           weight: 500
-        - asset: asset/fonts/samsungsharpsans-bold.otf
+        - asset: assets/fonts/samsungsharpsans-bold.otf
           weight: 700
 
-flutter_launcher_icons:
-  android: true
-  ios: true
-  image_path: "asset/images/logo.svg"
-  adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "asset/images/logo.svg"

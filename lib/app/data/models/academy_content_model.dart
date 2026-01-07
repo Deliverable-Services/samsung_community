@@ -179,6 +179,7 @@ class AcademyContentModel {
   final int? totalPointsToWin;
   final List<dynamic>? answers;
   final String? assignmentCreatorUserId;
+  final String? answer;
   final DateTime? assignmentCreatedAt;
   final DateTime? assignmentUpdatedAt;
 
@@ -225,6 +226,7 @@ class AcademyContentModel {
     this.totalPointsToWin,
     this.answers,
     this.assignmentCreatorUserId,
+    this.answer,
     this.assignmentCreatedAt,
     this.assignmentUpdatedAt,
 
@@ -293,6 +295,7 @@ class AcademyContentModel {
       totalPointsToWin: json['total_points_to_win'],
       answers: json['answers'],
       assignmentCreatorUserId: json['assignment_creator_user_id'],
+      answer: json['answer'],
       assignmentCreatedAt: json['assignment_created_at'] != null
           ? DateTime.parse(json['assignment_created_at'])
           : null,
@@ -353,6 +356,7 @@ class AcademyContentModel {
       'assignment_updated_at': assignmentUpdatedAt?.toIso8601String(),
 
       // Submissions
+      'answer': answer,
       'submission_user_ids': submissionUserIds,
     };
   }

@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -17,6 +19,7 @@ import '../../../data/constants/app_images.dart';
 import '../../../data/core/base/base_controller.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/core/utils/result.dart';
+import '../../../data/helper_widgets/alert_modal.dart';
 import '../../../data/helper_widgets/audio_player/audio_player_manager.dart';
 import '../../../data/helper_widgets/bottom_sheet_modal.dart';
 import '../../../data/helper_widgets/event_buying_bottom_bar_modal.dart';
@@ -86,7 +89,7 @@ class AcademyController extends BaseController {
       final ids = (response as List)
           .map((item) => item['event_id'] as String)
           .toSet();
-      
+
       registeredEventIds.assignAll(ids);
       debugPrint('Fetched ${ids.length} registered event IDs for Academy');
     } catch (e) {
@@ -214,10 +217,14 @@ class AcademyController extends BaseController {
 
         // Fetch detailed event data for Zoom Workshops
         final workshopEventIds = newContent
-            .where((e) => e.fileType == AcademyFileType.zoomWorkshop && e.eventId != null)
+            .where(
+              (e) =>
+                  e.fileType == AcademyFileType.zoomWorkshop &&
+                  e.eventId != null,
+            )
             .map((e) => e.eventId!)
             .toList();
-        
+
         if (workshopEventIds.isNotEmpty) {
           await _fetchWorkshopEvents(workshopEventIds);
         }
@@ -262,6 +269,38 @@ class AcademyController extends BaseController {
 
   List<AcademyContentModel> get filteredContent {
     return contentList;
+  }
+
+  Future<void> _awardAssignmentPoints({
+    required int points,
+    required String assignmentId,
+  }) async {
+    try {
+      final user = SupabaseService.currentUser;
+      if (user == null) return;
+
+      final currentUser = _authRepo.currentUser.value;
+      if (currentUser == null) return;
+
+      final newBalance = currentUser.pointsBalance + points;
+
+      await SupabaseService.client.from('points_transactions').insert({
+        'user_id': user.id,
+        'transaction_type': 'earned',
+        'amount': points,
+        'balance_after': newBalance,
+        'description': 'Correct assignment answer',
+        'related_entity_type': 'assignment',
+        'related_entity_id': assignmentId,
+      });
+
+      await SupabaseService.client
+          .from('users')
+          .update({'points_balance': newBalance})
+          .eq('id', user.id);
+
+      await _authRepo.loadCurrentUser();
+    } catch (_) {}
   }
 
   void clickOnButtonTap({required AcademyContentModel content}) {
@@ -312,8 +351,7 @@ class AcademyController extends BaseController {
   }
 
   void clickOnSendAudio({required AcademyContentModel content}) async {
-    if (!(uploadedMediaUrl.value != null &&
-        uploadedMediaUrl.value!.isNotEmpty)) {
+    if (uploadedMediaUrl.value?.isEmpty ?? true) {
       CommonSnackbar.error('please_select_audio_file'.tr);
       return;
     }
@@ -325,10 +363,7 @@ class AcademyController extends BaseController {
     Get.back();
 
     final user = SupabaseService.currentUser;
-    if (user == null) {
-      CommonSnackbar.error('user_not_found'.tr);
-      return;
-    }
+    if (user == null) return;
 
     final data = {
       'solution': uploadedMediaUrl.value,
@@ -338,18 +373,88 @@ class AcademyController extends BaseController {
 
     final result = await AcademyService().assignmentSubmissions(content: data);
 
-    if (result is Success<Map<String, dynamic>>) {
+    if (result is Success) {
       clearFields();
       _updateSubmissionStatus(content.academyContentId, user.id);
-      CommonSnackbar.success('audio_published_successfully'.tr);
+      _showSubmittedModal(); // 👈 SAME AS RIDDLE
       loadContent();
     } else {
       CommonSnackbar.error('failed_to_publish_audio'.tr);
     }
   }
 
+  /// Show submitted modal for audio/video submissions
+  void _showSubmittedModal() {
+    final context = Get.context;
+    if (context == null) return;
+
+    AlertModal.show(
+      context,
+      iconPath: AppImages.icVerify,
+      // Using verify icon for submitted
+      iconWidth: 60.w,
+      iconHeight: 60.h,
+      title: 'answerSubmitted'.tr,
+      description: 'reviewingAnswer'.tr,
+      buttonText: 'close'.tr,
+    );
+  }
+
+  /// Show success modal when answer is correct
+  void _showSuccessModal(int pointsEarned) {
+    final context = Get.context;
+    if (context == null) return;
+
+    AlertModal.show(
+      context,
+      icon: SvgPicture.asset(AppImages.correctAnswerRiddleIcon),
+      iconWidth: 50.w,
+      iconHeight: 50.h,
+      title: 'amazingGotItRight'.tr,
+      descriptionWidget: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          style: TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 14.sp,
+            color: AppColors.textWhiteOpacity70,
+          ),
+          children: [
+            TextSpan(text: 'youveEarned'.tr),
+            TextSpan(
+              text: '$pointsEarned ${'points'.tr}',
+              style: TextStyle(
+                color: const Color(0xFF4FC3F7), // Light blue
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            TextSpan(text: 'forCorrectAnswer'.tr),
+          ],
+        ),
+      ),
+      buttonText: 'close'.tr,
+    );
+  }
+
+  /// Show failure modal when answer is incorrect
+  void _showFailureModal() {
+    final context = Get.context;
+    if (context == null) return;
+
+    AlertModal.show(
+      context,
+      iconPath: AppImages.incorrectAnswerRiddleIcon,
+      // Using failed icon
+      iconWidth: 50.w,
+      iconHeight: 50.h,
+      title: 'answerNotQuiteRight'.tr,
+      description: 'maybeNextTime'.tr,
+      buttonText: 'close'.tr,
+    );
+  }
+
   void clickOnText({required AcademyContentModel content}) async {
-    if (!(textController.text.trim().isNotEmpty)) {
+    if (textController.text.trim().isEmpty) {
       CommonSnackbar.error('please_enter_text'.tr);
       return;
     }
@@ -361,26 +466,41 @@ class AcademyController extends BaseController {
     Get.back();
 
     final user = SupabaseService.currentUser;
-    if (user == null) {
-      CommonSnackbar.error('user_not_found'.tr);
-      return;
-    }
+    if (user == null) return;
+
+    final submittedAnswer = textController.text.trim();
+    final correctAnswer = content.answer?.trim() ?? '';
+
+    final isCorrect =
+        submittedAnswer.toLowerCase() == correctAnswer.toLowerCase();
 
     final data = {
-      'solution': textController.text,
-      'assignment_id': content.assignmentId, // ✅ now guaranteed non-null
+      'solution': submittedAnswer,
+      'assignment_id': content.assignmentId,
       'user_id': user.id,
+      'is_correct': isCorrect,
+      'total_points_to_win': isCorrect ? content.pointsToEarn : 0,
     };
 
     final result = await AcademyService().assignmentSubmissions(content: data);
 
-    if (result is Success<Map<String, dynamic>>) {
+    if (result is Success) {
       clearFields();
       _updateSubmissionStatus(content.academyContentId, user.id);
-      CommonSnackbar.success('text_published_successfully'.tr);
+
+      if (isCorrect) {
+        await _awardAssignmentPoints(
+          points: content.pointsToEarn,
+          assignmentId: content.assignmentId!,
+        );
+        _showSuccessModal(content.pointsToEarn);
+      } else {
+        _showFailureModal();
+      }
+
       loadContent();
     } else {
-      CommonSnackbar.error('failed_to_publish_text'.tr);
+      CommonSnackbar.error('failed_to_submit_answer'.tr);
     }
   }
 
@@ -391,26 +511,53 @@ class AcademyController extends BaseController {
     Get.back();
 
     final user = SupabaseService.currentUser;
-    if (user == null) {
-      CommonSnackbar.error('user_not_found'.tr);
+    if (user == null) return;
+
+    final answersList = content.answers!;
+
+    /// ✅ selected option value
+    final selectedValue = answersList[selectedIndex]['option']
+        ?.toString()
+        .trim();
+
+    /// ✅ correct answer from LAST object
+    final correctAnswer = answersList.last['correct_answer']?.toString().trim();
+
+    print('SELECTED => "$selectedValue"');
+    print('CORRECT  => "$correctAnswer"');
+
+    if (selectedValue == null || correctAnswer == null) {
+      CommonSnackbar.error('invalid_mcq_data'.tr);
       return;
     }
 
-    final selectedOptionMap = content.answers?[selectedIndex];
-    final selectedOptionKey = selectedOptionMap.keys.first;
+    final isCorrect =
+        selectedValue.toLowerCase() == correctAnswer.toLowerCase();
 
     final data = {
-      'solution': selectedOptionKey, // 👈 VERY IMPORTANT
+      'solution': selectedValue, // ✅ save value
       'assignment_id': content.assignmentId,
       'user_id': user.id,
+      'is_correct': isCorrect,
+      'total_points_to_win': isCorrect ? content.pointsToEarn : 0,
     };
 
     final result = await AcademyService().assignmentSubmissions(content: data);
 
-    if (result is Success<Map<String, dynamic>>) {
+    if (result is Success) {
       clearFields();
       _updateSubmissionStatus(content.academyContentId, user.id);
-      CommonSnackbar.success('answer_submitted_successfully'.tr);
+
+      if (isCorrect) {
+        await _awardAssignmentPoints(
+          points: content.pointsToEarn,
+          assignmentId: content.assignmentId!,
+        );
+        _showSuccessModal(content.pointsToEarn);
+      } else {
+        _showFailureModal();
+      }
+
       loadContent();
     } else {
       CommonSnackbar.error('failed_to_submit_answer'.tr);
@@ -703,23 +850,29 @@ class AcademyController extends BaseController {
     final context = Get.context;
     if (context == null) return;
 
-    final event = content.eventId != null ? workshopEvents[content.eventId] : null;
+    final event = content.eventId != null
+        ? workshopEvents[content.eventId]
+        : null;
 
     /// 🔒 Zoom link guard (checks both content and associated event)
     if (content.zoomLink == null && (event == null || event.zoomLink == null)) {
       CommonSnackbar.error('content_does_not_accept_submissions'.tr);
       return;
     }
-    
+
     final user = SupabaseService.currentUser;
-    final bool isRegistered = user != null && 
+    final bool isRegistered =
+        user != null &&
         ((content.submissionUserIds?.contains(user.id) ?? false) ||
-         (content.eventId != null && registeredEventIds.contains(content.eventId!)));
+            (content.eventId != null &&
+                registeredEventIds.contains(content.eventId!)));
 
     // Format timing
     String timingString = '';
-    if (event != null && (event.zoomStartTime != null || event.zoomEndTime != null)) {
-      timingString = "${event.zoomStartTime ?? ''}${event.zoomEndTime != null ? ' - ${event.zoomEndTime}' : ''}";
+    if (event != null &&
+        (event.zoomStartTime != null || event.zoomEndTime != null)) {
+      timingString =
+          "${event.zoomStartTime ?? ''}${event.zoomEndTime != null ? ' - ${event.zoomEndTime}' : ''}";
     } else {
       timingString = content.taskEndTime ?? '';
     }
@@ -735,9 +888,11 @@ class AcademyController extends BaseController {
         title: event?.title ?? content.title,
         description: event?.description ?? content.description ?? '',
         points: "${event?.costPoints ?? content.pointsToEarn}",
-        date: event?.eventDate != null 
-            ? DateFormat('dd.MM.yyyy').format(event!.eventDate) 
-            : (content.eventDate != null ? DateFormat('dd.MM.yyyy').format(content.eventDate!) : ''),
+        date: event?.eventDate != null
+            ? DateFormat('dd.MM.yyyy').format(event!.eventDate)
+            : (content.eventDate != null
+                  ? DateFormat('dd.MM.yyyy').format(content.eventDate!)
+                  : ''),
         timing: timingString,
         mediaUrl: event?.imageUrl ?? content.mediaFileUrl,
         isVideo: false,
@@ -774,7 +929,9 @@ class AcademyController extends BaseController {
     final currentUser = _authRepo.currentUser.value;
     if (currentUser == null) return;
 
-    final event = content.eventId != null ? workshopEvents[content.eventId] : null;
+    final event = content.eventId != null
+        ? workshopEvents[content.eventId]
+        : null;
     final cost = event?.costPoints ?? content.pointsToEarn;
 
     if (currentUser.pointsBalance >= cost) {
@@ -782,7 +939,7 @@ class AcademyController extends BaseController {
     } else {
       // Close detail modal if open
       if (Get.isBottomSheetOpen ?? false) Get.back();
-      
+
       clickOnInsufficientPoints(content: content);
     }
   }
@@ -792,7 +949,9 @@ class AcademyController extends BaseController {
 
     final workshopEventId = content.eventId;
     if (workshopEventId == null) {
-      CommonSnackbar.error('This workshop does not have an associated event ID.');
+      CommonSnackbar.error(
+        'This workshop does not have an associated event ID.',
+      );
       return;
     }
 
@@ -805,7 +964,9 @@ class AcademyController extends BaseController {
       final currentUser = _authRepo.currentUser.value;
       if (currentUser == null) return;
 
-      final event = content.eventId != null ? workshopEvents[content.eventId] : null;
+      final event = content.eventId != null
+          ? workshopEvents[content.eventId]
+          : null;
       final cost = event?.costPoints ?? content.pointsToEarn;
       final balanceAfter = currentUser.pointsBalance - cost;
 
@@ -838,7 +999,7 @@ class AcademyController extends BaseController {
           })
           .select('id')
           .single();
-      
+
       final registrationId = registrationResponse['id'] as String;
 
       // 2. Create Points Transaction
@@ -847,7 +1008,8 @@ class AcademyController extends BaseController {
         'transaction_type': 'spent',
         'amount': -cost,
         'balance_after': balanceAfter,
-        'description': 'Workshop Registration: ${event?.title ?? content.title}',
+        'description':
+            'Workshop Registration: ${event?.title ?? content.title}',
         'related_entity_type': 'event_registration',
         'related_entity_id': registrationId,
       });
