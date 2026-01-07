@@ -162,7 +162,7 @@ class VerificationCodeByLoginView
                                   TextSpan(
                                     children: [
                                       TextSpan(
-                                        text: 'otp_sent'.tr + ' ',
+                                        text: '${'otp_sent'.tr} ',
                                         style: TextStyle(
                                           fontWeight: FontWeight.w400,
                                           fontSize: 12.sp,

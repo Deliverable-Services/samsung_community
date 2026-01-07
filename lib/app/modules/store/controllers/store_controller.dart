@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 import '../../../common/services/supabase_service.dart';
@@ -114,7 +113,9 @@ class StoreController extends GetxController {
       final productsData = response as List<dynamic>;
 
       final newProducts = productsData
-          .map((json) => StoreProductModel.fromJson(json as Map<String, dynamic>))
+          .map(
+            (json) => StoreProductModel.fromJson(json as Map<String, dynamic>),
+          )
           .toList();
 
       if (loadMore) {
@@ -136,7 +137,6 @@ class StoreController extends GetxController {
       isLoadingMore.value = false;
     }
   }
-
 
   Future<void> loadMyPurchases() async {
     isLoadingProducts.value = true;
@@ -228,10 +228,10 @@ class StoreController extends GetxController {
     required String phone,
   }) async {
     if (isCreatingOrder.value) return false;
-    
+
     try {
       isCreatingOrder.value = true;
-      
+
       final currentUserId = SupabaseService.currentUser?.id;
       if (currentUserId == null) {
         CommonSnackbar.error('User not authenticated');

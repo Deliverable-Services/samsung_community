@@ -1,4 +1,5 @@
 /// Academy Content Model based on Supabase schema
+library;
 
 enum AcademyFileType {
   video,
@@ -116,4 +117,3 @@ class AcademyContentModel {
     );
   }
 }
-

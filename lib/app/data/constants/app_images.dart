@@ -1,6 +1,6 @@
 class AppImages {
   static const String baseUrl = 'asset/images',
-      logo = '$baseUrl/logo.svg',
+      logo = '$baseUrl/Logo.svg',
       imageSplash = '$baseUrl/imageSplash.png',
       imageOnBoarding = '$baseUrl/imageOnBoarding.png',
       backArrow = '$baseUrl/Path.png',

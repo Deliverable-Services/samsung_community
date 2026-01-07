@@ -73,11 +73,6 @@ class ProfileController extends BaseController {
     await _profileService.refreshProfileData();
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
   Future<void> loadUserProfile() async {
     await _profileService.loadUserProfile();
   }
@@ -460,7 +455,7 @@ class ProfileController extends BaseController {
       await _profileService.refreshProfileData();
     } catch (e) {
       debugPrint('Error updating user profile picture: $e');
-      throw e;
+      rethrow;
     }
   }
 }

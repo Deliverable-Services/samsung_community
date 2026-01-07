@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -302,7 +301,9 @@ class FollowersFollowingController extends BaseController {
       await SupabaseService.client
           .from('user_follows')
           .update({'deleted_at': now})
-          .or('and(follower_id.eq.${currentUser.id},following_id.eq.$userId),and(follower_id.eq.$userId,following_id.eq.${currentUser.id})');
+          .or(
+            'and(follower_id.eq.${currentUser.id},following_id.eq.$userId),and(follower_id.eq.$userId,following_id.eq.${currentUser.id})',
+          );
 
       // Remove from followers/following lists locally
       followers.removeWhere((u) => u.id == userId);
@@ -332,10 +333,7 @@ class FollowersFollowingController extends BaseController {
       if (conversationId != null) {
         Get.toNamed(
           Routes.CHAT_SCREEN,
-          arguments: {
-            'conversationId': conversationId,
-            'userId': otherUserId,
-          },
+          arguments: {'conversationId': conversationId, 'userId': otherUserId},
         );
       } else {
         CommonSnackbar.error('failed_to_create_conversation'.tr);

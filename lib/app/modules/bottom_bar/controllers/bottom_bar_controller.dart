@@ -40,7 +40,7 @@ class BottomBarController extends GetxController {
       isSamsungDevice.value = isSamsung;
       isCheckingDevice.value = false;
       update(); // Force update to ensure all reactive widgets rebuild
-    } catch (e, stackTrace) {
+    } catch (e) {
       // On error, assume not Samsung and stop checking
       isSamsungDevice.value = false;
       isCheckingDevice.value = false;
@@ -55,11 +55,6 @@ class BottomBarController extends GetxController {
   void onReady() {
     super.onReady();
     _loadPointsBalance();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
   }
 
   void increment() => count.value++;

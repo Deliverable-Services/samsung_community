@@ -1,5 +1,6 @@
 /// Comment Model based on Supabase schema
 /// Represents comments on content
+library;
 
 class CommentModel {
   final String id;
@@ -66,4 +67,3 @@ class CommentModel {
     );
   }
 }
-

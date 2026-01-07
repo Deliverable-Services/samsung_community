@@ -241,7 +241,6 @@ class _ReusableFormState extends State<ReusableForm> {
               onSurface: Colors.black87,
               surface: Colors.white,
             ),
-            dialogBackgroundColor: Colors.white,
             textTheme: const TextTheme(
               bodyLarge: TextStyle(color: Colors.black87),
               bodyMedium: TextStyle(color: Colors.black87),
@@ -255,6 +254,7 @@ class _ReusableFormState extends State<ReusableForm> {
               weekdayStyle: const TextStyle(color: Colors.black87),
               yearStyle: const TextStyle(color: Colors.black87),
             ),
+            dialogTheme: DialogThemeData(backgroundColor: Colors.white),
           ),
           child: child!,
         );

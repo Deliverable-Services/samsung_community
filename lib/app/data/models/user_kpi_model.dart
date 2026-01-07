@@ -1,4 +1,5 @@
 /// User KPI Model based on Supabase schema
+library;
 
 class UserKpiModel {
   final String userId;
@@ -51,4 +52,3 @@ class UserKpiModel {
     );
   }
 }
-

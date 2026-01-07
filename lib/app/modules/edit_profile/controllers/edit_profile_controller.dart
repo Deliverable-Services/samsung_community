@@ -152,9 +152,13 @@ class EditProfileController extends BaseController {
       if (_pendingChanges.containsKey('socialMedia')) {
         final socialMedia = _pendingChanges['socialMedia'] as String?;
         if (socialMedia != null && socialMedia.isNotEmpty) {
-          final urls = socialMedia.split(',').map((url) => url.trim()).where((url) => url.isNotEmpty).toList();
+          final urls = socialMedia
+              .split(',')
+              .map((url) => url.trim())
+              .where((url) => url.isNotEmpty)
+              .toList();
           final List<String> errors = [];
-          
+
           for (var url in urls) {
             if (!_isValidUrl(url)) {
               errors.add('Invalid URL: $url');
@@ -165,7 +169,7 @@ class EditProfileController extends BaseController {
               errors.add('Unsupported platform: $url');
             }
           }
-          
+
           if (errors.isNotEmpty) {
             CommonSnackbar.error(errors.join(', '));
             isSaving.value = false;
@@ -216,20 +220,24 @@ class EditProfileController extends BaseController {
         final socialMedia = profileData['socialMedia'] as String?;
         if (socialMedia != null && socialMedia.isNotEmpty) {
           // Parse comma-separated URLs (already validated above)
-          final urls = socialMedia.split(',').map((url) => url.trim()).where((url) => url.isNotEmpty).toList();
+          final urls = socialMedia
+              .split(',')
+              .map((url) => url.trim())
+              .where((url) => url.isNotEmpty)
+              .toList();
           final socialMediaMap = <String, String>{};
-          
+
           for (var url in urls) {
             final platform = _parseSocialMediaPlatform(url);
             if (platform != null) {
               // Use platform as key, or add index if platform already exists
-              final key = socialMediaMap.containsKey(platform) 
+              final key = socialMediaMap.containsKey(platform)
                   ? '${platform}_${socialMediaMap.length}'
                   : platform;
               socialMediaMap[key] = url;
             }
           }
-          
+
           if (socialMediaMap.isNotEmpty) {
             updateData['social_media_links'] = socialMediaMap;
           }
@@ -429,7 +437,7 @@ class EditProfileController extends BaseController {
       await _authRepo.loadCurrentUser();
     } catch (e) {
       debugPrint('Error updating user profile picture: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -450,7 +458,8 @@ class EditProfileController extends BaseController {
       return 'instagram';
     } else if (cleanHost.contains('facebook.com')) {
       return 'facebook';
-    } else if (cleanHost.contains('twitter.com') || cleanHost.contains('x.com')) {
+    } else if (cleanHost.contains('twitter.com') ||
+        cleanHost.contains('x.com')) {
       return 'twitter';
     } else if (cleanHost.contains('linkedin.com')) {
       return 'linkedin';

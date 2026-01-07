@@ -34,5 +34,5 @@ class GetPrefs {
   static Map<String, dynamic> getMap(String key) =>
       _getStorage.read(key) ?? <String, dynamic>{};
 
-  static remove(String key) => _getStorage.remove(key);
+  static Future<void> remove(String key) => _getStorage.remove(key);
 }

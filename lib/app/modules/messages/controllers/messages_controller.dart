@@ -45,18 +45,13 @@ class MessagesController extends GetxController {
     _setupRealtimeSubscription();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
   void refreshConversations() {
     loadConversations();
   }
 
   Future<void> _getCurrentUserId() async {
     try {
-      final user = await SupabaseService.client.auth.currentUser;
+      final user = SupabaseService.client.auth.currentUser;
       if (user != null) {
         final userData = await SupabaseService.client
             .from('users')
@@ -78,15 +73,17 @@ class MessagesController extends GetxController {
 
     try {
       isLoading.value = true;
-      
+
       final participantsResponse = await SupabaseService.client
           .from('conversation_participants')
-          .select('conversation_id, last_read_at, conversations!inner(id, last_message_at)')
+          .select(
+            'conversation_id, last_read_at, conversations!inner(id, last_message_at)',
+          )
           .eq('user_id', currentUserId.value)
           .isFilter('deleted_at', null);
 
       final participants = participantsResponse as List;
-      
+
       if (participants.isEmpty) {
         conversations.value = [];
         return;
@@ -110,7 +107,7 @@ class MessagesController extends GetxController {
         final conv = participant['conversations'] as Map<String, dynamic>?;
         if (conv == null) continue;
         final convId = conv['id'] as String;
-        
+
         final otherParticipant = await SupabaseService.client
             .from('conversation_participants')
             .select('user_id')
@@ -127,7 +124,7 @@ class MessagesController extends GetxController {
 
         if (otherParticipant != null) {
           otherUserId = otherParticipant['user_id'] as String?;
-          
+
           if (otherUserId != null) {
             final userData = await SupabaseService.client
                 .from('users')
@@ -135,7 +132,7 @@ class MessagesController extends GetxController {
                 .eq('id', otherUserId)
                 .isFilter('deleted_at', null)
                 .maybeSingle();
-            
+
             if (userData != null) {
               otherUserName = userData['full_name'] as String?;
               otherUserAvatar = userData['profile_picture_url'] as String?;
@@ -176,17 +173,19 @@ class MessagesController extends GetxController {
           unreadCount = (unreadResponse as List).length;
         }
 
-        loadedConversations.add(ConversationItem(
-          conversationId: convId,
-          otherUserId: otherUserId,
-          otherUserName: otherUserName ?? 'user'.tr,
-          otherUserAvatar: otherUserAvatar,
-          lastMessage: lastMessage,
-          lastMessageAt: conv['last_message_at'] != null
-              ? DateTime.parse(conv['last_message_at'] as String)
-              : null,
-          unreadCount: unreadCount,
-        ));
+        loadedConversations.add(
+          ConversationItem(
+            conversationId: convId,
+            otherUserId: otherUserId,
+            otherUserName: otherUserName ?? 'user'.tr,
+            otherUserAvatar: otherUserAvatar,
+            lastMessage: lastMessage,
+            lastMessageAt: conv['last_message_at'] != null
+                ? DateTime.parse(conv['last_message_at'] as String)
+                : null,
+            unreadCount: unreadCount,
+          ),
+        );
       }
 
       conversations.value = loadedConversations;

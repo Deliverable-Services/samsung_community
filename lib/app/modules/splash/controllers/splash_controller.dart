@@ -1,14 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'package:samsung_community_mobile/app/routes/app_pages.dart';
+import 'package:samsung_community_mobile/app/modules/on_boarding/bindings/on_boarding_binding.dart';
+import 'package:samsung_community_mobile/app/modules/on_boarding/views/on_boarding_view.dart';
 
-import '../../../../main.dart';
 import '../../../repository/auth_repo/auth_repo.dart';
 import '../../bottom_bar/bindings/bottom_bar_binding.dart';
 import '../../bottom_bar/views/bottom_bar_view.dart';
-import '../../login/bindings/login_binding.dart';
-import '../../login/views/login_view.dart';
 
 class SplashController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -51,8 +49,8 @@ class SplashController extends GetxController
         );
       } else {
         Get.offAll(
-          () => const LoginView(),
-          binding: LoginBinding(),
+          () => const OnBoardingView(),
+          binding: OnBoardingBinding(),
           transition: Transition.fadeIn,
           duration: const Duration(milliseconds: 1000),
         );
@@ -60,16 +58,11 @@ class SplashController extends GetxController
     } catch (e) {
       // If AuthRepo is not found, default to welcome screen
       Get.offAll(
-        () => const LoginView(),
-        binding: LoginBinding(),
+        () => const OnBoardingView(),
+        binding: OnBoardingBinding(),
         transition: Transition.fadeIn,
         duration: const Duration(milliseconds: 1000),
       );
     }
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
   }
 }

@@ -10,7 +10,6 @@ import 'package:image_picker/image_picker.dart';
 import '../../../common/services/content_service.dart';
 import '../../../common/services/event_service.dart';
 import '../../../common/services/storage_service.dart';
-import '../../../common/services/storage_service.dart' show MediaType;
 import '../../../common/services/supabase_service.dart';
 import '../../../common/services/weekly_riddle_service.dart';
 import '../../../data/core/utils/common_snackbar.dart';

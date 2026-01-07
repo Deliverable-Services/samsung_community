@@ -78,7 +78,6 @@ class PersonalDetailsController extends GetxController {
               onSurface: Colors.black87,
               surface: Colors.white,
             ),
-            dialogBackgroundColor: Colors.white,
             textTheme: const TextTheme(
               bodyLarge: TextStyle(color: Colors.black87),
               bodyMedium: TextStyle(color: Colors.black87),
@@ -92,6 +91,7 @@ class PersonalDetailsController extends GetxController {
               weekdayStyle: const TextStyle(color: Colors.black87),
               yearStyle: const TextStyle(color: Colors.black87),
             ),
+            dialogTheme: DialogThemeData(backgroundColor: Colors.white),
           ),
           child: child!,
         );
@@ -112,16 +112,6 @@ class PersonalDetailsController extends GetxController {
       final day = picked.day.toString().padLeft(2, '0');
       birthdayController.text = '$year-$month-$day';
     }
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
   }
 
   void increment() => count.value++;

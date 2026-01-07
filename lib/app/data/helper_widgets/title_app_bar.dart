@@ -12,7 +12,7 @@ class TitleAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
   final Widget? leadingWidget;
 
-  TitleAppBar({
+  const TitleAppBar({
     super.key,
     required this.text,
     this.onTap,

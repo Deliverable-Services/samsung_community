@@ -14,7 +14,6 @@ import '../../../data/helper_widgets/event_launch_card.dart';
 import '../../../data/helper_widgets/filter_component.dart';
 import '../../../data/models/academy_content_model.dart';
 import '../../../data/models/weekly_riddle_model.dart';
-import '../../../data/models/event_model.dart';
 import '../controllers/academy_controller.dart';
 import 'assignment_card.dart';
 
@@ -272,9 +271,11 @@ class AcademyView extends GetView<AcademyController> {
 
   Widget _buildContentCard(AcademyContentModel content) {
     final currentUserId = SupabaseService.currentUser?.id;
-    final isSubmitted = currentUserId != null &&
+    final isSubmitted =
+        currentUserId != null &&
         ((content.submissionUserIds?.contains(currentUserId) ?? false) ||
-         (content.eventId != null && controller.registeredEventIds.contains(content.eventId!)));
+            (content.eventId != null &&
+                controller.registeredEventIds.contains(content.eventId!)));
     final isAssignment = content.fileType == AcademyFileType.assignment;
 
     final isVideo = content.fileType == AcademyFileType.video;
@@ -282,8 +283,8 @@ class AcademyView extends GetView<AcademyController> {
     final mediaUrl = content.mediaFileUrl;
     final hasMedia = mediaUrl != null && mediaUrl.isNotEmpty;
 
-    final event = isZoomWorkshop && content.eventId != null 
-        ? controller.workshopEvents[content.eventId] 
+    final event = isZoomWorkshop && content.eventId != null
+        ? controller.workshopEvents[content.eventId]
         : null;
 
     if (isZoomWorkshop) {

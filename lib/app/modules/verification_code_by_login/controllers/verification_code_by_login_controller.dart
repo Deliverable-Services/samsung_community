@@ -49,8 +49,9 @@ class VerificationCodeByLoginController extends GetxController {
 
   Future<void> handleResendCode() async {
     if (phoneNumber.value.isEmpty) return;
-    if (resendCountdown.value > 0)
+    if (resendCountdown.value > 0) {
       return; // Don't allow resend if timer is active
+    }
 
     isResending.value = true;
 
@@ -261,16 +262,6 @@ class VerificationCodeByLoginController extends GetxController {
     phoneNumber.value = (parameters?['phoneNumber'] as String?) ?? '';
     // Start countdown timer when screen loads
     startResendTimer();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
   }
 
   void increment() => count.value++;

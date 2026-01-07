@@ -1,4 +1,5 @@
 /// Event Model based on Supabase schema
+library;
 
 enum EventType {
   workshop,
@@ -139,4 +140,3 @@ class EventModel {
     );
   }
 }
-

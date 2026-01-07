@@ -1,4 +1,5 @@
 /// Notification Model based on Supabase schema
+library;
 
 enum NotificationType {
   like,
@@ -96,4 +97,3 @@ class NotificationModel {
     );
   }
 }
-

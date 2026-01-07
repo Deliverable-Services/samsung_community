@@ -122,7 +122,7 @@ class FeedController extends BaseController {
           SizedBox(height: 16.h),
 
           /// CONTENT
-          Container(
+          SizedBox(
             height: Get.height * .6,
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -295,7 +295,10 @@ class FeedController extends BaseController {
               ),
               TextButton(
                 onPressed: () => Get.back(),
-                child: Text('cancel'.tr, style: TextStyle(color: AppColors.white)),
+                child: Text(
+                  'cancel'.tr,
+                  style: TextStyle(color: AppColors.white),
+                ),
               ),
             ],
           ),

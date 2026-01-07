@@ -63,7 +63,7 @@ class VideoPlayerPlayButton extends StatelessWidget {
     return Center(
       child: GestureDetector(
         onTap: showLoading ? null : onTap,
-        child: Container(
+        child: SizedBox(
           width: 80.w,
           height: 80.h,
           child: Center(

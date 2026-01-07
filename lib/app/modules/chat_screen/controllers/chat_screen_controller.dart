@@ -25,7 +25,7 @@ class ChatMessage {
 
 class ChatScreenController extends GetxController {
   final TextEditingController messageController = TextEditingController();
-  
+
   final Rx<UserModel?> otherUser = Rx<UserModel?>(null);
   final RxList<ChatMessage> messages = <ChatMessage>[].obs;
   final RxBool isLoading = false.obs;
@@ -58,7 +58,7 @@ class ChatScreenController extends GetxController {
 
   Future<void> _getCurrentUserId() async {
     try {
-      final user = await SupabaseService.client.auth.currentUser;
+      final user = SupabaseService.client.auth.currentUser;
       if (user != null) {
         final userData = await SupabaseService.client
             .from('users')
@@ -82,7 +82,7 @@ class ChatScreenController extends GetxController {
           .eq('id', userId)
           .isFilter('deleted_at', null)
           .single();
-      
+
       otherUser.value = UserModel.fromJson(response);
       await _checkBlockStatus(userId);
     } catch (e) {
@@ -97,7 +97,7 @@ class ChatScreenController extends GetxController {
       if (currentUserId.value.isEmpty) {
         await _getCurrentUserId();
       }
-      
+
       final response = await SupabaseService.client
           .from('user_blocks')
           .select()
@@ -105,7 +105,7 @@ class ChatScreenController extends GetxController {
           .eq('blocked_id', userId)
           .isFilter('deleted_at', null)
           .maybeSingle();
-      
+
       isBlocked.value = response != null;
     } catch (e) {
       print('Error checking block status: $e');
@@ -117,16 +117,18 @@ class ChatScreenController extends GetxController {
     if (currentUserId.value.isEmpty) {
       await _getCurrentUserId();
     }
-    
+
     try {
       isLoading.value = true;
       final response = await SupabaseService.client
           .from('conversation_messages')
-          .select('*, sender:users!conversation_messages_sender_id_fkey(id, full_name, profile_picture_url)')
+          .select(
+            '*, sender:users!conversation_messages_sender_id_fkey(id, full_name, profile_picture_url)',
+          )
           .eq('conversation_id', conversationId.value)
           .isFilter('deleted_at', null)
           .order('created_at', ascending: true);
-      
+
       messages.value = (response as List).map((msg) {
         final senderId = msg['sender_id'] as String;
         return ChatMessage(
@@ -150,14 +152,12 @@ class ChatScreenController extends GetxController {
 
     try {
       isSending.value = true;
-      await SupabaseService.client
-          .from('conversation_messages')
-          .insert({
-            'conversation_id': conversationId.value,
-            'sender_id': currentUserId.value,
-            'content': text,
-          });
-      
+      await SupabaseService.client.from('conversation_messages').insert({
+        'conversation_id': conversationId.value,
+        'sender_id': currentUserId.value,
+        'content': text,
+      });
+
       messageController.clear();
       await loadMessages();
       markAsRead();
@@ -170,23 +170,25 @@ class ChatScreenController extends GetxController {
 
   Future<void> markAsRead() async {
     if (conversationId.value.isEmpty || currentUserId.value.isEmpty) {
-      print('Cannot mark as read: conversationId=${conversationId.value}, currentUserId=${currentUserId.value}');
+      print(
+        'Cannot mark as read: conversationId=${conversationId.value}, currentUserId=${currentUserId.value}',
+      );
       return;
     }
 
     try {
       final now = DateTime.now().toIso8601String();
-      print('Marking messages as read: conversationId=${conversationId.value}, userId=${currentUserId.value}, time=$now');
-      
+      print(
+        'Marking messages as read: conversationId=${conversationId.value}, userId=${currentUserId.value}, time=$now',
+      );
+
       final result = await SupabaseService.client
           .from('conversation_participants')
-          .update({
-            'last_read_at': now,
-          })
+          .update({'last_read_at': now})
           .eq('conversation_id', conversationId.value)
           .eq('user_id', currentUserId.value)
           .select();
-      
+
       print('Mark as read result: $result');
     } catch (e) {
       print('Error marking messages as read: $e');
@@ -213,7 +215,7 @@ class ChatScreenController extends GetxController {
 
   Future<void> blockUser() async {
     if (otherUser.value == null || currentUserId.value.isEmpty) return;
-    
+
     try {
       final now = DateTime.now().toUtc().toIso8601String();
 
@@ -228,7 +230,9 @@ class ChatScreenController extends GetxController {
       await SupabaseService.client
           .from('user_follows')
           .update({'deleted_at': now})
-          .or('and(follower_id.eq.${currentUserId.value},following_id.eq.${otherUser.value!.id}),and(follower_id.eq.${otherUser.value!.id},following_id.eq.${currentUserId.value})');
+          .or(
+            'and(follower_id.eq.${currentUserId.value},following_id.eq.${otherUser.value!.id}),and(follower_id.eq.${otherUser.value!.id},following_id.eq.${currentUserId.value})',
+          );
 
       isBlocked.value = true;
       CommonSnackbar.success('user_blocked_successfully'.tr);
@@ -240,14 +244,14 @@ class ChatScreenController extends GetxController {
 
   Future<void> unblockUser() async {
     if (otherUser.value == null || currentUserId.value.isEmpty) return;
-    
+
     try {
       await SupabaseService.client
           .from('user_blocks')
           .delete()
           .eq('blocker_id', currentUserId.value)
           .eq('blocked_id', otherUser.value!.id);
-      
+
       isBlocked.value = false;
       CommonSnackbar.success('user_unblocked_successfully'.tr);
     } catch (e) {

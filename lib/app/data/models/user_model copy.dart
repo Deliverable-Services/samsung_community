@@ -2,6 +2,7 @@
 ///
 /// This model represents the users table in the Supabase database.
 /// It includes all fields and helper methods for OTP-based authentication.
+library;
 
 /// User status enum matching database enum
 enum UserStatus {

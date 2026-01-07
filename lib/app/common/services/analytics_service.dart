@@ -134,9 +134,9 @@ class AnalyticsService {
     Map<String, dynamic>? parameters,
   }) async {
     try {
-      final convertedParams = parameters != null
-          ? parameters.map((key, value) => MapEntry(key, value as Object))
-          : null;
+      final convertedParams = parameters?.map(
+        (key, value) => MapEntry(key, value as Object),
+      );
       await _analytics.logEvent(name: eventName, parameters: convertedParams);
       if (kDebugMode) {
         debugPrint('Analytics: Event logged - $eventName');

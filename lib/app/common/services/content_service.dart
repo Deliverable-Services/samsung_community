@@ -118,8 +118,9 @@ class ContentService {
       if (description != null) updates['description'] = description;
       if (isPublished != null) updates['is_published'] = isPublished;
       if (isFeatured != null) updates['is_featured'] = isFeatured;
-      if (externalSharePlatforms != null)
+      if (externalSharePlatforms != null) {
         updates['external_share_platforms'] = externalSharePlatforms;
+      }
 
       if (updates.isEmpty) {
         return const Success(null); // nothing to update

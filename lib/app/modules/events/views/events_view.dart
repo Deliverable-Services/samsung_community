@@ -118,7 +118,7 @@ class EventsView extends GetView<EventsController> {
                   SizedBox(height: 16.h),
                 ],
               );
-            }).toList(),
+            }),
             if (controller.isLoadingAllEvents.value &&
                 controller.allEventsList.isNotEmpty)
               const Padding(
@@ -188,7 +188,7 @@ class EventsView extends GetView<EventsController> {
                   SizedBox(height: 16.h),
                 ],
               );
-            }).toList(),
+            }),
             if (controller.isLoadingMyEvents.value &&
                 controller.myEventsList.isNotEmpty)
               const Padding(

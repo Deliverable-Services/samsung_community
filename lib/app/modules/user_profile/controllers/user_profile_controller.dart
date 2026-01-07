@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -40,9 +39,8 @@ class UserProfileController extends GetxController {
   UserProfileController({
     ContentService? contentService,
     ContentInteractionService? interactionService,
-  })  : _contentService = contentService ?? ContentService(),
-        _interactionService =
-            interactionService ?? ContentInteractionService();
+  }) : _contentService = contentService ?? ContentService(),
+       _interactionService = interactionService ?? ContentInteractionService();
 
   @override
   void onInit() {
@@ -93,7 +91,9 @@ class UserProfileController extends GetxController {
       );
       if (postsResult.isSuccess) {
         final allPosts = postsResult.dataOrNull ?? [];
-        postsCount.value = allPosts.where((p) => p.userId == targetUserId).length;
+        postsCount.value = allPosts
+            .where((p) => p.userId == targetUserId)
+            .length;
       }
 
       final followersResult = await SupabaseService.client
@@ -224,7 +224,9 @@ class UserProfileController extends GetxController {
             .eq('follower_id', currentUserId)
             .eq('following_id', targetUserId);
         isFollowing.value = false;
-        followersCount.value = (followersCount.value - 1).clamp(0, 1 << 31).toInt();
+        followersCount.value = (followersCount.value - 1)
+            .clamp(0, 1 << 31)
+            .toInt();
       } else {
         await SupabaseService.client.from('user_follows').insert({
           'follower_id': currentUserId,
@@ -242,7 +244,7 @@ class UserProfileController extends GetxController {
   Future<void> blockUser() async {
     final currentUserId = SupabaseService.currentUser?.id;
     if (currentUserId == null || targetUserId.isEmpty) return;
-    
+
     try {
       final now = DateTime.now().toUtc().toIso8601String();
 
@@ -257,7 +259,9 @@ class UserProfileController extends GetxController {
       await SupabaseService.client
           .from('user_follows')
           .update({'deleted_at': now})
-          .or('and(follower_id.eq.$currentUserId,following_id.eq.$targetUserId),and(follower_id.eq.$targetUserId,following_id.eq.$currentUserId)');
+          .or(
+            'and(follower_id.eq.$currentUserId,following_id.eq.$targetUserId),and(follower_id.eq.$targetUserId,following_id.eq.$currentUserId)',
+          );
 
       CommonSnackbar.success('user_blocked_successfully'.tr);
       Get.back(); // Go back from profile
@@ -308,14 +312,18 @@ class UserProfileController extends GetxController {
             .isFilter('deleted_at', null)
             .maybeSingle()
             .then((userResponse) {
-          if (userResponse != null) {
-            final convertedUser = UserModel.fromJson(userResponse);
-            final updatedList = <UserModel>[convertedUser, ...existingLikedBy];
-            likedByUsersMap[contentId] = updatedList.take(3).toList();
-          }
-        }).catchError((e) {
-          debugPrint('Error getting current user for likedBy: $e');
-        });
+              if (userResponse != null) {
+                final convertedUser = UserModel.fromJson(userResponse);
+                final updatedList = <UserModel>[
+                  convertedUser,
+                  ...existingLikedBy,
+                ];
+                likedByUsersMap[contentId] = updatedList.take(3).toList();
+              }
+            })
+            .catchError((e) {
+              debugPrint('Error getting current user for likedBy: $e');
+            });
       }
     } else {
       final existingLikedBy = likedByUsersMap[contentId] ?? [];
@@ -326,53 +334,53 @@ class UserProfileController extends GetxController {
 
     // Run API call in background
     _interactionService
-        .toggleLike(
-        contentId: contentId,
-        userId: currentUserId,
-    )
+        .toggleLike(contentId: contentId, userId: currentUserId)
         .then((result) async {
-      if (result.isSuccess) {
-        final serverIsLiked = result.dataOrNull ?? false;
-        likedStatusMap[contentId] = serverIsLiked;
+          if (result.isSuccess) {
+            final serverIsLiked = result.dataOrNull ?? false;
+            likedStatusMap[contentId] = serverIsLiked;
 
-        final updatedPost = postsList.firstWhereOrNull((p) => p.id == contentId);
-        if (updatedPost != null) {
-          final postIndex = postsList.indexOf(updatedPost);
-          postsList[postIndex] = updatedPost.copyWith(
-            likesCount: serverIsLiked
-                ? updatedPost.likesCount + (newIsLiked ? 0 : 1)
-                : (updatedPost.likesCount > 0
-                    ? updatedPost.likesCount - (newIsLiked ? 1 : 0)
-                    : 0),
-          );
+            final updatedPost = postsList.firstWhereOrNull(
+              (p) => p.id == contentId,
+            );
+            if (updatedPost != null) {
+              final postIndex = postsList.indexOf(updatedPost);
+              postsList[postIndex] = updatedPost.copyWith(
+                likesCount: serverIsLiked
+                    ? updatedPost.likesCount + (newIsLiked ? 0 : 1)
+                    : (updatedPost.likesCount > 0
+                          ? updatedPost.likesCount - (newIsLiked ? 1 : 0)
+                          : 0),
+              );
 
-          if (serverIsLiked) {
-            await _loadLikedByUsers([postsList[postIndex]]);
+              if (serverIsLiked) {
+                await _loadLikedByUsers([postsList[postIndex]]);
+              } else {
+                final existingLikedBy = likedByUsersMap[contentId] ?? [];
+                likedByUsersMap[contentId] = existingLikedBy
+                    .where((u) => u.id != currentUserId)
+                    .toList();
+              }
+            }
           } else {
-            final existingLikedBy = likedByUsersMap[contentId] ?? [];
-            likedByUsersMap[contentId] = existingLikedBy
-                .where((u) => u.id != currentUserId)
-                .toList();
+            // Revert on error
+            likedStatusMap[contentId] = previousIsLiked;
+            if (index < postsList.length) {
+              postsList[index] = post.copyWith(likesCount: previousLikesCount);
+            }
+            likedByUsersMap[contentId] = previousLikedByUsers;
+            _showError(result.errorOrNull ?? 'failed_to_like_content'.tr);
           }
-        }
-      } else {
-        // Revert on error
-        likedStatusMap[contentId] = previousIsLiked;
-        if (index < postsList.length) {
-          postsList[index] = post.copyWith(likesCount: previousLikesCount);
-        }
-        likedByUsersMap[contentId] = previousLikedByUsers;
-        _showError(result.errorOrNull ?? 'failed_to_like_content'.tr);
-      }
-    }).catchError((error) {
-      // Revert on exception
-      likedStatusMap[contentId] = previousIsLiked;
-      if (index < postsList.length) {
-        postsList[index] = post.copyWith(likesCount: previousLikesCount);
-      }
-      likedByUsersMap[contentId] = previousLikedByUsers;
-      _showError('somethingWentWrong'.tr);
-    });
+        })
+        .catchError((error) {
+          // Revert on exception
+          likedStatusMap[contentId] = previousIsLiked;
+          if (index < postsList.length) {
+            postsList[index] = post.copyWith(likesCount: previousLikesCount);
+          }
+          likedByUsersMap[contentId] = previousLikedByUsers;
+          _showError('somethingWentWrong'.tr);
+        });
   }
 
   Future<void> addComment(String contentId, String commentText) async {
@@ -398,8 +406,9 @@ class UserProfileController extends GetxController {
         final post = postsList.firstWhereOrNull((p) => p.id == contentId);
         if (post != null) {
           final index = postsList.indexOf(post);
-          postsList[index] =
-              post.copyWith(commentsCount: post.commentsCount + 1);
+          postsList[index] = post.copyWith(
+            commentsCount: post.commentsCount + 1,
+          );
         }
 
         CommonSnackbar.success('comment_added_successfully'.tr);
@@ -545,10 +554,7 @@ class UserProfileController extends GetxController {
       if (conversationId != null) {
         Get.toNamed(
           Routes.CHAT_SCREEN,
-          arguments: {
-            'conversationId': conversationId,
-            'userId': targetUserId,
-          },
+          arguments: {'conversationId': conversationId, 'userId': targetUserId},
         );
       } else {
         _showError('failed_to_create_conversation'.tr);

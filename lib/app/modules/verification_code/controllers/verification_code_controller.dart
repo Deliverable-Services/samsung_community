@@ -49,16 +49,6 @@ class VerificationCodeController extends GetxController {
     startResendTimer();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
   void increment() => count.value++;
 
   void startResendTimer() {

@@ -1,4 +1,5 @@
 /// Store Product Model based on Supabase schema
+library;
 
 class StoreProductModel {
   final String id;
@@ -87,4 +88,3 @@ class StoreProductModel {
     );
   }
 }
-
