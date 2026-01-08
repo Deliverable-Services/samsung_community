@@ -25,7 +25,6 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.10" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/video_player-2.10.1" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/file_selector_linux-0.9.4" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/video_player_android-2.9.0" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_macos-3.2.5" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_messaging_web-3.10.10" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.23.5" />
@@ -59,6 +58,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences-2.5.4" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_local_notifications_windows-1.0.3" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_android-2.2.22" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/video_player_android-2.9.1" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
