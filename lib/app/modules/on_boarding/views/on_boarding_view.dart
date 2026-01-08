@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../common/services/analytics_service.dart';
 import '../../../data/constants/app_button.dart';
@@ -69,6 +70,11 @@ class OnBoardingView extends GetView<OnBoardingController> {
                         ),
                       ),
                       SizedBox(height: 90.h),
+                      AppButton(
+                        onTap: () =>controller.clickOnSignUpWithGoogleButton(),
+                        text: 'signUpWithGoogle'.tr,
+                      ),
+                      SizedBox(height: 30.h),
                       AppButton(
                         onTap: () {
                           // Log button click event

@@ -9,6 +9,7 @@ import '../../../common/services/analytics_service.dart';
 import '../../../common/services/storage_service.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/core/utils/common_snackbar.dart';
+import '../../on_boarding/controllers/on_boarding_controller.dart';
 
 class PersonalDetailsController extends GetxController {
   //TODO: Implement PersonalDetailsController
@@ -38,7 +39,8 @@ class PersonalDetailsController extends GetxController {
     if (phoneNumber.value.isEmpty) {
       phoneNumber.value = (parameters?['phoneNumber'] as String?) ?? '';
     }
-
+    fullNameController.text = userData['name'];
+    emailController.text = userData['email'];
     // Birthday field should remain empty - user must select a date
   }
 
