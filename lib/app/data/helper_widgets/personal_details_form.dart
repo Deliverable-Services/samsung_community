@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:samsung_community_mobile/app/modules/on_boarding/controllers/on_boarding_controller.dart';
 
 import 'reusable_form.dart';
 
@@ -85,6 +86,7 @@ class PersonalDetailsForm extends StatelessWidget {
         label: 'emailAddress'.tr,
         placeholder: 'type'.tr,
         textController: emailController,
+        readOnly: userData['email']!=null,
         validator: (value) {
           if (value == null || value.trim().isEmpty) {
             return 'emailAddress'.tr + ' is_required'.tr;

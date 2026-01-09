@@ -71,19 +71,18 @@ class OnBoardingView extends GetView<OnBoardingController> {
                       ),
                       SizedBox(height: 90.h),
                       AppButton(
-                        onTap: () =>controller.clickOnSignUpWithGoogleButton(),
-                        text: 'signUpWithGoogle'.tr,
+                        onTap: () => controller.clickOnSignUpWithGoogleButton(),
+                        text: 'Sign up with google'.tr,
                       ),
                       SizedBox(height: 30.h),
                       AppButton(
                         onTap: () {
-                          // Log button click event
                           AnalyticsService.logButtonClick(
                             screenName: 'Main screen',
                             buttonName: 'Login',
                             eventName: 'main_screen_click',
                           );
-                          Get.toNamed(Routes.LOGIN);
+                          controller.clickOnLogInButton();
                         },
                         text: 'logIn'.tr,
                       ),

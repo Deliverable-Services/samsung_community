@@ -26,6 +26,8 @@ import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
+import '../modules/login_options/bindings/login_options_binding.dart';
+import '../modules/login_options/views/login_options_view.dart';
 import '../modules/messages/bindings/messages_binding.dart';
 import '../modules/messages/views/messages_view.dart';
 import '../modules/notifications/bindings/notifications_binding.dart';
@@ -208,6 +210,11 @@ class AppPages {
       name: _Paths.NOTIFICATIONS,
       page: () => const NotificationsView(),
       binding: NotificationsBinding(),
+    ),
+    GetPage(
+      name: _Paths.LOGIN_OPTIONS,
+      page: () => const LoginOptionsView(),
+      binding: LoginOptionsBinding(),
     ),
   ];
 
