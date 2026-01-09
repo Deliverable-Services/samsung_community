@@ -238,6 +238,7 @@ class HebrewiLocalization {
     // Side Menu
     "messages": "הודעות",
     "store": "חנות",
+    "samsungStore": "Samsung Store",
     "exploreStore": "חקור את החנות",
     "storeDescription": "פנק את עצמך במשהו מיוחד.",
     "allProducts": "כל המוצרים",

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../routes/app_pages.dart';
 import '../constants/app_colors.dart';
@@ -32,6 +33,14 @@ class SideMenu extends StatelessWidget {
   void _handleStore(BuildContext context) {
     Navigator.of(context, rootNavigator: true).pop();
     Get.toNamed(Routes.STORE);
+  }
+
+  Future<void> _handleSamsungStore(BuildContext context) async {
+    Navigator.of(context, rootNavigator: true).pop();
+    final Uri url = Uri.parse('https://www.samsung.com/');
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      debugPrint('Could not launch $url');
+    }
   }
 
   void _handleProfile(BuildContext context) {
@@ -192,6 +201,17 @@ class SideMenu extends StatelessWidget {
             fit: BoxFit.contain,
           ),
           onTap: () => _handleStore(context),
+        ),
+        SizedBox(height: 15.h),
+        OptionItem(
+          text: 'samsungStore'.tr,
+          boxTextWidget: SvgPicture.asset(
+            AppImages.sIcon,
+            width: 14.w,
+            height: 14.h,
+            fit: BoxFit.contain,
+          ),
+          onTap: () => _handleSamsungStore(context),
         ),
         SizedBox(height: 15.h),
         OptionItem(

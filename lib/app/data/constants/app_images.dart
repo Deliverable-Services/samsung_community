@@ -59,5 +59,6 @@ class AppImages {
       verifiedIcon = '$baseUrl/verify.svg',
       vodIcon = '$baseUrl/vod.svg',
       correctAnswerRiddleIcon = '$baseUrl/correct_answer_riddle.svg',
-      incorrectAnswerRiddleIcon = '$baseUrl/incorrect_answer_riddle.svg';
+      incorrectAnswerRiddleIcon = '$baseUrl/incorrect_answer_riddle.svg',
+      sIcon = '$baseUrl/S.svg';
 }

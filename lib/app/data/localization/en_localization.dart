@@ -244,6 +244,7 @@ class EnLocalization {
     // Side Menu
     "messages": "Messages",
     "store": "Store",
+    "samsungStore": "Samsung Store",
     "exploreStore": "Explore the Store",
     "storeDescription": "Treat yourself to something special.",
     "allProducts": "All Products",
