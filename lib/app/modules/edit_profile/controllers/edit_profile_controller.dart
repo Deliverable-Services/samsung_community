@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 import '../../../common/services/storage_service.dart';
 import '../../../common/services/supabase_service.dart';
@@ -52,6 +52,7 @@ class EditProfileController extends BaseController {
     super.onInit();
     loadUserProfile();
     _setupAutoSave();
+    _detectAndSaveDeviceModel();
   }
 
   @override
@@ -258,6 +259,24 @@ class EditProfileController extends BaseController {
     } finally {
       isSaving.value = false;
     }
+  }
+
+  Future<void> _detectAndSaveDeviceModel() async {
+    try {
+      String? model;
+      final deviceInfo = DeviceInfoPlugin();
+      if (Platform.isAndroid) {
+        final androidInfo = await deviceInfo.androidInfo;
+        model = androidInfo.model;
+      } else if (Platform.isIOS) {
+        final iosInfo = await deviceInfo.iosInfo;
+        model = iosInfo.utsname.machine ?? iosInfo.model;
+      }
+      if (model != null && model.isNotEmpty) {
+        selectedDeviceModel.value = model;
+        saveFieldOnBlur('deviceModel', model);
+      }
+    } catch (_) {}
   }
 
   Future<void> _loadAdditionalFields(String userId) async {

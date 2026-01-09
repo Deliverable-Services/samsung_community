@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_utils/src/extensions/internacionalization.dart';
@@ -46,35 +47,33 @@ class EventLaunchCard extends StatelessWidget {
     this.extraPaddingForButton,
     this.labels,
   });
-
   @override
   Widget build(BuildContext context) {
+    debugPrint(imagePathNetwork ?? '');
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(16.r),
       child: Stack(
         children: [
           (imagePathNetwork != null && imagePathNetwork!.isNotEmpty)
-              ? Image.network(
-                  imagePathNetwork!,
+              ? CachedNetworkImage(
+                  imageUrl: imagePathNetwork!,
                   fit: BoxFit.cover,
                   width: double.infinity,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
-                      height: 180.h,
+                  placeholder: (context, url) => Container(
+                    height: 180.h,
+                    width: double.infinity,
+                    color: AppColors.black.withOpacity(0.1),
+                    child: const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) {
+                    return Image.asset(
+                      imagePath,
+                      fit: BoxFit.cover,
                       width: double.infinity,
-                      color: AppColors.black.withOpacity(0.1),
-                      child: const Center(
-                        child:  CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
                       height: 180.h,
-                      width: double.infinity,
-                      color: AppColors.black.withOpacity(0.1),
-                      child: const Icon(Icons.error, color: AppColors.white),
                     );
                   },
                 )
@@ -329,24 +328,23 @@ class AllEventLaunchCard extends StatelessWidget {
           children: [
             // Background image - takes full height
             (imagePathNetwork != null && imagePathNetwork!.isNotEmpty)
-                ? Image.network(
-                    imagePathNetwork!,
+                ? CachedNetworkImage(
+                    imageUrl: imagePathNetwork!,
                     fit: BoxFit.cover,
                     width: double.infinity,
                     height: double.infinity,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Container(
-                        color: AppColors.black.withOpacity(0.1),
-                        child: const Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      );
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                       return Container(
-                        color: AppColors.black.withOpacity(0.1),
-                        child: const Icon(Icons.error, color: AppColors.white),
+                    placeholder: (context, url) => Container(
+                      color: AppColors.black.withOpacity(0.1),
+                      child: const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) {
+                      return Image.asset(
+                        imagePath,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
                       );
                     },
                   )
@@ -503,7 +501,8 @@ class AllEventLaunchCard extends StatelessWidget {
                                       ).createShader(bounds);
                                     },
                                     child: Text(
-                                      buttonText ?? "eventDetailsRegistration".tr,
+                                      buttonText ??
+                                          "eventDetailsRegistration".tr,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w700,
                                         fontSize: 14.sp,

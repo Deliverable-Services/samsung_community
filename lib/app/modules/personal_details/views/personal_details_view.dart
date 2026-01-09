@@ -39,7 +39,7 @@ class PersonalDetailsView extends GetView<PersonalDetailsController> {
                     children: [
                       SizedBox(height: 20.h),
                       Center(child: PersonalDetailsProfilePictureWidget()),
-                      SizedBox(height: 20.h),
+                      SizedBox(height: 50.h),
                       PersonalDetailsForm(
                         fullNameController: controller.fullNameController,
                         birthdayController: controller.birthdayController,
@@ -47,9 +47,13 @@ class PersonalDetailsView extends GetView<PersonalDetailsController> {
                         cityController: controller.cityController,
                         selectedGender: controller.selectedGender,
                         selectedDeviceModel: controller.selectedDeviceModel,
-                        saveButtonText: 'next'.tr,
+                        saveButtonText: 'signUp'.tr,
                         isLoading: false,
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        padding: EdgeInsets.only(
+                          left: 20.w,
+                          right: 20.w,
+                          top: 24.h,
+                        ),
                         onSave: (formData) async {
                           // Update controller values from form data
                           controller.fullNameController.text =
@@ -74,10 +78,6 @@ class PersonalDetailsView extends GetView<PersonalDetailsController> {
                           if (formData.containsKey('gender')) {
                             controller.selectedGender.value =
                                 formData['gender'] as String?;
-                          }
-                          if (formData.containsKey('deviceModel')) {
-                            controller.selectedDeviceModel.value =
-                                formData['deviceModel'] as String?;
                           }
 
                           // Call the existing handler

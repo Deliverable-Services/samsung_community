@@ -84,18 +84,19 @@ class BottomSheetModal extends StatelessWidget {
                 child: buttonType == BottomSheetButtonType.none
                     ? const SizedBox.shrink()
                     : buttonType == BottomSheetButtonType.close
-                        ? CustomCloseButton(
-                            onTap: () {
-                              Navigator.of(context, rootNavigator: true).pop();
-                              onClose?.call();
-                            },
-                          )
-                        : CustomBackButton(
-                            onTap: () {
-                              Navigator.of(context, rootNavigator: true).pop();
-                              onClose?.call();
-                            },
-                          ),
+                    ? CustomCloseButton(
+                        onTap: () {
+                          Navigator.of(context, rootNavigator: true).pop();
+                          onClose?.call();
+                        },
+                      )
+                    : CustomBackButton(
+                        onTap: () {
+                          Navigator.of(context, rootNavigator: true).pop();
+                          onClose?.call();
+                        },
+                        rotation: 0,
+                      ),
               ),
             ],
           ),

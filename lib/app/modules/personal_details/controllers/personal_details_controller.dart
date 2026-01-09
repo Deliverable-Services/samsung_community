@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import '../../../repository/auth_repo/auth_repo.dart';
 
 import '../../../common/services/analytics_service.dart';
 import '../../../common/services/storage_service.dart';
@@ -12,8 +14,6 @@ import '../../../data/core/utils/common_snackbar.dart';
 import '../../on_boarding/controllers/on_boarding_controller.dart';
 
 class PersonalDetailsController extends GetxController {
-  //TODO: Implement PersonalDetailsController
-
   final count = 0.obs;
 
   late final GlobalKey<FormState> formKey;
@@ -22,7 +22,7 @@ class PersonalDetailsController extends GetxController {
   final emailController = TextEditingController();
   final cityController = TextEditingController();
   final selectedGender = ValueNotifier<String?>('male');
-  final selectedDeviceModel = ValueNotifier<String?>('galaxys24ultra');
+  final selectedDeviceModel = ValueNotifier<String?>(null);
   final phoneNumber = ''.obs;
   DateTime? selectedBirthday;
   final genderError = ''.obs;
@@ -30,6 +30,7 @@ class PersonalDetailsController extends GetxController {
   final selectedImagePath = Rxn<File>();
   final profilePictureUrl = Rxn<String>();
   final isUploadingImage = false.obs;
+  final authRepo = Get.find<AuthRepo>();
 
   @override
   void onInit() {
@@ -42,6 +43,7 @@ class PersonalDetailsController extends GetxController {
     fullNameController.text = userData['name'];
     emailController.text = userData['email'];
     // Birthday field should remain empty - user must select a date
+    _detectAndSetDeviceModel();
   }
 
   @override
@@ -259,9 +261,8 @@ class PersonalDetailsController extends GetxController {
 
     if (selectedDeviceModel.value == null ||
         selectedDeviceModel.value!.isEmpty) {
-      CommonSnackbar.error('${'deviceModel'.tr} is_required'.tr);
-      deviceModelError.value = '${'deviceModel'.tr} is_required'.tr;
-      return;
+      // No device model selected via dropdown; proceed (we detect automatically)
+      deviceModelError.value = '';
     }
 
     if (phoneNumber.value.isEmpty) {
@@ -269,28 +270,58 @@ class PersonalDetailsController extends GetxController {
       return;
     }
 
-    // Log button click event with device_model parameter (only on next click)
     AnalyticsService.logButtonClick(
       screenName: 'signup screen personal details',
-      buttonName: 'next',
+      buttonName: 'signup',
       eventName: 'signup_personal_details_click',
       additionalParams: {'device_model': selectedDeviceModel.value ?? ''},
     );
 
-    final personalDetailsData = <String, String>{
-      'phoneNumber': phoneNumber.value,
+    final profileData = <String, dynamic>{
       'fullName': fullNameController.text.trim(),
       'birthday': selectedBirthday?.toIso8601String().split('T')[0] ?? '',
       'email': emailController.text.trim(),
       'city': cityController.text.trim(),
       'gender': selectedGender.value ?? '',
-      'deviceModel': selectedDeviceModel.value ?? '',
     };
 
-    if (profilePictureUrl.value != null) {
-      personalDetailsData['profilePictureUrl'] = profilePictureUrl.value!;
+    final detectedModel = selectedDeviceModel.value;
+    if (detectedModel != null && detectedModel.isNotEmpty) {
+      profileData['deviceModel'] = detectedModel;
     }
 
-    Get.toNamed(Routes.ACCOUNT_DETAIL, parameters: personalDetailsData);
+    if (profilePictureUrl.value != null) {
+      profileData['profilePictureUrl'] = profilePictureUrl.value!;
+    }
+
+    try {
+      final success = await authRepo.saveProfile(
+        phoneNumber: phoneNumber.value,
+        profileData: profileData,
+      );
+      if (success) {
+        Get.offNamed(Routes.REQUEST_SENT);
+      }
+    } catch (e) {
+      CommonSnackbar.error('failed_to_save_profile'.tr);
+    }
+  }
+
+  Future<void> _detectAndSetDeviceModel() async {
+    try {
+      String? model;
+      final deviceInfo = DeviceInfoPlugin();
+      if (Platform.isAndroid) {
+        final androidInfo = await deviceInfo.androidInfo;
+        model = androidInfo.model;
+      } else if (Platform.isIOS) {
+        final iosInfo = await deviceInfo.iosInfo;
+        model = iosInfo.utsname.machine;
+      }
+      if (model != null && model.isNotEmpty) {
+        selectedDeviceModel.value = model;
+      }
+      debugPrint('Detected device model: $model');
+    } catch (_) {}
   }
 }

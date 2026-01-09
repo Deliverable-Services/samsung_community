@@ -44,107 +44,97 @@ class PersonalDetailsForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fields = <FormFieldConfig>[
+      FormFieldConfig(
+        key: 'fullName',
+        type: FormFieldType.text,
+        label: 'fullName'.tr,
+        placeholder: 'type'.tr,
+        textController: fullNameController,
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) {
+            return 'fullName'.tr + ' is_required'.tr;
+          }
+          return null;
+        },
+        spacing: 26.h,
+        onBlur: onFieldBlur != null
+            ? () => onFieldBlur!('fullName', fullNameController.text)
+            : null,
+      ),
+      FormFieldConfig(
+        key: 'birthday',
+        type: FormFieldType.date,
+        label: 'birthday'.tr,
+        placeholder: 'type'.tr,
+        textController: birthdayController,
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) {
+            return 'birthday'.tr + ' is_required'.tr;
+          }
+          return null;
+        },
+        spacing: 26.h,
+        onBlur: onFieldBlur != null
+            ? () => onFieldBlur!('birthday', birthdayController.text)
+            : null,
+      ),
+      FormFieldConfig(
+        key: 'email',
+        type: FormFieldType.email,
+        label: 'emailAddress'.tr,
+        placeholder: 'type'.tr,
+        textController: emailController,
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) {
+            return 'emailAddress'.tr + ' is_required'.tr;
+          }
+          final emailRegex = RegExp(
+            r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+          );
+          if (!emailRegex.hasMatch(value.trim())) {
+            return 'Please enter a valid email address';
+          }
+          return null;
+        },
+        spacing: 26.h,
+        onBlur: onFieldBlur != null
+            ? () => onFieldBlur!('email', emailController.text)
+            : null,
+      ),
+      FormFieldConfig(
+        key: 'city',
+        type: FormFieldType.text,
+        label: 'city'.tr,
+        placeholder: 'type'.tr,
+        textController: cityController,
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) {
+            return 'city'.tr + ' is_required'.tr;
+          }
+          return null;
+        },
+        spacing: 26.h,
+        onBlur: onFieldBlur != null
+            ? () => onFieldBlur!('city', cityController.text)
+            : null,
+      ),
+      FormFieldConfig(
+        key: 'gender',
+        type: FormFieldType.gender,
+        label: 'gender'.tr,
+        dropdownNotifier: selectedGender,
+        spacing: 26.h,
+      ),
+    ];
+
     return ReusableForm(
-      fields: [
-        FormFieldConfig(
-          key: 'fullName',
-          type: FormFieldType.text,
-          label: 'fullName'.tr,
-          placeholder: 'type'.tr,
-          textController: fullNameController,
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) {
-              return 'fullName'.tr + ' is_required'.tr;
-            }
-            return null;
-          },
-          spacing: 20.h,
-          onBlur: onFieldBlur != null
-              ? () => onFieldBlur!('fullName', fullNameController.text)
-              : null,
-        ),
-        FormFieldConfig(
-          key: 'birthday',
-          type: FormFieldType.date,
-          label: 'birthday'.tr,
-          placeholder: 'type'.tr,
-          textController: birthdayController,
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) {
-              return 'birthday'.tr + ' is_required'.tr;
-            }
-            return null;
-          },
-          spacing: 20.h,
-          onBlur: onFieldBlur != null
-              ? () => onFieldBlur!('birthday', birthdayController.text)
-              : null,
-        ),
-        FormFieldConfig(
-          key: 'email',
-          type: FormFieldType.email,
-          label: 'emailAddress'.tr,
-          placeholder: 'type'.tr,
-          textController: emailController,
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) {
-              return 'emailAddress'.tr + ' is_required'.tr;
-            }
-            final emailRegex = RegExp(
-              r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-            );
-            if (!emailRegex.hasMatch(value.trim())) {
-              return 'Please enter a valid email address';
-            }
-            return null;
-          },
-          spacing: 20.h,
-          onBlur: onFieldBlur != null
-              ? () => onFieldBlur!('email', emailController.text)
-              : null,
-        ),
-        FormFieldConfig(
-          key: 'city',
-          type: FormFieldType.text,
-          label: 'city'.tr,
-          placeholder: 'type'.tr,
-          textController: cityController,
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) {
-              return 'city'.tr + ' is_required'.tr;
-            }
-            return null;
-          },
-          spacing: 20.h,
-          onBlur: onFieldBlur != null
-              ? () => onFieldBlur!('city', cityController.text)
-              : null,
-        ),
-        FormFieldConfig(
-          key: 'gender',
-          type: FormFieldType.gender,
-          label: 'gender'.tr,
-          dropdownNotifier: selectedGender,
-          spacing: 20.h,
-        ),
-        FormFieldConfig(
-          key: 'deviceModel',
-          type: FormFieldType.deviceModel,
-          label: 'deviceModel'.tr,
-          dropdownNotifier: selectedDeviceModel,
-          validator: (value) {
-            if (value == null || value.toString().isEmpty) {
-              return 'deviceModel'.tr + ' is_required'.tr;
-            }
-            return null;
-          },
-          spacing: 20.h,
-        ),
-      ],
+      fields: fields,
       saveButtonText: saveButtonText,
       isLoading: isLoading,
       padding: padding,
       hideSaveButton: hideSaveButton,
+      saveButtonSpacing: 60.h,
       onSave: onSave,
     );
   }

@@ -25,6 +25,7 @@ class ReusableForm extends StatefulWidget {
   final bool isScrollable;
 
   final bool hideSaveButton;
+  final double? saveButtonSpacing;
 
   const ReusableForm({
     super.key,
@@ -35,6 +36,7 @@ class ReusableForm extends StatefulWidget {
     this.padding,
     this.isScrollable = true,
     this.hideSaveButton = false,
+    this.saveButtonSpacing,
   });
 
   @override
@@ -561,7 +563,7 @@ class _ReusableFormState extends State<ReusableForm> {
               SizedBox(height: widget.fields[i].spacing ?? 30.h),
           ],
           if (!widget.hideSaveButton) ...[
-            SizedBox(height: 30.h),
+            SizedBox(height: widget.saveButtonSpacing ?? 30.h),
             AppButton(
               onTap: widget.isLoading ? null : _handleSave,
               text: widget.isLoading ? 'saving'.tr : widget.saveButtonText,
