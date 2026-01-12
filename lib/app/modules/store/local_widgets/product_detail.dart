@@ -17,6 +17,8 @@ class ProductDetail extends StatelessWidget {
   final String? mediaUrl;
   final bool isVideo;
   final String? bottomButtonText;
+  final String? bottomButtonIconPath;
+  final double? bottomButtonIconSize;
   final VoidCallback? bottomButtonOnTap;
   final bool isButtonEnabled;
   final String? tag;
@@ -30,6 +32,8 @@ class ProductDetail extends StatelessWidget {
     this.mediaUrl,
     this.isVideo = false,
     this.bottomButtonText,
+    this.bottomButtonIconPath,
+    this.bottomButtonIconSize,
     this.bottomButtonOnTap,
     this.isButtonEnabled = true,
     this.tag,
@@ -162,6 +166,8 @@ class ProductDetail extends StatelessWidget {
                 child: AppButton(
                   onTap: isButtonEnabled ? bottomButtonOnTap : () {},
                   text: bottomButtonText!,
+                  iconPath: bottomButtonIconPath,
+                  iconSize: bottomButtonIconSize,
                   width: double.infinity,
                   isEnabled: isButtonEnabled,
                 ),

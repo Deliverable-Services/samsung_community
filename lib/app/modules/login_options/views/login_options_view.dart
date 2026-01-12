@@ -124,6 +124,8 @@ class LoginOptionsView extends GetView<VerificationCodeController> {
                   width: 350.w,
                   height: 48.h,
                   isEnabled: !controller.isLoading.value,
+                  iconPath: AppImages.googleIcon,
+                  iconSize: 20.w,
                 ),
                 SizedBox(height: 10.h),
                 AppButton(

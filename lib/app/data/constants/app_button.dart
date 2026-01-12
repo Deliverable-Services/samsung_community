@@ -14,6 +14,7 @@ class AppButton extends StatelessWidget {
   final bool isEnabled;
   final bool isLoading;
   final String? iconPath;
+  final double? iconSize;
 
   const AppButton({
     super.key,
@@ -25,6 +26,7 @@ class AppButton extends StatelessWidget {
     this.isEnabled = true,
     this.isLoading = false,
     this.iconPath,
+    this.iconSize,
   });
 
   @override
@@ -109,8 +111,8 @@ class AppButton extends StatelessWidget {
                             if (iconPath!.toLowerCase().endsWith('.svg'))
                               SvgPicture.asset(
                                 iconPath!,
-                                width: 24.w,
-                                height: 24.h,
+                                width: iconSize ?? 24.w,
+                                height: iconSize ?? 24.h,
                               )
                             else
                               Image.asset(iconPath!, width: 24.w, height: 24.h),

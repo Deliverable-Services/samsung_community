@@ -30,10 +30,44 @@ enum EventType {
   }
 }
 
+enum EventAccessType {
+  internal,
+  external;
+
+  static EventAccessType fromString(
+    String? value, {
+    int? costCreditCents,
+  }) {
+    final normalized = value?.trim().toLowerCase();
+    if (normalized == null || normalized.isEmpty) {
+      if (costCreditCents != null && costCreditCents > 0) {
+        return EventAccessType.external;
+      }
+      return EventAccessType.internal;
+    }
+    switch (normalized) {
+      case 'external':
+      case 'p2':
+        return EventAccessType.external;
+      case 'internal':
+      case 'p1':
+        return EventAccessType.internal;
+      default:
+        if (costCreditCents != null && costCreditCents > 0) {
+          return EventAccessType.external;
+        }
+        return EventAccessType.internal;
+    }
+  }
+
+  String toJson() => name;
+}
+
 class EventModel {
   final String id;
   final String title;
   final String? description;
+  final EventAccessType accessType;
   final EventType eventType;
   final DateTime eventDate;
   final int? durationMinutes;
@@ -57,6 +91,7 @@ class EventModel {
     required this.id,
     required this.title,
     this.description,
+    required this.accessType,
     required this.eventType,
     required this.eventDate,
     this.durationMinutes,
@@ -82,6 +117,7 @@ class EventModel {
       'id': id,
       'title': title,
       'description': description,
+      'type': accessType.toJson(),
       'event_type': eventType.toJson(),
       'event_date': eventDate.toIso8601String(),
       'duration_minutes': durationMinutes,
@@ -108,6 +144,10 @@ class EventModel {
       id: json['id'] as String,
       title: json['title'] as String,
       description: json['description'] as String?,
+      accessType: EventAccessType.fromString(
+        json['type'] as String?,
+        costCreditCents: json['cost_credit_cents'] as int?,
+      ),
       eventType: EventType.fromString(json['event_type'] as String),
       eventDate: DateTime.parse(json['event_date'] as String),
       durationMinutes: json['duration_minutes'] as int?,
@@ -135,6 +175,7 @@ class EventModel {
     String? id,
     String? title,
     String? description,
+    EventAccessType? accessType,
     EventType? eventType,
     DateTime? eventDate,
     int? durationMinutes,
@@ -158,6 +199,7 @@ class EventModel {
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
+      accessType: accessType ?? this.accessType,
       eventType: eventType ?? this.eventType,
       eventDate: eventDate ?? this.eventDate,
       durationMinutes: durationMinutes ?? this.durationMinutes,

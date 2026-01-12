@@ -60,5 +60,9 @@ class AppImages {
       vodIcon = '$baseUrl/vod.svg',
       correctAnswerRiddleIcon = '$baseUrl/correct_answer_riddle.svg',
       incorrectAnswerRiddleIcon = '$baseUrl/incorrect_answer_riddle.svg',
-      sIcon = '$baseUrl/S.svg';
+      sIcon = '$baseUrl/S.svg',
+      cancelEventIcon = '$baseUrl/cancel_event.svg',
+      cancelConfirmationIcon = '$baseUrl/cancel_confirmation.svg',
+      confirmIcon = '$baseUrl/confirm.svg',
+      googleIcon = '$baseUrl/google.svg';
 }

@@ -1,4 +1,4 @@
-package com.example.samsung_community_mobile
+package com.samsung.samsung_community
 
 import io.flutter.embedding.android.FlutterActivity
 

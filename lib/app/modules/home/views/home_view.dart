@@ -125,6 +125,17 @@ class HomeView extends GetView<HomeController> {
       onButtonTap: () => eventsController.showEventDetailsModal(event),
       labels: [
         EventLabel(text: eventsController.formatEventDate(event.eventDate)),
+        if (event.accessType == EventAccessType.internal &&
+            event.costPoints != null &&
+            event.costPoints! > 0)
+          EventLabel(text: 'Points: ${event.costPoints}'),
+        if (event.accessType == EventAccessType.external &&
+            event.costCreditCents != null &&
+            event.costCreditCents! > 0)
+          EventLabel(
+            text:
+                'Credits: ${(event.costCreditCents! / 100).toStringAsFixed(0)}',
+          ),
         EventLabel(
           text: event.maxTickets != null
               ? '${eventsController.getRemainingTickets(event)} ${'remaining'.tr}'

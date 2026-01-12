@@ -50,7 +50,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="com.example.samsung_community_mobile"
+                    android:scheme="com.samsung.samsung_community"
                     android:host="login-callback" />
             </intent-filter>
 

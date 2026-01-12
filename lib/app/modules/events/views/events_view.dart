@@ -94,6 +94,34 @@ class EventsView extends GetView<EventsController> {
             _buildSearchBarForAllEvent(),
             SizedBox(height: 20.h),
             ...controller.allEventsList.map((event) {
+              final List<EventLabel> labels = [
+                EventLabel(text: controller.formatEventDate(event.eventDate)),
+              ];
+
+              if (event.accessType == EventAccessType.internal) {
+                if (event.costPoints != null && event.costPoints! > 0) {
+                  labels.add(EventLabel(text: 'Points: ${event.costPoints}'));
+                }
+              } else {
+                if (event.costCreditCents != null &&
+                    event.costCreditCents! > 0) {
+                  labels.add(
+                    EventLabel(
+                      text:
+                          'Credits: ${(event.costCreditCents! / 100).toStringAsFixed(0)}',
+                    ),
+                  );
+                }
+              }
+
+              labels.add(
+                EventLabel(
+                  text: event.maxTickets != null
+                      ? '${controller.getRemainingTickets(event)} ${'remaining'.tr}'
+                      : 'Unlimited',
+                ),
+              );
+
               return Column(
                 children: [
                   AllEventLaunchCard(
@@ -104,16 +132,7 @@ class EventsView extends GetView<EventsController> {
                     exclusiveEvent: true,
                     buttonText: "eventDetailsRegistration".tr,
                     onButtonTap: () => controller.showEventDetailsModal(event),
-                    labels: [
-                      EventLabel(
-                        text: controller.formatEventDate(event.eventDate),
-                      ),
-                      EventLabel(
-                        text: event.maxTickets != null
-                            ? '${controller.getRemainingTickets(event)} ${'remaining'.tr}'
-                            : 'Unlimited',
-                      ),
-                    ],
+                    labels: labels,
                   ),
                   SizedBox(height: 16.h),
                 ],
@@ -169,6 +188,26 @@ class EventsView extends GetView<EventsController> {
             _buildSearchBar(),
             SizedBox(height: 20.h),
             ...controller.myEventsList.map((event) {
+              final List<EventLabel> labels = [
+                EventLabel(text: controller.formatEventDate(event.eventDate)),
+              ];
+
+              if (event.accessType == EventAccessType.internal) {
+                if (event.costPoints != null && event.costPoints! > 0) {
+                  labels.add(EventLabel(text: 'Points: ${event.costPoints}'));
+                }
+              } else {
+                if (event.costCreditCents != null &&
+                    event.costCreditCents! > 0) {
+                  labels.add(
+                    EventLabel(
+                      text:
+                          'Credits: ${(event.costCreditCents! / 100).toStringAsFixed(0)}',
+                    ),
+                  );
+                }
+              }
+
               return Column(
                 children: [
                   AllEventLaunchCard(
@@ -179,11 +218,7 @@ class EventsView extends GetView<EventsController> {
                     exclusiveEvent: true,
                     buttonText: 'details'.tr,
                     onButtonTap: () => controller.showEventDetailsModal(event),
-                    labels: [
-                      EventLabel(
-                        text: controller.formatEventDate(event.eventDate),
-                      ),
-                    ],
+                    labels: labels,
                   ),
                   SizedBox(height: 16.h),
                 ],

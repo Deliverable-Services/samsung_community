@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../common/services/event_service.dart';
@@ -11,6 +12,7 @@ import '../../../data/helper_widgets/bottom_sheet_modal.dart';
 import '../../../data/models/event_model.dart';
 import '../../store/local_widgets/product_detail.dart';
 import '../local_widgets/event_email_modal.dart';
+import '../local_widgets/event_registration_success_modal.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../repository/auth_repo/auth_repo.dart';
 
@@ -25,6 +27,7 @@ class EventsController extends BaseController {
   final RxBool hasMoreAllEvents = true.obs;
   final RxBool hasMoreMyEvents = true.obs;
   final RxBool isPurchasing = false.obs;
+  final RxBool isCancelling = false.obs;
   final RxSet<String> registeredEventIds = <String>{}.obs;
 
   static const int pageSize = 10;
@@ -67,7 +70,7 @@ class EventsController extends BaseController {
       final ids = (response as List)
           .map((e) => e['event_id'] as String)
           .toSet();
-      
+
       debugPrint('Fetched registered IDs: $ids');
       registeredEventIds.assignAll(ids);
     } catch (e) {
@@ -265,7 +268,9 @@ class EventsController extends BaseController {
       debugPrint('Starting registration logic...');
 
       // 1. Create Event Registration
-      debugPrint('Inserting event_registration for event: ${event.id}, user: $currentUserId');
+      debugPrint(
+        'Inserting event_registration for event: ${event.id}, user: $currentUserId',
+      );
       try {
         final registrationResponse = await SupabaseService.client
             .from('event_registrations')
@@ -279,7 +284,7 @@ class EventsController extends BaseController {
             })
             .select('id')
             .single();
-        
+
         debugPrint('Registration inserted. ID: ${registrationResponse['id']}');
         final registrationId = registrationResponse['id'] as String;
 
@@ -331,6 +336,65 @@ class EventsController extends BaseController {
     }
   }
 
+  Future<bool> cancelEventRegistration(EventModel event) async {
+    if (isCancelling.value) return false;
+    isCancelling.value = true;
+
+    try {
+      final currentUserId = SupabaseService.currentUser?.id;
+      if (currentUserId == null) {
+        CommonSnackbar.error('User not authenticated');
+        return false;
+      }
+
+      final existingRegistration = await SupabaseService.client
+          .from('event_registrations')
+          .select('id')
+          .eq('event_id', event.id)
+          .eq('user_id', currentUserId)
+          .maybeSingle();
+
+      if (existingRegistration == null) {
+        CommonSnackbar.error('Registration not found');
+        return false;
+      }
+
+      await SupabaseService.client
+          .from('event_registrations')
+          .delete()
+          .eq('id', existingRegistration['id'] as String);
+
+      final eventRow = await SupabaseService.client
+          .from('events')
+          .select('tickets_sold')
+          .eq('id', event.id)
+          .single();
+
+      final currentTicketsSold = eventRow['tickets_sold'] as int? ?? 0;
+      final updatedTicketsSold = currentTicketsSold > 0
+          ? currentTicketsSold - 1
+          : 0;
+
+      await SupabaseService.client
+          .from('events')
+          .update({'tickets_sold': updatedTicketsSold})
+          .eq('id', event.id);
+
+      registeredEventIds.remove(event.id);
+      loadAllEvents();
+      loadMyEvents();
+      await fetchRegisteredUserEvents();
+
+      return true;
+    } catch (e) {
+      debugPrint('Error cancelling event registration: $e');
+      CommonSnackbar.error('Error: $e');
+      return false;
+    } finally {
+      isCancelling.value = false;
+    }
+  }
+
   void showEventDetailsModal(EventModel event) {
     // ... existing implementation ...
     final context = Get.context;
@@ -342,15 +406,20 @@ class EventsController extends BaseController {
     // Top tablets - date
     final List<String> topTablets = [formatEventDate(event.eventDate)];
 
+    final bool isInternal = event.accessType == EventAccessType.internal;
+
     // Middle tablets - points and credit
     final List<String> middleTablets = [];
-    if (event.costCreditCents != null && event.costCreditCents! > 0) {
-      middleTablets.add(
-        'Credits: ${(event.costCreditCents! / 100).toStringAsFixed(0)}',
-      );
-    }
-    if (event.costPoints != null && event.costPoints! > 0) {
-      middleTablets.add('Points: ${event.costPoints}');
+    if (isInternal) {
+      if (event.costPoints != null && event.costPoints! > 0) {
+        middleTablets.add('Points: ${event.costPoints}');
+      }
+    } else {
+      if (event.costCreditCents != null && event.costCreditCents! > 0) {
+        middleTablets.add(
+          'Credits: ${(event.costCreditCents! / 100).toStringAsFixed(0)}',
+        );
+      }
     }
 
     // Media URL - prefer video, then image, then fallback asset
@@ -366,28 +435,73 @@ class EventsController extends BaseController {
     final bool isVideo = hasVideo;
 
     // Bottom button
-    final bool hasCost =
-        (event.costPoints != null && event.costPoints! > 0) ||
-        (event.costCreditCents != null && event.costCreditCents! > 0);
+    final bool hasCost = isInternal
+        ? (event.costPoints != null && event.costPoints! > 0)
+        : (event.costCreditCents != null && event.costCreditCents! > 0);
 
     BottomSheetModal.show(
       context,
       buttonType: BottomSheetButtonType.close,
       content: Obx(() {
         final bool isRegistered = registeredEventIds.contains(event.id);
+        final bool isBusy = isPurchasing.value || isCancelling.value;
 
-        final String buttonText = isRegistered 
-            ? 'Registered' 
+        final String buttonText = isRegistered
+            ? 'Cancel event'
             : (hasCost ? 'Buying' : 'Register');
 
-        final VoidCallback? buttonOnTap = isRegistered 
-            ? null 
-            : () {
-                // Close the product detail modal first
+        final String? buttonIconPath = isRegistered
+            ? AppImages.cancelEventIcon
+            : null;
+
+        final double? buttonIconSize = isRegistered ? 14.h : null;
+
+        final VoidCallback? buttonOnTap = isRegistered
+            ? () {
+                if (isBusy) return;
                 Get.back();
-                // Show email input modal
+                final currentContext = Get.context;
+                if (currentContext == null) return;
+                BottomSheetModal.show(
+                  currentContext,
+                  buttonType: BottomSheetButtonType.close,
+                  content: Obx(
+                    () => CancelEventConfirmationModal(
+                      isLoading: isCancelling.value,
+                      onConfirm: () {
+                        if (isCancelling.value) return;
+                        cancelEventRegistration(event).then((didCancel) {
+                          if (!didCancel) return;
+                          final popContext = Get.context;
+                          if (popContext != null) {
+                            final navigator = Navigator.of(
+                              popContext,
+                              rootNavigator: true,
+                            );
+                            if (navigator.canPop()) navigator.pop();
+                          }
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            final ctx = Get.context;
+                            if (ctx == null) return;
+                            BottomSheetModal.show(
+                              ctx,
+                              content: const EventCancellationSuccessModal(),
+                              buttonType: BottomSheetButtonType.none,
+                            );
+                          });
+                        });
+                      },
+                    ),
+                  ),
+                );
+              }
+            : () {
+                if (isBusy) return;
+                Get.back();
+                final currentContext = Get.context;
+                if (currentContext == null) return;
                 EventEmailModal.show(
-                  context,
+                  currentContext,
                   eventId: event.id,
                   costPoints: event.costPoints,
                   eventModel: event,
@@ -402,8 +516,10 @@ class EventsController extends BaseController {
           mediaUrl: mediaUrl,
           isVideo: isVideo,
           bottomButtonText: buttonText,
+          bottomButtonIconPath: buttonIconPath,
+          bottomButtonIconSize: buttonIconSize,
           bottomButtonOnTap: buttonOnTap ?? () {},
-          isButtonEnabled: !isRegistered,
+          isButtonEnabled: !isBusy,
           tag: 'event_${event.id}',
         );
       }),

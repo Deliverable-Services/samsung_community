@@ -73,6 +73,8 @@ class OnBoardingView extends GetView<OnBoardingController> {
                       AppButton(
                         onTap: () => controller.clickOnSignUpWithGoogleButton(),
                         text: 'Sign up with google'.tr,
+                        iconPath: AppImages.googleIcon,
+                        iconSize: 20.w,
                       ),
                       SizedBox(height: 30.h),
                       AppButton(

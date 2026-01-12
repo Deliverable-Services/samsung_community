@@ -101,6 +101,7 @@ class StoreProductDetailsModal extends StatelessWidget {
         mediaUrl: mediaUrl,
         isVideo: isVideo,
         bottomButtonText: buttonText,
+        bottomButtonIconPath: null,
         bottomButtonOnTap: hideBuyButton
             ? null
             : () => _handlePurchase(context),
