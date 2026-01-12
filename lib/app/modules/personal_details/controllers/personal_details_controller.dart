@@ -40,8 +40,10 @@ class PersonalDetailsController extends GetxController {
     if (phoneNumber.value.isEmpty) {
       phoneNumber.value = (parameters?['phoneNumber'] as String?) ?? '';
     }
-    fullNameController.text = userData['name'];
-    emailController.text = userData['email'];
+    if(userData.isNotEmpty) {
+      fullNameController.text = userData['name'];
+      emailController.text = userData['email'];
+    }
     // Birthday field should remain empty - user must select a date
     _detectAndSetDeviceModel();
   }
