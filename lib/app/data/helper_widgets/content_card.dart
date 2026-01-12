@@ -7,6 +7,7 @@ import '../constants/app_colors.dart';
 import '../constants/app_images.dart';
 import 'audio_player/audio_player_widget.dart';
 import 'event_tablet.dart';
+import 'read_more_text.dart';
 import 'video_player/video_player_widget.dart';
 
 class ContentCard1 extends StatelessWidget {
@@ -156,10 +157,6 @@ class ContentCard1 extends StatelessWidget {
                                       ),
                                     );
                                   },
-                                        ),
-                                      ),
-                                    );
-                                  },
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
                                   width: 68.w,
@@ -198,20 +195,16 @@ class ContentCard1 extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       SizedBox(height: 4.h),
-                      SizedBox(
-                        child: Text(
-                          description,
-                          style: TextStyle(
-                            fontFamily: 'Samsung Sharp Sans',
-                            fontSize: 14.sp,
-                            height: 22 / 14,
-                            letterSpacing: 0,
-                            color: AppColors.textWhiteSecondary,
-                          ),
-                          textScaler: const TextScaler.linear(1.0),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
+                      ReadMoreText(
+                        text: description,
+                        textStyle: TextStyle(
+                          fontFamily: 'Samsung Sharp Sans',
+                          fontSize: 14.sp,
+                          height: 22 / 14,
+                          letterSpacing: 0,
+                          color: AppColors.textWhiteSecondary,
                         ),
+                        maxLines: 3,
                       ),
                     ],
                   ),
