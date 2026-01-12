@@ -156,10 +156,6 @@ class ContentCard1 extends StatelessWidget {
                                       ),
                                     );
                                   },
-                                        ),
-                                      ),
-                                    );
-                                  },
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
                                   width: 68.w,

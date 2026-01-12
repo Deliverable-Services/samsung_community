@@ -24,6 +24,8 @@ import '../../../data/models/event_model.dart';
 import '../../../data/models/home_item_model.dart';
 import '../../../data/models/weekly_riddle_model.dart';
 import '../../../repository/auth_repo/auth_repo.dart';
+import '../repo/promotion_model.dart';
+import '../repo/promotion_service.dart';
 
 class HomeController extends GetxController {
   final AuthRepo _authRepo = Get.find<AuthRepo>();
@@ -59,14 +61,37 @@ class HomeController extends GetxController {
   final uploadedFileName = Rxn<String>();
   final isUploadingMedia = false.obs;
 
+  final PromotionService _promotionService = PromotionService();
+
+  final RxList<PromotionModel> promotions = <PromotionModel>[].obs;
+  final RxBool isLoadingPromotions = false.obs;
+
   @override
   void onInit() {
     super.onInit();
     scrollController = ScrollController();
     scrollController?.addListener(_onScroll);
+
     loadLatestItems().then((_) {
       loadAllItems();
     });
+
+    loadPromotions();
+  }
+
+  Future<void> loadPromotions() async {
+    isLoadingPromotions.value = true;
+    final result = await _promotionService.fetchPromotions();
+
+    print('result::::::::::::::::::${result}');
+    print('result::::::::::::::::::${result.isSuccess}');
+    print('result::::::::::::::::::${promotions.value}');
+
+    if (result.isSuccess) {
+      promotions.value = result.dataOrNull ?? [];
+    }
+
+    isLoadingPromotions.value = false;
   }
 
   void _onScroll() {
@@ -81,6 +106,7 @@ class HomeController extends GetxController {
   Future<void> loadLatestItems() async {
     isLoadingLatestItems.value = true;
     await Future.wait([
+      loadPromotions(),
       loadWeeklyRiddle(),
       loadLatestEvent(),
       loadLatestVod(),
