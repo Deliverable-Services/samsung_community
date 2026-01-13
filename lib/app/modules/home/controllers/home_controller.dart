@@ -83,10 +83,6 @@ class HomeController extends GetxController {
     isLoadingPromotions.value = true;
     final result = await _promotionService.fetchPromotions();
 
-    print('result::::::::::::::::::${result}');
-    print('result::::::::::::::::::${result.isSuccess}');
-    print('result::::::::::::::::::${promotions.value}');
-
     if (result.isSuccess) {
       promotions.value = result.dataOrNull ?? [];
     }
