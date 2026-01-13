@@ -70,10 +70,21 @@ class _ReusableFormState extends State<ReusableForm> {
               text: field.initialValue,
             );
           }
-          if (field.type == FormFieldType.date && field.initialValue != null) {
-            try {
-              _dateValues[field.key] = DateTime.parse(field.initialValue!);
-            } catch (e) {}
+          if (field.type == FormFieldType.date) {
+            final existingText = _controllers[field.key]!.text;
+            if (existingText.isNotEmpty) {
+              try {
+                final parsed = DateTime.parse(existingText);
+                _dateValues[field.key] = parsed;
+                _controllers[field.key]!.text = _formatDateDisplay(parsed);
+              } catch (e) {}
+            } else if (field.initialValue != null) {
+              try {
+                final parsed = DateTime.parse(field.initialValue!);
+                _dateValues[field.key] = parsed;
+                _controllers[field.key]!.text = _formatDateDisplay(parsed);
+              } catch (e) {}
+            }
           }
           break;
         case FormFieldType.dropdown:
@@ -217,12 +228,6 @@ class _ReusableFormState extends State<ReusableForm> {
     final today = DateTime(now.year, now.month, now.day);
 
     DateTime? currentDate = _dateValues[fieldKey];
-    if (currentDate == null &&
-        _controllers[fieldKey]?.text.isNotEmpty == true) {
-      try {
-        currentDate = DateTime.parse(_controllers[fieldKey]!.text);
-      } catch (e) {}
-    }
     currentDate ??= today.subtract(const Duration(days: 365 * 18));
 
     final DateTime? picked = await showDatePicker(
@@ -266,11 +271,7 @@ class _ReusableFormState extends State<ReusableForm> {
     if (picked != null) {
       setState(() {
         _dateValues[fieldKey] = picked;
-        final year = picked.year.toString();
-        final month = picked.month.toString().padLeft(2, '0');
-        final day = picked.day.toString().padLeft(2, '0');
-        final dateString = '$year-$month-$day';
-        _controllers[fieldKey]?.text = dateString;
+        _controllers[fieldKey]?.text = _formatDateDisplay(picked);
 
         // Find the field config and trigger onBlur if available
         final field = widget.fields.firstWhere(
@@ -283,6 +284,27 @@ class _ReusableFormState extends State<ReusableForm> {
         }
       });
     }
+  }
+
+  String _formatDateDisplay(DateTime date) {
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    final day = date.day.toString().padLeft(2, '0');
+    final monthName = monthNames[date.month - 1];
+    final year = date.year.toString();
+    return '$day $monthName $year';
   }
 
   Widget _buildField(FormFieldConfig field) {

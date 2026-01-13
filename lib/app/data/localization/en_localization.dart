@@ -13,7 +13,8 @@ class EnLocalization {
     "markAllAsRead": "Mark all as read",
     "accountNotApproved": "Account Not Approved",
     "yourAccountIsNotApprovedYet": "Your account is not approved yet.",
-    "pleaseWaitForAdminApprovalOrContactSupport": "Please wait for admin approval or contact support.",
+    "pleaseWaitForAdminApprovalOrContactSupport":
+        "Please wait for admin approval or contact support.",
 
     //SUCCESS
     "comment_added_successfully": "Comment added successfully",
@@ -68,6 +69,7 @@ class EnLocalization {
     "failed_to_delete_post": "Failed to delete post",
     "failed_to_like_content": "Failed to like content",
     "failed_to_load_blocked_users": "Failed to load blocked users",
+    "profile_saved_successfully": "Profile updated successfully",
     "cancel": "Cancel",
 
     //BOTTOM BAR
@@ -129,9 +131,11 @@ class EnLocalization {
     "birthday": "Birthday",
     "emailAddress": "Email Address",
     "city": "City",
+    "location": "Location",
     "gender": "Gender",
     "deviceModel": "Device model",
     "next": "Next",
+    "save": "Save Changes",
     "account_details": "Account Details",
     "social_media": "Social media",
     "profession": "Profession",

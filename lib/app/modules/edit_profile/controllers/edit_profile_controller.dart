@@ -74,47 +74,35 @@ class EditProfileController extends BaseController {
   }
 
   void _setupAutoSave() {
-    fullNameController.addListener(
-      () => _onFieldChanged('fullName', fullNameController.text),
-    );
-    birthdayController.addListener(
-      () => _onFieldChanged('birthday', birthdayController.text),
-    );
-    emailController.addListener(
-      () => _onFieldChanged('email', emailController.text),
-    );
-    cityController.addListener(
-      () => _onFieldChanged('city', cityController.text),
-    );
-    socialMediaController.addListener(
-      () => _onFieldChanged('socialMedia', socialMediaController.text),
-    );
-    professionController.addListener(
-      () => _onFieldChanged('profession', professionController.text),
-    );
-    bioController.addListener(() => _onFieldChanged('bio', bioController.text));
-    classController.addListener(
-      () => _onFieldChanged('className', classController.text),
-    );
+    // Auto-save disabled; explicit Save buttons are used instead
+  }
 
-    selectedGender.addListener(() {
-      if (selectedGender.value != null) {
-        saveFieldOnBlur('gender', selectedGender.value);
-      }
-    });
-    selectedDeviceModel.addListener(() {
-      if (selectedDeviceModel.value != null) {
-        saveFieldOnBlur('deviceModel', selectedDeviceModel.value);
-      }
-    });
-    selectedCollege.addListener(() {
-      if (selectedCollege.value != null) {
-        saveFieldOnBlur('college', selectedCollege.value);
-      }
-    });
-    selectedStudent.addListener(() {
-      saveFieldOnBlur('isStudent', selectedStudent.value);
-    });
+  Future<void> savePersonalDetails() async {
+    _pendingChanges['fullName'] = fullNameController.text.trim();
+    _pendingChanges['birthday'] = birthdayController.text.trim();
+    _pendingChanges['email'] = emailController.text.trim();
+    _pendingChanges['city'] = cityController.text.trim();
+    if (selectedGender.value != null) {
+      _pendingChanges['gender'] = selectedGender.value;
+    }
+    if (selectedDeviceModel.value != null) {
+      _pendingChanges['deviceModel'] = selectedDeviceModel.value;
+    }
+    await _saveChanges();
+    CommonSnackbar.success('profile_saved_successfully'.tr);
+  }
+
+  Future<void> saveAccountDetails() async {
+    _pendingChanges['socialMedia'] = socialMediaController.text.trim();
+    _pendingChanges['profession'] = professionController.text.trim();
+    _pendingChanges['bio'] = bioController.text.trim();
+    _pendingChanges['className'] = classController.text.trim();
+    _pendingChanges['isStudent'] = selectedStudent.value;
+    if (selectedCollege.value != null) {
+      _pendingChanges['college'] = selectedCollege.value;
+    }
+    await _saveChanges();
+    CommonSnackbar.success('profile_saved_successfully'.tr);
   }
 
   void _onFieldChanged(String key, dynamic value) {
@@ -274,7 +262,7 @@ class EditProfileController extends BaseController {
       }
       if (model != null && model.isNotEmpty) {
         selectedDeviceModel.value = model;
-        saveFieldOnBlur('deviceModel', model);
+        // Do not auto-save here; saved when user presses Save
       }
     } catch (_) {}
   }

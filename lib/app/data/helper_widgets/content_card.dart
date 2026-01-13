@@ -227,18 +227,16 @@ class ContentCard1 extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 4.h),
-            Text(
-              description,
-              style: TextStyle(
+            ReadMoreText(
+              text: description,
+              textStyle: TextStyle(
                 fontFamily: 'Samsung Sharp Sans',
                 fontSize: 14.sp,
                 height: 22 / 14,
                 letterSpacing: 0,
                 color: const Color(0xFFBDBDBD),
               ),
-              textScaler: const TextScaler.linear(1.0),
               maxLines: 3,
-              overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 16.h),
             // Video Player

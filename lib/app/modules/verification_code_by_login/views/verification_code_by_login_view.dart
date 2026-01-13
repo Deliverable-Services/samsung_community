@@ -255,7 +255,7 @@ class VerificationCodeByLoginView
                 );
               }),
               Positioned(
-                top: 680.h,
+                top: 660.h,
                 left: 20.w,
                 child: Obx(() {
                   controller.count.value;
@@ -279,79 +279,61 @@ class VerificationCodeByLoginView
                   );
                 }),
               ),
-              // Positioned(
-              //   top: 680.h,
-              //   left: 20.w,
-              //   child: Obx(() {
-              //     controller.count.value;
-              //     return AppButton(
-              //       onTap:
-              //           (controller.isVerifying.value ||
-              //               !controller.isFormValid)
-              //           ? null
-              //           : () {
-              //               // Log button click event
-              //               AnalyticsService.logButtonClick(
-              //                 screenName: 'Login screen verification code',
-              //                 buttonName: 'Approval',
-              //                 eventName: 'login_verification_code_click',
-              //               );
-              //               controller.handleApproval();
-              //             },
-              //       text: controller.isVerifying.value
-              //           ? 'verifying'.tr
-              //           : 'approval'.tr,
-              //       width: 350.w,
-              //       height: 48.h,
-              //       isEnabled:
-              //           !controller.isVerifying.value && controller.isFormValid,
-              //     );
-              //   }),
-              // ),
               Positioned(
-                top: 758.h,
+                top: 738.h,
                 left: 0,
                 right: 0,
                 child: Center(
                   child: SizedBox(
-                    child: RichText(
-                      textScaler: const TextScaler.linear(1.0),
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'dontHaveAccount'.tr,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 16.sp,
-                              letterSpacing: 0,
-                              color: AppColors.linkBlue,
-                              height: 24 / 16,
+                    child: Obx(() {
+                      final disabled =
+                          controller.isVerifying.value ||
+                          controller.isResending.value;
+                      final baseColor = AppColors.linkBlue.withOpacity(
+                        disabled ? 0.6 : 1.0,
+                      );
+                      return RichText(
+                        textScaler: const TextScaler.linear(1.0),
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'dontHaveAccount'.tr,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 16.sp,
+                                letterSpacing: 0,
+                                color: baseColor,
+                                height: 24 / 16,
+                              ),
                             ),
-                          ),
-                          TextSpan(
-                            text: 'signUp'.tr,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16.sp,
-                              letterSpacing: 0,
-                              color: AppColors.linkBlue,
-                              height: 24 / 16,
+                            TextSpan(
+                              text: 'signUp'.tr,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16.sp,
+                                letterSpacing: 0,
+                                color: baseColor,
+                                height: 24 / 16,
+                              ),
+                              recognizer: disabled
+                                  ? null
+                                  : (TapGestureRecognizer()
+                                      ..onTap = () {
+                                        AnalyticsService.logButtonClick(
+                                          screenName:
+                                              'Login screen verification code',
+                                          buttonName: 'signup',
+                                          eventName:
+                                              'login_verification_code_click',
+                                        );
+                                        Get.toNamed(Routes.SIGN_UP);
+                                      }),
                             ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                // Log button click event
-                                AnalyticsService.logButtonClick(
-                                  screenName: 'Login screen verification code',
-                                  buttonName: 'signup',
-                                  eventName: 'login_verification_code_click',
-                                );
-                                Get.toNamed(Routes.SIGN_UP);
-                              },
-                          ),
-                        ],
-                      ),
-                    ),
+                          ],
+                        ),
+                      );
+                    }),
                   ),
                 ),
               ),

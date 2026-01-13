@@ -23,6 +23,7 @@ class EventerPaymentController extends GetxController {
     super.onInit();
     // Get arguments from route
     final arguments = Get.arguments as Map<String, dynamic>?;
+    // eventId = arguments?['eventId'] as String?;
     eventId = arguments?['eventId'] as String?;
     email = arguments?['email'] as String?;
     initialConfig = arguments?['config'] as Map<String, dynamic>?;

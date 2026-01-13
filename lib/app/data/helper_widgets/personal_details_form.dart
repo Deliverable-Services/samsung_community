@@ -107,12 +107,12 @@ class PersonalDetailsForm extends StatelessWidget {
       FormFieldConfig(
         key: 'city',
         type: FormFieldType.text,
-        label: 'city'.tr,
+        label: 'location'.tr,
         placeholder: 'type'.tr,
         textController: cityController,
         validator: (value) {
           if (value == null || value.trim().isEmpty) {
-            return 'city'.tr + ' is_required'.tr;
+            return 'location'.tr + ' is_required'.tr;
           }
           return null;
         },

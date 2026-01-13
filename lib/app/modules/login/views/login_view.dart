@@ -145,7 +145,7 @@ class LoginView extends GetView<LoginController> {
                 ),
               ),
               Positioned(
-                top: 710.h,
+                top: 690.h,
                 left: 20.w,
                 child: Obx(
                   () => AppButton(
@@ -170,49 +170,57 @@ class LoginView extends GetView<LoginController> {
                 ),
               ),
               Positioned(
-                top: 788.h,
+                top: 768.h,
                 left: 0,
                 right: 0,
                 child: Center(
                   child: SizedBox(
-                    child: RichText(
-                      textScaler: const TextScaler.linear(1.0),
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'dontHaveAccount'.tr,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 16.sp,
-                              letterSpacing: 0,
-                              color: AppColors.linkBlue,
-                              height: 24 / 16,
+                    child: Obx(() {
+                      final disabled = controller.isValidating.value;
+                      final baseColor = AppColors.linkBlue.withOpacity(
+                        disabled ? 0.6 : 1.0,
+                      );
+                      return RichText(
+                        textScaler: const TextScaler.linear(1.0),
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'dontHaveAccount'.tr,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 16.sp,
+                                letterSpacing: 0,
+                                color: baseColor,
+                                height: 24 / 16,
+                              ),
                             ),
-                          ),
-                          TextSpan(
-                            text: 'signUp'.tr,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16.sp,
-                              letterSpacing: 0,
-                              color: AppColors.linkBlue,
-                              height: 24 / 16,
+                            TextSpan(
+                              text: 'signUp'.tr,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16.sp,
+                                letterSpacing: 0,
+                                color: baseColor,
+                                height: 24 / 16,
+                              ),
+                              recognizer: disabled
+                                  ? null
+                                  : (TapGestureRecognizer()
+                                      ..onTap = () {
+                                        AnalyticsService.logButtonClick(
+                                          screenName:
+                                              'Login screen enter phone',
+                                          buttonName: 'signup',
+                                          eventName: 'login_enter_phone_click',
+                                        );
+                                        Get.toNamed(Routes.SIGN_UP);
+                                      }),
                             ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                // Log button click event
-                                AnalyticsService.logButtonClick(
-                                  screenName: 'Login screen enter phone',
-                                  buttonName: 'signup',
-                                  eventName: 'login_enter_phone_click',
-                                );
-                                Get.toNamed(Routes.SIGN_UP);
-                              },
-                          ),
-                        ],
-                      ),
-                    ),
+                          ],
+                        ),
+                      );
+                    }),
                   ),
                 ),
               ),

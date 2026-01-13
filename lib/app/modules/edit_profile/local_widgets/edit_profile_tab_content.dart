@@ -20,12 +20,14 @@ class EditProfileTabContent extends GetView<EditProfileController> {
           cityController: controller.cityController,
           selectedGender: controller.selectedGender,
           selectedDeviceModel: controller.selectedDeviceModel,
-          saveButtonText: '',
+          saveButtonText: 'save'.tr,
           isLoading: controller.isLoading.value || controller.isSaving.value,
           padding: EdgeInsets.symmetric(horizontal: 20.w),
-          hideSaveButton: true,
-          onSave: (formData) async {},
-          onFieldBlur: (key, value) => controller.saveFieldOnBlur(key, value),
+          hideSaveButton: false,
+          onSave: (formData) async {
+            await controller.savePersonalDetails();
+          },
+          onFieldBlur: null,
         );
       } else {
         return AccountDetailsForm(
@@ -35,12 +37,14 @@ class EditProfileTabContent extends GetView<EditProfileController> {
           classController: controller.classController,
           selectedCollege: controller.selectedCollege,
           selectedStudent: controller.selectedStudent,
-          saveButtonText: '',
+          saveButtonText: 'save'.tr,
           isLoading: controller.isLoading.value || controller.isSaving.value,
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-          hideSaveButton: true,
-          onSave: (formData) async {},
-          onFieldBlur: (key, value) => controller.saveFieldOnBlur(key, value),
+          hideSaveButton: false,
+          onSave: (formData) async {
+            await controller.saveAccountDetails();
+          },
+          onFieldBlur: null,
         );
       }
     });

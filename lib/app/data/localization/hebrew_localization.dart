@@ -68,6 +68,7 @@ class HebrewiLocalization {
     "failed_to_like_content": "הוספת לייק לתוכן נכשלה",
     "cancel": "ביטול",
     "failed_to_load_blocked_users": "טעינת משתמשים חסומים נכשלה",
+    "profile_saved_successfully": "הפרופיל עודכן בהצלחה",
 
     //BOTTOM BAR
     "home": "בית",
@@ -123,9 +124,11 @@ class HebrewiLocalization {
     "birthday": "יום הולדת",
     "emailAddress": "כתובת אימייל",
     "city": "עיר",
+    "location": "מיקום",
     "gender": "מִגדָר",
     "deviceModel": "דגם מכשיר",
     "next": "הבא",
+    "save": "שמור שינויים",
     "account_details": "פרטי חשבון",
     "social_media": "מדיה חברתית",
     "profession": "מִקצוֹעַ",
