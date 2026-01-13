@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:samsung_community_mobile/app/modules/home/views/promotion_card.dart';
 
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
@@ -46,6 +47,32 @@ class HomeView extends GetView<HomeController> {
                     _buildEventCard(controller.latestEvent.value!),
                     SizedBox(height: 16.h),
                   ],
+
+                  // Promotions
+                  if (controller.promotions.isNotEmpty) ...[
+                    SizedBox(
+                      height: 150.h,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: controller.promotions.length,
+                        separatorBuilder: (_, __) => SizedBox(width: 12.w),
+                        itemBuilder: (context, index) {
+                          final promo = controller.promotions[index];
+                          return SizedBox(
+                            width: 300.w,
+                            child: PromotionCard(
+                              title: promo.title ?? '',
+                              description: promo.description ?? '',
+                              imageUrl: promo.backgroundImageUrl??'',
+                              interval: promo.intervalDuration.toString(),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+                  ],
+
 
                   // Weekly Riddle
                   if (controller.weeklyRiddle.value != null) ...[
