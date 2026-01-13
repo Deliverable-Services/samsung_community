@@ -78,7 +78,7 @@ class _FeedViewState extends State<FeedView> {
                                 child: Padding(
                                   padding: EdgeInsets.only(top: 40.h),
                                   child: Text(
-                                    'No content found',
+                                    'noContentAvailable'.tr,
                                     style: TextStyle(fontSize: 16.sp),
                                   ),
                                 ),

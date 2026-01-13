@@ -66,39 +66,34 @@ class BottomSheetModal extends StatelessWidget {
               ),
             ],
           ),
-          padding: EdgeInsets.only(top: 14.w),
-          child: Stack(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(
-                  top: 19.h,
-                  left: 20.w,
-                  right: 20.w,
-                  bottom: 20.h,
-                ),
-                child: content,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  buttonType == BottomSheetButtonType.none
+                      ? const SizedBox.shrink()
+                      : buttonType == BottomSheetButtonType.close
+                      ? CustomCloseButton(
+                          onTap: () {
+                            Navigator.of(context, rootNavigator: true).pop();
+                            onClose?.call();
+                          },
+                        )
+                      : CustomBackButton(
+                          onTap: () {
+                            Navigator.of(context, rootNavigator: true).pop();
+                            onClose?.call();
+                          },
+                          rotation: 0,
+                        ),
+                  SizedBox(height: 10),
+                  content,
+                ],
               ),
-              Positioned(
-                top: 0.w,
-                right: 20.w,
-                child: buttonType == BottomSheetButtonType.none
-                    ? const SizedBox.shrink()
-                    : buttonType == BottomSheetButtonType.close
-                    ? CustomCloseButton(
-                        onTap: () {
-                          Navigator.of(context, rootNavigator: true).pop();
-                          onClose?.call();
-                        },
-                      )
-                    : CustomBackButton(
-                        onTap: () {
-                          Navigator.of(context, rootNavigator: true).pop();
-                          onClose?.call();
-                        },
-                        rotation: 0,
-                      ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

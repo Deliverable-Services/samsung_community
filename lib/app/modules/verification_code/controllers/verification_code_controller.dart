@@ -52,7 +52,69 @@ class VerificationCodeController extends GetxController {
     startResendTimer();
   }
 
-  void clickOnSignUpWithGoogleButton() async {
+  Future<void> clickOnSignUpWithGoogleButton() async {
+    const webClientId =
+        '750436578430-gd5c9nh6cndglhsn9u0rjslnurbdk61m.apps.googleusercontent.com';
+    const iosClientId = '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';
+
+    final scopes = ['email', 'profile'];
+
+    final googleSignIn = GoogleSignIn.instance;
+
+    await googleSignIn.initialize(
+      serverClientId: webClientId,
+      clientId: iosClientId,
+    );
+
+    final googleUser = await googleSignIn.authenticate();
+
+    final idToken = googleUser.authentication.idToken;
+
+    if (idToken == null) {
+      debugPrint('No ID token found');
+      return;
+    }
+    final authorization =
+        await googleUser.authorizationClient.authorizationForScopes(scopes) ??
+        await googleUser.authorizationClient.authorizeScopes(scopes);
+
+    final accessToken = authorization.accessToken;
+
+    AuthResponse response = await Supabase.instance.client.auth
+        .signInWithIdToken(
+          provider: OAuthProvider.google,
+          idToken: idToken,
+          accessToken: accessToken,
+        );
+
+    UserIdentity? identityData = response.user?.identities
+        ?.where((element) => element.userId == response.user?.id)
+        .first;
+
+    userData.value = {
+      'id': response.user?.id,
+      'email': response.user?.email,
+      'name': identityData?.identityData?['full_name'],
+      'photoUrl': identityData?.identityData?['avatar_url'],
+    };
+
+    Get.offNamed(
+      Routes.PERSONAL_DETAILS,
+      parameters: {'phoneNumber': phoneNumber.value},
+    );
+
+    debugPrint('response user email :::  ${response.user?.email}');
+    debugPrint('response user id :::  ${response.user?.id}');
+    debugPrint(
+      'response user identities full_name:::  ${identityData?.identityData?['full_name']}',
+    );
+    debugPrint(
+      'response user identities avatar_url:::  ${identityData?.identityData?['avatar_url']}',
+    );
+  }
+
+  /*
+  void clickOnSignUpWithGoogleButton1() async {
     final supabase = Supabase.instance.client;
 
     /// TODO: update the Web client ID with your own.
@@ -88,6 +150,7 @@ class VerificationCodeController extends GetxController {
       parameters: {'phoneNumber': phoneNumber.value},
     );
   }
+*/
 
   void increment() => count.value++;
 

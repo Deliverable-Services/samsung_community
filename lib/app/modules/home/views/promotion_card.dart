@@ -19,55 +19,79 @@ class PromotionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 140.h,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.r),
-        image: DecorationImage(
-          image: NetworkImage(imageUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Container(
-        padding: EdgeInsets.all(16.w),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.r),
-          gradient: LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-            colors: [
-              Colors.black.withOpacity(0.7),
-              Colors.transparent,
-            ],
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.end,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20.r),
+      child: AspectRatio(
+        aspectRatio: 4 / 5,
+        child: Stack(
+          fit: StackFit.expand,
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                color: AppColors.white,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w700,
+            /// Background image
+            Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
+            ),
+
+            /// Soft gradient overlay
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.75),
+                    Colors.black.withOpacity(0.25),
+                    Colors.transparent,
+                  ],
+                ),
               ),
             ),
-            SizedBox(height: 4.h),
-            Text(
-              description,
-              style: TextStyle(
-                color: AppColors.textWhiteOpacity70,
-                fontSize: 14.sp,
-              ),
-            ),
-            SizedBox(height: 6.h),
-            Text(
-              interval,
-              style: TextStyle(
-                color: const Color(0xFF4FC3F7),
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
+
+            /// Content
+            Padding(
+              padding: EdgeInsets.all(20.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: 6.h),
+                  Text(
+                    description,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.85),
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  Container(
+                    padding:
+                    EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Text(
+                      interval,
+                      style: TextStyle(
+                        color: const Color(0xFF4FC3F7),
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

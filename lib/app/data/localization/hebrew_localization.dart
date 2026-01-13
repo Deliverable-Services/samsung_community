@@ -3,7 +3,19 @@ class HebrewiLocalization {
     "logout": "התנתק",
     "wantLogout": "האם אתה בטוח שאתה רוצה להתנתק?",
     "yes": "כֵּן",
-    "no": "לֹא",
+    "no": "לֹא", "text": "טקסט",
+    "cancelEvent": "ביטול אירוע",
+    "buying": "רכישה",
+    "register": "הרשמה",
+    "emailAddress": "כתובת אימייל",
+    "next": "הבא",
+    "enterYourEmailToReceiveYourTickets":
+        "הזן את כתובת האימייל שלך כדי לקבל את הכרטיסים.",
+    "typeEmailAddress": "הזן כתובת אימייל",
+    "registrationCancelled": "ההרשמה בוטלה",
+    "yourEventRegistration": "הרישום שלך לאירוע בוטל.",
+    "noContentAvailable": "אין תוכן זמין",
+    "markAllAsRead": "סמן הכל כנקרא",
 
     //Notification and channel
     "notifications": "התראות",
@@ -241,7 +253,7 @@ class HebrewiLocalization {
     // Side Menu
     "messages": "הודעות",
     "store": "חנות",
-    "samsungStore": "Samsung Store",
+    "samsungStore": "חנות סמסונג",
     "exploreStore": "חקור את החנות",
     "storeDescription": "פנק את עצמך במשהו מיוחד.",
     "allProducts": "כל המוצרים",

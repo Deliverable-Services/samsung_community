@@ -48,32 +48,6 @@ class HomeView extends GetView<HomeController> {
                     SizedBox(height: 16.h),
                   ],
 
-                  // Promotions
-                  if (controller.promotions.isNotEmpty) ...[
-                    SizedBox(
-                      height: 150.h,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: controller.promotions.length,
-                        separatorBuilder: (_, __) => SizedBox(width: 12.w),
-                        itemBuilder: (context, index) {
-                          final promo = controller.promotions[index];
-                          return SizedBox(
-                            width: 300.w,
-                            child: PromotionCard(
-                              title: promo.title ?? '',
-                              description: promo.description ?? '',
-                              imageUrl: promo.backgroundImageUrl??'',
-                              interval: promo.intervalDuration.toString(),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 16.h),
-                  ],
-
-
                   // Weekly Riddle
                   if (controller.weeklyRiddle.value != null) ...[
                     AssignmentCard(

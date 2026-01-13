@@ -43,8 +43,8 @@ class PersonalDetailsController extends GetxController {
     if(userData.isNotEmpty) {
       fullNameController.text = userData['name'];
       emailController.text = userData['email'];
+      profilePictureUrl.value = userData['photoUrl'];
     }
-    // Birthday field should remain empty - user must select a date
     _detectAndSetDeviceModel();
   }
 

@@ -150,7 +150,7 @@ class EventEmailModal extends StatelessWidget {
       children: [
         // Title
         Text(
-          'Email address',
+          'emailAddress'.tr,
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 18.sp,
@@ -164,7 +164,7 @@ class EventEmailModal extends StatelessWidget {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 55.w),
           child: Text(
-            'Enter your email to receive your tickets.',
+            'enterYourEmailToReceiveYourTickets'.tr,
             style: TextStyle(
               fontSize: 14.sp,
               height: 22 / 14,
@@ -179,7 +179,7 @@ class EventEmailModal extends StatelessWidget {
         CustomTextField(
           controller: controller.emailController,
           keyboardType: TextInputType.emailAddress,
-          placeholder: 'Type Email address',
+          placeholder: 'typeEmailAddress'.tr,
           onEditingComplete: () => _handleNext(context, controller),
         ),
         SizedBox(height: 30.h),
@@ -189,7 +189,7 @@ class EventEmailModal extends StatelessWidget {
             onTap: controller.isValidEmail
                 ? () => _handleNext(context, controller)
                 : () {},
-            text: 'Next',
+            text: 'next'.tr,
             width: double.infinity,
             isEnabled: controller.isValidEmail,
           ),
