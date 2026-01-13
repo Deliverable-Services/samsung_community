@@ -4,6 +4,17 @@ class EnLocalization {
     "wantLogout": "Are you sure you want to logout?",
     "yes": "Yes",
     "no": "No",
+    "text": "Text",
+    "cancelEvent": "Cancel event",
+    "buying": "Buying",
+    "register": "Register",
+    "emailAddress": "Email address",
+    "next": "Next",
+    "enterYourEmailToReceiveYourTickets": "Enter your email to receive your tickets.",
+    "typeEmailAddress": "Type email address",
+    "registrationCancelled": "Registration Cancelled",
+    "yourEventRegistration": "Your event registration has been cancelled.",
+    "noContentAvailable": "No content available",
 
     //Notification and channel
     "notifications": "Notifications",

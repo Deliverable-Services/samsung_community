@@ -447,8 +447,8 @@ class EventsController extends BaseController {
         final bool isBusy = isPurchasing.value || isCancelling.value;
 
         final String buttonText = isRegistered
-            ? 'Cancel event'
-            : (hasCost ? 'Buying' : 'Register');
+            ? 'cancelEvent'.tr
+            : (hasCost ? 'buying'.tr : 'register'.tr);
 
         final String? buttonIconPath = isRegistered
             ? AppImages.cancelEventIcon

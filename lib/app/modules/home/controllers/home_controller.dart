@@ -26,6 +26,7 @@ import '../../../data/models/weekly_riddle_model.dart';
 import '../../../repository/auth_repo/auth_repo.dart';
 import '../repo/promotion_model.dart';
 import '../repo/promotion_service.dart';
+import '../views/promotion_card.dart';
 
 class HomeController extends GetxController {
   final AuthRepo _authRepo = Get.find<AuthRepo>();
@@ -75,20 +76,16 @@ class HomeController extends GetxController {
     loadLatestItems().then((_) {
       loadAllItems();
     });
-
-    loadPromotions();
   }
 
   Future<void> loadPromotions() async {
     isLoadingPromotions.value = true;
     final result = await _promotionService.fetchPromotions();
 
-    print('result::::::::::::::::::${result}');
-    print('result::::::::::::::::::${result.isSuccess}');
-    print('result::::::::::::::::::${promotions.value}');
-
     if (result.isSuccess) {
       promotions.value = result.dataOrNull ?? [];
+      isLoadingPromotions.value = false;
+      showPromotionsOneByOne();
     }
 
     isLoadingPromotions.value = false;
@@ -101,6 +98,32 @@ class HomeController extends GetxController {
       loadMoreItems();
     }
   }
+
+  void showPromotionsOneByOne() {
+    if (promotions.isEmpty) return;
+    _showPromotionAtIndex(0);
+  }
+
+  void _showPromotionAtIndex(int index) {
+    if (index >= promotions.length) return;
+
+    showDialog(
+      context: Get.context!,
+      barrierDismissible: false,
+      builder: (_) => PromotionPopup(
+        promotion: promotions[index],
+        onClose: () {
+          Get.back(); // close current popup
+
+          // Show next popup after close
+          Future.delayed(const Duration(milliseconds: 300), () {
+            _showPromotionAtIndex(index + 1);
+          });
+        },
+      ),
+    );
+  }
+
 
   /// Load all latest items
   Future<void> loadLatestItems() async {
@@ -1091,3 +1114,56 @@ class HomeController extends GetxController {
   //   isConfirmChecked.value = false;
   // }
 }
+
+class PromotionPopup extends StatelessWidget {
+  final PromotionModel promotion;
+  final VoidCallback onClose;
+
+  const PromotionPopup({
+    super.key,
+    required this.promotion,
+    required this.onClose,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: AppColors.overlayContainerBackground,
+      insetPadding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 48.h),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          PromotionCard(
+            title: promotion.title,
+            description: promotion.description ?? '',
+            imageUrl: promotion.backgroundImageUrl ?? '',
+            interval: promotion.intervalDuration.toString(),
+          ),
+
+          /// Floating close button
+          Positioned(
+            top: -14,
+            right: -14,
+            child: GestureDetector(
+              onTap: onClose,
+              child: Container(
+                height: 36,
+                width: 36,
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.7),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+

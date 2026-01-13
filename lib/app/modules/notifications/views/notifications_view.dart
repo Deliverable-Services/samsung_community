@@ -14,7 +14,7 @@ class NotificationsView extends GetView<NotificationsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TitleAppBar(text: 'Notifications', isLeading: false),
+      appBar: TitleAppBar(text: 'notifications'.tr, isLeading: false),
       backgroundColor: AppColors.primary,
       body: SafeArea(
         top: false, // TitleAppBar already handles top padding

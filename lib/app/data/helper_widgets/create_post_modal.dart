@@ -37,88 +37,90 @@ class CreatePostModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Title
-        Text(
-          'publishingAPost'.tr,
-          style: TextStyle(
-            fontFamily: 'Samsung Sharp Sans',
-            fontWeight: FontWeight.w700,
-            fontSize: 16.sp,
-            height: 24 / 16,
-            letterSpacing: 0,
-            color: AppColors.textWhite,
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Title
+          Text(
+            'publishingAPost'.tr,
+            style: TextStyle(
+              fontFamily: 'Samsung Sharp Sans',
+              fontWeight: FontWeight.w700,
+              fontSize: 16.sp,
+              height: 24 / 16,
+              letterSpacing: 0,
+              color: AppColors.textWhite,
+            ),
           ),
-        ),
-        // Description
-        Text(
-          'publishingAPostDescription'.tr,
-          style: TextStyle(
-            fontFamily: 'Samsung Sharp Sans',
-            fontSize: 14.sp,
-            height: 22 / 14,
-            letterSpacing: 0,
-            color: AppColors.textWhite,
+          // Description
+          Text(
+            'publishingAPostDescription'.tr,
+            style: TextStyle(
+              fontFamily: 'Samsung Sharp Sans',
+              fontSize: 14.sp,
+              height: 22 / 14,
+              letterSpacing: 0,
+              color: AppColors.textWhite,
+            ),
           ),
-        ),
-        SizedBox(height: 20.h),
-        // Title Input Field
-        CustomTextField(
-          controller: titleController,
-          label: 'title'.tr,
-          placeholder: 'typeATitle'.tr,
-          maxLines: 1,
-          width: double.infinity,
-        ),
-        SizedBox(height: 25.h),
-        // Description Text Area Field
-        CustomTextField(
-          controller: descriptionController,
-          label: 'description'.tr,
-          placeholder: 'typeADescription'.tr,
-          maxLines: 5,
-          width: double.infinity,
-        ),
-        SizedBox(height: 25.h),
-        // Upload File Field
-        UploadFileField(
-          onTap: () {
-            onPublish1?.call();
-          },
-          onRemove: onRemoveFile,
-          uploadedFileName: uploadedFileName,
-          isUploadingMedia: isUploadingMedia,
-        ),
-        if (selectedMediaFile != null || uploadedMediaUrl != null)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 16.h),
-              _MediaPreview(
-                mediaFile: selectedMediaFile,
-                mediaUrl: uploadedMediaUrl,
-                fileName: uploadedFileName,
-                isUploading: isUploadingMedia,
-              ),
-            ],
-          ),
-        SizedBox(height: 32.h),
-        // Publish Button
-        Center(
-          child: AppButton(
-            onTap: () {
-              // TODO: Implement publish functionality
-              onPublish?.call();
-            },
-            text: 'publish'.tr,
+          SizedBox(height: 20.h),
+          // Title Input Field
+          CustomTextField(
+            controller: titleController,
+            label: 'title'.tr,
+            placeholder: 'typeATitle'.tr,
+            maxLines: 1,
             width: double.infinity,
-            height: 48.h,
           ),
-        ),
-      ],
+          SizedBox(height: 25.h),
+          // Description Text Area Field
+          CustomTextField(
+            controller: descriptionController,
+            label: 'description'.tr,
+            placeholder: 'typeADescription'.tr,
+            maxLines: 5,
+            width: double.infinity,
+          ),
+          SizedBox(height: 25.h),
+          // Upload File Field
+          UploadFileField(
+            onTap: () {
+              onPublish1?.call();
+            },
+            onRemove: onRemoveFile,
+            uploadedFileName: uploadedFileName,
+            isUploadingMedia: isUploadingMedia,
+          ),
+          if (selectedMediaFile != null || uploadedMediaUrl != null)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 16.h),
+                _MediaPreview(
+                  mediaFile: selectedMediaFile,
+                  mediaUrl: uploadedMediaUrl,
+                  fileName: uploadedFileName,
+                  isUploading: isUploadingMedia,
+                ),
+              ],
+            ),
+          SizedBox(height: 32.h),
+          // Publish Button
+          Center(
+            child: AppButton(
+              onTap: () {
+                // TODO: Implement publish functionality
+                onPublish?.call();
+              },
+              text: 'publish'.tr,
+              width: double.infinity,
+              height: 48.h,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
