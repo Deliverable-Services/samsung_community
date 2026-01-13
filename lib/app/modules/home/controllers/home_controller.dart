@@ -124,7 +124,6 @@ class HomeController extends GetxController {
     );
   }
 
-
   /// Load all latest items
   Future<void> loadLatestItems() async {
     isLoadingLatestItems.value = true;
@@ -1144,20 +1143,16 @@ class PromotionPopup extends StatelessWidget {
           Positioned(
             top: -14,
             right: -14,
-            child: GestureDetector(
-              onTap: onClose,
-              child: Container(
+            child: IconButton(
+              onPressed: onClose,
+              icon: Container(
                 height: 36,
                 width: 36,
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.7),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.close,
-                  color: Colors.white,
-                  size: 20,
-                ),
+                child: const Icon(Icons.close, color: Colors.white, size: 20),
               ),
             ),
           ),
@@ -1166,4 +1161,3 @@ class PromotionPopup extends StatelessWidget {
     );
   }
 }
-
