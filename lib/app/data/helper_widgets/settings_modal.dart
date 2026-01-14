@@ -19,19 +19,20 @@ class SettingsModal extends StatelessWidget {
     );
   }
 
-  void _handleEditAccountDetails(BuildContext context) {
-    // Navigate to edit profile after modal closes
-    Future.delayed(const Duration(milliseconds: 200), () {
+  void _handleEditAccountDetails() {
+    Get.back();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       Get.toNamed(Routes.EDIT_PROFILE);
     });
   }
 
-  void _handleBlockedUsers(BuildContext context) {
-    // Navigate after a brief delay - this will push on top of profile
-    Future.delayed(const Duration(milliseconds: 250), () {
+  void _handleBlockedUsers() {
+    Get.back();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       Get.toNamed(Routes.BLOCKED_USERS);
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +43,13 @@ class SettingsModal extends StatelessWidget {
         OptionItem(
           text: 'editAccountDetails'.tr,
           boxTextWidget: SvgPicture.asset(AppImages.editProfileIcon),
-          onTap: () => _handleEditAccountDetails(context),
+          onTap: () => _handleEditAccountDetails(),
         ),
         SizedBox(height: 15.h),
         OptionItem(
           text: 'blockedUsers'.tr,
           boxTextWidget: SvgPicture.asset(AppImages.blockIcon),
-          onTap: () => _handleBlockedUsers(context),
+          onTap: () => _handleBlockedUsers(),
         ),
         SizedBox(height: 10.h),
       ],
