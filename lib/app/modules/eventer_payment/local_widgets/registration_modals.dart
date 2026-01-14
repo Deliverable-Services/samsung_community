@@ -31,9 +31,9 @@ class RegistrationCancelledModal {
       iconPath: AppImages.icFailed,
       iconWidth: 60.w,
       iconHeight: 60.h,
-      title: 'Registration Cancelled',
-      description: 'Your event registration has been cancelled.',
-      buttonText: 'Close',
+      title: 'registrationCancelled'.tr,
+      description: 'yourEventRegistration'.tr,
+      buttonText: 'close'.tr,
       onButtonTap: () {
         Navigator.of(context, rootNavigator: true).pop();
         // Return to events screen

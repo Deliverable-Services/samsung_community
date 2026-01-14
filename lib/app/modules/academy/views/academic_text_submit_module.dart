@@ -28,98 +28,100 @@ class AcademicTextSubmitModule extends StatelessWidget {
     final controller = Get.find<AcademyController>();
 
     return Obx(
-      () => Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// Points
-          Row(
-            children: [
-              SvgPicture.asset(AppImages.pointsIcon, width: 18.w, height: 18.h),
-              SizedBox(width: 4.w),
-              Text(
-                "${pointsToEarn ?? 0}",
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 12.sp,
-                  color: AppColors.white,
+      () => SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// Points
+            Row(
+              children: [
+                SvgPicture.asset(AppImages.pointsIcon, width: 18.w, height: 18.h),
+                SizedBox(width: 4.w),
+                Text(
+                  "${pointsToEarn ?? 0}",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12.sp,
+                    color: AppColors.white,
+                  ),
                 ),
-              ),
-            ],
-          ),
-
-          SizedBox(height: 14.h),
-
-          /// Title
-          Text(
-            title,
-            style: TextStyle(
-              fontFamily: 'Samsung Sharp Sans',
-              fontWeight: FontWeight.w700,
-              fontSize: 16.sp,
-              color: AppColors.textWhite,
+              ],
             ),
-          ),
 
-          /// Description
-          Text(
-            description,
-            style: TextStyle(
-              fontFamily: 'Samsung Sharp Sans',
-              fontSize: 14.sp,
-              color: AppColors.textWhite,
-            ),
-          ),
+            SizedBox(height: 14.h),
 
-          SizedBox(height: 20.h),
-
-          CustomTextField(
-            label: 'text'.tr,
-            controller: controller.textController,
-            placeholder: 'type'.tr,
-          ),
-
-          SizedBox(height: 24.h),
-
-          /// Checkbox
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Checkbox(
-                value: controller.isConfirmChecked.value,
-                onChanged: (value) =>
-                    controller.isConfirmChecked.value = value ?? false,
-                activeColor: AppColors.white,
-                checkColor: AppColors.primary,
+            /// Title
+            Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Samsung Sharp Sans',
+                fontWeight: FontWeight.w700,
+                fontSize: 16.sp,
+                color: AppColors.textWhite,
               ),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => controller.isConfirmChecked.toggle(),
-                  child: Text(
-                    'iConfirmGranting'.tr,
-                    style: TextStyle(
-                      fontFamily: 'Samsung Sharp Sans',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12.sp,
-                      color: AppColors.textWhite,
+            ),
+
+            /// Description
+            Text(
+              description,
+              style: TextStyle(
+                fontFamily: 'Samsung Sharp Sans',
+                fontSize: 14.sp,
+                color: AppColors.textWhite,
+              ),
+            ),
+
+            SizedBox(height: 20.h),
+
+            CustomTextField(
+              label: 'text'.tr,
+              controller: controller.textController,
+              placeholder: 'type'.tr,
+            ),
+
+            SizedBox(height: 24.h),
+
+            /// Checkbox
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Checkbox(
+                  value: controller.isConfirmChecked.value,
+                  onChanged: (value) =>
+                      controller.isConfirmChecked.value = value ?? false,
+                  activeColor: AppColors.white,
+                  checkColor: AppColors.primary,
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => controller.isConfirmChecked.toggle(),
+                    child: Text(
+                      'iConfirmGranting'.tr,
+                      style: TextStyle(
+                        fontFamily: 'Samsung Sharp Sans',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12.sp,
+                        color: AppColors.textWhite,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
 
-          SizedBox(height: 24.h),
+            SizedBox(height: 24.h),
 
-          /// Submit Button (disabled until checked)
-          AppButton(
-            onTap: onPublish,
-            text: 'submitAnswer'.tr,
-            width: double.infinity,
-            height: 48.h,
-            isEnabled: controller.isConfirmChecked.value,
-          ),
-        ],
+            /// Submit Button (disabled until checked)
+            AppButton(
+              onTap: onPublish,
+              text: 'submitAnswer'.tr,
+              width: double.infinity,
+              height: 48.h,
+              isEnabled: controller.isConfirmChecked.value,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -152,105 +154,107 @@ class _AcademicMcqSubmitModuleState extends State<AcademicMcqSubmitModule> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          /// Points
-          Row(
-            children: [
-              SvgPicture.asset(AppImages.pointsIcon, width: 18.w, height: 18.h),
-              SizedBox(width: 4.w),
-              Text(
-                '+${widget.pointsToEarn ?? 0}',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.white,
-                ),
-              ),
-            ],
-          ),
-
-          SizedBox(height: 14.h),
-
-          /// Title
-          Text(
-            widget.title,
-            style: TextStyle(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textWhite,
-            ),
-          ),
-
-          SizedBox(height: 4.h),
-
-          /// Description
-          Text(
-            widget.description,
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: AppColors.textWhiteSecondary,
-            ),
-          ),
-
-          SizedBox(height: 20.h),
-
-          /// MCQ Options
-          ...List.generate(widget.options.length, (index) {
-            final optionMap = widget.options[index];
-            final optionText = (optionMap as Map<String, dynamic>).values.first
-                .toString();
-
-            return GestureDetector(
-              onTap: () => selectedIndex.value = index,
-              child: Container(
-                margin: EdgeInsets.only(bottom: 12.h),
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16.r),
-                  gradient: LinearGradient(
-                    colors: selectedIndex.value == index
-                        ? const [Color(0xFF3B82F6), Color(0xFF2563EB)]
-                        : const [Color(0xFF3A3F45), Color(0xFF2F3439)],
+      return SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// Points
+            Row(
+              children: [
+                SvgPicture.asset(AppImages.pointsIcon, width: 18.w, height: 18.h),
+                SizedBox(width: 4.w),
+                Text(
+                  '+${widget.pointsToEarn ?? 0}',
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.white,
                   ),
                 ),
-                child: Row(
-                  children: [
-                    _RadioCircle(isSelected: selectedIndex.value == index),
-                    SizedBox(width: 12.w),
-                    Expanded(
-                      child: Text(
-                        optionText,
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+              ],
+            ),
+
+            SizedBox(height: 14.h),
+
+            /// Title
+            Text(
+              widget.title,
+              style: TextStyle(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textWhite,
+              ),
+            ),
+
+            SizedBox(height: 4.h),
+
+            /// Description
+            Text(
+              widget.description,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: AppColors.textWhiteSecondary,
+              ),
+            ),
+
+            SizedBox(height: 20.h),
+
+            /// MCQ Options
+            ...List.generate(widget.options.length, (index) {
+              final optionMap = widget.options[index];
+              final optionText = (optionMap as Map<String, dynamic>).values.first
+                  .toString();
+
+              return GestureDetector(
+                onTap: () => selectedIndex.value = index,
+                child: Container(
+                  margin: EdgeInsets.only(bottom: 12.h),
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16.r),
+                    gradient: LinearGradient(
+                      colors: selectedIndex.value == index
+                          ? const [Color(0xFF3B82F6), Color(0xFF2563EB)]
+                          : const [Color(0xFF3A3F45), Color(0xFF2F3439)],
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      _RadioCircle(isSelected: selectedIndex.value == index),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: Text(
+                          optionText,
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+              );
+            }),
+
+            SizedBox(height: 24.h),
+
+            /// Submit Button
+            Opacity(
+              opacity: selectedIndex.value != null ? 1 : 0.5,
+              child: AppButton(
+                text: 'submitAnswer'.tr,
+                width: double.infinity,
+                height: 48.h,
+                onTap: selectedIndex.value != null
+                    ? () => widget.onSubmit(selectedIndex.value!)
+                    : null,
               ),
-            );
-          }),
-
-          SizedBox(height: 24.h),
-
-          /// Submit Button
-          Opacity(
-            opacity: selectedIndex.value != null ? 1 : 0.5,
-            child: AppButton(
-              text: 'submitAnswer'.tr,
-              width: double.infinity,
-              height: 48.h,
-              onTap: selectedIndex.value != null
-                  ? () => widget.onSubmit(selectedIndex.value!)
-                  : null,
             ),
-          ),
-        ],
+          ],
+        ),
       );
     });
   }

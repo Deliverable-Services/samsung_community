@@ -243,7 +243,7 @@ class _VodViewState extends State<VodView> {
             child: Padding(
               padding: EdgeInsets.all(20.h),
               child: Text(
-                'No content available',
+                'noContentAvailable'.tr,
                 style: TextStyle(
                   fontFamily: 'Samsung Sharp Sans',
                   fontSize: 14,

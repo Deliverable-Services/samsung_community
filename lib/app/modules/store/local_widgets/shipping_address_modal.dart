@@ -18,9 +18,17 @@ class ShippingAddressModal extends StatefulWidget {
   final StoreProductModel product;
   final VoidCallback? onConfirm;
 
-  const ShippingAddressModal({super.key, required this.product, this.onConfirm});
+  const ShippingAddressModal({
+    super.key,
+    required this.product,
+    this.onConfirm,
+  });
 
-  static void show(BuildContext context, {required StoreProductModel product, VoidCallback? onConfirm}) {
+  static void show(
+    BuildContext context, {
+    required StoreProductModel product,
+    VoidCallback? onConfirm,
+  }) {
     BottomSheetModal.show(
       context,
       content: ShippingAddressModal(product: product, onConfirm: onConfirm),
@@ -138,7 +146,7 @@ class _ShippingAddressModalState extends State<ShippingAddressModal> {
     }
 
     final controller = Get.find<StoreController>();
-    
+
     final success = await controller.createOrder(
       product: widget.product,
       city: _cityController.text.trim(),
