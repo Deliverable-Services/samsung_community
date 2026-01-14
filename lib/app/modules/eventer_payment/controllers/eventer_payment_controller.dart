@@ -24,7 +24,7 @@ class EventerPaymentController extends GetxController {
     // Get arguments from route
     final arguments = Get.arguments as Map<String, dynamic>?;
     // eventId = arguments?['eventId'] as String?;
-    eventId = arguments?['eventId'] as String?;
+    eventId = 'yp93f';
     email = arguments?['email'] as String?;
     initialConfig = arguments?['config'] as Map<String, dynamic>?;
 
@@ -58,13 +58,6 @@ class EventerPaymentController extends GetxController {
       showSeller: initialConfig?['showSeller'] ?? false,
       showPoweredBy: initialConfig?['showPoweredBy'] ?? false,
     );
-
-    print('═══════════════════════════════════════════════════════════');
-    print('Eventer Payment URL:');
-    print('Event ID: $eventId');
-    print('Full URL: $eventUrl');
-    print('Email: $email');
-    print('═══════════════════════════════════════════════════════════');
 
     webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)

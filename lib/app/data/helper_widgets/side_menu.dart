@@ -125,48 +125,31 @@ class SideMenu extends StatelessWidget {
   }
 
   void _showLanguageSelector(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      useRootNavigator: true,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: AppColors.overlayContainerBackground,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30.r),
-            topRight: Radius.circular(30.r),
-          ),
-        ),
-        padding: EdgeInsets.only(
-          top: 19.h,
-          left: 20.w,
-          right: 20.w,
-          bottom: 20.h,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: LanguageOptions.options.asMap().entries.map((entry) {
-            final index = entry.key;
-            final option = entry.value;
-            final isLast = index == LanguageOptions.options.length - 1;
-            final languageController = Get.find<LanguageController>();
-            final isSelected =
-                languageController.currentLocale == option.locale;
+    BottomSheetModal.show(
+      context,
+      onClose: () => SideMenu.show(context),
+      buttonType: BottomSheetButtonType.back,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: LanguageOptions.options.asMap().entries.map((entry) {
+          final index = entry.key;
+          final option = entry.value;
+          final isLast = index == LanguageOptions.options.length - 1;
+          final languageController = Get.find<LanguageController>();
+          final isSelected = languageController.currentLocale == option.locale;
 
-            return Padding(
-              padding: EdgeInsets.only(bottom: isLast ? 10.h : 15.h),
-              child: OptionItem(
-                text: option.name,
-                boxText: option.boxText,
-                isSelected: isSelected,
-                onTap: () async {
-                  languageController.changeLanguage(option.id);
-                },
-              ),
-            );
-          }).toList(),
-        ),
+          return Padding(
+            padding: EdgeInsets.only(bottom: isLast ? 10.h : 15.h),
+            child: OptionItem(
+              text: option.name,
+              boxText: option.boxText,
+              isSelected: isSelected,
+              onTap: () async {
+                languageController.changeLanguage(option.id);
+              },
+            ),
+          );
+        }).toList(),
       ),
     );
   }
