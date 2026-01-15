@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 
 import '../../data/core/exceptions/app_exception.dart';
@@ -172,6 +174,52 @@ class AuthService {
   Future<Result<String>> generateOTPForLogin(String phoneNumber) async {
     return _otpService.generateOTPForLogin(phoneNumber);
   }
+
+  Future<Result<String>> signupWithPhone(String phoneNumber) async {
+    try {
+      final response = await SupabaseService.client.functions.invoke(
+        'signup',
+        body: {'phoneNumber': phoneNumber},
+      );
+
+      final rawData = response.data;
+      debugPrint('EDGE RAW RESPONSE: $rawData');
+
+      if (rawData == null) {
+        return const Failure('Empty server response');
+      }
+
+      Map<String, dynamic> data;
+
+      // ✅ Case 1: Map
+      if (rawData is Map<String, dynamic>) {
+        data = rawData;
+      }
+      // ✅ Case 2: JSON String
+      else if (rawData is String) {
+        data = jsonDecode(rawData) as Map<String, dynamic>;
+      }
+      else {
+        return const Failure('Invalid server response format');
+      }
+
+      if (data['error'] != null) {
+        return Failure(data['error'].toString());
+      }
+
+      final otp = data['otp'];
+      if (otp == null) {
+        return const Failure('OTP not received');
+      }
+
+      return Success(otp.toString());
+    } catch (e, stack) {
+      debugPrint('Signup Edge exception: $e');
+      debugPrint('$stack');
+      return Failure(e.toString());
+    }
+  }
+
 
   Future<Result<Map<String, dynamic>?>> checkUserForSignup(
     String phoneNumber,

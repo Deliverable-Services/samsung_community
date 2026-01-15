@@ -168,6 +168,24 @@ class AuthRepo extends BaseController {
     }
   }
 
+  Future<String?> signupPublicUser(String phoneNumber) async {
+    setLoading(true);
+    clearError();
+
+    final result = await _authService.signupWithPhone(phoneNumber);
+
+    setLoading(false);
+
+    if (result.isSuccess) {
+      CommonSnackbar.success('${'otp_for_signup'.tr}: ${result.dataOrNull}');
+      return result.dataOrNull;
+    } else {
+      setError(result.errorOrNull ?? 'Signup failed');
+      return null;
+    }
+  }
+
+
   Future<Map<String, dynamic>?> checkUserForSignup(String phoneNumber) async {
     setLoading(true);
     clearError();

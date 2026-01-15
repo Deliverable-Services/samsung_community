@@ -8,6 +8,7 @@ import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../common/services/analytics_service.dart';
+import '../../../common/services/supabase_service.dart';
 import '../../../data/constants/language_options.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/helper_widgets/bottom_sheet_modal.dart';
@@ -220,7 +221,7 @@ class VerificationCodeController extends GetxController {
     isVerifying.value = true;
 
     // Verify OTP (for signup, we only verify, don't sign in)
-    final isValid = await authRepo.verifyOTP(
+    final isValid = await verifyOTP(
       phoneNumber: phoneNumber.value,
       otpCode: otpCode,
     );
@@ -246,6 +247,33 @@ class VerificationCodeController extends GetxController {
     // OTP verified successfully, show language selector
     _showLanguageSelector();
   }
+
+  Future<bool> verifyOTP({
+    required String phoneNumber,
+    required String otpCode,
+  }) async {
+    print({
+      'phoneNumber': phoneNumber,
+      'otp': otpCode,
+    });
+    final response = await SupabaseService.client.functions.invoke(
+      'update_signup_data',
+      body: {
+        'phoneNumber': phoneNumber,
+        'otp': otpCode,
+      },
+    );
+
+    if (response.data == null) return false;
+
+    await SupabaseService.client.auth.setSession(
+      //response.data['access_token'],
+      response.data['refresh_token'],
+    );
+
+    return true;
+  }
+
 
   void _showLanguageSelector() {
     // Log screen view when language selector appears
