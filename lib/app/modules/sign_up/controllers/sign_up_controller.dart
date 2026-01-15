@@ -60,6 +60,60 @@ class SignUpController extends GetxController {
     isValidating.value = true;
 
     try {
+      final otp = await _authRepo.signupPublicUser(normalizedPhone);
+
+      isValidating.value = false;
+
+      if (otp == null) {
+        final errorMessage = _authRepo.errorMessage.value;
+        _authRepo.clearError();
+
+        if (errorMessage.contains('USER_ALREADY_SIGNED_UP')) {
+          CommonSnackbar.error('user_already_signed_up'.tr);
+          return;
+        }
+
+        if (errorMessage.contains('WAIT_FOR_APPROVAL') ||
+            errorMessage.contains('wait_for_approval')) {
+          CommonSnackbar.error('wait_for_approval'.tr);
+          return;
+        }
+
+        CommonSnackbar.error(
+          errorMessage.isNotEmpty
+              ? errorMessage
+              : 'failedToGenerateVerificationCode'.tr,
+        );
+        return;
+      }
+      Get.toNamed(
+        Routes.VERIFICATION_CODE,
+        parameters: {'phoneNumber': normalizedPhone, 'otp': otp},
+      );
+    } catch (e) {
+      isValidating.value = false;
+      debugPrint('Error in handleSignUp: $e');
+      CommonSnackbar.error('somethingWentWrong'.tr);
+    }
+  }
+
+  Future<void> handleSignUp1() async {
+    hasValidated.value = true;
+
+    if (!(formKey.currentState?.validate() ?? false)) {
+      final phoneError = validatePhone(mobileController.text);
+      if (phoneError != null) {
+        CommonSnackbar.error(phoneError);
+      }
+      return;
+    }
+
+    final phoneNumber = mobileController.text.trim();
+    final normalizedPhone = phoneNumber.replaceAll(RegExp(r'\D'), '');
+
+    isValidating.value = true;
+
+    try {
       final userDetails = await _authRepo.checkUserForSignup(normalizedPhone);
       final checkUserError = _authRepo.errorMessage.value;
 
