@@ -251,7 +251,7 @@ class StoreController extends GetxController {
         return false;
       }
 
-      final shippingAddress = '$address, $city';
+      final shippingAddress = address.trim();
       final balanceAfter = currentPoints - product.costPoints;
 
       final orderResponse = await SupabaseService.client

@@ -383,7 +383,7 @@ class FollowersFollowingController extends BaseController {
     try {
       final newConversation = await SupabaseService.client
           .from('conversations')
-          .insert({})
+          .insert({'created_by': currentUserId})
           .select('id')
           .single();
 

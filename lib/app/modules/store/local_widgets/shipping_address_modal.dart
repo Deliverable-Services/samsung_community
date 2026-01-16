@@ -58,14 +58,14 @@ class _ShippingAddressModalState extends State<ShippingAddressModal> {
 
   String? _validateCity(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return '${'city'.tr} ${'isRequired'.tr}';
+      return '${'location'.tr} ${'isRequired'.tr}';
     }
     final trimmed = value.trim();
     if (trimmed.length < 2) {
-      return 'City must be at least 2 characters';
+      return 'Location must be at least 2 characters';
     }
     if (trimmed.length > 50) {
-      return 'City must not exceed 50 characters';
+      return 'Location must not exceed 50 characters';
     }
     return null;
   }
@@ -202,7 +202,7 @@ class _ShippingAddressModalState extends State<ShippingAddressModal> {
           ),
           SizedBox(height: 24.h),
           CustomTextField(
-            label: 'city'.tr,
+            label: 'location'.tr,
             controller: _cityController,
             placeholder: 'type'.tr,
             width: double.infinity,
