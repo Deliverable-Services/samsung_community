@@ -33,7 +33,7 @@ class VerificationCodeController extends GetxController {
   /// Check if form is valid
   bool get isFormValid {
     final otpCode = verificationCodeController.text.trim();
-    return otpCode.isNotEmpty;
+    return otpCode.length == 6;
   }
 
   @override
