@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../common/services/app_lifecycle_service.dart';
 import '../../common/services/auth_service.dart';
 import '../../common/services/supabase_service.dart';
+import '../../data/constants/app_consts.dart';
 import '../../data/core/base/base_controller.dart';
 import '../../data/core/utils/common_snackbar.dart';
 import '../../data/core/utils/result.dart';
@@ -131,6 +132,101 @@ class AuthRepo extends BaseController {
       return false;
     }
   }
+
+
+
+  Future<String?> callLoginApi({required String phoneNumber}) async {
+    try {
+      final payload = {
+        'phone_number': phoneNumber,
+        'user_role': 'user',
+      };
+
+      final FunctionResponse response =
+      await Supabase.instance.client.functions.invoke(
+        'login',
+        method: HttpMethod.post,
+        headers: {
+          'apikey': AppConst.supabaseAnonKey,
+          'Content-Type': 'application/json',
+        },
+        body: payload,
+      );
+
+      if (response.data?['success'] == true) {
+        final otp = response.data?['data']?['otp'];
+
+        CommonSnackbar.success('${'otp_for_login'.tr}: $otp');
+
+        return otp;
+      }
+
+      CommonSnackbar.error(
+        response.data?['message'] ?? 'Failed to send OTP',
+      );
+      return null;
+    } on FunctionException catch (e) {
+      final message = e.details?['message'] ?? 'Something went wrong';
+      CommonSnackbar.error(message);
+      debugPrint('🔥 FunctionException: $message');
+      return null;
+    } catch (e) {
+      CommonSnackbar.error('Something went wrong');
+      debugPrint('🔥 Unknown Exception: $e');
+      return null;
+    }
+  }
+
+
+  Future<Map<String, dynamic>?> callVerifyOtpApi({
+    required String phoneNumber,
+    required String otp,
+  }) async {
+    try {
+      final payload = {
+        'phone_number': phoneNumber,
+        'otp': otp,
+      };
+
+      final FunctionResponse response =
+      await Supabase.instance.client.functions.invoke(
+        'verify-otp',
+        method: HttpMethod.post,
+        headers: {
+          'apikey': AppConst.supabaseAnonKey,
+          'Content-Type': 'application/json',
+        },
+        body: payload,
+      );
+
+      if (response.data?['success'] == true) {
+        final data = response.data?['data'];
+
+        CommonSnackbar.success(
+          response.data?['message'] ?? 'OTP verified successfully',
+        );
+
+        return data; // ✅ user + next_step
+      }
+
+      CommonSnackbar.error(
+        response.data?['message'] ?? 'OTP verification failed',
+      );
+      return null;
+    } on FunctionException catch (e) {
+      final message = e.details?['message'] ?? 'OTP verification failed';
+      CommonSnackbar.error(message);
+      debugPrint('🔥 Verify OTP FunctionException: $message');
+      return null;
+    } catch (e) {
+      CommonSnackbar.error('Something went wrong');
+      debugPrint('🔥 Verify OTP Unknown Error: $e');
+      return null;
+    }
+  }
+
+
+
 
   Future<String?> generateOTPForLogin(String phoneNumber) async {
     setLoading(true);
