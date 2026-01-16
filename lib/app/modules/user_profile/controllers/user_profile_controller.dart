@@ -26,6 +26,7 @@ class UserProfileController extends GetxController {
   final RxBool isFollowing = false.obs;
   final RxBool isFollowedBy = false.obs;
   final RxBool isLoadingFollow = false.obs;
+  final RxBool isBlocked = false.obs;
 
   final RxMap<String, bool> likedStatusMap = <String, bool>{}.obs;
   final RxMap<String, List<UserModel>> likedByUsersMap =
@@ -56,6 +57,7 @@ class UserProfileController extends GetxController {
       loadUserProfile();
       loadUserPosts();
       _loadFollowState();
+      _loadBlockState();
     }
   }
 
@@ -212,6 +214,20 @@ class UserProfileController extends GetxController {
     isFollowedBy.value = reverseResult != null;
   }
 
+  Future<void> _loadBlockState() async {
+    final currentUserId = SupabaseService.currentUser?.id;
+    if (currentUserId == null || targetUserId.isEmpty) return;
+
+    final result = await SupabaseService.client
+        .from('user_blocks')
+        .select()
+        .eq('blocker_id', currentUserId)
+        .eq('blocked_id', targetUserId)
+        .isFilter('deleted_at', null)
+        .maybeSingle();
+    isBlocked.value = result != null;
+  }
+
   Future<void> followOrUnfollow() async {
     final currentUserId = SupabaseService.currentUser?.id;
     if (currentUserId == null || targetUserId.isEmpty) return;
@@ -220,7 +236,7 @@ class UserProfileController extends GetxController {
       if (isFollowing.value) {
         await SupabaseService.client
             .from('user_follows')
-            .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
+            .delete()
             .eq('follower_id', currentUserId)
             .eq('following_id', targetUserId);
         isFollowing.value = false;
@@ -258,16 +274,40 @@ class UserProfileController extends GetxController {
       // 2. Remove any follow relationships in both directions
       await SupabaseService.client
           .from('user_follows')
-          .update({'deleted_at': now})
+          .delete()
           .or(
             'and(follower_id.eq.$currentUserId,following_id.eq.$targetUserId),and(follower_id.eq.$targetUserId,following_id.eq.$currentUserId)',
           );
+
+      isBlocked.value = true;
+      isFollowing.value = false;
+      isFollowedBy.value = false;
 
       CommonSnackbar.success('user_blocked_successfully'.tr);
       Get.back(); // Go back from profile
     } catch (e) {
       debugPrint('Error blocking user: $e');
       CommonSnackbar.error('failed_to_block_user'.tr);
+    }
+  }
+
+  Future<void> unblockUser() async {
+    final currentUserId = SupabaseService.currentUser?.id;
+    if (currentUserId == null || targetUserId.isEmpty) return;
+
+    try {
+      await SupabaseService.client
+          .from('user_blocks')
+          .delete()
+          .eq('blocker_id', currentUserId)
+          .eq('blocked_id', targetUserId);
+
+      isBlocked.value = false;
+      CommonSnackbar.success('user_unblocked_successfully'.tr);
+      Get.back();
+    } catch (e) {
+      debugPrint('Error unblocking user: $e');
+      CommonSnackbar.error('failed_to_unblock_user'.tr);
     }
   }
 

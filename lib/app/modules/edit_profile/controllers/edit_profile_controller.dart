@@ -150,12 +150,12 @@ class EditProfileController extends BaseController {
 
           for (var url in urls) {
             if (!_isValidUrl(url)) {
-              errors.add('Invalid URL: $url');
+              errors.add('invalid_url'.trParams({'url': url}));
               continue;
             }
             final platform = _parseSocialMediaPlatform(url);
             if (platform == null) {
-              errors.add('Unsupported platform: $url');
+              errors.add('unsupported_platform'.trParams({'url': url}));
             }
           }
 

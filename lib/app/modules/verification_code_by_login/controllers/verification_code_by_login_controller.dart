@@ -128,7 +128,7 @@ class VerificationCodeByLoginController extends GetxController {
                   actions: [
                     CupertinoDialogAction(
                       isDefaultAction: true,
-                      child: const Text('OK'),
+                      child: Text('ok'.tr),
                       onPressed: () async {
                         _isDialogOpen = false;
 

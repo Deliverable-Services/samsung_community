@@ -38,7 +38,7 @@ class EventerPaymentController extends GetxController {
       initialConfig = arguments?['config'] as Map<String, dynamic>?;
 
       if (eventerEventId == null || eventerEventId!.isEmpty) {
-        errorMessage.value = 'Event ID is required';
+        errorMessage.value = 'event_id_required'.tr;
         isLoading.value = false;
         return;
       }

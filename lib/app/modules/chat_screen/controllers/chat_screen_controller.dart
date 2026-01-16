@@ -217,19 +217,14 @@ class ChatScreenController extends GetxController {
     if (otherUser.value == null || currentUserId.value.isEmpty) return;
 
     try {
-      final now = DateTime.now().toUtc().toIso8601String();
-
-      // 1. Create or Reactivate block record
       await SupabaseService.client.from('user_blocks').upsert({
         'blocker_id': currentUserId.value,
         'blocked_id': otherUser.value!.id,
-        'deleted_at': null,
       }, onConflict: 'blocker_id,blocked_id');
 
-      // 2. Remove any follow relationships in both directions
       await SupabaseService.client
           .from('user_follows')
-          .update({'deleted_at': now})
+          .delete()
           .or(
             'and(follower_id.eq.${currentUserId.value},following_id.eq.${otherUser.value!.id}),and(follower_id.eq.${otherUser.value!.id},following_id.eq.${currentUserId.value})',
           );

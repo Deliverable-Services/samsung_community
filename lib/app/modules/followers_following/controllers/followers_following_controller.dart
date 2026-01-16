@@ -288,19 +288,14 @@ class FollowersFollowingController extends BaseController {
         return;
       }
 
-      final now = DateTime.now().toUtc().toIso8601String();
-
-      // 1. Create or Reactivate block record
       await SupabaseService.client.from('user_blocks').upsert({
         'blocker_id': currentUser.id,
         'blocked_id': userId,
-        'deleted_at': null,
       }, onConflict: 'blocker_id,blocked_id');
 
-      // 2. Remove any follow relationships in both directions
       await SupabaseService.client
           .from('user_follows')
-          .update({'deleted_at': now})
+          .delete()
           .or(
             'and(follower_id.eq.${currentUser.id},following_id.eq.$userId),and(follower_id.eq.$userId,following_id.eq.${currentUser.id})',
           );

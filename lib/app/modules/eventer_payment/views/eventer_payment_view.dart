@@ -27,9 +27,9 @@ class EventerPaymentView extends GetView<EventerPaymentController> {
             icon: const Icon(Icons.arrow_back, color: AppColors.white),
             onPressed: () => controller.handleBackButton(),
           ),
-          title: const Text(
-            'Event Registration',
-            style: TextStyle(color: AppColors.white),
+          title: Text(
+            'event_registration'.tr,
+            style: const TextStyle(color: AppColors.white),
           ),
         ),
         body: Obx(
@@ -73,7 +73,7 @@ class EventerPaymentView extends GetView<EventerPaymentController> {
             const Icon(Icons.error_outline, color: Colors.red, size: 48),
             SizedBox(height: 16.h),
             Text(
-              'Error loading payment page',
+              'error_loading_payment_page'.tr,
               style: TextStyle(
                 color: AppColors.white,
                 fontSize: 18.sp,
@@ -84,14 +84,14 @@ class EventerPaymentView extends GetView<EventerPaymentController> {
             Text(
               controller.errorMessage.value.isNotEmpty
                   ? controller.errorMessage.value
-                  : 'Unknown error',
+                  : 'unknown_error'.tr,
               style: TextStyle(color: AppColors.white, fontSize: 14.sp),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 24.h),
             ElevatedButton(
               onPressed: controller.reload,
-              child: const Text('Retry'),
+              child: Text('retry'.tr),
             ),
           ],
         ),

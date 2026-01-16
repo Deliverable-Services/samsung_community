@@ -19,7 +19,16 @@ class UserProfileView extends GetView<UserProfileController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TitleAppBar(text: '', isLeading: false),
+      appBar: TitleAppBar(
+        text: '',
+        isLeading: false,
+        actions: [
+          IconButton(
+            onPressed: _showMoreOptions,
+            icon: const Icon(Icons.more_vert, color: AppColors.white),
+          ),
+        ],
+      ),
       backgroundColor: AppColors.primary,
       body: SafeArea(
         child: Stack(
@@ -58,6 +67,43 @@ class UserProfileView extends GetView<UserProfileController> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showMoreOptions() {
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.all(20.w),
+        decoration: BoxDecoration(
+          color: AppColors.primary,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        ),
+        child: Obx(
+          () => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(
+                  controller.isBlocked.value ? Icons.lock_open : Icons.block,
+                  color: AppColors.white,
+                ),
+                title: Text(
+                  controller.isBlocked.value ? 'unblock'.tr : 'block'.tr,
+                  style: TextStyle(color: AppColors.white),
+                ),
+                onTap: () {
+                  Get.back();
+                  if (controller.isBlocked.value) {
+                    controller.unblockUser();
+                  } else {
+                    controller.blockUser();
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

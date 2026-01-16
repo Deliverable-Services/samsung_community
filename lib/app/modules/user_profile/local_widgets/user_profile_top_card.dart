@@ -214,31 +214,6 @@ class UserProfileTopCard extends GetView<UserProfileController> {
       );
     });
   }
-
-  void _showMoreOptions() {
-    Get.bottomSheet(
-      Container(
-        padding: EdgeInsets.all(20.w),
-        decoration: BoxDecoration(
-          color: AppColors.primary,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.block, color: AppColors.white),
-              title: Text('block'.tr, style: TextStyle(color: AppColors.white)),
-              onTap: () {
-                Get.back();
-                controller.blockUser();
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 class _GradientButton extends StatelessWidget {
