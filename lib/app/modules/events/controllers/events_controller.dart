@@ -15,6 +15,7 @@ import '../local_widgets/event_email_modal.dart';
 import '../local_widgets/event_registration_success_modal.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../repository/auth_repo/auth_repo.dart';
+import '../../../routes/app_pages.dart';
 
 class EventsController extends BaseController {
   final EventService eventService;
@@ -224,7 +225,10 @@ class EventsController extends BaseController {
   }
 
   /// Show event details modal - reusable method
-  Future<bool> registerEventWithPoints(EventModel event) async {
+  Future<bool> registerEventWithPoints(
+    EventModel event, {
+    String? emailForTickets,
+  }) async {
     if (isPurchasing.value) return false;
     isPurchasing.value = true;
 
@@ -277,6 +281,8 @@ class EventsController extends BaseController {
             .insert({
               'event_id': event.id,
               'user_id': currentUserId,
+              if (emailForTickets != null && emailForTickets.isNotEmpty)
+                'email_for_tickets': emailForTickets,
               'payment_method': 'points',
               'points_paid': costPoints,
               'status': 'registered',
@@ -416,9 +422,7 @@ class EventsController extends BaseController {
       }
     } else {
       if (event.costCreditCents != null && event.costCreditCents! > 0) {
-        middleTablets.add(
-          'Credits: ${(event.costCreditCents! / 100).toStringAsFixed(0)}',
-        );
+        middleTablets.add('Credits: ${event.costCreditCents}');
       }
     }
 
@@ -460,40 +464,50 @@ class EventsController extends BaseController {
             ? () {
                 if (isBusy) return;
                 Get.back();
-                final currentContext = Get.context;
-                if (currentContext == null) return;
-                BottomSheetModal.show(
-                  currentContext,
-                  buttonType: BottomSheetButtonType.close,
-                  content: Obx(
-                    () => CancelEventConfirmationModal(
-                      isLoading: isCancelling.value,
-                      onConfirm: () {
-                        if (isCancelling.value) return;
-                        cancelEventRegistration(event).then((didCancel) {
-                          if (!didCancel) return;
-                          final popContext = Get.context;
-                          if (popContext != null) {
-                            final navigator = Navigator.of(
-                              popContext,
-                              rootNavigator: true,
-                            );
-                            if (navigator.canPop()) navigator.pop();
-                          }
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            final ctx = Get.context;
-                            if (ctx == null) return;
-                            BottomSheetModal.show(
-                              ctx,
-                              content: const EventCancellationSuccessModal(),
-                              buttonType: BottomSheetButtonType.none,
-                            );
+
+                if (isInternal) {
+                  final currentContext = Get.context;
+                  if (currentContext == null) return;
+                  BottomSheetModal.show(
+                    currentContext,
+                    buttonType: BottomSheetButtonType.close,
+                    content: Obx(
+                      () => CancelEventConfirmationModal(
+                        isLoading: isCancelling.value,
+                        onConfirm: () {
+                          if (isCancelling.value) return;
+                          cancelEventRegistration(event).then((didCancel) {
+                            if (!didCancel) return;
+                            final popContext = Get.context;
+                            if (popContext != null) {
+                              final navigator = Navigator.of(
+                                popContext,
+                                rootNavigator: true,
+                              );
+                              if (navigator.canPop()) navigator.pop();
+                            }
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              final ctx = Get.context;
+                              if (ctx == null) return;
+                              BottomSheetModal.show(
+                                ctx,
+                                content: const EventCancellationSuccessModal(),
+                                buttonType: BottomSheetButtonType.none,
+                              );
+                            });
                           });
-                        });
-                      },
+                        },
+                      ),
                     ),
-                  ),
-                );
+                  );
+                } else {
+                  Get.toNamed(
+                    Routes.EVENTER_PAYMENT,
+                    arguments: {
+                      'url': 'https://www.eventer.co.il/orderCancellation',
+                    },
+                  );
+                }
               }
             : () {
                 if (isBusy) return;

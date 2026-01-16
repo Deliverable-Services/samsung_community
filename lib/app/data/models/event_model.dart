@@ -86,6 +86,7 @@ class EventModel {
   final DateTime updatedAt;
   final String? zoomStartTime;
   final String? zoomEndTime;
+  final String? externalId;
 
   EventModel({
     required this.id,
@@ -110,6 +111,7 @@ class EventModel {
     required this.updatedAt,
     this.zoomStartTime,
     this.zoomEndTime,
+    this.externalId,
   });
 
   Map<String, dynamic> toJson() {
@@ -168,6 +170,7 @@ class EventModel {
       updatedAt: DateTime.parse(json['updated_at'] as String),
       zoomStartTime: json['zoom_start_time'] as String?,
       zoomEndTime: json['zoom_end_time'] as String?,
+      externalId: json['external_id'] as String?,
     );
   }
 
@@ -194,6 +197,7 @@ class EventModel {
     DateTime? updatedAt,
     String? zoomStartTime,
     String? zoomEndTime,
+    String? externalId,
   }) {
     return EventModel(
       id: id ?? this.id,
@@ -218,6 +222,7 @@ class EventModel {
       updatedAt: updatedAt ?? this.updatedAt,
       zoomStartTime: zoomStartTime ?? this.zoomStartTime,
       zoomEndTime: zoomEndTime ?? this.zoomEndTime,
+      externalId: externalId ?? this.externalId,
     );
   }
 }

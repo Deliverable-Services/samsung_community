@@ -4,7 +4,9 @@ import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../common/services/eventer_service.dart';
+import '../../../common/services/supabase_service.dart';
 import '../../../data/constants/app_colors.dart';
+import '../../events/controllers/events_controller.dart';
 import '../local_widgets/registration_modals.dart';
 
 class EventerPaymentController extends GetxController {
@@ -14,24 +16,32 @@ class EventerPaymentController extends GetxController {
   final RxBool penpalReady = false.obs;
   final RxBool registrationCompleted = false.obs;
 
-  String? eventId;
+  String? eventerEventId; // Eventer ID (e.g., 'yp93f')
+  String? supabaseEventId; // Supabase Event ID (UUID)
+  String? directUrl; // Optional direct URL (e.g., order cancellation)
   String? email;
   Map<String, dynamic>? initialConfig;
 
   @override
   void onInit() {
     super.onInit();
-    // Get arguments from route
     final arguments = Get.arguments as Map<String, dynamic>?;
-    // eventId = arguments?['eventId'] as String?;
-    eventId = 'yp93f';
-    email = arguments?['email'] as String?;
-    initialConfig = arguments?['config'] as Map<String, dynamic>?;
 
-    if (eventId == null || eventId!.isEmpty) {
-      errorMessage.value = 'Event ID is required';
-      isLoading.value = false;
-      return;
+    directUrl = arguments?['url'] as String?;
+
+    if (directUrl == null) {
+      supabaseEventId = arguments?['eventId'] as String?;
+      eventerEventId =
+          (arguments?['external_id'] as String?) ?? supabaseEventId;
+
+      email = arguments?['email'] as String?;
+      initialConfig = arguments?['config'] as Map<String, dynamic>?;
+
+      if (eventerEventId == null || eventerEventId!.isEmpty) {
+        errorMessage.value = 'Event ID is required';
+        isLoading.value = false;
+        return;
+      }
     }
 
     _initializeWebView();
@@ -43,21 +53,25 @@ class EventerPaymentController extends GetxController {
       return;
     }
 
-    // Build the Eventer iframe URL
-    final eventUrl = EventerService.buildEventerIframeUrl(
-      eventId: eventId!,
-      lang: initialConfig?['lang'] ?? 'en_EN',
-      colorScheme: initialConfig?['colorScheme'] ?? '#FFFFFF',
-      colorScheme2: initialConfig?['colorScheme2'] ?? '#000000',
-      colorSchemeButton: initialConfig?['colorSchemeButton'] ?? '#1FA3FF',
-      showBanner: initialConfig?['showBanner'] ?? false,
-      showEventDetails: initialConfig?['showEventDetails'] ?? false,
-      showBackground: initialConfig?['showBackground'] ?? true,
-      showLocationDescription:
-          initialConfig?['showLocationDescription'] ?? false,
-      showSeller: initialConfig?['showSeller'] ?? false,
-      showPoweredBy: initialConfig?['showPoweredBy'] ?? false,
-    );
+    // Build the URL (either direct or Eventer iframe)
+    final eventUrl =
+        directUrl ??
+        EventerService.buildEventerIframeUrl(
+          eventId: eventerEventId!,
+          lang: initialConfig?['lang'] ?? 'en_EN',
+          colorScheme: initialConfig?['colorScheme'] ?? '#FFFFFF',
+          colorScheme2: initialConfig?['colorScheme2'] ?? '#000000',
+          colorSchemeButton: initialConfig?['colorSchemeButton'] ?? '#1FA3FF',
+          showBanner: initialConfig?['showBanner'] ?? false,
+          showEventDetails: initialConfig?['showEventDetails'] ?? false,
+          showBackground: initialConfig?['showBackground'] ?? true,
+          showLocationDescription:
+              initialConfig?['showLocationDescription'] ?? false,
+          showSeller: initialConfig?['showSeller'] ?? false,
+          showPoweredBy: initialConfig?['showPoweredBy'] ?? false,
+        );
+
+    debugPrint('Opening Eventer URL: $eventUrl');
 
     webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -69,12 +83,10 @@ class EventerPaymentController extends GetxController {
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (String url) {
-            print('Page started loading: $url');
             isLoading.value = true;
             errorMessage.value = '';
           },
           onPageFinished: (String url) {
-            print('Page finished loading: $url');
             isLoading.value = false;
             errorMessage.value = '';
             // Inject PenPal communication script after page loads
@@ -85,8 +97,6 @@ class EventerPaymentController extends GetxController {
             });
           },
           onNavigationRequest: (NavigationRequest request) {
-            print('Navigation request: ${request.url}');
-            // Allow all navigation within Eventer domain
             if (request.url.contains('eventer.co.il') ||
                 request.url.contains('eventer.us')) {
               return NavigationDecision.navigate;
@@ -94,15 +104,14 @@ class EventerPaymentController extends GetxController {
             return NavigationDecision.navigate;
           },
           onWebResourceError: (WebResourceError error) {
-            print(
-              'Web resource error: ${error.description} (${error.errorCode})',
-            );
+            if (registrationCompleted.value) {
+              return;
+            }
 
             // Handle ORB errors gracefully
             if (error.description.contains('ORB') ||
                 error.description.contains('ERR_BLOCKED_BY_ORB') ||
                 error.description.contains('opaque response')) {
-              print('ORB error detected - continuing anyway');
               return;
             }
 
@@ -118,9 +127,6 @@ class EventerPaymentController extends GetxController {
             }
           },
           onHttpError: (HttpResponseError error) {
-            print(
-              'HTTP error: ${error.response?.statusCode} - ${error.response?.uri}',
-            );
             if (error.response?.statusCode != null &&
                 error.response!.statusCode >= 400) {
               isLoading.value = false;
@@ -145,31 +151,40 @@ class EventerPaymentController extends GetxController {
       final type = data['type'] as String?;
       final payload = data['payload'];
 
+      if (type == null) {
+        return;
+      }
+
+      Map<String, dynamic>? payloadMap;
+      if (payload is Map<String, dynamic>) {
+        payloadMap = payload;
+      } else if (payload is Map) {
+        payloadMap = Map<String, dynamic>.from(payload);
+      }
+
       switch (type) {
         case 'notifyIframeReady':
-          _handleIframeReady(payload);
+          _handleIframeReady(payloadMap);
           break;
         case 'notifySaleSuccess':
-          _handleSaleSuccess(payload);
+          _handleSaleSuccess(payloadMap);
           break;
         case 'notifyTicketChange':
-          _handleTicketChange(payload);
+          _handleTicketChange(payloadMap);
           break;
         case 'onSaleSuccess':
-          _handleOnSaleSuccess(payload);
+        case 'PurchaseSuccess':
+          _handleOnSaleSuccess(payloadMap);
           break;
         case 'penpalReady':
           penpalReady.value = true;
           _prefillGuestDetailsIfAvailable();
           break;
       }
-    } catch (e) {
-      print('Error handling JavaScript message: $e');
-    }
+    } catch (e) {}
   }
 
   void _handleIframeReady(Map<String, dynamic>? data) {
-    print('Iframe ready: $data');
     _prefillGuestDetailsIfAvailable();
   }
 
@@ -177,55 +192,57 @@ class EventerPaymentController extends GetxController {
     if (email != null && email!.isNotEmpty) {
       _callEventerMethod('setGuestDetails', [
         {'email': email},
-        false, // isLock - set to false to allow editing
+        false,
       ]);
     }
   }
 
   void _injectPenPalScript() {
-    // Inject PenPal script and communication bridge after page loads
     webViewController?.runJavaScript(r'''
       (function() {
-        // Listen for Eventer's postMessage events
+        function sendToFlutter(message) {
+          if (window.FlutterChannel) {
+            window.FlutterChannel.postMessage(JSON.stringify(message));
+          }
+        }
+
         window.addEventListener('message', function(event) {
-          if (event.origin.match(/^https:(\/\/|[^\.]+\.)eventer\.(co\.il|us)$/)) {
-            if (event.data && event.data.event === 'eva' && window.FlutterChannel) {
-              // Handle Eventer messages
-              FlutterChannel.postMessage(JSON.stringify({
-                type: 'eventerMessage',
-                payload: event.data
-              }));
+          try {
+            var data = event.data || {};
+            var type = data.type || data.event;
+            var payload = data.payload || data.data || null;
+
+            if (!type) {
+              sendToFlutter({ type: 'unknown', payload: data });
+              return;
             }
+
+            sendToFlutter({ type: type, payload: payload });
+          } catch (e) {
+            sendToFlutter({ type: 'bridgeError', payload: String(e) });
           }
         });
-        
-        // Notify Flutter that page is ready
-        if (window.FlutterChannel) {
-          FlutterChannel.postMessage(JSON.stringify({type: 'penpalReady'}));
-        }
+
+        sendToFlutter({ type: 'penpalReady' });
       })();
     ''');
   }
 
   void _handleSaleSuccess(Map<String, dynamic>? data) {
-    print('Sale success: $data');
     if (data != null) {
       _processPayment(data);
     }
   }
 
   void _handleTicketChange(Map<String, dynamic>? data) {
-    print('Ticket change: $data');
     // Handle ticket selection changes if needed
   }
 
   void _handleOnSaleSuccess(Map<String, dynamic>? data) {
-    print('On sale success: $data');
     _showPaymentResult(true, data);
   }
 
   Future<void> _processPayment(Map<String, dynamic> saleData) async {
-    // Show loading dialog
     Get.dialog(
       const Center(child: CircularProgressIndicator()),
       barrierDismissible: false,
@@ -236,7 +253,6 @@ class EventerPaymentController extends GetxController {
       final guid = saleData['guid'] as String?;
 
       if (saleNumber != null && guid != null) {
-        // Report payment result to Eventer
         final result = await EventerService.reportPaymentResult(
           saleNumber: saleNumber,
           guid: guid,
@@ -244,15 +260,15 @@ class EventerPaymentController extends GetxController {
           confirmationKey: 'ORDER-${DateTime.now().millisecondsSinceEpoch}',
         );
 
-        Get.back(); // Close loading dialog
+        Get.back();
         _showPaymentResult(true, result);
       } else {
-        Get.back(); // Close loading dialog
-        _showPaymentResult(false, null, error: 'Missing sale information');
+        Get.back();
+        _showPaymentResult(true, null);
       }
     } catch (e) {
-      Get.back(); // Close loading dialog
-      _showPaymentResult(false, null, error: e.toString());
+      Get.back();
+      _showPaymentResult(true, null);
     }
   }
 
@@ -266,14 +282,12 @@ class EventerPaymentController extends GetxController {
 
     if (success) {
       registrationCompleted.value = true;
-      // Close payment screen first, then show success modal
-      Get.back();
-      // Show success modal after a small delay to ensure navigation is complete
-      Future.delayed(const Duration(milliseconds: 300), () {
-        if (Get.context != null) {
-          RegistrationSuccessModal.show(Get.context!);
-        }
-      });
+
+      // Record registration in API immediately
+      _addRegistrationToAPI();
+
+      // Do NOT close the webview automatically.
+      // User will close it manually.
     } else {
       // For errors, show cancelled modal
       Get.back();
@@ -285,9 +299,26 @@ class EventerPaymentController extends GetxController {
     }
   }
 
-  /// Handle back button press - show cancelled modal if registration not completed
+  /// Handle back button press
   void handleBackButton() {
-    if (!registrationCompleted.value) {
+    if (registrationCompleted.value) {
+      // If registration was successful, just close and show success modal
+      Get.back();
+
+      // Reload events to refresh the UI (e.g. show cancel button)
+      try {
+        final eventsController = Get.find<EventsController>();
+        eventsController.loadAllEvents();
+        eventsController.loadMyEvents();
+        eventsController.fetchRegisteredUserEvents();
+      } catch (e) {}
+
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (Get.context != null) {
+          RegistrationSuccessModal.show(Get.context!);
+        }
+      });
+    } else {
       final context = Get.context;
       if (context != null) {
         // Close payment screen first
@@ -301,9 +332,42 @@ class EventerPaymentController extends GetxController {
       } else {
         Get.back();
       }
-    } else {
-      Get.back();
     }
+  }
+
+  Future<void> _addRegistrationToAPI() async {
+    if (supabaseEventId == null) {
+      return;
+    }
+
+    try {
+      final userId = SupabaseService.currentUser?.id;
+      if (userId == null) {
+        return;
+      }
+
+      // Check if already registered
+      final existingRegistration = await SupabaseService.client
+          .from('event_registrations')
+          .select('id')
+          .eq('event_id', supabaseEventId!)
+          .eq('user_id', userId)
+          .maybeSingle();
+
+      if (existingRegistration != null) {
+        return;
+      }
+
+      await SupabaseService.client.from('event_registrations').insert({
+        'event_id': supabaseEventId,
+        'user_id': userId,
+        if (email != null && email!.isNotEmpty) 'email_for_tickets': email,
+        'payment_method': 'credit_card', // Assuming credit card for Eventer
+        'points_paid': 0,
+        'status': 'registered',
+        'registered_at': DateTime.now().toUtc().toIso8601String(),
+      });
+    } catch (e) {}
   }
 
   Future<void> _callEventerMethod(
@@ -311,7 +375,6 @@ class EventerPaymentController extends GetxController {
     List<dynamic>? args,
   ]) async {
     if (!penpalReady.value) {
-      print('PenPal not ready yet');
       return;
     }
 
@@ -322,9 +385,7 @@ class EventerPaymentController extends GetxController {
           window.callEventerMethod('$methodName', ...$argsJson);
         }
       ''');
-    } catch (e) {
-      print('Error calling Eventer method: $e');
-    }
+    } catch (e) {}
   }
 
   void reload() {

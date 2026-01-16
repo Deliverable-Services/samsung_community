@@ -160,9 +160,9 @@ class _EventTabletState extends State<EventTablet>
                         ),
                       ),
                       padding: EdgeInsets.fromLTRB(
-                        22.w + (widget.extraPadding?.left ?? 0),
+                        19.w + (widget.extraPadding?.left ?? 0),
                         12.h + (widget.extraPadding?.top ?? 0),
-                        22.w + (widget.extraPadding?.right ?? 0),
+                        19.w + (widget.extraPadding?.right ?? 0),
                         12.h + (widget.extraPadding?.bottom ?? 0),
                       ),
                       child: Stack(

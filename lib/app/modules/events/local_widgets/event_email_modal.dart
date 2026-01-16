@@ -107,8 +107,15 @@ class EventEmailModal extends StatelessWidget {
           return;
         }
 
-        final success = await eventsController.registerEventWithPoints(event);
+        final success = await eventsController.registerEventWithPoints(
+          event,
+          emailForTickets: email,
+        );
         if (success && Get.context != null) {
+          // Reload events to refresh the UI (e.g. show cancel button)
+          eventsController.loadAllEvents();
+          eventsController.loadMyEvents();
+
           BottomSheetModal.show(
             Get.context!,
             content: const EventRegistrationSuccessModal(),
@@ -122,6 +129,7 @@ class EventEmailModal extends StatelessWidget {
         Routes.EVENTER_PAYMENT,
         arguments: {
           'eventId': eId,
+          'external_id': event?.externalId,
           'email': email,
           'config': {
             'lang': 'en_EN',

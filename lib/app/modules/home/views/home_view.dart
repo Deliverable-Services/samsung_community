@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:samsung_community_mobile/app/modules/home/views/promotion_card.dart';
 
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
@@ -134,8 +134,12 @@ class HomeView extends GetView<HomeController> {
             event.costCreditCents != null &&
             event.costCreditCents! > 0)
           EventLabel(
-            text:
-                'Credits: ${(event.costCreditCents! / 100).toStringAsFixed(0)}',
+            text: () {
+              debugPrint(
+                'Event credits (Home): ${event.title} -> ${event.costCreditCents}',
+              );
+              return 'Credits: ${event.costCreditCents}';
+            }(),
           ),
         EventLabel(
           text: event.maxTickets != null

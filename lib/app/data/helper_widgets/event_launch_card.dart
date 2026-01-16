@@ -103,29 +103,33 @@ class EventLaunchCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (labels != null && labels!.isNotEmpty)
-                    Wrap(
-                      spacing: 8.w,
-                      runSpacing: 8.h,
-                      children: labels!.map((label) {
-                        if (label.text != null) {
-                          return IntrinsicWidth(
-                            child: EventTablet(
-                              text: label.text!,
-                              onTap: label.onTap,
-                              extraPadding: label.extraPadding,
-                            ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: labels!.map((label) {
+                          final chip = (label.text != null)
+                              ? IntrinsicWidth(
+                                  child: EventTablet(
+                                    text: label.text!,
+                                    onTap: label.onTap,
+                                    extraPadding: label.extraPadding,
+                                  ),
+                                )
+                              : (label.widget != null)
+                                  ? IntrinsicWidth(
+                                      child: EventTablet(
+                                        widget: label.widget!,
+                                        onTap: label.onTap,
+                                        extraPadding: label.extraPadding,
+                                      ),
+                                    )
+                                  : const SizedBox.shrink();
+                          return Padding(
+                            padding: EdgeInsets.only(right: 8.w),
+                            child: chip,
                           );
-                        } else if (label.widget != null) {
-                          return IntrinsicWidth(
-                            child: EventTablet(
-                              widget: label.widget!,
-                              onTap: label.onTap,
-                              extraPadding: label.extraPadding,
-                            ),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      }).toList(),
+                        }).toList(),
+                      ),
                     ),
                   if (labels != null && labels!.isNotEmpty)
                     SizedBox(height: 8.h),
@@ -360,29 +364,33 @@ class AllEventLaunchCard extends StatelessWidget {
                 top: 16.h,
                 left: 16.w,
                 right: 16.w,
-                child: Wrap(
-                  spacing: 8.w,
-                  runSpacing: 8.h,
-                  children: labels!.map((label) {
-                    if (label.text != null) {
-                      return IntrinsicWidth(
-                        child: EventTablet(
-                          text: label.text!,
-                          onTap: label.onTap,
-                          extraPadding: label.extraPadding,
-                        ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: labels!.map((label) {
+                      final chip = (label.text != null)
+                          ? IntrinsicWidth(
+                              child: EventTablet(
+                                text: label.text!,
+                                onTap: label.onTap,
+                                extraPadding: label.extraPadding,
+                              ),
+                            )
+                          : (label.widget != null)
+                              ? IntrinsicWidth(
+                                  child: EventTablet(
+                                    widget: label.widget!,
+                                    onTap: label.onTap,
+                                    extraPadding: label.extraPadding,
+                                  ),
+                                )
+                              : const SizedBox.shrink();
+                      return Padding(
+                        padding: EdgeInsets.only(right: 8.w),
+                        child: chip,
                       );
-                    } else if (label.widget != null) {
-                      return IntrinsicWidth(
-                        child: EventTablet(
-                          widget: label.widget!,
-                          onTap: label.onTap,
-                          extraPadding: label.extraPadding,
-                        ),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  }).toList(),
+                    }).toList(),
+                  ),
                 ),
               ),
             // Gradient overlay at the bottom for text visibility

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
@@ -105,11 +106,11 @@ class EventsView extends GetView<EventsController> {
               } else {
                 if (event.costCreditCents != null &&
                     event.costCreditCents! > 0) {
+                  debugPrint(
+                    'Event credits (All Events): ${event.title} -> ${event.costCreditCents}',
+                  );
                   labels.add(
-                    EventLabel(
-                      text:
-                          'Credits: ${(event.costCreditCents! / 100).toStringAsFixed(0)}',
-                    ),
+                    EventLabel(text: 'Credits: ${event.costCreditCents}'),
                   );
                 }
               }
@@ -199,11 +200,11 @@ class EventsView extends GetView<EventsController> {
               } else {
                 if (event.costCreditCents != null &&
                     event.costCreditCents! > 0) {
+                  debugPrint(
+                    'Event credits (My Events): ${event.title} -> ${event.costCreditCents}',
+                  );
                   labels.add(
-                    EventLabel(
-                      text:
-                          'Credits: ${(event.costCreditCents! / 100).toStringAsFixed(0)}',
-                    ),
+                    EventLabel(text: 'Credits: ${event.costCreditCents}'),
                   );
                 }
               }
