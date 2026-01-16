@@ -19,16 +19,7 @@ class UserProfileView extends GetView<UserProfileController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TitleAppBar(
-        text: '',
-        isLeading: false,
-        actions: [
-          IconButton(
-            onPressed: _showMoreOptions,
-            icon: const Icon(Icons.more_vert, color: AppColors.white),
-          ),
-        ],
-      ),
+      appBar: TitleAppBar(text: '', isLeading: false),
       backgroundColor: AppColors.primary,
       body: SafeArea(
         child: Stack(

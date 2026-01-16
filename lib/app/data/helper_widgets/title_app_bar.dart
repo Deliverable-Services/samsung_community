@@ -25,6 +25,8 @@ class TitleAppBar extends StatelessWidget implements PreferredSizeWidget {
   AppBar build(BuildContext context) => AppBar(
     backgroundColor: AppColors.primary,
     elevation: 0,
+    scrolledUnderElevation: 0,
+    surfaceTintColor: Colors.transparent,
     toolbarHeight: 30.h, // Reduced height
     centerTitle: true,
     title: Text(

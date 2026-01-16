@@ -23,6 +23,8 @@ class EventerPaymentView extends GetView<EventerPaymentController> {
         appBar: AppBar(
           backgroundColor: AppColors.primary,
           elevation: 0,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: AppColors.white),
             onPressed: () => controller.handleBackButton(),
