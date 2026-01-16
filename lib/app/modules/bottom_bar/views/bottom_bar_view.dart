@@ -83,43 +83,43 @@ class BottomBarView extends GetView<BottomBarController> {
                   ),
                 ],
               ),
-              if (shouldShowOverlay)
-                Positioned.fill(
-                  child: Stack(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          // Overlay background - can be used to dismiss if needed
-                        },
-                        child: Container(color: AppColors.overlayBackground),
-                      ),
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        child: Container(
-                          padding: EdgeInsets.all(20.w),
-                          decoration: BoxDecoration(
-                            color: AppColors.overlayContainerBackground,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(30.r),
-                              topRight: Radius.circular(30.r),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                offset: Offset(0, -6.h),
-                                blurRadius: 50.r,
-                                spreadRadius: 0,
-                                color: AppColors.overlayContainerShadow,
-                              ),
-                            ],
-                          ),
-                          child: const DeviceNotSupportedOverlay(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              // if (shouldShowOverlay)
+              //   Positioned.fill(
+              //     child: Stack(
+              //       children: [
+              //         GestureDetector(
+              //           onTap: () {
+              //             // Overlay background - can be used to dismiss if needed
+              //           },
+              //           child: Container(color: AppColors.overlayBackground),
+              //         ),
+              //         Positioned(
+              //           left: 0,
+              //           right: 0,
+              //           bottom: 0,
+              //           child: Container(
+              //             padding: EdgeInsets.all(20.w),
+              //             decoration: BoxDecoration(
+              //               color: AppColors.overlayContainerBackground,
+              //               borderRadius: BorderRadius.only(
+              //                 topLeft: Radius.circular(30.r),
+              //                 topRight: Radius.circular(30.r),
+              //               ),
+              //               boxShadow: [
+              //                 BoxShadow(
+              //                   offset: Offset(0, -6.h),
+              //                   blurRadius: 50.r,
+              //                   spreadRadius: 0,
+              //                   color: AppColors.overlayContainerShadow,
+              //                 ),
+              //               ],
+              //             ),
+              //             // child: const DeviceNotSupportedOverlay(),
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
             ],
           );
         }),

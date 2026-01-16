@@ -48,20 +48,18 @@ class _CustomTextFieldState extends State<CustomTextField> {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (widget.label != null) ...[
-            SizedBox(
-              height: 14.h,
-              child: Text(
-                widget.label!,
-                style: TextStyle(
-                  fontFamily: 'Samsung Sharp Sans',
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14.sp,
-                  letterSpacing: 0,
-                  color: AppColors.white,
-                  height: 22 / 22,
-                ),
-                textScaler: const TextScaler.linear(1.0),
+            Text(
+              widget.label!,
+              style: TextStyle(
+                fontFamily: 'Samsung Sharp Sans',
+                fontWeight: FontWeight.w500,
+                fontSize: 14.sp,
+                letterSpacing: 0,
+                color: AppColors.white,
+                height: 22 / 22,
               ),
+              textScaler: const TextScaler.linear(1.0),
+              overflow: TextOverflow.visible,
             ),
             SizedBox(height: 10.h),
           ],
@@ -180,9 +178,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         right: 20.w,
                         bottom: 12.h,
                       ),
-                ),
-              ),
-            ),
+                    ),
+                  ),
+          ),
         ],
       ),
     );

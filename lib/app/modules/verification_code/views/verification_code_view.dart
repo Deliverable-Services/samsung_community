@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
@@ -134,6 +135,10 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                           controller: controller.verificationCodeController,
                           keyboardType: TextInputType.number,
                           placeholder: 'type'.tr,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(6),
+                          ],
                           validator: (value) {
                             if (controller.otpError.value.isNotEmpty) {
                               return controller.otpError.value;

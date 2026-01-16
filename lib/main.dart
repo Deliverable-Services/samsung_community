@@ -204,11 +204,20 @@ Future<void> main() async {
           defaultTransition: Transition.rightToLeft,
           transitionDuration: const Duration(milliseconds: 300),
           builder: (context, child) {
-            return MediaQuery(
-              data: MediaQuery.of(
-                context,
-              ).copyWith(textScaler: const TextScaler.linear(1.0)),
-              child: child!,
+            return AnnotatedRegion<SystemUiOverlayStyle>(
+              value: const SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarIconBrightness:
+                    Brightness.light, // White icons for Android
+                statusBarBrightness:
+                    Brightness.dark, // Dark content for iOS (shows light icons)
+              ),
+              child: MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(textScaler: const TextScaler.linear(1.0)),
+                child: child!,
+              ),
             );
           },
         );

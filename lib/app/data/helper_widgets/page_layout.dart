@@ -97,51 +97,52 @@ class _PageLayoutState extends State<PageLayout> {
                 ),
               ],
             ),
-            if (shouldShowOverlay && !_isCheckingDevice)
-              Positioned.fill(
-                child: Stack(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        // Overlay background - can be used to dismiss if needed
-                      },
-                      child: Container(color: AppColors.overlayBackground),
-                    ),
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: Container(
-                        padding: EdgeInsets.all(20.w), // padding: 20px
-                        decoration: BoxDecoration(
-                          color:
-                              AppColors.overlayContainerBackground, // #292E36
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(
-                              30.r,
-                            ), // border-top-left-radius: 30px
-                            topRight: Radius.circular(
-                              30.r,
-                            ), // border-top-right-radius: 30px
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              offset: Offset(0, -6.h), // 0px -6px
-                              blurRadius: 50.r, // 50px
-                              spreadRadius: 0,
-                              color:
-                                  AppColors.overlayContainerShadow, // #0000004D
-                            ),
-                          ],
-                        ),
-                        child:
-                            widget.overlayContent ??
-                            const DeviceNotSupportedOverlay(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            // if (shouldShowOverlay && !_isCheckingDevice)
+            //   Positioned.fill(
+            //     child: Stack(
+            //       children: [
+            //         GestureDetector(
+            //           onTap: () {
+            //             // Overlay background - can be used to dismiss if needed
+            //           },
+            //           child: Container(color: AppColors.overlayBackground),
+            //         ),
+            //         Positioned(
+            //           left: 0,
+            //           right: 0,
+            //           bottom: 0,
+            //           child: Container(
+            //             padding: EdgeInsets.all(20.w), // padding: 20px
+            //             decoration: BoxDecoration(
+            //               color:
+            //                   AppColors.overlayContainerBackground, // #292E36
+            //               borderRadius: BorderRadius.only(
+            //                 topLeft: Radius.circular(
+            //                   30.r,
+            //                 ), // border-top-left-radius: 30px
+            //                 topRight: Radius.circular(
+            //                   30.r,
+            //                 ), // border-top-right-radius: 30px
+            //               ),
+            //               boxShadow: [
+            //                 BoxShadow(
+            //                   offset: Offset(0, -6.h), // 0px -6px
+            //                   blurRadius: 50.r, // 50px
+            //                   spreadRadius: 0,
+            //                   color:
+            //                       AppColors.overlayContainerShadow, // #0000004D
+            //                 ),
+            //               ],
+            //             ),
+            //             child:
+            //                 widget.overlayContent ??
+            //                 // const DeviceNotSupportedOverlay(),
+            //                 const SizedBox.shrink(),
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
           ],
         ),
       ),

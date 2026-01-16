@@ -65,7 +65,6 @@ class PersonalDetailsView extends GetView<PersonalDetailsController> {
                           if (formData.containsKey('birthday')) {
                             final birthdayStr = formData['birthday'] as String?;
                             if (birthdayStr != null && birthdayStr.isNotEmpty) {
-                              controller.birthdayController.text = birthdayStr;
                               try {
                                 controller.selectedBirthday = DateTime.parse(
                                   birthdayStr,
