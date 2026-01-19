@@ -443,9 +443,12 @@ class EventsController extends BaseController {
         ? (event.costPoints != null && event.costPoints! > 0)
         : (event.costCreditCents != null && event.costCreditCents! > 0);
 
+    final maxSheetHeight = MediaQuery.of(context).size.height * 0.85;
+
     BottomSheetModal.show(
       context,
       buttonType: BottomSheetButtonType.close,
+      maxHeight: maxSheetHeight,
       content: Obx(() {
         final bool isRegistered = registeredEventIds.contains(event.id);
         final bool isBusy = isPurchasing.value || isCancelling.value;

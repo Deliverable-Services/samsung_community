@@ -175,7 +175,7 @@ class HebrewiLocalization {
     // Academy Screen
     "academyTitle": "אקדמיה",
     "academyDescription":
-        "סרטונים בלעדיים, שידורים חיים ומאמרים – הכל במקום אחד מעורר השראה.",
+        "סרטונים בלעדיים, שידורים חיים ומאמרים, הכל במקום אחד מעורר השראה.",
     "academyAll": "הכול",
     "academyVideos": "סרטונים",
     "academyZoomWorkshops": "סדנאות זום",

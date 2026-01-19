@@ -47,6 +47,9 @@ class VideoPlayerControllerGetX extends GetxController {
     super.onInit();
     if (_controller != null) {
       _controller!.addListener(_videoListener);
+    } else if (videoUrl != null && videoUrl!.isNotEmpty) {
+      // Pre-initialize to fetch duration so UI can show it before playback
+      initializeVideo();
     }
   }
 

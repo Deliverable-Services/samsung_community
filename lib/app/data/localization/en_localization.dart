@@ -194,7 +194,7 @@ class EnLocalization {
     // Academy Screen
     "academyTitle": "Academy",
     "academyDescription":
-        "Exclusive videos, lives, and articles,all in one inspiring space.",
+        "Exclusive videos, lives, and articles, all in one inspiring space.",
     "academyAll": "All",
     "academyVideos": "Videos",
     "academyZoomWorkshops": "Zoom Workshops",
