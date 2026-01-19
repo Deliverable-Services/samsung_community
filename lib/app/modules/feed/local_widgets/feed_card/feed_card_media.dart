@@ -52,9 +52,7 @@ class FeedCardMedia extends StatelessWidget {
         placeholder: (context, url) => Container(
           height: 200.h,
           color: AppColors.backgroundDark,
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: const Center(child: CircularProgressIndicator()),
         ),
         errorWidget: (context, url, error) => Container(
           height: 200.h,
@@ -69,4 +67,3 @@ class FeedCardMedia extends StatelessWidget {
     );
   }
 }
-
