@@ -3,9 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../constants/app_colors.dart';
+import 'bottom_sheet_modal.dart';
 
 class ReadMoreText extends StatefulWidget {
   final String text;
+  final String? title;
   final TextStyle? textStyle;
   final int maxLines;
   final String readMoreText;
@@ -17,6 +19,7 @@ class ReadMoreText extends StatefulWidget {
   const ReadMoreText({
     super.key,
     required this.text,
+    this.title,
     this.textStyle,
     this.maxLines = 5,
     this.readMoreText = 'readMore',
@@ -75,12 +78,36 @@ class _ReadMoreTextState extends State<ReadMoreText> {
             SizedBox(height: 4.h),
             GestureDetector(
               onTap: () {
-                setState(() {
-                  _isExpanded = !_isExpanded;
-                });
+                 BottomSheetModal.show(
+                  context,
+                  buttonType: BottomSheetButtonType.close,
+                  content: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (widget.title != null && widget.title!.isNotEmpty) ...[
+                          Text(
+                            widget.title!,
+                            style: TextStyle(
+                              fontFamily: 'Samsung Sharp Sans',
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textWhite,
+                            ),
+                          ),
+                          SizedBox(height: 12.h),
+                        ],
+                        Text(
+                          widget.text,
+                          style: textStyle.copyWith(color: AppColors.textWhite),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
               },
               child: Text(
-                _isExpanded ? 'showLess'.tr : 'readMore'.tr,
+                'readMore'.tr,
                 style: textStyle.copyWith(
                   fontFamily: 'Samsung Sharp Sans',
                   fontSize: 14.sp,

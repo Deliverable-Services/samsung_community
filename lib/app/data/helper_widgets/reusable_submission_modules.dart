@@ -74,6 +74,7 @@ class ReusableTextSubmitModule extends StatelessWidget {
             /// Description
             ReadMoreText(
               text: description,
+              title: title,
               textStyle: TextStyle(
                 fontFamily: 'Samsung Sharp Sans',
                 fontSize: 14.sp,
@@ -205,6 +206,7 @@ class ReusableAudioSubmitModule extends StatelessWidget {
             /// Description
             ReadMoreText(
               text: description,
+              title: title,
               textStyle: TextStyle(
                 fontFamily: 'Samsung Sharp Sans',
                 fontSize: 14.sp,
@@ -339,6 +341,7 @@ class _ReusableMcqSubmitModuleState extends State<ReusableMcqSubmitModule> {
             /// Description
             ReadMoreText(
               text: widget.description,
+              title: widget.title,
               textStyle: TextStyle(
                 fontSize: 14.sp,
                 color: AppColors.textWhiteSecondary,

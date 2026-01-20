@@ -197,6 +197,7 @@ class ContentCard1 extends StatelessWidget {
                       SizedBox(height: 4.h),
                       ReadMoreText(
                         text: description,
+                        title: title,
                         textStyle: TextStyle(
                           fontFamily: 'Samsung Sharp Sans',
                           fontSize: 14.sp,
@@ -229,6 +230,7 @@ class ContentCard1 extends StatelessWidget {
             SizedBox(height: 4.h),
             ReadMoreText(
               text: description,
+              title: title,
               textStyle: TextStyle(
                 fontFamily: 'Samsung Sharp Sans',
                 fontSize: 14.sp,

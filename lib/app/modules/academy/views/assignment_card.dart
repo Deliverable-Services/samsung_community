@@ -114,6 +114,7 @@ class AssignmentCard extends StatelessWidget {
             /// 📝 Description (NO blue behind now)
             ReadMoreText(
               text: description,
+              title: title,
               maxLines: 3,
               textStyle: TextStyle(
                 fontFamily: 'Samsung Sharp Sans',
