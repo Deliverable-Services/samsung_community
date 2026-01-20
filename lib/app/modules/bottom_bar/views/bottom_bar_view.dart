@@ -27,102 +27,133 @@ class BottomBarView extends GetView<BottomBarController> {
         });
       }
     }
-    return Scaffold(
-      backgroundColor: AppColors.primary,
-      body: SafeArea(
-        top: true,
-        bottom: true,
-        child: Obx(() {
-          final shouldShowOverlay =
-              !controller.isSamsungDevice.value &&
-              !controller.isCheckingDevice.value;
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          final nestedNavigator = Get.nestedKey(1)?.currentState;
+          if (nestedNavigator != null && nestedNavigator.canPop()) {
+            final previousRoute = controller.getPreviousRoute();
+            nestedNavigator.pop();
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              controller.updateCurrentIndexFromRouteName(
+                previousRoute ?? Routes.HOME,
+              );
+            });
+          } else {
+            Get.offNamed(Routes.HOME, id: 1);
+            controller.currentIndex.value = 0;
+            controller.resetRouteHistory();
+          }
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.primary,
+        body: SafeArea(
+          top: true,
+          bottom: true,
+          child: Obx(() {
+            final shouldShowOverlay =
+                !controller.isSamsungDevice.value &&
+                !controller.isCheckingDevice.value;
 
-          return Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 16.h,
+            return Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 16.h,
+                      ),
+                      child: Obx(
+                        () => Navbar(totalPoints: controller.totalPoints.value),
+                      ),
                     ),
-                    child: Obx(
-                      () => Navbar(totalPoints: controller.totalPoints.value),
-                    ),
-                  ),
-                  Expanded(
-                    child: Navigator(
-                      key: Get.nestedKey(1),
-                      initialRoute: Routes.HOME,
-                      onGenerateRoute: (settings) {
-                        final nestedRoute = AppPages.nestedRoutes.firstWhere(
-                          (route) => route.name == settings.name,
-                          orElse: () => AppPages.nestedRoutes.first,
-                        );
+                    Expanded(
+                      child: Navigator(
+                        key: Get.nestedKey(1),
+                        initialRoute: Routes.HOME,
+                        onGenerateRoute: (settings) {
+                          final nestedRoute = AppPages.nestedRoutes.firstWhere(
+                            (route) => route.name == settings.name,
+                            orElse: () => AppPages.nestedRoutes.first,
+                          );
 
-                        return GetPageRoute(
-                          page: nestedRoute.page,
-                          binding: nestedRoute.binding,
-                          middlewares: nestedRoute.middlewares,
-                          settings: settings,
-                          transition: nestedRoute.transition,
-                          transitionDuration:
-                              nestedRoute.transitionDuration ??
-                              const Duration(milliseconds: 300),
-                        );
-                      },
+                          final route = GetPageRoute(
+                            page: nestedRoute.page,
+                            binding: nestedRoute.binding,
+                            middlewares: nestedRoute.middlewares,
+                            settings: settings,
+                            transition: nestedRoute.transition,
+                            transitionDuration:
+                                nestedRoute.transitionDuration ??
+                                const Duration(milliseconds: 300),
+                          );
+
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            final routeName = settings.name ?? '';
+                            controller.updateRouteHistory(routeName);
+                            controller.updateCurrentIndexFromRouteName(
+                              routeName,
+                            );
+                          });
+
+                          return route;
+                        },
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 9.w,
-                      vertical: 16.h,
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 9.w,
+                        vertical: 16.h,
+                      ),
+                      child: BottomNavBar(),
                     ),
-                    child: BottomNavBar(),
-                  ),
-                ],
-              ),
-              // if (shouldShowOverlay)
-              //   Positioned.fill(
-              //     child: Stack(
-              //       children: [
-              //         GestureDetector(
-              //           onTap: () {
-              //             // Overlay background - can be used to dismiss if needed
-              //           },
-              //           child: Container(color: AppColors.overlayBackground),
-              //         ),
-              //         Positioned(
-              //           left: 0,
-              //           right: 0,
-              //           bottom: 0,
-              //           child: Container(
-              //             padding: EdgeInsets.all(20.w),
-              //             decoration: BoxDecoration(
-              //               color: AppColors.overlayContainerBackground,
-              //               borderRadius: BorderRadius.only(
-              //                 topLeft: Radius.circular(30.r),
-              //                 topRight: Radius.circular(30.r),
-              //               ),
-              //               boxShadow: [
-              //                 BoxShadow(
-              //                   offset: Offset(0, -6.h),
-              //                   blurRadius: 50.r,
-              //                   spreadRadius: 0,
-              //                   color: AppColors.overlayContainerShadow,
-              //                 ),
-              //               ],
-              //             ),
-              //             // child: const DeviceNotSupportedOverlay(),
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-            ],
-          );
-        }),
+                  ],
+                ),
+                // if (shouldShowOverlay)
+                //   Positioned.fill(
+                //     child: Stack(
+                //       children: [
+                //         GestureDetector(
+                //           onTap: () {
+                //             // Overlay background - can be used to dismiss if needed
+                //           },
+                //           child: Container(color: AppColors.overlayBackground),
+                //         ),
+                //         Positioned(
+                //           left: 0,
+                //           right: 0,
+                //           bottom: 0,
+                //           child: Container(
+                //             padding: EdgeInsets.all(20.w),
+                //             decoration: BoxDecoration(
+                //               color: AppColors.overlayContainerBackground,
+                //               borderRadius: BorderRadius.only(
+                //                 topLeft: Radius.circular(30.r),
+                //                 topRight: Radius.circular(30.r),
+                //               ),
+                //               boxShadow: [
+                //                 BoxShadow(
+                //                   offset: Offset(0, -6.h),
+                //                   blurRadius: 50.r,
+                //                   spreadRadius: 0,
+                //                   color: AppColors.overlayContainerShadow,
+                //                 ),
+                //               ],
+                //             ),
+                //             // child: const DeviceNotSupportedOverlay(),
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+              ],
+            );
+          }),
+        ),
       ),
     );
   }

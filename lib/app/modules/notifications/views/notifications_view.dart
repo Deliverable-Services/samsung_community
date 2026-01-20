@@ -17,11 +17,10 @@ class NotificationsView extends GetView<NotificationsController> {
       appBar: TitleAppBar(text: 'notifications'.tr, isLeading: false),
       backgroundColor: AppColors.primary,
       body: SafeArea(
-        top: false, // TitleAppBar already handles top padding
+        top: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔹 Header + Subtitle + Search
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: Column(
@@ -34,14 +33,11 @@ class NotificationsView extends GetView<NotificationsController> {
               ),
             ),
 
-            // 🔹 List
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {
                   return Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.linkBlue,
-                    ),
+                    child: CircularProgressIndicator(color: AppColors.linkBlue),
                   );
                 }
 
@@ -62,13 +58,18 @@ class NotificationsView extends GetView<NotificationsController> {
                 return ListView.builder(
                   controller: controller.scrollController,
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  itemCount: list.length + (controller.hasMoreData.value ? 1 : 0),
+                  itemCount:
+                      list.length + (controller.hasMoreData.value ? 1 : 0),
                   itemBuilder: (_, index) {
                     if (index == list.length) {
-                      return controller.isLoadingMore.value 
+                      return controller.isLoadingMore.value
                           ? Padding(
                               padding: EdgeInsets.symmetric(vertical: 20.h),
-                              child: Center(child: CircularProgressIndicator(color: AppColors.linkBlue)),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.linkBlue,
+                                ),
+                              ),
                             )
                           : const SizedBox.shrink();
                     }

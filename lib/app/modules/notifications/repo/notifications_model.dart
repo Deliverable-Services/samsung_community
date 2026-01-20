@@ -20,11 +20,22 @@ class NotificationItem {
   });
 
   factory NotificationItem.fromJson(Map<String, dynamic> json) {
+    bool isReadValue = false;
+    if (json['is_read'] != null) {
+      if (json['is_read'] is bool) {
+        isReadValue = json['is_read'] as bool;
+      } else if (json['is_read'] is String) {
+        isReadValue = json['is_read'].toString().toLowerCase() == 'true';
+      } else {
+        isReadValue = json['is_read'] == 1 || json['is_read'] == true;
+      }
+    }
+
     return NotificationItem(
       id: json['id'] as String,
       title: json['title'] as String,
       message: json['message'] as String,
-      isRead: json['is_read'] as bool,
+      isRead: isReadValue,
       notificationType: json['notification_type'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
       relatedEntityType: json['related_entity_type'] as String?,
