@@ -5,6 +5,8 @@ import 'package:just_audio/just_audio.dart';
 import 'audio_player_controller.dart' as audio_controller;
 import 'audio_player_manager.dart';
 
+import '../../../common/services/video_duration_service.dart';
+
 class AudioPlayerControllerGetX extends GetxController {
   final String? audioUrl;
 
@@ -29,6 +31,21 @@ class AudioPlayerControllerGetX extends GetxController {
     _audioPlayer = AudioPlayer();
     _initializeController();
     _setupListeners();
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    if (audioUrl != null && audioUrl!.isNotEmpty) {
+      fetchDuration();
+    }
+  }
+
+  Future<void> fetchDuration() async {
+    final duration = await MediaDurationService.getDuration(audioUrl!, isAudio: true);
+    if (duration != null && !isInitialized.value) {
+      totalDuration.value = duration;
+    }
   }
 
   void _initializeController() {

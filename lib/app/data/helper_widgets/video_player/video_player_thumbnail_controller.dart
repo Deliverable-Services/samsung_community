@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
 import '../../../common/services/video_thumbnail_service.dart';
 
 class VideoPlayerThumbnailController extends GetxController {
@@ -18,19 +19,22 @@ class VideoPlayerThumbnailController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    if (_shouldGenerateThumbnail()) {
-      _generateThumbnail();
-    }
+    // Lazy generation handled by UI or on demand to save resources
+    // if (_shouldGenerateThumbnail()) {
+    //   _generateThumbnail();
+    // }
   }
 
-  bool _shouldGenerateThumbnail() {
+  bool shouldGenerateThumbnail() {
     return (thumbnailUrl == null && thumbnailImage == null) &&
         videoUrl != null &&
         videoUrl!.isNotEmpty;
   }
 
-  Future<void> _generateThumbnail() async {
+  Future<void> generateThumbnail() async {
     if (videoUrl == null || videoUrl!.isEmpty) return;
+    // Check if already generated or generating
+    if (generatedThumbnailPath.value != null || isGenerating.value) return;
 
     isGenerating.value = true;
 
@@ -45,7 +49,7 @@ class VideoPlayerThumbnailController extends GetxController {
         generatedThumbnailPath.value = thumbnailPath;
       }
     } catch (e) {
-      print('Error generating thumbnail: $e');
+      debugPrint('Error generating thumbnail: $e');
     } finally {
       isGenerating.value = false;
     }

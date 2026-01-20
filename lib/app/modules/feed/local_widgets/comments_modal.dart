@@ -112,9 +112,7 @@ class _CommentsModalState extends State<CommentsModal> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: Get.height * 0.7,
-      child: Column(
+    return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -294,8 +292,7 @@ class _CommentsModalState extends State<CommentsModal> {
               }),
             ],
           ),
-        ],
-      ),
+      ],
     );
   }
 }

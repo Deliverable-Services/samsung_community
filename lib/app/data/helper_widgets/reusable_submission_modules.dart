@@ -7,6 +7,7 @@ import '../constants/app_button.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_images.dart';
 import 'custom_text_field.dart';
+import 'read_more_text.dart';
 import 'upload_file_field.dart';
 
 /// Reusable Text Submission Module
@@ -71,9 +72,9 @@ class ReusableTextSubmitModule extends StatelessWidget {
             ),
 
             /// Description
-            Text(
-              description,
-              style: TextStyle(
+            ReadMoreText(
+              text: description,
+              textStyle: TextStyle(
                 fontFamily: 'Samsung Sharp Sans',
                 fontSize: 14.sp,
                 color: AppColors.textWhite,
@@ -202,9 +203,9 @@ class ReusableAudioSubmitModule extends StatelessWidget {
             ),
 
             /// Description
-            Text(
-              description,
-              style: TextStyle(
+            ReadMoreText(
+              text: description,
+              textStyle: TextStyle(
                 fontFamily: 'Samsung Sharp Sans',
                 fontSize: 14.sp,
                 color: AppColors.textWhite,
@@ -336,9 +337,9 @@ class _ReusableMcqSubmitModuleState extends State<ReusableMcqSubmitModule> {
             SizedBox(height: 4.h),
 
             /// Description
-            Text(
-              widget.description,
-              style: TextStyle(
+            ReadMoreText(
+              text: widget.description,
+              textStyle: TextStyle(
                 fontSize: 14.sp,
                 color: AppColors.textWhiteSecondary,
               ),

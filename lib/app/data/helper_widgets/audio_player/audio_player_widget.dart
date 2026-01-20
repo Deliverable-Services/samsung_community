@@ -23,11 +23,19 @@ class AudioPlayerWidget extends StatelessWidget {
           tag: controllerTag,
         );
       }
+      // Trigger lazy fetch if needed
+      if ((!controller.isInitialized.value && controller.totalDuration.value == Duration.zero)) {
+         controller.fetchDuration();
+      }
     } catch (_) {
       controller = Get.put(
         AudioPlayerControllerGetX(audioUrl: audioUrl),
         tag: controllerTag,
       );
+      // Trigger lazy fetch if needed
+      if ((!controller.isInitialized.value && controller.totalDuration.value == Duration.zero)) {
+         controller.fetchDuration();
+      }
     }
 
     return Obx(() {

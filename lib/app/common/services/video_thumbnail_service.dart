@@ -50,7 +50,7 @@ class VideoThumbnailService {
           file.deleteSync();
         }
       } catch (e) {
-        print('Error deleting thumbnail cache: $e');
+        debugPrint('Error deleting thumbnail cache: $e');
       }
     }
     _thumbnailCache.clear();
@@ -65,7 +65,7 @@ class VideoThumbnailService {
           file.deleteSync();
         }
       } catch (e) {
-        print('Error deleting thumbnail cache: $e');
+        debugPrint('Error deleting thumbnail cache: $e');
       }
     }
   }

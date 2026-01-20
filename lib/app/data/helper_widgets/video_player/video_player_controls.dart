@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../constants/app_colors.dart';
 import '../../constants/app_images.dart';
+import '../skeleton_loader.dart';
 import '../video_modal.dart';
 import 'media_slider.dart';
 
@@ -43,6 +44,39 @@ class VideoPlayerControls extends StatelessWidget {
   }
 
   Widget _buildTimeDisplay() {
+    if (totalDuration.inSeconds == 0) {
+      return Row(
+        children: [
+          Text(
+            '00:00',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12.sp,
+              fontFamily: 'Samsung Sharp Sans',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          SizedBox(width: 2.w),
+          Text(
+            '/ ',
+            style: TextStyle(
+              color: AppColors.accentBlueLight,
+              fontSize: 12.sp,
+              fontFamily: 'Samsung Sharp Sans',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          SkeletonLoader(
+            width: 30.w,
+            height: 12.h,
+            baseColor: Colors.white.withOpacity(0.2),
+            highlightColor: Colors.white.withOpacity(0.4),
+            borderRadius: 2,
+          ),
+        ],
+      );
+    }
+
     return Row(
       children: [
         Text(

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:video_player/video_player.dart' as video_player;
 
 import 'video_player_manager.dart';
+import '../../../common/services/video_duration_service.dart';
 
 class VideoPlayerControllerGetX extends GetxController {
   final String? videoUrl;
@@ -48,8 +49,17 @@ class VideoPlayerControllerGetX extends GetxController {
     if (_controller != null) {
       _controller!.addListener(_videoListener);
     } else if (videoUrl != null && videoUrl!.isNotEmpty) {
-      // Pre-initialize to fetch duration so UI can show it before playback
-      initializeVideo();
+       fetchDuration();
+    }
+  }
+
+  Future<void> fetchDuration() async {
+    if (videoUrl == null || videoUrl!.isEmpty) return;
+    
+    // Check if we already have duration from cache to avoid flicker
+    final duration = await MediaDurationService.getDuration(videoUrl!);
+    if (duration != null && !isInitialized.value) {
+      totalDuration.value = duration;
     }
   }
 

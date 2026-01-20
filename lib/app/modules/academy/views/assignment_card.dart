@@ -7,6 +7,7 @@ import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../data/helper_widgets/audio_player/audio_player_widget.dart';
 import '../../../data/helper_widgets/event_tablet.dart';
+import '../../../data/helper_widgets/read_more_text.dart';
 import '../../../data/models/weekly_riddle_model.dart';
 
 class AssignmentCard extends StatelessWidget {
@@ -111,17 +112,15 @@ class AssignmentCard extends StatelessWidget {
             SizedBox(height: 4.h),
 
             /// 📝 Description (NO blue behind now)
-            Text(
-              description,
+            ReadMoreText(
+              text: description,
               maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
+              textStyle: TextStyle(
                 fontFamily: 'Samsung Sharp Sans',
                 fontSize: 14.sp,
                 height: 22 / 14,
                 color: const Color(0xFFBDBDBD),
               ),
-              textScaler: const TextScaler.linear(1.0),
             ),
 
             /// 🔊 Audio

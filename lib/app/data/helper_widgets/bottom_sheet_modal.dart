@@ -48,43 +48,47 @@ class BottomSheetModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maxSheetHeight =
-        maxHeight ?? MediaQuery.of(context).size.height; // default: no cap
+    final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final availableHeight = screenHeight - bottomPadding - 120.h;
+
+    final defaultMaxHeight = 905.h;
+    final targetHeight = maxHeight ?? defaultMaxHeight;
+    final effectiveMaxHeight =
+        targetHeight > availableHeight ? availableHeight : targetHeight;
 
     return SafeArea(
       top: true,
       bottom: false,
       child: GestureDetector(
         onTap: () {}, // Prevent tap from closing when tapping inside modal
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: maxSheetHeight),
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppColors.overlayContainerBackground,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30.r),
-                topRight: Radius.circular(30.r),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  offset: Offset(0, -6.h),
-                  blurRadius: 50.r,
-                  spreadRadius: 0,
-                  color: AppColors.overlayContainerShadow,
-                ),
-              ],
+        child: Container(
+          width: double.infinity,
+          constraints: BoxConstraints(maxHeight: effectiveMaxHeight),
+          decoration: BoxDecoration(
+            color: AppColors.overlayContainerBackground,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30.r),
+              topRight: Radius.circular(30.r),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    buttonType == BottomSheetButtonType.none
-                        ? const SizedBox.shrink()
-                        : buttonType == BottomSheetButtonType.close
+            boxShadow: [
+              BoxShadow(
+                offset: Offset(0, -6.h),
+                blurRadius: 50.r,
+                spreadRadius: 0,
+                color: AppColors.overlayContainerShadow,
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                buttonType == BottomSheetButtonType.none
+                    ? const SizedBox.shrink()
+                    : buttonType == BottomSheetButtonType.close
                         ? CustomCloseButton(
                             onTap: () {
                               Navigator.of(context, rootNavigator: true).pop();
@@ -98,11 +102,11 @@ class BottomSheetModal extends StatelessWidget {
                             },
                             rotation: 0,
                           ),
-                    SizedBox(height: 10),
-                    content,
-                  ],
+                const SizedBox(height: 10),
+                Flexible(
+                  child: content,
                 ),
-              ),
+              ],
             ),
           ),
         ),

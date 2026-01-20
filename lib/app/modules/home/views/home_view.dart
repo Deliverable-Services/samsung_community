@@ -59,6 +59,7 @@ class HomeView extends GetView<HomeController> {
                       isAudio:
                           controller.weeklyRiddle.value?.solutionType ==
                           RiddleSolutionType.audio,
+                      contentId: controller.weeklyRiddle.value?.id,
                       audioUrl:
                           controller.weeklyRiddle.value?.solutionType ==
                               RiddleSolutionType.audio
@@ -135,9 +136,6 @@ class HomeView extends GetView<HomeController> {
             event.costCreditCents! > 0)
           EventLabel(
             text: () {
-              debugPrint(
-                'Event credits (Home): ${event.title} -> ${event.costCreditCents}',
-              );
               return 'Credits: ${event.costCreditCents}';
             }(),
           ),
@@ -159,6 +157,7 @@ class HomeView extends GetView<HomeController> {
     final hasMedia = mediaUrl != null && mediaUrl.isNotEmpty;
 
     return ContentCard1(
+      contentId: vod.id,
       title: vod.title ?? '',
       description: vod.description ?? '',
       videoUrl: hasMedia ? mediaUrl : null,
@@ -181,6 +180,7 @@ class HomeView extends GetView<HomeController> {
     final hasMedia = mediaUrl != null && mediaUrl.isNotEmpty;
 
     return ContentCard1(
+      contentId: podcast.id,
       title: podcast.title ?? '',
       description: podcast.description ?? '',
       audioUrl: hasMedia ? mediaUrl : null,

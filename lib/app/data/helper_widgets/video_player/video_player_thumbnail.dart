@@ -60,6 +60,10 @@ class VideoPlayerThumbnail extends StatelessWidget {
       return _buildThumbnailImage(controller.thumbnailImage!);
     }
 
+    if (controller.shouldGenerateThumbnail()) {
+       controller.generateThumbnail();
+    }
+
     // Use Obx only for reactive variables
     return Obx(() {
       if (controller.generatedThumbnailPath.value != null) {

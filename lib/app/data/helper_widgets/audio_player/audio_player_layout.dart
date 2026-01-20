@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../constants/app_colors.dart';
 import '../../constants/app_images.dart';
+import '../skeleton_loader.dart';
 import 'audio_player_slider.dart';
 
 class AudioPlayerLayout extends StatefulWidget {
@@ -177,15 +178,24 @@ class _AudioPlayerLayoutState extends State<AudioPlayerLayout> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const SizedBox.shrink(),
-                      Text(
-                        _formatDuration(widget.totalDuration),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontFamily: 'Samsung Sharp Sans',
-                          fontWeight: FontWeight.w400,
+                      if (widget.totalDuration.inSeconds == 0)
+                        SkeletonLoader(
+                          width: 40.w,
+                          height: 14.h,
+                          baseColor: Colors.white.withOpacity(0.2),
+                          highlightColor: Colors.white.withOpacity(0.4),
+                          borderRadius: 4,
+                        )
+                      else
+                        Text(
+                          _formatDuration(widget.totalDuration),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.sp,
+                            fontFamily: 'Samsung Sharp Sans',
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                   SizedBox(height: 4.h),

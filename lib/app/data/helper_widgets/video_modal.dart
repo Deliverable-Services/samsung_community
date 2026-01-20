@@ -40,6 +40,7 @@ class _VideoModalState extends State<VideoModal> {
               onMinimize: () =>
                   Navigator.of(context, rootNavigator: true).pop(),
               fullScreen: true,
+              tag: 'fullscreen_${widget.videoUrl}',
             ),
           ),
           Positioned(
