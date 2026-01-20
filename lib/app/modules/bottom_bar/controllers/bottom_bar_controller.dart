@@ -63,6 +63,7 @@ class BottomBarController extends GetxController {
   final RxInt totalPoints = 0.obs;
   final RxBool isSamsungDevice = false.obs;
   final RxBool isCheckingDevice = true.obs;
+  final List<String> _routeHistory = [Routes.HOME];
 
   void _loadPointsBalance() {
     try {
@@ -104,8 +105,31 @@ class BottomBarController extends GetxController {
     if (currentIndex.value != index) {
       _pauseAllMedia();
       currentIndex.value = index;
-      Get.offNamed(routes[index], id: 1);
+      final route = routes[index];
+      if (!_routeHistory.contains(route)) {
+        _routeHistory.add(route);
+      }
+      Get.toNamed(route, id: 1, preventDuplicates: false);
     }
+  }
+
+  String? getPreviousRoute() {
+    if (_routeHistory.length > 1) {
+      _routeHistory.removeLast();
+      return _routeHistory.isNotEmpty ? _routeHistory.last : Routes.HOME;
+    }
+    return Routes.HOME;
+  }
+
+  void updateRouteHistory(String routeName) {
+    if (_routeHistory.isEmpty || _routeHistory.last != routeName) {
+      _routeHistory.add(routeName);
+    }
+  }
+
+  void resetRouteHistory() {
+    _routeHistory.clear();
+    _routeHistory.add(Routes.HOME);
   }
 
   void _pauseAllMedia() {
@@ -115,5 +139,12 @@ class BottomBarController extends GetxController {
 
   void updateTotalPoints(int points) {
     totalPoints.value = points;
+  }
+
+  void updateCurrentIndexFromRouteName(String routeName) {
+    final index = routes.indexWhere((route) => route == routeName);
+    if (index != -1 && currentIndex.value != index) {
+      currentIndex.value = index;
+    }
   }
 }
