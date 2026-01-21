@@ -125,6 +125,7 @@ class AssignmentCard extends StatelessWidget {
             ),
 
             /// 🔊 Audio
+            SizedBox(height: 16.h),
             if (isAudio)
               AudioPlayerWidget(
                 audioUrl: audioUrl,

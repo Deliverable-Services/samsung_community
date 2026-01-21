@@ -27,10 +27,7 @@ class PromotionCard extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             /// Background image
-            Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
-            ),
+            Image.network(imageUrl, fit: BoxFit.cover),
 
             /// Soft gradient overlay
             Container(
@@ -74,23 +71,23 @@ class PromotionCard extends StatelessWidget {
                       fontSize: 14.sp,
                     ),
                   ),
-                  SizedBox(height: 10.h),
-                  Container(
-                    padding:
-                    EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.4),
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: Text(
-                      interval,
-                      style: TextStyle(
-                        color: const Color(0xFF4FC3F7),
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
+                  // SizedBox(height: 10.h),
+                  // Container(
+                  //   padding:
+                  //   EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.black.withOpacity(0.4),
+                  //     borderRadius: BorderRadius.circular(8.r),
+                  //   ),
+                  //   child: Text(
+                  //     interval,
+                  //     style: TextStyle(
+                  //       color: const Color(0xFF4FC3F7),
+                  //       fontSize: 12.sp,
+                  //       fontWeight: FontWeight.w600,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

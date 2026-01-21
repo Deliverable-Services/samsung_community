@@ -17,11 +17,9 @@ class EventService {
       var query = SupabaseService.client
           .from('events')
           .select()
-          .isFilter('deleted_at', null);
-
-      if (eventType != null) {
-        query = query.eq('event_type', eventType.toJson());
-      }
+          .isFilter('deleted_at', null)
+          // Always fetch only live events
+          .eq('event_type', EventType.liveEvent.toJson());
 
       if (isPublished != null) {
         query = query.eq('is_published', isPublished);
@@ -86,12 +84,13 @@ class EventService {
       // Build OR conditions for event IDs
       final orConditions = eventIds.map((id) => 'id.eq.$id').join(',');
 
-      // Now get the events
+      // Now get the events (only live events)
       var query = SupabaseService.client
           .from('events')
           .select()
           .or(orConditions)
-          .isFilter('deleted_at', null);
+          .isFilter('deleted_at', null)
+          .eq('event_type', EventType.liveEvent.toJson());
 
       if (isPublished != null) {
         query = query.eq('is_published', isPublished);

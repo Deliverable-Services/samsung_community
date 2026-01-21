@@ -429,7 +429,10 @@ class HomeController extends GetxController {
             (riddle.question is Map && (riddle.question as Map).isNotEmpty));
     final isMcq = isMcqType || hasQuestionField;
 
+    debugPrint('isMcq: $isMcq');
+
     if (isMcq) {
+      debugPrint('riddle.question: ${riddle.question}');
       // Check if question exists, if not show error or fallback
       if (riddle.question == null ||
           (riddle.question is List && (riddle.question as List).isEmpty) ||
