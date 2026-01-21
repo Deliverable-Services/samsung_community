@@ -98,6 +98,18 @@ class EventLaunchCard extends StatelessWidget {
             right: 0,
             child: Container(
               padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.0),
+                    Colors.black.withOpacity(0.55),
+                    Colors.black.withOpacity(0.85),
+                  ],
+                  stops: const [0.0, 0.4, 1.0],
+                ),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -116,14 +128,14 @@ class EventLaunchCard extends StatelessWidget {
                                   ),
                                 )
                               : (label.widget != null)
-                                  ? IntrinsicWidth(
-                                      child: EventTablet(
-                                        widget: label.widget!,
-                                        onTap: label.onTap,
-                                        extraPadding: label.extraPadding,
-                                      ),
-                                    )
-                                  : const SizedBox.shrink();
+                              ? IntrinsicWidth(
+                                  child: EventTablet(
+                                    widget: label.widget!,
+                                    onTap: label.onTap,
+                                    extraPadding: label.extraPadding,
+                                  ),
+                                )
+                              : const SizedBox.shrink();
                           return Padding(
                             padding: EdgeInsets.only(right: 8.w),
                             child: chip,
@@ -177,19 +189,14 @@ class EventLaunchCard extends StatelessWidget {
                               children: [
                                 ShaderMask(
                                   shaderCallback: (bounds) {
-                                    // 181.18deg gradient: almost vertical (180deg), slightly rotated
-                                    // Using Alignment to represent the direction
                                     return const LinearGradient(
                                       begin: Alignment.topCenter,
                                       end: Alignment.bottomCenter,
                                       colors: [
-                                        Color(0xFFBEBEBE), // #BEBEBE
-                                        Color(0xFFFFFFFF), // #FFFFFF
+                                        Color(0xFFBEBEBE),
+                                        Color(0xFFFFFFFF),
                                       ],
-                                      stops: [
-                                        0.0101,
-                                        1.0,
-                                      ], // Clamp 119.84% to 1.0
+                                      stops: [0.0101, 1.0],
                                     ).createShader(bounds);
                                   },
                                   child: Text(
@@ -227,7 +234,6 @@ class EventLaunchCard extends StatelessWidget {
                             ),
                             child: Stack(
                               children: [
-                                // Gradient border
                                 Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5.09.r),
@@ -243,7 +249,6 @@ class EventLaunchCard extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                // Inner container with background gradient
                                 Padding(
                                   padding: EdgeInsets.all(0.w),
                                   child: Container(
@@ -377,14 +382,14 @@ class AllEventLaunchCard extends StatelessWidget {
                               ),
                             )
                           : (label.widget != null)
-                              ? IntrinsicWidth(
-                                  child: EventTablet(
-                                    widget: label.widget!,
-                                    onTap: label.onTap,
-                                    extraPadding: label.extraPadding,
-                                  ),
-                                )
-                              : const SizedBox.shrink();
+                          ? IntrinsicWidth(
+                              child: EventTablet(
+                                widget: label.widget!,
+                                onTap: label.onTap,
+                                extraPadding: label.extraPadding,
+                              ),
+                            )
+                          : const SizedBox.shrink();
                       return Padding(
                         padding: EdgeInsets.only(right: 8.w),
                         child: chip,
@@ -406,10 +411,10 @@ class AllEventLaunchCard extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Colors.black.withOpacity(0.3),
-                      Colors.black.withOpacity(0.7),
+                      Colors.black.withOpacity(0.6),
+                      Colors.black.withOpacity(0.9),
                     ],
-                    stops: const [0.0, 0.5, 1.0],
+                    stops: const [0.0, 0.4, 1.0],
                   ),
                 ),
               ),
