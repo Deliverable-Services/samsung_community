@@ -16,6 +16,26 @@ class ContentService {
     String? searchQuery,
   }) async {
     try {
+      // Get current logged-in user to filter out blocked users' posts
+      final currentUser = SupabaseService.currentUser;
+      List<String> blockedUserIds = [];
+
+      if (currentUser != null) {
+        try {
+          final blockedResponse = await SupabaseService.client
+              .from('user_blocks')
+              .select('blocked_id')
+              .eq('blocker_id', currentUser.id)
+              .isFilter('deleted_at', null);
+
+          blockedUserIds = (blockedResponse as List)
+              .map((row) => row['blocked_id'] as String)
+              .toList();
+        } catch (e) {
+          debugPrint('Error loading blocked users for content filter: $e');
+        }
+      }
+
       var query = SupabaseService.client
           .from('content')
           .select()
