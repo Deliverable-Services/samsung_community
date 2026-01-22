@@ -26,31 +26,40 @@ class AcademyView extends GetView<AcademyController> {
       style: const TextStyle(decoration: TextDecoration.none),
       child: RefreshIndicator(
         onRefresh: controller.loadContent,
-        child: CustomScrollView(
-          controller: controller.scrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          cacheExtent: 500,
-          slivers: [
-            SliverPadding(
-              padding: EdgeInsets.only(
-                left: 16.w,
-                right: 16.w,
-                top: 22.h,
-                bottom: 22.h,
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (scrollInfo is ScrollEndNotification &&
+                scrollInfo.metrics.pixels >=
+                    scrollInfo.metrics.maxScrollExtent * 0.8) {
+              controller.loadMoreContent();
+            }
+            return false;
+          },
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            cacheExtent: 500,
+            slivers: [
+              SliverPadding(
+                padding: EdgeInsets.only(
+                  left: 16.w,
+                  right: 16.w,
+                  top: 22.h,
+                  bottom: 22.h,
+                ),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    _buildHeader(),
+                    SizedBox(height: 20.h),
+                    _buildSearchBar(),
+                    SizedBox(height: 20.h),
+                    _buildFilters(),
+                    SizedBox(height: 10.h),
+                  ]),
+                ),
               ),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  _buildHeader(),
-                  SizedBox(height: 20.h),
-                  _buildSearchBar(),
-                  SizedBox(height: 20.h),
-                  _buildFilters(),
-                  SizedBox(height: 10.h),
-                ]),
-              ),
-            ),
-            _buildContentList(),
-          ],
+              _buildContentList(),
+            ],
+          ),
         ),
       ),
     );
@@ -314,7 +323,10 @@ class AcademyView extends GetView<AcademyController> {
             ],
           ),
           child: EventLaunchCard(
-            imagePath: AppImages.eventRegisteration,
+            imagePath:
+                event?.imageUrl ??
+                content.mediaFileUrl ??
+                AppImages.eventRegisteration,
             imagePathNetwork: event?.imageUrl ?? content.mediaFileUrl,
             title: event?.title ?? content.title,
             description: event?.description ?? content.description ?? '',

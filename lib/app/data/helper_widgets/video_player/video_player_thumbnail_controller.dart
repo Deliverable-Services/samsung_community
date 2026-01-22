@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:get/get.dart';
 import 'package:flutter/foundation.dart';
 import '../../../common/services/video_thumbnail_service.dart';
@@ -16,13 +17,25 @@ class VideoPlayerThumbnailController extends GetxController {
   final RxnString generatedThumbnailPath = RxnString();
   final RxBool isGenerating = false.obs;
 
+  Timer? _debounceTimer;
+
   @override
   void onInit() {
     super.onInit();
-    // Lazy generation handled by UI or on demand to save resources
-    // if (_shouldGenerateThumbnail()) {
-    //   _generateThumbnail();
-    // }
+    // Debounce generation to avoid lag during fast scrolling
+    if (shouldGenerateThumbnail()) {
+      _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+        if (!isClosed) {
+          generateThumbnail();
+        }
+      });
+    }
+  }
+
+  @override
+  void onClose() {
+    _debounceTimer?.cancel();
+    super.onClose();
   }
 
   bool shouldGenerateThumbnail() {
@@ -42,7 +55,7 @@ class VideoPlayerThumbnailController extends GetxController {
       final thumbnailPath = await VideoThumbnailService.generateThumbnail(
         videoUrl: videoUrl!,
         timeMs: 1000,
-        quality: 75,
+        quality: 50,
       );
 
       if (thumbnailPath != null) {

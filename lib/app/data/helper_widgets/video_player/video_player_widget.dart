@@ -60,9 +60,10 @@ class VideoPlayerWidget extends StatelessWidget {
         );
       }
       // Trigger lazy fetch if not initialized
-      if (!videoController.isInitialized.value && videoController.totalDuration.value == Duration.zero) {
-         videoController.fetchDuration();
-      }
+      // Trigger lazy fetch if not initialized
+      // if (!videoController.isInitialized.value && videoController.totalDuration.value == Duration.zero) {
+      //    videoController.fetchDuration();
+      // }
     } catch (_) {
       videoController = Get.put(
         VideoPlayerControllerGetX(
@@ -77,9 +78,10 @@ class VideoPlayerWidget extends StatelessWidget {
         tag: controllerTag,
       );
       // Trigger lazy fetch if not initialized
-      if (!videoController.isInitialized.value && videoController.totalDuration.value == Duration.zero) {
-         videoController.fetchDuration();
-      }
+      // Trigger lazy fetch if not initialized
+      // if (!videoController.isInitialized.value && videoController.totalDuration.value == Duration.zero) {
+      //    videoController.fetchDuration();
+      // }
     }
 
     return Obx(() {

@@ -60,9 +60,10 @@ class VideoPlayerThumbnail extends StatelessWidget {
       return _buildThumbnailImage(controller.thumbnailImage!);
     }
 
-    if (controller.shouldGenerateThumbnail()) {
-       controller.generateThumbnail();
-    }
+    // Generation logic is handled in the controller's onInit or onReady
+    // if (controller.shouldGenerateThumbnail()) {
+    //    controller.generateThumbnail();
+    // }
 
     // Use Obx only for reactive variables
     return Obx(() {
@@ -89,6 +90,8 @@ class VideoPlayerThumbnail extends StatelessWidget {
         fit: BoxFit.cover,
         width: double.infinity,
         height: double.infinity,
+        memCacheWidth: 600,
+        maxWidthDiskCache: 600,
         placeholder: (context, url) => Container(
           color: const Color(0xFF2A2A2A),
           child: const Center(child: CircularProgressIndicator()),

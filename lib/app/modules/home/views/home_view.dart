@@ -32,11 +32,19 @@ class HomeView extends GetView<HomeController> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return ListView(
-          controller: controller.scrollController ?? ScrollController(),
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 22.h),
-          children: [
+        return NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (scrollInfo is ScrollEndNotification &&
+                scrollInfo.metrics.pixels >=
+                    scrollInfo.metrics.maxScrollExtent * 0.8) {
+              controller.loadMoreItems();
+            }
+            return false;
+          },
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 22.h),
+            children: [
             DefaultTextStyle(
               style: const TextStyle(decoration: TextDecoration.none),
               child: Column(
@@ -103,8 +111,9 @@ class HomeView extends GetView<HomeController> {
               ),
             ),
           ],
-        );
-      }),
+        ),
+      );
+    }),
     );
   }
 

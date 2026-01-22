@@ -55,8 +55,6 @@ class AcademyController extends BaseController {
   AcademyController({AcademyService? academyService})
     : academyService = academyService ?? AcademyService();
 
-  late final ScrollController scrollController;
-
   final selectedMediaFile = Rxn<File>();
   final uploadedMediaUrl = Rxn<String>();
   final uploadedFileName = Rxn<String>();
@@ -66,8 +64,7 @@ class AcademyController extends BaseController {
   @override
   void onInit() {
     super.onInit();
-    scrollController = ScrollController();
-    scrollController.addListener(_onScroll);
+    // Removed scrollController. View will handle pagination via NotificationListener.
     searchController.addListener(_onSearchChanged);
     fetchRegisteredWorkshops();
     loadContent();
@@ -107,20 +104,11 @@ class AcademyController extends BaseController {
     await _authRepo.loadCurrentUser();
   }
 
-  void _onScroll() {
-    if (scrollController.position.pixels >=
-        scrollController.position.maxScrollExtent * 0.8) {
-      loadMoreContent();
-    }
-  }
-
   @override
   void onClose() {
     searchDebounceTimer?.cancel();
     searchController.removeListener(_onSearchChanged);
     searchController.dispose();
-    scrollController.removeListener(_onScroll);
-    scrollController.dispose();
     super.onClose();
   }
 

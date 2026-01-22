@@ -48,9 +48,10 @@ class VideoPlayerControllerGetX extends GetxController {
     super.onInit();
     if (_controller != null) {
       _controller!.addListener(_videoListener);
-    } else if (videoUrl != null && videoUrl!.isNotEmpty) {
-       fetchDuration();
-    }
+    } 
+    // else if (videoUrl != null && videoUrl!.isNotEmpty) {
+    //    fetchDuration();
+    // }
   }
 
   Future<void> fetchDuration() async {

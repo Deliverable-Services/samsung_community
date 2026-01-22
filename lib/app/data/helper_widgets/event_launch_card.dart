@@ -49,26 +49,29 @@ class EventLaunchCard extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    debugPrint(imagePathNetwork ?? '');
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(16.r),
       child: Stack(
         children: [
           (imagePathNetwork != null && imagePathNetwork!.isNotEmpty)
-              ? CachedNetworkImage(
-                  imageUrl: imagePathNetwork!,
+              ? Image.network(
+                  imagePathNetwork!,
                   fit: BoxFit.cover,
                   width: double.infinity,
-                  placeholder: (context, url) => Container(
-                    height: 180.h,
-                    width: double.infinity,
-                    color: AppColors.black.withOpacity(0.1),
-                    child: const Center(
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  ),
-                  errorWidget: (context, url, error) {
+                  height: 180.h,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      height: 180.h,
+                      width: double.infinity,
+                      color: AppColors.black.withOpacity(0.1),
+                      child: const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
                     return Image.asset(
                       imagePath,
                       fit: BoxFit.cover,
@@ -81,6 +84,7 @@ class EventLaunchCard extends StatelessWidget {
                   imagePath,
                   fit: BoxFit.cover,
                   width: double.infinity,
+                  height: 180.h,
                 ),
           if (showButton && text != null && exclusiveEvent)
             Positioned(

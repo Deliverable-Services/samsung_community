@@ -52,7 +52,7 @@ class HomeController extends GetxController {
   int _itemsLoaded = 0;
 
   // Scroll Controller
-  ScrollController? scrollController;
+  // Removed
 
   // Submission State
   final TextEditingController textController = TextEditingController();
@@ -70,8 +70,7 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    scrollController = ScrollController();
-    scrollController?.addListener(_onScroll);
+    // scrollController logic removed in favor of NotificationListener in View
 
     loadLatestItems().then((_) {
       loadAllItems();
@@ -89,14 +88,6 @@ class HomeController extends GetxController {
     }
 
     isLoadingPromotions.value = false;
-  }
-
-  void _onScroll() {
-    if (scrollController != null &&
-        scrollController!.position.pixels >=
-            scrollController!.position.maxScrollExtent * 0.8) {
-      loadMoreItems();
-    }
   }
 
   void showPromotionsOneByOne() {
@@ -317,8 +308,6 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
-    scrollController?.removeListener(_onScroll);
-    scrollController?.dispose();
     textController.dispose();
     super.onClose();
   }
