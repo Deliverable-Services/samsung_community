@@ -58,9 +58,16 @@ class ContentService {
 
       final response = await transformQuery;
 
-      final contentList = (response as List)
+      var contentList = (response as List)
           .map((json) => ContentModel.fromJson(json as Map<String, dynamic>))
           .toList();
+
+      // Filter out posts authored by users blocked by the current user
+      if (blockedUserIds.isNotEmpty) {
+        contentList = contentList
+            .where((content) => !blockedUserIds.contains(content.userId))
+            .toList();
+      }
 
       return Success(contentList);
     } catch (e) {
