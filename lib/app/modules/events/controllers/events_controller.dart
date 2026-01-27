@@ -418,7 +418,7 @@ class EventsController extends BaseController {
     final List<String> middleTablets = [];
     if (isInternal) {
       if (event.costPoints != null && event.costPoints! > 0) {
-        middleTablets.add('Points: ${event.costPoints}');
+        middleTablets.add('${'points'.tr} ${event.costPoints}');
       }
     } else {
       if (event.costCreditCents != null && event.costCreditCents! > 0) {

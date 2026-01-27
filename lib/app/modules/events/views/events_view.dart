@@ -101,7 +101,9 @@ class EventsView extends GetView<EventsController> {
 
               if (event.accessType == EventAccessType.internal) {
                 if (event.costPoints != null && event.costPoints! > 0) {
-                  labels.add(EventLabel(text: 'Points: ${event.costPoints}'));
+                  labels.add(
+                    EventLabel(text: '${'points'.tr} ${event.costPoints}'),
+                  );
                 }
               } else {
                 if (event.costCreditCents != null &&
@@ -195,7 +197,9 @@ class EventsView extends GetView<EventsController> {
 
               if (event.accessType == EventAccessType.internal) {
                 if (event.costPoints != null && event.costPoints! > 0) {
-                  labels.add(EventLabel(text: 'Points: ${event.costPoints}'));
+                  labels.add(
+                    EventLabel(text: '${'points'.tr} ${event.costPoints}'),
+                  );
                 }
               } else {
                 if (event.costCreditCents != null &&

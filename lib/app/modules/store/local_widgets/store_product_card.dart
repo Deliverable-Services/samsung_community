@@ -58,7 +58,7 @@ class StoreProductCard extends StatelessWidget {
                 ),
                 SizedBox(width: 3.w),
                 Text(
-                  '${'homePoints'.tr}${_formatPoints(product.costPoints)}',
+                  '${'points'.tr} ${_formatPoints(product.costPoints)}',
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 12.sp,
