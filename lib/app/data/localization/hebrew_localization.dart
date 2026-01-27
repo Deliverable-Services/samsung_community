@@ -85,7 +85,7 @@ class HebrewiLocalization {
 
     //BOTTOM BAR
     "home": "בית",
-    "vod": "וידאו לפי דרישה",
+    "vod": "VOD",
     "academy": "אקדמיה",
     "feed": "פיד",
     "events": "אירועים",
@@ -201,6 +201,7 @@ class HebrewiLocalization {
     // Home Screen
     "homeMoreDetails": "פרטים נוספים",
     "homePoints": "נקודות: -",
+    "points": "נקודות",
     // Filter Component
     "filterExploreLibrary": "חקור את הספרייה שלנו.....",
     // Content Card

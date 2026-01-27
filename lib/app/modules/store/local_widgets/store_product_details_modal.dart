@@ -72,7 +72,7 @@ class StoreProductDetailsModal extends StatelessWidget {
 
     final List<String> middleTablets = [];
     if (product.costPoints > 0) {
-      middleTablets.add('Points: ${_formatPoints(product.costPoints)}');
+      middleTablets.add('${'points'.tr} ${_formatPoints(product.costPoints)}');
     }
 
     final String? mediaUrl =

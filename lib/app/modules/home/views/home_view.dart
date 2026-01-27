@@ -32,77 +32,87 @@ class HomeView extends GetView<HomeController> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return ListView(
-          controller: controller.scrollController ?? ScrollController(),
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 22.h),
-          children: [
-            DefaultTextStyle(
-              style: const TextStyle(decoration: TextDecoration.none),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Latest Event
-                  if (controller.latestEvent.value != null) ...[
-                    _buildEventCard(controller.latestEvent.value!),
-                    SizedBox(height: 16.h),
-                  ],
+        return NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (scrollInfo is ScrollEndNotification &&
+                scrollInfo.metrics.pixels >=
+                    scrollInfo.metrics.maxScrollExtent * 0.8) {
+              controller.loadMoreItems();
+            }
+            return false;
+          },
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 22.h),
+            children: [
+              DefaultTextStyle(
+                style: const TextStyle(decoration: TextDecoration.none),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Latest Event
+                    if (controller.latestEvent.value != null) ...[
+                      _buildEventCard(controller.latestEvent.value!),
+                      SizedBox(height: 16.h),
+                    ],
 
-                  // Weekly Riddle
-                  if (controller.weeklyRiddle.value != null) ...[
-                    AssignmentCard(
-                      type: AssignmentCardType.riddle,
-                      title: controller.weeklyRiddle.value?.title ?? "",
-                      description:
-                          controller.weeklyRiddle.value?.description ?? '',
-                      pointsToEarn: controller.weeklyRiddle.value?.pointsToEarn,
-                      isAudio:
-                          controller.weeklyRiddle.value?.solutionType ==
-                          RiddleSolutionType.audio,
-                      contentId: controller.weeklyRiddle.value?.id,
-                      audioUrl:
-                          controller.weeklyRiddle.value?.solutionType ==
-                              RiddleSolutionType.audio
-                          ? controller.weeklyRiddle.value?.answer
-                          : null,
-                      isSubmitted: controller.hasSubmittedRiddle.value,
-                      onButtonTap: controller.onRiddleSubmitTap,
-                    ),
-                    SizedBox(height: 16.h),
-                  ],
+                    // Weekly Riddle
+                    if (controller.weeklyRiddle.value != null) ...[
+                      AssignmentCard(
+                        type: AssignmentCardType.riddle,
+                        title: controller.weeklyRiddle.value?.title ?? "",
+                        description:
+                            controller.weeklyRiddle.value?.description ?? '',
+                        pointsToEarn:
+                            controller.weeklyRiddle.value?.pointsToEarn,
+                        isAudio:
+                            controller.weeklyRiddle.value?.solutionType ==
+                            RiddleSolutionType.audio,
+                        contentId: controller.weeklyRiddle.value?.id,
+                        audioUrl:
+                            controller.weeklyRiddle.value?.solutionType ==
+                                RiddleSolutionType.audio
+                            ? controller.weeklyRiddle.value?.answer
+                            : null,
+                        isSubmitted: controller.hasSubmittedRiddle.value,
+                        onButtonTap: controller.onRiddleSubmitTap,
+                      ),
+                      SizedBox(height: 16.h),
+                    ],
 
-                  // Latest VOD
-                  if (controller.latestVod.value != null) ...[
-                    _buildVodCard(controller.latestVod.value!),
-                    SizedBox(height: 16.h),
-                  ],
+                    // Latest VOD
+                    if (controller.latestVod.value != null) ...[
+                      _buildVodCard(controller.latestVod.value!),
+                      SizedBox(height: 16.h),
+                    ],
 
-                  // Latest Podcast
-                  if (controller.latestPodcast.value != null) ...[
-                    _buildPodcastCard(controller.latestPodcast.value!),
-                    SizedBox(height: 16.h),
-                  ],
+                    // Latest Podcast
+                    if (controller.latestPodcast.value != null) ...[
+                      _buildPodcastCard(controller.latestPodcast.value!),
+                      SizedBox(height: 16.h),
+                    ],
 
-                  // Infinite Scroll List
-                  ...controller.allItems.map(
-                    (item) => Padding(
-                      padding: EdgeInsets.only(bottom: 16.h),
-                      child: _buildItemCard(item),
-                    ),
-                  ),
-
-                  // Loading indicator for infinite scroll
-                  if (controller.isLoadingMore.value)
-                    const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: CircularProgressIndicator(),
+                    // Infinite Scroll List
+                    ...controller.allItems.map(
+                      (item) => Padding(
+                        padding: EdgeInsets.only(bottom: 16.h),
+                        child: _buildItemCard(item),
                       ),
                     ),
-                ],
+
+                    // Loading indicator for infinite scroll
+                    if (controller.isLoadingMore.value)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       }),
     );
@@ -130,7 +140,7 @@ class HomeView extends GetView<HomeController> {
         if (event.accessType == EventAccessType.internal &&
             event.costPoints != null &&
             event.costPoints! > 0)
-          EventLabel(text: 'Points: ${event.costPoints}'),
+          EventLabel(text: '${'points'.tr} ${event.costPoints}'),
         if (event.accessType == EventAccessType.external &&
             event.costCreditCents != null &&
             event.costCreditCents! > 0)

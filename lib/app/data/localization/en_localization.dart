@@ -233,6 +233,7 @@ class EnLocalization {
     // Home Screen
     "homeMoreDetails": "More Details",
     "homePoints": "Points: -",
+    "points": "Points",
     // Filter Component
     "filterExploreLibrary": "Explore our library.....",
     // Content Card
