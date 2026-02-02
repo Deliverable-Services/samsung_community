@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
@@ -10,6 +11,68 @@ import '../constants/app_button.dart';
 import '../constants/app_colors.dart';
 import 'custom_text_field.dart';
 import 'upload_file_field.dart';
+
+/// Text input formatter that limits input to a maximum number of words
+class WordLimitingTextInputFormatter extends TextInputFormatter {
+  final int maxWords;
+
+  WordLimitingTextInputFormatter(this.maxWords);
+
+  int _countWords(String text) {
+    if (text.trim().isEmpty) return 0;
+    return text.trim().split(RegExp(r'\s+')).length;
+  }
+
+  String _truncateToMaxWords(String text) {
+    if (text.trim().isEmpty) return text;
+
+    final words = text.trim().split(RegExp(r'\s+'));
+    if (words.length <= maxWords) return text;
+
+    // Take only the first maxWords words
+    final truncatedWords = words.take(maxWords).toList();
+
+    // Join the words back, preserving the original spacing pattern if possible
+    // For simplicity, we'll join with a single space
+    return truncatedWords.join(' ');
+  }
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final wordCount = _countWords(newValue.text);
+
+    if (wordCount > maxWords) {
+      // Truncate to first maxWords words
+      final truncatedText = _truncateToMaxWords(newValue.text);
+
+      // Calculate the new cursor position
+      // If the cursor was at the end, keep it at the end of truncated text
+      // Otherwise, try to maintain relative position
+      int newSelectionOffset;
+      if (newValue.selection.baseOffset >= newValue.text.length) {
+        // Cursor was at the end, keep it at the end
+        newSelectionOffset = truncatedText.length;
+      } else {
+        // Try to maintain relative position, but cap at truncated text length
+        final ratio = newValue.selection.baseOffset / newValue.text.length;
+        newSelectionOffset = (truncatedText.length * ratio).round().clamp(
+          0,
+          truncatedText.length,
+        );
+      }
+
+      return TextEditingValue(
+        text: truncatedText,
+        selection: TextSelection.collapsed(offset: newSelectionOffset),
+      );
+    }
+
+    return newValue;
+  }
+}
 
 class CreatePostModal extends StatelessWidget {
   final TextEditingController titleController;
@@ -82,6 +145,7 @@ class CreatePostModal extends StatelessWidget {
             placeholder: 'typeADescription'.tr,
             maxLines: 5,
             width: double.infinity,
+            inputFormatters: [WordLimitingTextInputFormatter(1000)],
           ),
           SizedBox(height: 25.h),
           // Upload File Field
