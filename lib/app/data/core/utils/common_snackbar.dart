@@ -12,13 +12,14 @@ class CommonSnackbar {
     );
   }
 
-  static void success(String message) {
+  static void success(String message, {Duration? duration}) {
     Get.snackbar(
       'Success'.tr,
       message,
       snackPosition: SnackPosition.TOP,
       backgroundColor: Theme.of(Get.context!).colorScheme.primary,
       colorText: Colors.white,
+      duration: duration ?? const Duration(seconds: 3),
     );
   }
 }

@@ -676,6 +676,23 @@ class FeedController extends BaseController {
       content: CommentsModal(
         contentId: contentId,
         onAddComment: (commentText) => addComment(contentId, commentText),
+        onCommentsCountUpdated: (totalCount) {
+          // Sync the commentsCount shown on the card with the actual total
+          final contentIndex = contentList.indexWhere((c) => c.id == contentId);
+          if (contentIndex != -1) {
+            final content = contentList[contentIndex];
+            contentList[contentIndex] = content.copyWith(
+              commentsCount: totalCount,
+            );
+
+            final filteredIndex = filteredContentList.indexWhere(
+              (c) => c.id == contentId,
+            );
+            if (filteredIndex != -1) {
+              filteredContentList[filteredIndex] = contentList[contentIndex];
+            }
+          }
+        },
       ),
     );
   }
