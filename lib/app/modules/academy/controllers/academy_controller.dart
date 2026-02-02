@@ -307,8 +307,6 @@ class AcademyController extends BaseController {
     final context = Get.context;
     if (context == null) return;
 
-    debugPrint('called:');
-
     /// 🔒 Assignment guard
     if (content.assignmentId == null) {
       CommonSnackbar.error('content_does_not_accept_submissions'.tr);

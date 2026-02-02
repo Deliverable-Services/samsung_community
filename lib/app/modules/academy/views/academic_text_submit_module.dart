@@ -36,11 +36,7 @@ class AcademicTextSubmitModule extends StatelessWidget {
             /// Points
             Row(
               children: [
-                SvgPicture.asset(
-                  AppImages.pointsIcon,
-                  width: 18.w,
-                  height: 18.h,
-                ),
+                SvgPicture.asset(AppImages.pointsIcon, width: 18.w, height: 18.h),
                 SizedBox(width: 4.w),
                 Text(
                   "${pointsToEarn ?? 0}",
@@ -166,11 +162,7 @@ class _AcademicMcqSubmitModuleState extends State<AcademicMcqSubmitModule> {
             /// Points
             Row(
               children: [
-                SvgPicture.asset(
-                  AppImages.pointsIcon,
-                  width: 18.w,
-                  height: 18.h,
-                ),
+                SvgPicture.asset(AppImages.pointsIcon, width: 18.w, height: 18.h),
                 SizedBox(width: 4.w),
                 Text(
                   '+${widget.pointsToEarn ?? 0}',
@@ -209,57 +201,43 @@ class _AcademicMcqSubmitModuleState extends State<AcademicMcqSubmitModule> {
             SizedBox(height: 20.h),
 
             /// MCQ Options
-            ///
-            /// Filter out meta object that contains the `correct_answer` key
-            ...widget.options
-                .asMap()
-                .entries
-                .where((entry) {
-                  final map = entry.value as Map<String, dynamic>;
-                  return !map.keys.contains('correct_answer');
-                })
-                .map((entry) {
-                  final index = entry.key;
-                  final optionMap = entry.value as Map<String, dynamic>;
-                  final optionText = optionMap.values.first.toString();
+            ...List.generate(widget.options.length, (index) {
+              final optionMap = widget.options[index];
+              final optionText = (optionMap as Map<String, dynamic>).values.first
+                  .toString();
 
-                  return GestureDetector(
-                    onTap: () => selectedIndex.value = index,
-                    child: Container(
-                      margin: EdgeInsets.only(bottom: 12.h),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 14.h,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.r),
-                        gradient: LinearGradient(
-                          colors: selectedIndex.value == index
-                              ? const [Color(0xFF3B82F6), Color(0xFF2563EB)]
-                              : const [Color(0xFF3A3F45), Color(0xFF2F3439)],
+              return GestureDetector(
+                onTap: () => selectedIndex.value = index,
+                child: Container(
+                  margin: EdgeInsets.only(bottom: 12.h),
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16.r),
+                    gradient: LinearGradient(
+                      colors: selectedIndex.value == index
+                          ? const [Color(0xFF3B82F6), Color(0xFF2563EB)]
+                          : const [Color(0xFF3A3F45), Color(0xFF2F3439)],
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      _RadioCircle(isSelected: selectedIndex.value == index),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: Text(
+                          optionText,
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
-                      child: Row(
-                        children: [
-                          _RadioCircle(
-                            isSelected: selectedIndex.value == index,
-                          ),
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: Text(
-                              optionText,
-                              style: TextStyle(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }),
+                    ],
+                  ),
+                ),
+              );
+            }),
 
             SizedBox(height: 24.h),
 
