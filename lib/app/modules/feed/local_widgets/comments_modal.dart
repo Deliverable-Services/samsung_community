@@ -16,11 +16,13 @@ import '../../../data/models/user_model copy.dart';
 class CommentsModal extends StatefulWidget {
   final String contentId;
   final Future<void> Function(String) onAddComment;
+  final void Function(int totalCount)? onCommentsCountUpdated;
 
   const CommentsModal({
     super.key,
     required this.contentId,
     required this.onAddComment,
+    this.onCommentsCountUpdated,
   });
 
   @override
@@ -51,6 +53,10 @@ class _CommentsModalState extends State<CommentsModal> {
 
       if (result.isSuccess) {
         _comments.value = result.dataOrNull ?? [];
+
+        // Notify listener (e.g. FeedController) about the actual total count
+        widget.onCommentsCountUpdated?.call(_comments.length);
+
         await _loadUsers();
       }
     } catch (e) {
@@ -113,185 +119,184 @@ class _CommentsModalState extends State<CommentsModal> {
   @override
   Widget build(BuildContext context) {
     return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'viewAllComments'.tr,
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textWhite,
-            ),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'viewAllComments'.tr,
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textWhite,
           ),
-          SizedBox(height: 16.h),
-          Expanded(
-            child: Obx(() {
-              if (_isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
-              }
+        ),
+        SizedBox(height: 16.h),
+        Expanded(
+          child: Obx(() {
+            if (_isLoading.value) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-              if (_comments.isEmpty) {
-                return Center(
-                  child: Text(
-                    'No comments yet',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: AppColors.textWhiteOpacity60,
-                    ),
+            if (_comments.isEmpty) {
+              return Center(
+                child: Text(
+                  'No comments yet',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: AppColors.textWhiteOpacity60,
+                  ),
+                ),
+              );
+            }
+
+            return ListView.builder(
+              itemCount: _comments.length,
+              itemBuilder: (context, index) {
+                final comment = _comments[index];
+                final user = _userMap[comment.userId];
+
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 16.h),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 32.w,
+                        height: 32.h,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16.r),
+                          child: user?.profilePictureUrl?.isNotEmpty == true
+                              ? CachedNetworkImage(
+                                  imageUrl: user!.profilePictureUrl!,
+                                  fit: BoxFit.cover,
+                                  errorWidget: (_, __, ___) =>
+                                      Image.asset(AppImages.avatar),
+                                )
+                              : Image.asset(AppImages.avatar),
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  user?.fullName ?? 'Unknown',
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.textWhite,
+                                  ),
+                                ),
+                                SizedBox(width: 8.w),
+                                Text(
+                                  DateFormat(
+                                    'dd/MM/yy',
+                                  ).format(comment.createdAt),
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: AppColors.textWhiteOpacity60,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 4.h),
+                            Text(
+                              comment.content,
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: AppColors.textWhiteOpacity70,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 );
-              }
+              },
+            );
+          }),
+        ),
+        SizedBox(height: 16.h),
+        Row(
+          children: [
+            Obx(() {
+              final authRepo = Get.find<AuthRepo>();
+              final currentUser = authRepo.currentUser.value;
+              final profilePictureUrl = currentUser?.profilePictureUrl;
 
-              return ListView.builder(
-                itemCount: _comments.length,
-                itemBuilder: (context, index) {
-                  final comment = _comments[index];
-                  final user = _userMap[comment.userId];
-
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: 16.h),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: 32.w,
-                          height: 32.h,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16.r),
-                            child: user?.profilePictureUrl?.isNotEmpty == true
-                                ? CachedNetworkImage(
-                                    imageUrl: user!.profilePictureUrl!,
-                                    fit: BoxFit.cover,
-                                    errorWidget: (_, __, ___) =>
-                                        Image.asset(AppImages.avatar),
-                                  )
-                                : Image.asset(AppImages.avatar),
-                          ),
-                        ),
-                        SizedBox(width: 12.w),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    user?.fullName ?? 'Unknown',
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.textWhite,
-                                    ),
-                                  ),
-                                  SizedBox(width: 8.w),
-                                  Text(
-                                    DateFormat(
-                                      'dd/MM/yy',
-                                    ).format(comment.createdAt),
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: AppColors.textWhiteOpacity60,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 4.h),
-                              Text(
-                                comment.content,
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: AppColors.textWhiteOpacity70,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            }),
-          ),
-          SizedBox(height: 16.h),
-          Row(
-            children: [
-              Obx(() {
-                final authRepo = Get.find<AuthRepo>();
-                final currentUser = authRepo.currentUser.value;
-                final profilePictureUrl = currentUser?.profilePictureUrl;
-                
-                return SizedBox(
-                  width: 32.w,
-                  height: 32.h,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16.r),
-                    child: profilePictureUrl != null && profilePictureUrl.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: profilePictureUrl,
-                            width: double.infinity,
-                            height: double.infinity,
-                            fit: BoxFit.cover,
-                            errorWidget: (_, __, ___) => Image.asset(
-                              AppImages.avatar,
-                              width: double.infinity,
-                              height: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : Image.asset(
+              return SizedBox(
+                width: 32.w,
+                height: 32.h,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16.r),
+                  child:
+                      profilePictureUrl != null && profilePictureUrl.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: profilePictureUrl,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                          errorWidget: (_, __, ___) => Image.asset(
                             AppImages.avatar,
                             width: double.infinity,
                             height: double.infinity,
                             fit: BoxFit.cover,
                           ),
-                  ),
-                );
-              }),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: TextField(
-                  controller: _commentController,
-                  style: TextStyle(
+                        )
+                      : Image.asset(
+                          AppImages.avatar,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                ),
+              );
+            }),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: TextField(
+                controller: _commentController,
+                style: TextStyle(
+                  fontFamily: 'Samsung Sharp Sans',
+                  fontSize: 14.sp,
+                  color: AppColors.textWhiteOpacity60,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'addComment'.tr,
+                  hintStyle: TextStyle(
                     fontFamily: 'Samsung Sharp Sans',
                     fontSize: 14.sp,
-                    color: AppColors.textWhiteOpacity60,
+                    color: AppColors.textWhiteOpacity40,
                   ),
-                  decoration: InputDecoration(
-                    hintText: 'addComment'.tr,
-                    hintStyle: TextStyle(
-                      fontFamily: 'Samsung Sharp Sans',
-                      fontSize: 14.sp,
-                      color: AppColors.textWhiteOpacity40,
-                    ),
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                  ),
-                  onSubmitted: (_) => _submitComment(),
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                 ),
+                onSubmitted: (_) => _submitComment(),
               ),
-              SizedBox(width: 8.w),
-              Obx(() {
-                return IconButton(
-                  onPressed: _isSubmitting.value ? null : _submitComment,
-                  icon: _isSubmitting.value
-                      ? SizedBox(
-                          width: 20.w,
-                          height: 20.h,
-                          child: const CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : Icon(
-                          Icons.send,
-                          color: AppColors.accentBlue,
-                          size: 20.sp,
-                        ),
-                );
-              }),
-            ],
-          ),
+            ),
+            SizedBox(width: 8.w),
+            Obx(() {
+              return IconButton(
+                onPressed: _isSubmitting.value ? null : _submitComment,
+                icon: _isSubmitting.value
+                    ? SizedBox(
+                        width: 20.w,
+                        height: 20.h,
+                        child: const CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Icon(
+                        Icons.send,
+                        color: AppColors.accentBlue,
+                        size: 20.sp,
+                      ),
+              );
+            }),
+          ],
+        ),
       ],
     );
   }

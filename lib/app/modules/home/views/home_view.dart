@@ -119,7 +119,6 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget _buildEventCard(EventModel event) {
-    // Safely get EventsController - create if not found
     EventsController eventsController;
     try {
       eventsController = Get.find<EventsController>();

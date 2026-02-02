@@ -139,7 +139,10 @@ class AuthRepo extends BaseController {
     final result = await _authService.generateOTPForLogin(phoneNumber);
     final otp = result.dataOrNull;
     if (otp != null) {
-      CommonSnackbar.success('${'otp_for_login'.tr}: $otp');
+      CommonSnackbar.success(
+        '${'otp_for_login'.tr}: $otp',
+        duration: const Duration(seconds: 5),
+      );
     }
     setLoading(false);
 
