@@ -16,9 +16,6 @@ class UserProfileTopCard extends GetView<UserProfileController> {
   const UserProfileTopCard({super.key});
 
   @override
-  String? get tag => Get.parameters['userId'] ?? 'unknown_user';
-
-  @override
   Widget build(BuildContext context) {
     return Obx(() {
       final user = controller.user.value;
