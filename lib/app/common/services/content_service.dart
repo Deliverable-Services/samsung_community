@@ -16,26 +16,6 @@ class ContentService {
     String? searchQuery,
   }) async {
     try {
-      // Get current logged-in user to filter out blocked users' posts
-      final currentUser = SupabaseService.currentUser;
-      List<String> blockedUserIds = [];
-
-      if (currentUser != null) {
-        try {
-          final blockedResponse = await SupabaseService.client
-              .from('user_blocks')
-              .select('blocked_id')
-              .eq('blocker_id', currentUser.id)
-              .isFilter('deleted_at', null);
-
-          blockedUserIds = (blockedResponse as List)
-              .map((row) => row['blocked_id'] as String)
-              .toList();
-        } catch (e) {
-          debugPrint('Error loading blocked users for content filter: $e');
-        }
-      }
-
       var query = SupabaseService.client
           .from('content')
           .select()
@@ -78,16 +58,9 @@ class ContentService {
 
       final response = await transformQuery;
 
-      var contentList = (response as List)
+      final contentList = (response as List)
           .map((json) => ContentModel.fromJson(json as Map<String, dynamic>))
           .toList();
-
-      // Filter out posts authored by users blocked by the current user
-      if (blockedUserIds.isNotEmpty) {
-        contentList = contentList
-            .where((content) => !blockedUserIds.contains(content.userId))
-            .toList();
-      }
 
       return Success(contentList);
     } catch (e) {
