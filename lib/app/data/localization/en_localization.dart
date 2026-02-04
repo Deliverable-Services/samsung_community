@@ -238,6 +238,8 @@ class EnLocalization {
     "filterExploreLibrary": "Explore our library.....",
     // Content Card
     "contentCardViewing": "Viewing",
+    "deleteCommentConfirmation":
+        "Are you sure you want to delete this comment?",
     // Store Card
     "storeCardViewing": "Viewing",
     // Event

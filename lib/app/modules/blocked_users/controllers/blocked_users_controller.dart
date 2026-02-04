@@ -43,6 +43,7 @@ class BlockedUsersController extends BaseController {
   }
 
   Future<void> loadBlockedUsers() async {
+    debugPrint('Loading blocked users');
     try {
       setLoading(true);
       final currentUser = SupabaseService.currentUser;
@@ -111,7 +112,7 @@ class BlockedUsersController extends BaseController {
 
       await SupabaseService.client
           .from('user_blocks')
-          .update({'deleted_at': DateTime.now().toUtc().toIso8601String()})
+          .delete()
           .eq('blocker_id', currentUser.id)
           .eq('blocked_id', userId);
 

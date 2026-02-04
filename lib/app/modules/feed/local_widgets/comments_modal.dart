@@ -11,6 +11,7 @@ import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../data/core/utils/result.dart';
 import '../../../data/models/comment_model.dart';
+import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/models/user_model copy.dart';
 
 class CommentsModal extends StatefulWidget {
@@ -110,6 +111,43 @@ class _CommentsModalState extends State<CommentsModal> {
     }
   }
 
+  Future<void> _deleteComment(String commentId) async {
+    final result = await Get.dialog<bool>(
+      AlertDialog(
+        title: Text('delete'.tr),
+        content: Text('deleteCommentConfirmation'.tr),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(result: false),
+            child: Text('cancel'.tr),
+          ),
+          TextButton(
+            onPressed: () => Get.back(result: true),
+            child: Text('delete'.tr, style: const TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true) {
+      _isLoading.value = true;
+      try {
+        final deleteResult = await _interactionService.deleteComment(commentId);
+        if (deleteResult.isSuccess) {
+          await _loadComments();
+        } else {
+          CommonSnackbar.error(
+            deleteResult.errorOrNull ?? 'failed_to_delete_comment'.tr,
+          );
+        }
+      } catch (e) {
+        CommonSnackbar.error('somethingWentWrong'.tr);
+      } finally {
+        _isLoading.value = false;
+      }
+    }
+  }
+
   @override
   void dispose() {
     _commentController.dispose();
@@ -154,10 +192,13 @@ class _CommentsModalState extends State<CommentsModal> {
                 final comment = _comments[index];
                 final user = _userMap[comment.userId];
 
+                final currentUserId = SupabaseService.currentUser?.id;
+
                 return Padding(
                   padding: EdgeInsets.only(bottom: 16.h),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SizedBox(
                         width: 32.w,
@@ -212,6 +253,16 @@ class _CommentsModalState extends State<CommentsModal> {
                           ],
                         ),
                       ),
+                      if (currentUserId != null &&
+                          currentUserId == comment.userId)
+                        GestureDetector(
+                          onTap: () => _deleteComment(comment.id),
+                          child: Icon(
+                            Icons.delete_outline,
+                            size: 20.sp,
+                            color: AppColors.textWhiteOpacity60,
+                          ),
+                        ),
                     ],
                   ),
                 );

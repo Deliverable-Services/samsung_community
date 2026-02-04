@@ -216,10 +216,15 @@ class ChatScreenController extends GetxController {
   Future<void> blockUser() async {
     if (otherUser.value == null || currentUserId.value.isEmpty) return;
 
+    debugPrint('Blocking user: ${currentUserId.value} ${otherUser.value!.id}');
+
     try {
       await SupabaseService.client.from('user_blocks').upsert({
         'blocker_id': currentUserId.value,
         'blocked_id': otherUser.value!.id,
+        // If a matching record already exists (same blocker & blocked),
+        // ensure it is "re-activated" by clearing any soft-delete flag.
+        'deleted_at': null,
       }, onConflict: 'blocker_id,blocked_id');
 
       await SupabaseService.client
