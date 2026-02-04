@@ -16,6 +16,25 @@ class ContentService {
     String? searchQuery,
   }) async {
     try {
+      final currentUser = SupabaseService.currentUser;
+      List<String> blockedUserIds = [];
+
+      if (currentUser != null) {
+        try {
+          final blockedResponse = await SupabaseService.client
+              .from('user_blocks')
+              .select('blocked_id')
+              .eq('blocker_id', currentUser.id)
+              .isFilter('deleted_at', null);
+
+          blockedUserIds = (blockedResponse as List)
+              .map((row) => row['blocked_id'] as String)
+              .toList();
+        } catch (e) {
+          debugPrint('Error loading blocked users for content filter: $e');
+        }
+      }
+
       var query = SupabaseService.client
           .from('content')
           .select()
@@ -58,9 +77,15 @@ class ContentService {
 
       final response = await transformQuery;
 
-      final contentList = (response as List)
+      var contentList = (response as List)
           .map((json) => ContentModel.fromJson(json as Map<String, dynamic>))
           .toList();
+
+      if (blockedUserIds.isNotEmpty) {
+        contentList = contentList
+            .where((content) => !blockedUserIds.contains(content.userId))
+            .toList();
+      }
 
       return Success(contentList);
     } catch (e) {

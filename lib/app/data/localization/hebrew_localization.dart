@@ -210,6 +210,7 @@ class HebrewiLocalization {
     "storeCardViewing": "צפייה",
     // Event
     "eventDetailsRegistration": "פרטים והרשמה",
+    "deleteCommentConfirmation": "האם אתה בטוח שאתה רוצה למחוק את התגובה הזו?",
     // Create Post Modal
     "publishingAPost": "פרסום פוסט",
     "publishingAPostDescription": "לורם איפסום דולור סיט אמט, קונסקטורר",

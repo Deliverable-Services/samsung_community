@@ -142,5 +142,17 @@ class ContentInteractionService {
       return Failure(AppException.fromError(e).message);
     }
   }
-}
 
+  Future<Result<bool>> deleteComment(String commentId) async {
+    try {
+      await SupabaseService.client
+          .from('content_comments')
+          .delete()
+          .eq('id', commentId);
+      return const Success(true);
+    } catch (e) {
+      debugPrint('Error in deleteComment: $e');
+      return Failure(AppException.fromError(e).message);
+    }
+  }
+}
