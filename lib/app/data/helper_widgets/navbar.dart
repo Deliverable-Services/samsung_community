@@ -145,6 +145,7 @@ class Navbar extends StatelessWidget {
             fit: BoxFit.contain,
           ),
           onTap: () {
+            debugPrint('Analytics: user clicked the side menu button');
             SideMenu.show(context);
           },
         ),

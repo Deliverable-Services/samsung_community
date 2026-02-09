@@ -38,6 +38,9 @@ class BottomBarController extends GetxController {
       // Update both values together to ensure consistency
       // Use update() to ensure reactive widgets rebuild
       isSamsungDevice.value = isSamsung;
+      if (isSamsung == true) {
+        debugPrint('trigger that fires when a pop-up is shown to a user whose device');
+      }
       isCheckingDevice.value = false;
       update(); // Force update to ensure all reactive widgets rebuild
     } catch (e) {

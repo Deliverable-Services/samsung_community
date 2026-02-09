@@ -301,6 +301,7 @@ class PersonalDetailsController extends GetxController {
         phoneNumber: phoneNumber.value,
         profileData: profileData,
       );
+      debugPrint('finished filling out the personal details screen');
       if (success) {
         Get.offNamed(Routes.REQUEST_SENT);
       }

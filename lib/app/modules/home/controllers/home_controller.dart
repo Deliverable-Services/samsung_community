@@ -73,6 +73,8 @@ class HomeController extends GetxController {
     scrollController = ScrollController();
     scrollController?.addListener(_onScroll);
 
+    debugPrint('Analytics: viewed the main home screen');
+
     loadLatestItems().then((_) {
       loadAllItems();
     });
