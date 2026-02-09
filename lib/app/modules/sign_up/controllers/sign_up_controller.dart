@@ -15,6 +15,14 @@ class SignUpController extends GetxController {
   final isValidating = false.obs;
   final hasValidated = false.obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+
+    debugPrint('Analytics: phone number entry screen');
+    debugPrint('Analytics: started a new registration process (account creation).');
+  }
+
   bool get isFormValid {
     final phoneNumber = mobileController.text.trim();
     if (phoneNumber.isEmpty) return false;
