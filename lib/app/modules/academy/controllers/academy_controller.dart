@@ -71,6 +71,7 @@ class AcademyController extends BaseController {
     searchController.addListener(_onSearchChanged);
     fetchRegisteredWorkshops();
     loadContent();
+    debugPrint('Analytics: viewed the main screen of the academy complex');
   }
 
   Future<void> fetchRegisteredWorkshops() async {
@@ -283,6 +284,8 @@ class AcademyController extends BaseController {
       if (currentUser == null) return;
 
       final newBalance = currentUser.pointsBalance + points;
+
+      debugPrint('Analytics: awarding points: $points to user: ${user.id}');
 
       await SupabaseService.client.from('points_transactions').insert({
         'user_id': user.id,
@@ -1001,7 +1004,9 @@ class AcademyController extends BaseController {
           .single();
 
       final registrationId = registrationResponse['id'] as String;
-
+      debugPrint(
+        'Analytics: creating points transaction for workshop registration',
+      );
       // 2. Create Points Transaction
       await SupabaseService.client.from('points_transactions').insert({
         'user_id': user.id,

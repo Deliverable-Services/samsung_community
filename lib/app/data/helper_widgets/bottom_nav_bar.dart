@@ -43,9 +43,11 @@ class BottomNavBar extends StatelessWidget {
                   label: items[i].label,
                   isActive: items[i].isActive(),
                   onTap: () {
-                    debugPrint('Analytics: user clicked one of the icons in the bottom navigation bar');
-                    items[i].onTap;
-                    },
+                    debugPrint(
+                      'Analytics: user clicked one of the icons in the bottom navigation bar',
+                    );
+                    items[i].onTap();
+                  },
                 );
               }),
             ),

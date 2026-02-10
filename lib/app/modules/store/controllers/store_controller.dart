@@ -271,6 +271,11 @@ class StoreController extends GetxController {
 
       final orderId = orderResponse['id'] as String;
 
+      debugPrint('Analytics: creating points transaction for store purchase');
+      debugPrint(
+        'Analytics: awarding points: ${product.costPoints} to user: $currentUserId',
+      );
+
       await SupabaseService.client.from('points_transactions').insert({
         'user_id': currentUserId,
         'transaction_type': 'spent',

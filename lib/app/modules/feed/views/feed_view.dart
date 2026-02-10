@@ -132,8 +132,12 @@ class _FeedViewState extends State<FeedView> {
                                         ? likedUsers
                                         : null,
                                     commentsCount: content.commentsCount,
-                                    onLike: () =>
-                                        _controller.toggleLike(content.id),
+                                    onLike: () {
+                                      debugPrint(
+                                        'Analytics: user liked a post in the feed',
+                                      );
+                                      _controller.toggleLike(content.id);
+                                    },
                                     onComment: () => _controller
                                         .showCommentsModal(content.id),
                                     onViewComments: () => _controller

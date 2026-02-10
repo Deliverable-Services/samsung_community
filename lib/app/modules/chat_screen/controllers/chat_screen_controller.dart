@@ -38,6 +38,7 @@ class ChatScreenController extends GetxController {
   void onInit() {
     super.onInit();
     final args = Get.arguments;
+    debugPrint('Analytics: viewing the message screen.');
     if (args != null && args is Map) {
       conversationId.value = args['conversationId'] ?? '';
       final userId = args['userId'] as String?;

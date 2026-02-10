@@ -55,7 +55,7 @@ class CreatePostService {
               CommonSnackbar.error('pleaseEnterTitle'.tr);
               return;
             }
-            
+
             // Validate description (required)
             if (descriptionController.text.trim().isEmpty) {
               CommonSnackbar.error('pleaseEnterDescription'.tr);
@@ -99,6 +99,9 @@ class CreatePostService {
             final result = await ContentService().addContent(content: data);
 
             if (result is Success<Map<String, dynamic>>) {
+              debugPrint(
+                'Analytics: successfully finished creating and publishing a new post in the feed',
+              );
               shareToInstagram(
                 mediaPath: selectedMediaFile.value?.path ?? '',
                 caption:

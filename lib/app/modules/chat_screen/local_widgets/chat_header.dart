@@ -20,7 +20,10 @@ class ChatHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           CustomCircleButton(
-            onTap: () => controller.showChatOptionsModal(),
+            onTap: () {
+              debugPrint('Analytics: user clicked the chat options button');
+              controller.showChatOptionsModal();
+            },
             image: Icon(Icons.more_vert, color: AppColors.white, size: 20.sp),
             width: 32.w,
             height: 32.w,

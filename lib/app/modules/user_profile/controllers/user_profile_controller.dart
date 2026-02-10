@@ -494,6 +494,7 @@ class UserProfileController extends GetxController {
               }
             : null,
         onShare: () {
+          debugPrint('Analytics: user shared a post in the user profile');
           final shareContext = Get.context;
           if (shareContext != null &&
               Navigator.of(shareContext, rootNavigator: true).canPop()) {
