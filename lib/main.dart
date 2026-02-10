@@ -106,7 +106,7 @@ Future<void> main() async {
     iOS: iosSettings,
   );
 
-  await flutterLocalNotificationsPlugin.initialize(settings: initSettings);
+  await flutterLocalNotificationsPlugin.initialize(initSettings);
 
   /// ------------------------------------------------------------
   /// 🔔 CREATE ANDROID CHANNEL
@@ -125,10 +125,26 @@ Future<void> main() async {
     final android = message.notification?.android;
 
     if (notification != null && android != null) {
+      // flutterLocalNotificationsPlugin.show(
+      //   id: notification.hashCode,
+      //   body: notification.body,
+      //   notificationDetails: NotificationDetails(
+      //     android: AndroidNotificationDetails(
+      //       notificationChannel.id,
+      //       notificationChannel.name,
+      //       channelDescription: notificationChannel.description,
+      //       importance: Importance.high,
+      //       priority: Priority.high,
+      //     ),
+      //     iOS: const DarwinNotificationDetails(),
+      //   ),
+      //   title: notification.title,
+      // );
       flutterLocalNotificationsPlugin.show(
-        id: notification.hashCode,
-        body: notification.body,
-        notificationDetails: NotificationDetails(
+        notification.hashCode,
+        notification.title,
+        notification.body,
+        NotificationDetails(
           android: AndroidNotificationDetails(
             notificationChannel.id,
             notificationChannel.name,
@@ -138,7 +154,6 @@ Future<void> main() async {
           ),
           iOS: const DarwinNotificationDetails(),
         ),
-        title: notification.title,
       );
     }
   });

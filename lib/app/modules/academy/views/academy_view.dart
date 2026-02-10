@@ -330,7 +330,12 @@ class AcademyView extends GetView<AcademyController> {
                       CommonSnackbar.error('Zoom link not available');
                     }
                   }
-                : () => controller.clickOnMoreDetails(content: content),
+                : () {
+                    debugPrint(
+                      'Analytics: user clicked the more details button for a zoom workshop',
+                    );
+                    controller.clickOnMoreDetails(content: content);
+                  },
             exclusiveEvent: false,
             extraPaddingForButton: EdgeInsets.symmetric(horizontal: 16.w),
             labels: [

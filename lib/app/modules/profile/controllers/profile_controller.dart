@@ -241,6 +241,7 @@ class ProfileController extends BaseController {
           deleteContent(id);
         },
         onShare: () {
+          debugPrint('Analytics: user shared a post in the profile');
           final shareContext = Get.context;
           if (shareContext != null &&
               Navigator.of(shareContext, rootNavigator: true).canPop()) {

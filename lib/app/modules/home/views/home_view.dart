@@ -75,7 +75,12 @@ class HomeView extends GetView<HomeController> {
                             ? controller.weeklyRiddle.value?.answer
                             : null,
                         isSubmitted: controller.hasSubmittedRiddle.value,
-                        onButtonTap: controller.onRiddleSubmitTap,
+                        onButtonTap: () {
+                          debugPrint(
+                            'Analytics: [HomeView] Section tapped: Weekly Riddle',
+                          );
+                          controller.onRiddleSubmitTap();
+                        },
                       ),
                       SizedBox(height: 16.h),
                     ],
@@ -133,7 +138,10 @@ class HomeView extends GetView<HomeController> {
       description: event.description ?? '',
       exclusiveEvent: true,
       buttonText: "eventDetailsRegistration".tr,
-      onButtonTap: () => eventsController.showEventDetailsModal(event),
+      onButtonTap: () {
+        debugPrint('Analytics: [HomeView] Section tapped: Event');
+        eventsController.showEventDetailsModal(event);
+      },
       labels: [
         EventLabel(text: eventsController.formatEventDate(event.eventDate)),
         if (event.accessType == EventAccessType.internal &&
@@ -175,6 +183,7 @@ class HomeView extends GetView<HomeController> {
       showVideoPlayer: hasMedia,
       showSolutionButton: false,
       onTap: () {
+        debugPrint('Analytics: [HomeView] Section tapped: VOD');
         // TODO: Navigate to VOD details
       },
     );
@@ -198,6 +207,7 @@ class HomeView extends GetView<HomeController> {
       showAudioPlayer: hasMedia,
       showSolutionButton: false,
       onTap: () {
+        debugPrint('Analytics: [HomeView] Section tapped: Podcast');
         // TODO: Navigate to podcast details
       },
     );
@@ -330,7 +340,12 @@ class HomeView extends GetView<HomeController> {
               ? item.riddle!.answer
               : null,
           isSubmitted: false, // Check if needed
-          onButtonTap: controller.onRiddleSubmitTap,
+          onButtonTap: () {
+            debugPrint(
+              'Analytics: [HomeView] Section tapped: Riddle (list item)',
+            );
+            controller.onRiddleSubmitTap();
+          },
         );
       case HomeItemType.vod:
         return _buildVodCard(item.vod!);

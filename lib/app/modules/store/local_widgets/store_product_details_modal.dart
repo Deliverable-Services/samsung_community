@@ -24,10 +24,14 @@ class StoreProductDetailsModal extends StatelessWidget {
 
   void _handlePurchase(BuildContext context) {
     try {
+      debugPrint('Analytics: user clicked the buy button for a store product');
       final authRepo = Get.find<AuthRepo>();
       final currentPoints = authRepo.currentUser.value?.pointsBalance ?? 0;
 
       if (currentPoints < product.costPoints) {
+        debugPrint(
+          'Analytics: user does not have enough points to buy a store product',
+        );
         AlertModal.show(
           context,
           icon: SvgPicture.asset(
@@ -49,6 +53,9 @@ class StoreProductDetailsModal extends StatelessWidget {
         context,
         product: product,
         onConfirm: () {
+          debugPrint(
+            'Analytics: user successfully created an order for a store product',
+          );
           // Order created successfully
         },
       );

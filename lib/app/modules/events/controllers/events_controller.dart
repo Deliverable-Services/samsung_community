@@ -263,6 +263,9 @@ class EventsController extends BaseController {
       }
 
       if (currentPoints < costPoints) {
+        debugPrint(
+          'Analytics: user does not have enough points to register for an internal event',
+        );
         CommonSnackbar.error('insufficientPoints'.tr);
         return false;
       }
@@ -296,6 +299,12 @@ class EventsController extends BaseController {
 
         // 2. Create Points Transaction
         debugPrint('Inserting points_transaction...');
+        debugPrint(
+          'Analytics: creating points transaction for event registration',
+        );
+        debugPrint(
+          'Analytics: awarding points: $costPoints to user: $currentUserId',
+        );
         await SupabaseService.client.from('points_transactions').insert({
           'user_id': currentUserId,
           'transaction_type': 'spent',
@@ -478,6 +487,9 @@ class EventsController extends BaseController {
                       () => CancelEventConfirmationModal(
                         isLoading: isCancelling.value,
                         onConfirm: () {
+                          debugPrint(
+                            'Analytics: user clicked the confirm button to cancel an event registration',
+                          );
                           if (isCancelling.value) return;
                           cancelEventRegistration(event).then((didCancel) {
                             if (!didCancel) return;
@@ -513,6 +525,9 @@ class EventsController extends BaseController {
                 }
               }
             : () {
+                debugPrint(
+                  'Analytics: user clicked the register button for an internal event',
+                );
                 if (isBusy) return;
                 Get.back();
                 final currentContext = Get.context;

@@ -56,6 +56,12 @@ class StoreProductsList extends GetView<StoreController> {
                     product: products[index],
                     isMyPurchases: isMyPurchases,
                     onTap: () {
+                      debugPrint(
+                        'Analytics: user clicked the store product card',
+                      );
+                      debugPrint(
+                        'Analytics: user clicked the store product card for a product: ${products[index].name}',
+                      );
                       controller.showProductDetails(products[index]);
                     },
                   ),

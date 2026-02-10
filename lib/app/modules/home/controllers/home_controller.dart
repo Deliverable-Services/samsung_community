@@ -611,6 +611,9 @@ class HomeController extends GetxController {
       // Show success or failure modal based on correctness
       if (isCorrect) {
         // Create points transaction and update balance
+        debugPrint(
+          'Analytics: completed the weekly puzzle and answered correctly',
+        );
         await _awardPoints(
           points: riddle.pointsToEarn,
           riddleId: riddle.id,
@@ -618,6 +621,9 @@ class HomeController extends GetxController {
         );
         _showSuccessModal(riddle.pointsToEarn);
       } else {
+        debugPrint(
+          'Analytics: completed the weekly puzzle and answered incorrectly',
+        );
         _showFailureModal();
       }
       loadWeeklyRiddle(); // Refresh to update submission status
@@ -1084,7 +1090,11 @@ class HomeController extends GetxController {
       final currentBalance = currentUser.pointsBalance;
       final balanceAfter = currentBalance + points;
 
+      debugPrint('Analytics: awarding points: $points to user: ${user.id}');
+
       // Create points transaction
+      debugPrint('Analytics: creating points transaction for weekly riddle');
+      debugPrint('Analytics: awarding points: $points to user: ${user.id}');
       await SupabaseService.client.from('points_transactions').insert({
         'user_id': user.id,
         'transaction_type': 'earned',

@@ -112,6 +112,9 @@ class EventEmailModal extends StatelessWidget {
           emailForTickets: email,
         );
         if (success && Get.context != null) {
+          debugPrint(
+            'Analytics: user successfully registered for an internal event',
+          );
           // Reload events to refresh the UI (e.g. show cancel button)
           eventsController.loadAllEvents();
           eventsController.loadMyEvents();

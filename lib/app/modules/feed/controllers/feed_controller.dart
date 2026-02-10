@@ -60,6 +60,8 @@ class FeedController extends BaseController {
   void onInit() {
     super.onInit();
     loadContent();
+
+    debugPrint('Analytics: viewing the community feed screen');
   }
 
   @override
@@ -444,6 +446,7 @@ class FeedController extends BaseController {
           deleteContent(id);
         },
         onShare: () {
+          debugPrint('Analytics: user shared a post in the feed');
           final shareContext = Get.context;
           if (shareContext != null &&
               Navigator.of(shareContext, rootNavigator: true).canPop()) {
