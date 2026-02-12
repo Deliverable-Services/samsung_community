@@ -148,6 +148,7 @@ class EventLaunchCard extends StatelessWidget {
                   Text(
                     title,
                     style: TextStyle(
+                      fontFamily: 'Samsung Sharp Sans',
                       fontWeight: FontWeight.w700,
                       fontSize: 16.sp,
                       height: 24 / 16,
@@ -164,6 +165,7 @@ class EventLaunchCard extends StatelessWidget {
                     child: Text(
                       description,
                       style: TextStyle(
+                        fontFamily: 'Samsung Sharp Sans',
                         fontSize: 14.sp,
                         height: 22 / 14,
                         letterSpacing: 0,
@@ -204,6 +206,7 @@ class EventLaunchCard extends StatelessWidget {
                                     style: TextStyle(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 14.sp,
+                                      fontFamily: 'Samsung Sharp Sans',
                                       height: 1.0,
                                       letterSpacing: 0,
                                       color: Colors.white,
@@ -435,6 +438,7 @@ class AllEventLaunchCard extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 16.sp,
+                        fontFamily: 'Samsung Sharp Sans',
                         height: 24 / 16,
                         letterSpacing: 0,
                         color: AppColors.white,
@@ -461,6 +465,7 @@ class AllEventLaunchCard extends StatelessWidget {
                       child: Text(
                         description,
                         style: TextStyle(
+                          fontFamily: 'Samsung Sharp Sans',
                           fontSize: 14.sp,
                           height: 22 / 14,
                           letterSpacing: 0,
@@ -519,6 +524,7 @@ class AllEventLaunchCard extends StatelessWidget {
                                       style: TextStyle(
                                         fontWeight: FontWeight.w700,
                                         fontSize: 14.sp,
+                                        fontFamily: 'Samsung Sharp Sans',
                                         height: 1.0,
                                         letterSpacing: 0,
                                         color: Colors.white,
