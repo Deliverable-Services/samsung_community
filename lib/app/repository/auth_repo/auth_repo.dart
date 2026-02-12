@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:samsung_community_mobile/app/data/constants/app_consts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../common/services/app_lifecycle_service.dart';
@@ -138,11 +142,29 @@ class AuthRepo extends BaseController {
 
     final result = await _authService.generateOTPForLogin(phoneNumber);
     final otp = result.dataOrNull;
+
     if (otp != null) {
-      CommonSnackbar.success(
-        '${'otp_for_login'.tr}: $otp',
-        duration: const Duration(seconds: 5),
-      );
+      try {
+        final response = await http.post(
+          Uri.parse('${AppConst.supabaseUrl}/functions/v1/send-otp'),
+          headers: <String, String>{
+            // 'Authorization':
+            //     'Bearer ${SupabaseService.client.auth.currentSession?.accessToken}',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(<String, String>{'phone_number': phoneNumber}),
+        );
+
+        if (kDebugMode) {
+          debugPrint(
+            'send-otp response: ${response.statusCode} ${response.body}',
+          );
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('Error calling send-otp function: $e');
+        }
+      }
     }
     setLoading(false);
 

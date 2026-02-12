@@ -52,6 +52,8 @@ class OtpService {
       final random = DateTime.now().millisecondsSinceEpoch;
       final otpCode = (100000 + (random % 900000)).toString();
 
+      debugPrint('otpCode: $otpCode');
+
       await SupabaseService.client
           .from('users')
           .update({
