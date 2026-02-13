@@ -136,9 +136,11 @@ class AssignmentCard extends StatelessWidget {
 
             SizedBox(height: 20.h),
 
-            /// 📤 CTA (inside blue zone)
+            /// 📤 CTA (inside blue zone) — right for English, left for Hebrew
             Align(
-              alignment: Alignment.centerRight,
+              alignment: Get.locale?.languageCode == 'he'
+                  ? Alignment.centerLeft
+                  : Alignment.centerRight,
               child: IntrinsicWidth(
                 child: EventTablet(
                   text: isSubmitted ? 'submitted'.tr : 'sendSolution'.tr,

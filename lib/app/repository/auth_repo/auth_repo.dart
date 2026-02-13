@@ -145,20 +145,24 @@ class AuthRepo extends BaseController {
 
     if (otp != null) {
       try {
-        final response = await http.post(
-          Uri.parse('${AppConst.supabaseUrl}/functions/v1/send-otp'),
-          headers: <String, String>{
-            // 'Authorization':
-            //     'Bearer ${SupabaseService.client.auth.currentSession?.accessToken}',
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode(<String, String>{'phone_number': phoneNumber}),
-        );
+        // final response = await http.post(
+        //   Uri.parse('${AppConst.supabaseUrl}/functions/v1/send-otp'),
+        //   headers: <String, String>{
+        //     // 'Authorization':
+        //     //     'Bearer ${SupabaseService.client.auth.currentSession?.accessToken}',
+        //     'Content-Type': 'application/json',
+        //   },
+        //   body: jsonEncode(<String, String>{'phone_number': phoneNumber}),
+        // );
+
+        debugPrint('otp: $otp');
+
+        CommonSnackbar.success('OTP: $otp');
 
         if (kDebugMode) {
-          debugPrint(
-            'send-otp response: ${response.statusCode} ${response.body}',
-          );
+          // debugPrint(
+          //   'send-otp response: ${response.statusCode} ${response.body}',
+          // );
         }
       } catch (e) {
         if (kDebugMode) {

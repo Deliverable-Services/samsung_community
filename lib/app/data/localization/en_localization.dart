@@ -16,6 +16,8 @@ class EnLocalization {
     "registrationCancelled": "Registration Cancelled",
     "yourEventRegistration": "Your event registration has been cancelled.",
     "noContentAvailable": "No content available",
+    "male": 'Male',
+    "female": "נְקֵבָה",
 
     //Notification and channel
     "notifications": "Notifications",
@@ -35,6 +37,7 @@ class EnLocalization {
     "shared_to_tiktok": "Shared to TikTok",
     "shared_to_community_feed": "Shared to Community Feed",
     "post_deleted_successfully": "Post deleted successfully",
+    "noCommentsYet": "No comments yet",
     "profile_picture_updated": "Profile picture updated",
     "post_published_successfully": "Post published successfully",
     "audio_published_successfully": "Audio published successfully",
@@ -106,7 +109,7 @@ class EnLocalization {
 
     // Welcome Screen
     "welcomeToOur": "Welcome to our\n",
-    "sCommunity": "S Community",
+    "sCommunity": "S Society",
     "welcomeDescription":
         "Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....",
     "logIn": "Log in",
@@ -154,6 +157,7 @@ class EnLocalization {
     "addProfilePicture": "Add a profile picture",
     "fullName": "Full Name",
     "birthday": "Birthday",
+    "selectDate": "Select date",
     "emailAddress": "Email Address",
     "city": "City",
     "location": "Location",
@@ -192,7 +196,7 @@ class EnLocalization {
         "Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....",
 
     // Academy Screen
-    "academyTitle": "Academy",
+    "academyTitle": "The Monthly",
     "academyDescription":
         "Exclusive videos, lives, and articles, all in one inspiring space.",
     "academyAll": "All",

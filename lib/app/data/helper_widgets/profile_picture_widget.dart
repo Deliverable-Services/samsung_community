@@ -81,7 +81,11 @@ class ProfilePictureWidget extends StatelessWidget {
                                 );
                               },
                             )
-                          : null,
+                          : Icon(
+                              Icons.person,
+                              color: AppColors.textWhiteOpacity70,
+                              size: 24.sp,
+                            ),
                     ),
                   ),
                   if (isLoading)

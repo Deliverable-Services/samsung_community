@@ -24,6 +24,7 @@ class AppImages {
       homeNavIconSvg = '$baseUrl/home.svg',
       vodNavIconSvg = '$baseUrl/video-square.svg',
       academyNavIconSvg = '$baseUrl/teacher.svg',
+      brainSvg = '$baseUrl/brain.svg',
       feedNavIconSvg = '$baseUrl/message-text.svg',
       eventsNavIconSvg = '$baseUrl/calendar.svg',
       searchIcon = '$baseUrl/search.png',

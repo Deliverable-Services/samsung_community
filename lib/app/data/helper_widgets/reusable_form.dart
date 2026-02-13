@@ -73,17 +73,17 @@ class _ReusableFormState extends State<ReusableForm> {
           if (field.type == FormFieldType.date) {
             final existingText = _controllers[field.key]!.text;
             if (existingText.isNotEmpty) {
-              try {
-                final parsed = DateTime.parse(existingText);
+              final parsed = _parseDateInput(existingText);
+              if (parsed != null) {
                 _dateValues[field.key] = parsed;
                 _controllers[field.key]!.text = _formatDateDisplay(parsed);
-              } catch (e) {}
+              }
             } else if (field.initialValue != null) {
-              try {
-                final parsed = DateTime.parse(field.initialValue!);
+              final parsed = _parseDateInput(field.initialValue!);
+              if (parsed != null) {
                 _dateValues[field.key] = parsed;
                 _controllers[field.key]!.text = _formatDateDisplay(parsed);
-              } catch (e) {}
+              }
             }
           }
           break;
@@ -235,6 +235,8 @@ class _ReusableFormState extends State<ReusableForm> {
       initialDate: currentDate,
       firstDate: DateTime(1900),
       lastDate: today,
+      helpText: 'selectDate'.tr,
+      locale: Get.locale ?? const Locale('en'),
       selectableDayPredicate: (DateTime date) {
         final dateOnly = DateTime(date.year, date.month, date.day);
         return dateOnly.isBefore(today.add(const Duration(days: 1)));
@@ -286,25 +288,31 @@ class _ReusableFormState extends State<ReusableForm> {
     }
   }
 
+  /// Parses date from ISO (e.g. 2024-01-25) or DD/MM/YYYY.
+  DateTime? _parseDateInput(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return null;
+    try {
+      return DateTime.parse(trimmed);
+    } catch (_) {}
+    final ddmmyyyy = RegExp(r'^(\d{1,2})/(\d{1,2})/(\d{4})$');
+    final match = ddmmyyyy.firstMatch(trimmed);
+    if (match != null) {
+      final day = int.parse(match.group(1)!);
+      final month = int.parse(match.group(2)!);
+      final year = int.parse(match.group(3)!);
+      if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+        return DateTime(year, month, day);
+      }
+    }
+    return null;
+  }
+
   String _formatDateDisplay(DateTime date) {
-    const monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
     final day = date.day.toString().padLeft(2, '0');
-    final monthName = monthNames[date.month - 1];
+    final month = date.month.toString().padLeft(2, '0');
     final year = date.year.toString();
-    return '$day $monthName $year';
+    return '$day/$month/$year';
   }
 
   Widget _buildField(FormFieldConfig field) {
@@ -421,7 +429,7 @@ class _ReusableFormState extends State<ReusableForm> {
                 return DropdownMenuItem<String>(
                   value: option.id,
                   child: Text(
-                    option.name,
+                    option.id.tr,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 14.sp,

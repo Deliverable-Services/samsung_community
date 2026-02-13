@@ -177,7 +177,7 @@ class _CommentsModalState extends State<CommentsModal> {
             if (_comments.isEmpty) {
               return Center(
                 child: Text(
-                  'No comments yet',
+                  'noCommentsYet'.tr,
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: AppColors.textWhiteOpacity60,

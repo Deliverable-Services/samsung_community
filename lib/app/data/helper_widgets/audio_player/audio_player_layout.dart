@@ -36,91 +36,10 @@ class AudioPlayerLayout extends StatefulWidget {
 }
 
 class _AudioPlayerLayoutState extends State<AudioPlayerLayout> {
-  final GlobalKey _sliderKey = GlobalKey();
-  double _sliderWidth = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _updateSliderWidth();
-    });
-  }
-
-  @override
-  void didUpdateWidget(AudioPlayerLayout oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.sliderValue != widget.sliderValue) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _updateSliderWidth();
-      });
-    }
-  }
-
-  void _updateSliderWidth() {
-    final RenderBox? renderBox =
-        _sliderKey.currentContext?.findRenderObject() as RenderBox?;
-    if (renderBox != null && renderBox.hasSize && mounted) {
-      setState(() {
-        _sliderWidth = renderBox.size.width;
-      });
-    }
-  }
-
   String _formatDuration(Duration duration) {
     final minutes = duration.inMinutes;
     final seconds = duration.inSeconds % 60;
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
-  }
-
-  double _getCurrentTimePosition() {
-    if (_sliderWidth == 0) return 0;
-
-    // Calculate the width of the total duration text
-    final totalDurationText = _formatDuration(widget.totalDuration);
-    final textPainter = TextPainter(
-      text: TextSpan(
-        text: totalDurationText,
-        style: TextStyle(
-          fontSize: 14.sp,
-          fontFamily: 'Samsung Sharp Sans',
-          fontWeight: FontWeight.w400,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    );
-    textPainter.layout();
-    final totalDurationWidth = textPainter.size.width;
-
-    // Calculate the width of the current time text
-    final currentTimeText = _formatDuration(widget.currentPosition);
-    final currentTimePainter = TextPainter(
-      text: TextSpan(
-        text: currentTimeText,
-        style: TextStyle(
-          fontSize: 14.sp,
-          fontFamily: 'Samsung Sharp Sans',
-          fontWeight: FontWeight.w400,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    );
-    currentTimePainter.layout();
-    final currentTimeWidth = currentTimePainter.size.width;
-
-    // Reserve space for total duration on the right (with some padding)
-    final reservedRightSpace = totalDurationWidth + 8.0; // 8px padding
-
-    // Calculate the maximum left position to avoid overlap
-    final maxLeftPosition =
-        _sliderWidth - reservedRightSpace - currentTimeWidth;
-
-    final sliderValue = widget.sliderValue.clamp(0.0, 1.0);
-    final thumbCenter = sliderValue * _sliderWidth;
-    final position = thumbCenter - (currentTimeWidth / 2);
-
-    // Clamp to prevent overlap with total duration
-    return position.clamp(0.0, maxLeftPosition);
   }
 
   @override
@@ -169,61 +88,62 @@ class _AudioPlayerLayoutState extends State<AudioPlayerLayout> {
             ],
           ),
           SizedBox(height: 8.h),
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const SizedBox.shrink(),
-                      if (widget.totalDuration.inSeconds == 0)
-                        SkeletonLoader(
-                          width: 40.w,
-                          height: 14.h,
-                          baseColor: Colors.white.withOpacity(0.2),
-                          highlightColor: Colors.white.withOpacity(0.4),
-                          borderRadius: 4,
-                        )
-                      else
-                        Text(
-                          _formatDuration(widget.totalDuration),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.sp,
-                            fontFamily: 'Samsung Sharp Sans',
-                            fontWeight: FontWeight.w400,
-                          ),
+          // Force LTR: start time left, end time right, progress bar left-to-right
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Start time — fixed on the left
+                    if (widget.totalDuration.inSeconds == 0)
+                      SkeletonLoader(
+                        width: 40.w,
+                        height: 14.h,
+                        baseColor: Colors.white.withOpacity(0.2),
+                        highlightColor: Colors.white.withOpacity(0.4),
+                        borderRadius: 4,
+                      )
+                    else
+                      Text(
+                        _formatDuration(widget.currentPosition),
+                        style: TextStyle(
+                          color: AppColors.accentBlueLight,
+                          fontSize: 14.sp,
+                          fontFamily: 'Samsung Sharp Sans',
+                          fontWeight: FontWeight.w400,
                         ),
-                    ],
-                  ),
-                  SizedBox(height: 4.h),
-                  AudioPlayerSlider(
-                    key: _sliderKey,
-                    value: widget.sliderValue,
-                    onChanged: (value) {
-                      widget.onSliderChanged?.call(value);
-                      _updateSliderWidth();
-                    },
-                    isEnabled: widget.isSliderEnabled,
-                  ),
-                ],
-              ),
-              Positioned(
-                left: _getCurrentTimePosition(),
-                top: 0,
-                child: Text(
-                  _formatDuration(widget.currentPosition),
-                  style: TextStyle(
-                    color: AppColors.accentBlueLight,
-                    fontSize: 14.sp,
-                    fontFamily: 'Samsung Sharp Sans',
-                    fontWeight: FontWeight.w400,
-                  ),
+                      ),
+                    // End time — fixed on the right
+                    if (widget.totalDuration.inSeconds == 0)
+                      SkeletonLoader(
+                        width: 40.w,
+                        height: 14.h,
+                        baseColor: Colors.white.withOpacity(0.2),
+                        highlightColor: Colors.white.withOpacity(0.4),
+                        borderRadius: 4,
+                      )
+                    else
+                      Text(
+                        _formatDuration(widget.totalDuration),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontFamily: 'Samsung Sharp Sans',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                  ],
                 ),
-              ),
-            ],
+                SizedBox(height: 4.h),
+                AudioPlayerSlider(
+                  value: widget.sliderValue,
+                  onChanged: (value) => widget.onSliderChanged?.call(value),
+                  isEnabled: widget.isSliderEnabled,
+                ),
+              ],
+            ),
           ),
         ],
       ),

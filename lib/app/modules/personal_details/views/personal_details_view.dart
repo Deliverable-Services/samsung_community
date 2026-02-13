@@ -32,7 +32,7 @@ class PersonalDetailsView extends GetView<PersonalDetailsController> {
           bottom: true,
           child: Column(
             children: [
-              TitleAppBar(text: 'Personal details'),
+              TitleAppBar(text: 'personalDetails'.tr),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(

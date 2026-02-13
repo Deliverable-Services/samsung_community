@@ -37,50 +37,39 @@ class FeedCardLikedBy extends StatelessWidget {
     return Row(
       children: [
         _StackedAvatars(users: usersToShow),
+        SizedBox(width: 8.w),
         Expanded(
-          child: Transform.translate(
-            offset: Offset(-8.w, 0),
-            child: Text.rich(
-              TextSpan(
-                children: [
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: 'likedBy'.tr,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: AppColors.textWhite,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                if (usersToShow.isNotEmpty) ...[
                   TextSpan(
-                    text: 'likedBy'.tr,
+                    text: usersToShow.first.fullName ?? 'Unknown',
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: AppColors.textWhite,
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                  if (usersToShow.isNotEmpty) ...[
+                  if (likesCount > 1) ...[
                     TextSpan(
-                      text: usersToShow.first.fullName ?? 'Unknown',
+                      text: 'and'.tr,
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: AppColors.textWhite,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
-                    if (likesCount > 1) ...[
-                      TextSpan(
-                        text: 'and'.tr,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: AppColors.textWhite,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      TextSpan(
-                        text: '${likesCount - 1} ${'others'.tr}',
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: AppColors.textWhite,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ] else if (likesCount > 0) ...[
                     TextSpan(
-                      text: '$likesCount ${'others'.tr}',
+                      text: '${likesCount - 1} ${'others'.tr}',
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: AppColors.textWhite,
@@ -88,8 +77,17 @@ class FeedCardLikedBy extends StatelessWidget {
                       ),
                     ),
                   ],
+                ] else if (likesCount > 0) ...[
+                  TextSpan(
+                    text: '$likesCount ${'others'.tr}',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColors.textWhite,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ],
-              ),
+              ],
             ),
           ),
         ),
@@ -105,16 +103,26 @@ class _StackedAvatars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Calculate width: last avatar position + avatar width
+    // Avatar width is 18.w, positions are 0, 12.w, 24.w
+    final avatarCount = users.length.clamp(1, 3);
+    final lastPosition = (avatarCount - 1) * 12.w;
+    final avatarWidth = 18.w;
+    final containerWidth = lastPosition + avatarWidth;
+
     return SizedBox(
-      width: (users.length.clamp(1, 3) * 12 + 25).w,
+      width: containerWidth,
       height: 18.h,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          if (users.isNotEmpty) _AvatarItem(user: users[0], left: 0),
-          if (users.length > 1) _AvatarItem(user: users[1], left: 12.w),
-          if (users.length > 2) _AvatarItem(user: users[2], left: 24.w),
-        ],
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            if (users.isNotEmpty) _AvatarItem(user: users[0], left: 0),
+            if (users.length > 1) _AvatarItem(user: users[1], left: 12.w),
+            if (users.length > 2) _AvatarItem(user: users[2], left: 24.w),
+          ],
+        ),
       ),
     );
   }
@@ -130,7 +138,7 @@ class _AvatarItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final profilePictureUrl = user?.profilePictureUrl;
     final userId = user?.id;
-    
+
     return Positioned(
       left: left,
       child: Container(
@@ -138,7 +146,8 @@ class _AvatarItem extends StatelessWidget {
         width: 18.w,
         height: 18.h,
         decoration: const BoxDecoration(shape: BoxShape.circle),
-        child: profilePictureUrl != null &&
+        child:
+            profilePictureUrl != null &&
                 profilePictureUrl.isNotEmpty &&
                 userId != null
             ? ClipRRect(

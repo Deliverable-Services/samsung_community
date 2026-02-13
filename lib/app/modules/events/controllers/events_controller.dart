@@ -14,6 +14,7 @@ import '../../store/local_widgets/product_detail.dart';
 import '../local_widgets/event_email_modal.dart';
 import '../local_widgets/event_registration_success_modal.dart';
 import '../../../data/constants/app_images.dart';
+import '../../../data/helper_widgets/event_buying_bottom_bar_modal.dart';
 import '../../../repository/auth_repo/auth_repo.dart';
 import '../../../routes/app_pages.dart';
 
@@ -532,6 +533,20 @@ class EventsController extends BaseController {
                 Get.back();
                 final currentContext = Get.context;
                 if (currentContext == null) return;
+                
+                // Check if user has enough points before showing email modal
+                if (isInternal && event.costPoints != null && event.costPoints! > 0) {
+                  final authRepo = Get.find<AuthRepo>();
+                  final currentUser = authRepo.currentUser.value;
+                  if (currentUser != null) {
+                    final currentPoints = currentUser.pointsBalance;
+                    if (currentPoints < event.costPoints!) {
+                      _showInsufficientPointsModal(currentContext, event);
+                      return;
+                    }
+                  }
+                }
+                
                 EventEmailModal.show(
                   currentContext,
                   eventId: event.id,
@@ -555,6 +570,22 @@ class EventsController extends BaseController {
           tag: 'event_${event.id}',
         );
       }),
+    );
+  }
+
+  void _showInsufficientPointsModal(BuildContext context, EventModel event) {
+    BottomSheetModal.show(
+      context,
+      buttonType: BottomSheetButtonType.close,
+      content: RegistrationSuccessModal(
+        icon: AppImages.notEnoughPointsIcon,
+        title: "youDoNotHaveEnoughPoints".tr,
+        text: "close".tr,
+        description: 'yourBalanceIsTooLowToCompleteThisAction'.tr,
+        onButtonTap: () {
+          Get.back();
+        },
+      ),
     );
   }
 }
