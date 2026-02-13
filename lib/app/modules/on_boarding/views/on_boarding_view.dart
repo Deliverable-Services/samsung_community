@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
@@ -8,6 +9,10 @@ import '../../../common/services/analytics_service.dart';
 import '../../../data/constants/app_button.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
+import '../../../data/constants/language_options.dart';
+import '../../../data/helper_widgets/bottom_sheet_modal.dart';
+import '../../../data/helper_widgets/option_item.dart';
+import '../../../data/localization/language_controller.dart';
 import '../controllers/on_boarding_controller.dart';
 
 class OnBoardingView extends GetView<OnBoardingController> {
@@ -34,6 +39,22 @@ class OnBoardingView extends GetView<OnBoardingController> {
               width: double.infinity,
               height: double.infinity,
               fit: BoxFit.cover,
+            ),
+            SafeArea(
+              child: Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 16.h, right: 16.w),
+                  child: GestureDetector(
+                    onTap: () => _showLanguageSelector(context),
+                    child: SvgPicture.asset(
+                      AppImages.languageIcon,
+                      width: 28.w,
+                      height: 28.w,
+                    ),
+                  ),
+                ),
+              ),
             ),
             SafeArea(
               top: true,
@@ -123,6 +144,39 @@ class OnBoardingView extends GetView<OnBoardingController> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showLanguageSelector(BuildContext context) {
+    final languageController = Get.find<LanguageController>();
+
+    BottomSheetModal.show(
+      context,
+      content: SizedBox(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: LanguageOptions.options.asMap().entries.map((entry) {
+            final index = entry.key;
+            final option = entry.value;
+            final isLast = index == LanguageOptions.options.length - 1;
+            final isSelected =
+                languageController.currentLocale == option.locale;
+
+            return Padding(
+              padding: EdgeInsets.only(bottom: isLast ? 10.h : 15.h),
+              child: OptionItem(
+                text: option.name,
+                boxText: option.boxText,
+                isSelected: isSelected,
+                onTap: () {
+                  languageController.changeLanguage(option.id);
+                  Get.back();
+                },
+              ),
+            );
+          }).toList(),
         ),
       ),
     );

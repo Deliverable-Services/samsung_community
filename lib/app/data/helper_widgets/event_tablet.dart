@@ -190,6 +190,7 @@ class _EventTabletState extends State<EventTablet>
                                     style: TextStyle(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 12.sp,
+                                      fontFamily: 'Samsung Sharp Sans',
                                       height: 1,
                                       letterSpacing: 0,
                                       color: Colors.white,

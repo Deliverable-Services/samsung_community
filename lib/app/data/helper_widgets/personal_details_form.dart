@@ -86,7 +86,7 @@ class PersonalDetailsForm extends StatelessWidget {
         label: 'emailAddress'.tr,
         placeholder: 'type'.tr,
         textController: emailController,
-        readOnly: userData['email']!=null,
+        readOnly: userData['email'] != null,
         validator: (value) {
           if (value == null || value.trim().isEmpty) {
             return 'emailAddress'.tr + ' is_required'.tr;

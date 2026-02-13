@@ -33,6 +33,8 @@ class HebrewiLocalization {
     "shared_to_facebook": "שותף לפייסבוק",
     "shared_to_tiktok": "שותף לטיקטוק",
     "shared_to_community": "שותף לקהילה",
+    "post_deleted_successfully": "הפוסט נמחק בהצלחה",
+    "noCommentsYet": "אין תגובות עדיין",
     "feed_post_deleted_successfully": "פוסט הפיד נמחק בהצלחה",
     "profile_picture_updated": "תמונת הפרופיל עודכנה",
     "post_published_successfully": "הפוסט פורסם בהצלחה",
@@ -92,7 +94,7 @@ class HebrewiLocalization {
 
     // Welcome Screen
     "welcomeToOur": "ברוכים הבאים ל\n",
-    "sCommunity": "קהילת S",
+    "sCommunity": "S Society",
     "welcomeDescription":
         "לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אליט. סד דו איוסמוד טמפור....",
     "logIn": "התחבר",
@@ -135,10 +137,11 @@ class HebrewiLocalization {
     "addProfilePicture": "הוסף תמונת פרופיל",
     "fullName": "שם מלא",
     "birthday": "יום הולדת",
+    "selectDate": "בחר תאריך",
     "emailAddress": "כתובת אימייל",
     "city": "עיר",
     "location": "מיקום",
-    "gender": "מִגדָר",
+    "gender": "מגדר",
     "deviceModel": "דגם מכשיר",
     "next": "הבא",
     "save": "שמור שינויים",
@@ -173,7 +176,7 @@ class HebrewiLocalization {
         "לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אליט. סד דו איוסמוד טמפור....",
 
     // Academy Screen
-    "academyTitle": "אקדמיה",
+    "academyTitle": "החודשית",
     "academyDescription":
         "סרטונים בלעדיים, שידורים חיים ומאמרים, הכל במקום אחד מעורר השראה.",
     "academyAll": "הכול",
@@ -283,6 +286,9 @@ class HebrewiLocalization {
     "signInSuccessful": "התחברות הצליחה",
     "noPostsYet": "אין פוסטים עדיין",
     "changeProfilePhoto": "שנה תמונת פרופיל",
+    'male': 'זָכָר',
+    'female': 'נקבה',
+    'other': 'אחר',
     "blockedUsers": "משתמשים חסומים",
     "noBlockedUsers": "אין משתמשים חסומים",
     "unblock": "בטל חסימה",

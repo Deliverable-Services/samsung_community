@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/services/academy_service.dart';
+import '../../../common/services/event_tracking_service.dart';
 import '../../../common/services/storage_service.dart';
 import '../../../common/services/supabase_service.dart';
 import '../../../data/constants/app_colors.dart';
@@ -72,6 +73,7 @@ class AcademyController extends BaseController {
     fetchRegisteredWorkshops();
     loadContent();
     debugPrint('Analytics: viewed the main screen of the academy complex');
+    EventTrackingService.trackEvent(eventType: 'academy_main_screen_viewed');
   }
 
   Future<void> fetchRegisteredWorkshops() async {

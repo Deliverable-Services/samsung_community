@@ -16,7 +16,7 @@ class GenderOptions {
   static const List<GenderOption> options = [
     GenderOption(id: 'male', name: 'Male', boxText: 'M'),
     GenderOption(id: 'female', name: 'Female', boxText: 'F'),
-    GenderOption(id: 'other', name: 'Others', boxText: 'O'),
+    GenderOption(id: 'other', name: 'Other', boxText: 'O'),
   ];
 
   static Map<String, GenderOption> get optionsMap {

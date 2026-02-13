@@ -19,82 +19,82 @@ class PersonalDetailsForm extends GetView<PersonalDetailsController> {
       child: Form(
         key: controller.formKey,
         child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CustomTextField(
-                label: 'fullName'.tr,
-                controller: controller.fullNameController,
-                keyboardType: TextInputType.name,
-                placeholder: 'type'.tr,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'fullName'.tr + ' is_required'.tr;
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20.h),
-              GestureDetector(
-                onTap: () {
-                  FocusScope.of(context).unfocus();
-                  controller.selectDate();
-                },
-                child: AbsorbPointer(
-                  child: CustomTextField(
-                    label: 'birthday'.tr,
-                    controller: controller.birthdayController,
-                    keyboardType: TextInputType.datetime,
-                    placeholder: 'type'.tr,
-                    readOnly: true,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'birthday'.tr + ' is_required'.tr;
-                      }
-                      return null;
-                    },
-                  ),
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CustomTextField(
+              label: 'fullName'.tr,
+              controller: controller.fullNameController,
+              keyboardType: TextInputType.name,
+              placeholder: 'type'.tr,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'fullName'.tr + ' is_required'.tr;
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: 20.h),
+            GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+                controller.selectDate();
+              },
+              child: AbsorbPointer(
+                child: CustomTextField(
+                  label: 'birthday'.tr,
+                  controller: controller.birthdayController,
+                  keyboardType: TextInputType.datetime,
+                  placeholder: 'type'.tr,
+                  readOnly: true,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'birthday'.tr + ' is_required'.tr;
+                    }
+                    return null;
+                  },
                 ),
               ),
-              SizedBox(height: 20.h),
-              CustomTextField(
-                label: 'emailAddress'.tr,
-                controller: controller.emailController,
-                keyboardType: TextInputType.emailAddress,
-                placeholder: 'type'.tr,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'emailAddress'.tr + ' is_required'.tr;
-                  }
-                  final emailRegex = RegExp(
-                    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                  );
-                  if (!emailRegex.hasMatch(value.trim())) {
-                    return 'Please enter a valid email address';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20.h),
-              CustomTextField(
-                label: 'city'.tr,
-                controller: controller.cityController,
-                keyboardType: TextInputType.text,
-                placeholder: 'type'.tr,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'city'.tr + ' is_required'.tr;
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20.h),
-              _GenderDropdown(controller: controller),
-              SizedBox(height: 20.h),
-              _DeviceModelDropdown(controller: controller),
-            ],
-          ),
+            ),
+            SizedBox(height: 20.h),
+            CustomTextField(
+              label: 'emailAddress'.tr,
+              controller: controller.emailController,
+              keyboardType: TextInputType.emailAddress,
+              placeholder: 'type'.tr,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'emailAddress'.tr + ' is_required'.tr;
+                }
+                final emailRegex = RegExp(
+                  r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                );
+                if (!emailRegex.hasMatch(value.trim())) {
+                  return 'Please enter a valid email address';
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: 20.h),
+            CustomTextField(
+              label: 'city'.tr,
+              controller: controller.cityController,
+              keyboardType: TextInputType.text,
+              placeholder: 'type'.tr,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'city'.tr + ' is_required'.tr;
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: 20.h),
+            _GenderDropdown(controller: controller),
+            SizedBox(height: 20.h),
+            _DeviceModelDropdown(controller: controller),
+          ],
         ),
-      );
+      ),
+    );
   }
 }
 
