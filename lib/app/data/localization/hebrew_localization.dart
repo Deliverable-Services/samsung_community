@@ -270,6 +270,7 @@ class HebrewiLocalization {
     "remaining": "נותר",
     "profile": "פרופיל",
     "language": "שפה",
+    "userApproval": "ניהול משתמשים",
     // Service Error Messages
     "failedToCheckUser": "נכשל בבדיקת משתמש",
     "userNotFound": "משתמש לא נמצא במסד הנתונים",

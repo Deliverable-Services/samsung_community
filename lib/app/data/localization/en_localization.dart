@@ -291,6 +291,7 @@ class EnLocalization {
     "remaining": "Remaining",
     "profile": "Profile",
     "language": "Language",
+    "userApproval": "User Approval",
     // Service Error Messages
     "failedToCheckUser": "Failed to check user",
     "userNotFound": "User not found in database",

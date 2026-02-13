@@ -65,5 +65,7 @@ class AppImages {
       cancelEventIcon = '$baseUrl/cancel_event.svg',
       cancelConfirmationIcon = '$baseUrl/cancel_confirmation.svg',
       confirmIcon = '$baseUrl/confirm.svg',
-      googleIcon = '$baseUrl/google.svg';
+      googleIcon = '$baseUrl/google.svg',
+      approveUser = '$baseUrl/approveUser.svg',
+      rejectUser = '$baseUrl/rejectUser.svg';
 }
