@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 import 'dart:math';
 
@@ -19,8 +20,8 @@ import 'package:samsung_community_mobile/app/repository/auth_repo/auth_repo.dart
 class EventTrackingService {
   EventTrackingService._();
 
-  static const String _webhookUrl =
-      'https://n8n.srv1332850.hstgr.cloud/webhook-test/aa9d6b85-d8e3-4b79-9a33-059e654bd16a';
+  static String get _webhookUrl =>
+      dotenv.env['EVENTS_CAPTURE_URL'] ?? '';
 
   static const String _storageKeyDeviceId = 'event_tracking_device_id';
   static const String _storageKeyFirstOpen = 'event_tracking_first_open';
@@ -73,7 +74,7 @@ class EventTrackingService {
 
       if (kDebugMode) {
         if (response.statusCode >= 200 && response.statusCode < 300) {
-          debugPrint('EventTracking: sent "$eventType"');
+          debugPrint('EventTracking: webhook sent "$eventType"');
         } else {
           debugPrint(
             'EventTracking: webhook error ${response.statusCode} - ${response.body}',

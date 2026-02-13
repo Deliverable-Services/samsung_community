@@ -15,6 +15,7 @@ import '../../../data/models/weekly_riddle_model.dart';
 import '../../academy/views/assignment_card.dart';
 import '../../events/controllers/events_controller.dart';
 
+import '../../../common/services/event_tracking_service.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -79,6 +80,10 @@ class HomeView extends GetView<HomeController> {
                           debugPrint(
                             'Analytics: [HomeView] Section tapped: Weekly Riddle',
                           );
+                          EventTrackingService.trackEvent(
+                            eventType: 'home_section_tap',
+                            eventProperties: {'section': 'weekly_riddle'},
+                          );
                           controller.onRiddleSubmitTap();
                         },
                       ),
@@ -140,6 +145,10 @@ class HomeView extends GetView<HomeController> {
       buttonText: "eventDetailsRegistration".tr,
       onButtonTap: () {
         debugPrint('Analytics: [HomeView] Section tapped: Event');
+        EventTrackingService.trackEvent(
+          eventType: 'home_section_tap',
+          eventProperties: {'section': 'event', 'event_id': event.id},
+        );
         eventsController.showEventDetailsModal(event);
       },
       labels: [
@@ -184,6 +193,10 @@ class HomeView extends GetView<HomeController> {
       showSolutionButton: false,
       onTap: () {
         debugPrint('Analytics: [HomeView] Section tapped: VOD');
+        EventTrackingService.trackEvent(
+          eventType: 'home_section_tap',
+          eventProperties: {'section': 'vod', 'content_id': vod.id},
+        );
         // TODO: Navigate to VOD details
       },
     );
@@ -208,6 +221,10 @@ class HomeView extends GetView<HomeController> {
       showSolutionButton: false,
       onTap: () {
         debugPrint('Analytics: [HomeView] Section tapped: Podcast');
+        EventTrackingService.trackEvent(
+          eventType: 'home_section_tap',
+          eventProperties: {'section': 'podcast', 'content_id': podcast.id},
+        );
         // TODO: Navigate to podcast details
       },
     );
@@ -343,6 +360,13 @@ class HomeView extends GetView<HomeController> {
           onButtonTap: () {
             debugPrint(
               'Analytics: [HomeView] Section tapped: Riddle (list item)',
+            );
+            EventTrackingService.trackEvent(
+              eventType: 'home_section_tap',
+              eventProperties: {
+                'section': 'weekly_riddle_list_item',
+                'riddle_id': item.riddle!.id,
+              },
             );
             controller.onRiddleSubmitTap();
           },

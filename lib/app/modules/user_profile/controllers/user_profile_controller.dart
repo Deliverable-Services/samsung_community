@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../common/services/content_service.dart';
 import '../../../common/services/content_interaction_service.dart';
+import '../../../common/services/event_tracking_service.dart';
 import '../../../common/services/supabase_service.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/core/utils/result.dart';
@@ -495,6 +496,10 @@ class UserProfileController extends GetxController {
             : null,
         onShare: () {
           debugPrint('Analytics: user shared a post in the user profile');
+          EventTrackingService.trackEvent(
+            eventType: 'user_profile_post_share',
+            eventProperties: {'content_id': id ?? ''},
+          );
           final shareContext = Get.context;
           if (shareContext != null &&
               Navigator.of(shareContext, rootNavigator: true).canPop()) {

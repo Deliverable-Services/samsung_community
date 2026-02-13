@@ -11,6 +11,7 @@ import '../../../common/services/content_service.dart';
 import '../../../common/services/event_service.dart';
 import '../../../common/services/storage_service.dart';
 import '../../../common/services/supabase_service.dart';
+import '../../../common/services/event_tracking_service.dart';
 import '../../../common/services/weekly_riddle_service.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/core/utils/result.dart';
@@ -74,6 +75,7 @@ class HomeController extends GetxController {
     scrollController?.addListener(_onScroll);
 
     debugPrint('Analytics: viewed the main home screen');
+    EventTrackingService.trackEvent(eventType: 'home_screen_view');
 
     loadLatestItems().then((_) {
       loadAllItems();
@@ -619,10 +621,21 @@ class HomeController extends GetxController {
           riddleId: riddle.id,
           description: 'Weekly riddle correct answer',
         );
+        EventTrackingService.trackEvent(
+          eventType: 'riddle_correct_answer',
+          eventProperties: {
+            'riddle_id': riddle.id,
+            'points_earned': riddle.pointsToEarn,
+          },
+        );
         _showSuccessModal(riddle.pointsToEarn);
       } else {
         debugPrint(
           'Analytics: completed the weekly puzzle and answered incorrectly',
+        );
+        EventTrackingService.trackEvent(
+          eventType: 'riddle_incorrect_answer',
+          eventProperties: {'riddle_id': riddle.id},
         );
         _showFailureModal();
       }
@@ -1095,6 +1108,14 @@ class HomeController extends GetxController {
       // Create points transaction
       debugPrint('Analytics: creating points transaction for weekly riddle');
       debugPrint('Analytics: awarding points: $points to user: ${user.id}');
+      await EventTrackingService.trackEvent(
+        eventType: 'riddle_points_awarded',
+        eventProperties: {
+          'points': points,
+          'riddle_id': riddleId,
+          'user_id': user.id,
+        },
+      );
       await SupabaseService.client.from('points_transactions').insert({
         'user_id': user.id,
         'transaction_type': 'earned',

@@ -15,6 +15,7 @@ import '../../data/helper_widgets/bottom_sheet_modal.dart';
 import '../../data/helper_widgets/create_post_modal.dart';
 import '../../data/models/content_model.dart';
 import 'content_service.dart';
+import 'event_tracking_service.dart';
 import 'storage_service.dart';
 
 class CreatePostService {
@@ -101,6 +102,9 @@ class CreatePostService {
             if (result is Success<Map<String, dynamic>>) {
               debugPrint(
                 'Analytics: successfully finished creating and publishing a new post in the feed',
+              );
+              await EventTrackingService.trackEvent(
+                eventType: 'create_post_success',
               );
               shareToInstagram(
                 mediaPath: selectedMediaFile.value?.path ?? '',
