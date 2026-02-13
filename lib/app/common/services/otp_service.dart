@@ -37,8 +37,9 @@ class OtpService {
       }
 
       final status = userDetails['status'] as String?;
+      final role = userDetails['role'] as String?;
 
-      if (status != null && status == 'pending') {
+      if (status != null && status == 'pending' && role != 'admin') {
         return const Failure('WAIT_FOR_APPROVAL');
       }
       if (status != null && status == 'suspended') {
