@@ -17,7 +17,9 @@ class EnLocalization {
     "yourEventRegistration": "Your event registration has been cancelled.",
     "noContentAvailable": "No content available",
     "male": 'Male',
-    "female": "נְקֵבָה",
+    "female": "Female",
+    "other": "Other",
+    "preferNotToSay": "Prefer not to say",
 
     //Notification and channel
     "notifications": "Notifications",
@@ -390,5 +392,19 @@ class EnLocalization {
     "invalid_mcq_data": "Invalid MCQ data",
     "weekly_riddle_correct_answer": "Weekly riddle correct answer",
     "correct_assignment_answer": "Correct assignment answer",
+    "noPendingUsersFound": "No pending users found",
+    "dateOfBirth": "date of birth",
+    // "gender": "gender", // Existing key
+    // "city": "city", // Existing key
+    // "socialMedia": "Social media", // Existing key "social_media"
+    // "rejection": "Rejection", // Add new
+    "rejection": "Rejection",
+    // "approval": "Approval", // Existing key
+    "notAvailable": "N/A",
+    "failedToFetchUsers": "Failed to fetch users",
+    "failedToApproveUser": "Failed to approve user",
+    "userApprovedSuccessfully": "User approved successfully",
+    "failedToRejectUser": "Failed to reject user",
+    "userRejectedSuccessfully": "User rejected successfully",
   };
 }

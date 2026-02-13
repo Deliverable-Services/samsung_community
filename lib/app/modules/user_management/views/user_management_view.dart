@@ -60,7 +60,7 @@ class UserManagementView extends GetView<UserManagementController> {
         if (controller.pendingUsers.isEmpty) {
           return Center(
             child: Text(
-              'No pending users found', // Add translation key if needed
+              'noPendingUsersFound'.tr,
               style: TextStyle(
                 color: AppColors.textWhiteSecondary,
                 fontSize: 16.sp,
@@ -194,9 +194,11 @@ class UserManagementView extends GetView<UserManagementController> {
 
             // Date of Birth
             CustomTextField(
-              label: 'date of birth',
+              label: 'dateOfBirth'.tr,
               controller: TextEditingController(
-                text: user.birthday?.toIso8601String().split('T')[0] ?? 'N/A',
+                text:
+                    user.birthday?.toIso8601String().split('T')[0] ??
+                    'notAvailable'.tr,
               ),
               readOnly: true,
             ),
@@ -204,9 +206,9 @@ class UserManagementView extends GetView<UserManagementController> {
 
             // Gender
             CustomTextField(
-              label: 'gender',
+              label: 'gender'.tr,
               controller: TextEditingController(
-                text: user.gender?.name ?? 'N/A',
+                text: user.gender?.name.tr ?? 'notAvailable'.tr,
               ),
               readOnly: true,
             ),
@@ -214,15 +216,17 @@ class UserManagementView extends GetView<UserManagementController> {
 
             // City
             CustomTextField(
-              label: 'city',
-              controller: TextEditingController(text: user.city ?? 'N/A'),
+              label: 'city'.tr,
+              controller: TextEditingController(
+                text: user.city ?? 'notAvailable'.tr,
+              ),
               readOnly: true,
             ),
             SizedBox(height: 16.h),
 
             // Social Media
             CustomTextField(
-              label: 'Social media',
+              label: 'social_media'.tr,
               // Displaying raw JSON or processing it? Assuming it's a map, showing first link or just text if stored as string?
               // The model says Map<String, dynamic> socialMediaLinks.
               // I'll join keys and values or just showing something meaningful.
@@ -230,7 +234,7 @@ class UserManagementView extends GetView<UserManagementController> {
               controller: TextEditingController(
                 text: user.socialMediaLinks.values.isNotEmpty
                     ? user.socialMediaLinks.values.first.toString()
-                    : 'N/A',
+                    : 'notAvailable'.tr,
               ),
               readOnly: true,
             ),
@@ -241,7 +245,7 @@ class UserManagementView extends GetView<UserManagementController> {
               children: [
                 Expanded(
                   child: _buildModalActionButton(
-                    text: 'Rejection',
+                    text: 'rejection'.tr,
                     icon: Icons.close,
                     iconColor: const Color(0xFFFF453A),
                     onTap: () {
@@ -254,7 +258,7 @@ class UserManagementView extends GetView<UserManagementController> {
                 SizedBox(width: 16.w),
                 Expanded(
                   child: _buildModalActionButton(
-                    text: 'Approval',
+                    text: 'approval'.tr,
                     icon: Icons.check,
                     iconColor: AppColors
                         .white, // Actually check icon is usually black on white bg, but design shows white icon?

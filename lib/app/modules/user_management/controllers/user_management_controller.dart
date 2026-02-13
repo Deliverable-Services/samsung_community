@@ -7,7 +7,7 @@ import '../../../data/core/utils/result.dart';
 
 class UserManagementController extends GetxController {
   final UserRepo _userRepo = UserRepo();
-  
+
   final RxList<UserModel> pendingUsers = <UserModel>[].obs;
   final RxBool isLoading = false.obs;
 
@@ -20,11 +20,11 @@ class UserManagementController extends GetxController {
   Future<void> fetchPendingUsers() async {
     isLoading.value = true;
     final result = await _userRepo.getPendingUsers();
-    
+
     if (result.isSuccess) {
       pendingUsers.assignAll(result.dataOrNull ?? []);
     } else {
-      CommonSnackbar.error(result.errorOrNull ?? 'Failed to fetch users');
+      CommonSnackbar.error(result.errorOrNull ?? 'failedToFetchUsers'.tr);
     }
     isLoading.value = false;
   }
@@ -32,30 +32,36 @@ class UserManagementController extends GetxController {
   Future<void> approveUser(UserModel user) async {
     // Optimistic update
     pendingUsers.remove(user);
-    
-    final result = await _userRepo.updateUserStatus(user.id, UserStatus.approved);
-    
+
+    final result = await _userRepo.updateUserStatus(
+      user.id,
+      UserStatus.approved,
+    );
+
     if (!result.isSuccess) {
       // Revert if failed
       pendingUsers.add(user);
-      CommonSnackbar.error(result.errorOrNull ?? 'Failed to approve user');
+      CommonSnackbar.error(result.errorOrNull ?? 'failedToApproveUser'.tr);
     } else {
-      CommonSnackbar.success('User approved successfully');
+      CommonSnackbar.success('userApprovedSuccessfully'.tr);
     }
   }
 
   Future<void> rejectUser(UserModel user) async {
-     // Optimistic update
+    // Optimistic update
     pendingUsers.remove(user);
 
-    final result = await _userRepo.updateUserStatus(user.id, UserStatus.rejected);
-    
+    final result = await _userRepo.updateUserStatus(
+      user.id,
+      UserStatus.rejected,
+    );
+
     if (!result.isSuccess) {
       // Revert if failed
       pendingUsers.add(user);
-      CommonSnackbar.error(result.errorOrNull ?? 'Failed to reject user');
+      CommonSnackbar.error(result.errorOrNull ?? 'failedToRejectUser'.tr);
     } else {
-      CommonSnackbar.success('User rejected successfully');
+      CommonSnackbar.success('userRejectedSuccessfully'.tr);
     }
   }
 }
