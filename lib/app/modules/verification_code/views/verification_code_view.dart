@@ -73,6 +73,7 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                                   letterSpacing: 0,
                                   color: AppColors.white,
                                   height: 40 / 26,
+                                  fontFamily: 'Samsung Sharp Sans',
                                 ),
                               ),
                               TextSpan(
@@ -83,6 +84,7 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                                   letterSpacing: 0,
                                   color: AppColors.white,
                                   height: 40 / 30,
+                                  fontFamily: 'Samsung Sharp Sans',
                                 ),
                               ),
                             ],
@@ -108,6 +110,7 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                             letterSpacing: 0,
                             color: AppColors.white,
                             height: 22 / 14,
+                            fontFamily: 'Samsung Sharp Sans',
                           ),
                           textScaler: const TextScaler.linear(1.0),
                           maxLines: 2,
@@ -169,6 +172,7 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                                         height: 22 / 14,
                                         letterSpacing: 0,
                                         color: AppColors.white.withOpacity(0.7),
+                                        fontFamily: 'Samsung Sharp Sans',
                                       ),
                                     ),
                                     TextSpan(
@@ -180,6 +184,7 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                                         height: 22 / 14,
                                         letterSpacing: 0,
                                         color: AppColors.linkBlue,
+                                        fontFamily: 'Samsung Sharp Sans',
                                       ),
                                     ),
                                     TextSpan(
@@ -190,6 +195,7 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                                         height: 22 / 14,
                                         letterSpacing: 0,
                                         color: AppColors.white.withOpacity(0.7),
+                                        fontFamily: 'Samsung Sharp Sans',
                                       ),
                                     ),
                                   ],
@@ -231,6 +237,7 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                                         height: 22 / 14,
                                         letterSpacing: 0,
                                         color: AppColors.linkBlue,
+                                        fontFamily: 'Samsung Sharp Sans',
                                       ),
                                       textScaler: const TextScaler.linear(1.0),
                                     ),
@@ -297,6 +304,7 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                                 letterSpacing: 0,
                                 color: baseColor,
                                 height: 24 / 16,
+                                fontFamily: 'Samsung Sharp Sans',
                               ),
                             ),
                             TextSpan(
@@ -307,6 +315,7 @@ class VerificationCodeView extends GetView<VerificationCodeController> {
                                 letterSpacing: 0,
                                 color: baseColor,
                                 height: 24 / 16,
+                                fontFamily: 'Samsung Sharp Sans',
                               ),
                               recognizer: disabled
                                   ? null

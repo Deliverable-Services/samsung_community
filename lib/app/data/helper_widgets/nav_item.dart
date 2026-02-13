@@ -88,6 +88,7 @@ class NavItem extends StatelessWidget {
               color: isActive
                   ? AppColors.navTextActive
                   : AppColors.navTextInactive,
+              fontFamily: 'Samsung Sharp Sans',
             ),
           ),
         ],

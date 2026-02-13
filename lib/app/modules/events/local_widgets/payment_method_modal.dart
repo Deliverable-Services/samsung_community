@@ -74,6 +74,7 @@ class PaymentMethodModal extends StatelessWidget {
                 style: const TextStyle(
                   color: Color(0xFF6EA8FF),
                   fontWeight: FontWeight.bold,
+                  fontFamily: 'Samsung Sharp Sans',
                 ),
               ),
             ],

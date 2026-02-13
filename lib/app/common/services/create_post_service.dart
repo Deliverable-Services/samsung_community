@@ -198,7 +198,10 @@ class CreatePostService {
                 ),
                 title: const Text(
                   'Choose from Gallery',
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
                 onTap: () => Get.back(result: ImageSource.gallery),
               ),
@@ -206,7 +209,10 @@ class CreatePostService {
                 leading: const Icon(Icons.camera_alt, color: AppColors.white),
                 title: const Text(
                   'Take Photo/Video',
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
                 onTap: () => Get.back(result: ImageSource.camera),
               ),
@@ -214,7 +220,10 @@ class CreatePostService {
                 onPressed: () => Get.back(),
                 child: const Text(
                   'Cancel',
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
               ),
             ],
@@ -241,7 +250,10 @@ class CreatePostService {
                 leading: const Icon(Icons.image, color: AppColors.white),
                 title: const Text(
                   'Image',
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
                 onTap: () => Get.back(result: MediaType.image),
               ),
@@ -252,7 +264,10 @@ class CreatePostService {
                 ),
                 title: const Text(
                   'Video',
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
                 onTap: () => Get.back(result: MediaType.video),
               ),
@@ -260,7 +275,10 @@ class CreatePostService {
                 onPressed: () => Get.back(),
                 child: const Text(
                   'Cancel',
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
               ),
             ],

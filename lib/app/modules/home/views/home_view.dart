@@ -47,7 +47,10 @@ class HomeView extends GetView<HomeController> {
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 22.h),
             children: [
               DefaultTextStyle(
-                style: const TextStyle(decoration: TextDecoration.none),
+                style: const TextStyle(
+                  decoration: TextDecoration.none,
+                  fontFamily: 'Samsung Sharp Sans',
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [

@@ -78,6 +78,7 @@ class OnBoardingView extends GetView<OnBoardingController> {
                             letterSpacing: 0,
                             color: AppColors.white,
                             height: 22 / 14,
+                            fontFamily: 'Samsung Sharp Sans',
                           ),
                           textScaler: const TextScaler.linear(1.0),
                           maxLines: 2,
@@ -115,6 +116,7 @@ class OnBoardingView extends GetView<OnBoardingController> {
                               color: AppColors.linkBlue,
                               letterSpacing: 0,
                               fontSize: 16.sp,
+                              fontFamily: 'Samsung Sharp Sans',
                             ),
                           ),
                           TextSpan(
@@ -124,6 +126,7 @@ class OnBoardingView extends GetView<OnBoardingController> {
                               fontSize: 16.sp,
                               letterSpacing: 0,
                               fontWeight: FontWeight.bold,
+                              fontFamily: 'Samsung Sharp Sans',
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {

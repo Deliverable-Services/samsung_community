@@ -133,6 +133,7 @@ class ProfilePictureWidget extends StatelessWidget {
                     letterSpacing: 0,
                     color: AppColors.linkBlue,
                     height: 1,
+                    fontFamily: 'Samsung Sharp Sans',
                   ),
                   textScaler: const TextScaler.linear(1.0),
                 ),

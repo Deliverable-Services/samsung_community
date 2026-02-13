@@ -37,6 +37,7 @@ class ProfileSection extends GetView<ProfileController> {
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w700,
                 color: AppColors.white,
+                fontFamily: 'Samsung Sharp Sans',
               ),
             ),
             SizedBox(height: 8.h),

@@ -25,10 +25,16 @@ class FollowersFollowingHeader extends GetView<FollowersFollowingController> {
       child: Row(
         children: [
           Expanded(
-            child: _buildTabButton(text: '$followersCount ${'followers'.tr}', index: 0),
+            child: _buildTabButton(
+              text: '$followersCount ${'followers'.tr}',
+              index: 0,
+            ),
           ),
           Expanded(
-            child: _buildTabButton(text: '$followingCount ${'following'.tr}', index: 1),
+            child: _buildTabButton(
+              text: '$followingCount ${'following'.tr}',
+              index: 1,
+            ),
           ),
         ],
       ),
@@ -49,6 +55,7 @@ class FollowersFollowingHeader extends GetView<FollowersFollowingController> {
                 fontSize: 16.sp,
                 fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
                 color: AppColors.white,
+                fontFamily: 'Samsung Sharp Sans',
               ),
             ),
             SizedBox(height: 4.h),

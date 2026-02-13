@@ -47,6 +47,7 @@ class ChatInputBar extends StatelessWidget {
                   letterSpacing: 0,
                   color: AppColors.white,
                   height: 22 / 14,
+                  fontFamily: 'Samsung Sharp Sans',
                 ),
                 decoration: InputDecoration(
                   isDense: true,

@@ -79,7 +79,10 @@ class UserProfileView extends GetView<UserProfileController> {
                 ),
                 title: Text(
                   controller.isBlocked.value ? 'unblock'.tr : 'block'.tr,
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
                 onTap: () {
                   Get.back();

@@ -28,6 +28,7 @@ class StoreTabButton extends StatelessWidget {
               fontSize: 14.sp,
               fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
               color: AppColors.white,
+              fontFamily: 'Samsung Sharp Sans',
             ),
           ),
           SizedBox(height: 4.h),
@@ -44,4 +45,3 @@ class StoreTabButton extends StatelessWidget {
     );
   }
 }
-

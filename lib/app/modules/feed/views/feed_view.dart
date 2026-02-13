@@ -79,7 +79,10 @@ class _FeedViewState extends State<FeedView> {
                                   padding: EdgeInsets.only(top: 40.h),
                                   child: Text(
                                     'noContentAvailable'.tr,
-                                    style: TextStyle(fontSize: 16.sp),
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontFamily: 'Samsung Sharp Sans',
+                                    ),
                                   ),
                                 ),
                               ),

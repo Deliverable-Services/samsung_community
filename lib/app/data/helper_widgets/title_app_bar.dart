@@ -38,6 +38,7 @@ class TitleAppBar extends StatelessWidget implements PreferredSizeWidget {
         letterSpacing: 0,
         color: AppColors.white,
         height: 1,
+        fontFamily: 'Samsung Sharp Sans',
       ),
       textScaler: const TextScaler.linear(1.0),
     ),

@@ -75,7 +75,11 @@ class FollowerFollowingItem extends GetView<FollowersFollowingController> {
               onTap: _navigateToProfile,
               child: Text(
                 user.fullName ?? 'username',
-                style: TextStyle(fontSize: 14.sp, color: AppColors.white),
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: AppColors.white,
+                  fontFamily: 'Samsung Sharp Sans',
+                ),
               ),
             ),
           ),
@@ -125,6 +129,7 @@ class FollowerFollowingItem extends GetView<FollowersFollowingController> {
             fontSize: 14.sp,
             fontWeight: FontWeight.w500,
             color: AppColors.white,
+            fontFamily: 'Samsung Sharp Sans',
           ),
         ),
       ),
@@ -146,6 +151,7 @@ class FollowerFollowingItem extends GetView<FollowersFollowingController> {
             fontSize: 14.sp,
             fontWeight: FontWeight.w500,
             color: AppColors.white,
+            fontFamily: 'Samsung Sharp Sans',
           ),
         ),
       ),
@@ -160,7 +166,8 @@ class FollowerFollowingItem extends GetView<FollowersFollowingController> {
         height: 32.h,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: AppColors.overlayContainerBackground,
+          color: AppColors
+              .overlayContainerBackground, // Fixed: removed invalid color
         ),
         child: Icon(Icons.more_vert, color: AppColors.white, size: 20.sp),
       ),

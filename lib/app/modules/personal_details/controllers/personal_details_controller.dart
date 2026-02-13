@@ -40,7 +40,7 @@ class PersonalDetailsController extends GetxController {
     if (phoneNumber.value.isEmpty) {
       phoneNumber.value = (parameters?['phoneNumber'] as String?) ?? '';
     }
-    if(userData.isNotEmpty) {
+    if (userData.isNotEmpty) {
       fullNameController.text = userData['name'];
       emailController.text = userData['email'];
       profilePictureUrl.value = userData['photoUrl'];
@@ -85,17 +85,35 @@ class PersonalDetailsController extends GetxController {
               surface: Colors.white,
             ),
             textTheme: const TextTheme(
-              bodyLarge: TextStyle(color: Colors.black87),
-              bodyMedium: TextStyle(color: Colors.black87),
-              labelLarge: TextStyle(color: Colors.black87),
+              bodyLarge: TextStyle(
+                color: Colors.black87,
+                fontFamily: 'Samsung Sharp Sans',
+              ),
+              bodyMedium: TextStyle(
+                color: Colors.black87,
+                fontFamily: 'Samsung Sharp Sans',
+              ),
+              labelLarge: TextStyle(
+                color: Colors.black87,
+                fontFamily: 'Samsung Sharp Sans',
+              ),
             ),
             datePickerTheme: DatePickerThemeData(
               backgroundColor: Colors.white,
               headerBackgroundColor: AppColors.linkBlue,
               headerForegroundColor: Colors.white,
-              dayStyle: const TextStyle(color: Colors.black87),
-              weekdayStyle: const TextStyle(color: Colors.black87),
-              yearStyle: const TextStyle(color: Colors.black87),
+              dayStyle: const TextStyle(
+                color: Colors.black87,
+                fontFamily: 'Samsung Sharp Sans',
+              ),
+              weekdayStyle: const TextStyle(
+                color: Colors.black87,
+                fontFamily: 'Samsung Sharp Sans',
+              ),
+              yearStyle: const TextStyle(
+                color: Colors.black87,
+                fontFamily: 'Samsung Sharp Sans',
+              ),
             ),
             dialogTheme: DialogThemeData(backgroundColor: Colors.white),
           ),
@@ -164,7 +182,10 @@ class PersonalDetailsController extends GetxController {
                 ),
                 title: Text(
                   'Choose from Gallery',
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
                 onTap: () => Get.back(result: ImageSource.gallery),
               ),
@@ -172,13 +193,22 @@ class PersonalDetailsController extends GetxController {
                 leading: const Icon(Icons.camera_alt, color: AppColors.white),
                 title: Text(
                   'Take Photo',
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
                 onTap: () => Get.back(result: ImageSource.camera),
               ),
               TextButton(
                 onPressed: () => Get.back(),
-                child: Text('Cancel', style: TextStyle(color: AppColors.white)),
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
+                ),
               ),
             ],
           ),

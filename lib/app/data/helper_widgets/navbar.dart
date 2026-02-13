@@ -55,6 +55,7 @@ class Navbar extends StatelessWidget {
                   letterSpacing: 0,
                   color: AppColors.white,
                   height: 1,
+                  fontFamily: 'Samsung Sharp Sans',
                 ),
                 textScaler: const TextScaler.linear(1.0),
               ),
@@ -80,6 +81,7 @@ class Navbar extends StatelessWidget {
                       letterSpacing: 0,
                       color: AppColors.white,
                       height: 26.32 / 14,
+                      fontFamily: 'Samsung Sharp Sans',
                     ),
                     textScaler: const TextScaler.linear(1.0),
                   ),
@@ -114,7 +116,6 @@ class Navbar extends StatelessWidget {
                       height: 24.h,
                       fit: BoxFit.contain,
                     ),
-
                   ],
                 ),
               ),

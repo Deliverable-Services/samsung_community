@@ -76,6 +76,7 @@ class SideMenu extends StatelessWidget {
               color: AppColors.white,
               fontSize: 16.sp,
               fontWeight: FontWeight.w700,
+              fontFamily: 'Samsung Sharp Sans',
             ),
           ),
           content: Text(
@@ -84,6 +85,7 @@ class SideMenu extends StatelessWidget {
               color: AppColors.white,
               fontSize: 14.sp,
               fontWeight: FontWeight.w400,
+              fontFamily: 'Samsung Sharp Sans',
             ),
           ),
           actions: [
@@ -97,6 +99,7 @@ class SideMenu extends StatelessWidget {
                   color: AppColors.white,
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w400,
+                  fontFamily: 'Samsung Sharp Sans',
                 ),
               ),
             ),
@@ -111,6 +114,7 @@ class SideMenu extends StatelessWidget {
                   color: AppColors.white,
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
+                  fontFamily: 'Samsung Sharp Sans',
                 ),
               ),
             ),

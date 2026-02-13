@@ -64,6 +64,7 @@ class UserManagementView extends GetView<UserManagementController> {
               style: TextStyle(
                 color: AppColors.textWhiteSecondary,
                 fontSize: 16.sp,
+                fontFamily: 'Samsung Sharp Sans',
               ),
             ),
           );
@@ -121,6 +122,7 @@ class UserManagementView extends GetView<UserManagementController> {
                       color: AppColors.textWhite,
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w400,
+                      fontFamily: 'Samsung Sharp Sans',
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),

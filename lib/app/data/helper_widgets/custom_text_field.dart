@@ -127,7 +127,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
                           focusedBorder: InputBorder.none,
                           errorBorder: InputBorder.none,
                           focusedErrorBorder: InputBorder.none,
-                          errorStyle: const TextStyle(height: 0, fontSize: 0),
+                          errorStyle: const TextStyle(
+                            height: 0,
+                            fontSize: 0,
+                            fontFamily: 'Samsung Sharp Sans',
+                          ),
                           contentPadding: EdgeInsets.symmetric(
                             vertical: 0,
                             horizontal: 20.w,
@@ -171,7 +175,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       focusedBorder: InputBorder.none,
                       errorBorder: InputBorder.none,
                       focusedErrorBorder: InputBorder.none,
-                      errorStyle: const TextStyle(height: 0, fontSize: 0),
+                      errorStyle: const TextStyle(
+                        height: 0,
+                        fontSize: 0,
+                        fontFamily: 'Samsung Sharp Sans',
+                      ),
                       contentPadding: EdgeInsets.only(
                         top: 12.h,
                         left: 20.w,

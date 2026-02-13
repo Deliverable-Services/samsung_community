@@ -17,7 +17,10 @@ class EventsView extends GetView<EventsController> {
     return DefaultTabController(
       length: 2,
       child: DefaultTextStyle(
-        style: const TextStyle(decoration: TextDecoration.none),
+        style: const TextStyle(
+          decoration: TextDecoration.none,
+          fontFamily: 'Samsung Sharp Sans',
+        ),
         child: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
@@ -40,6 +43,16 @@ class EventsView extends GetView<EventsController> {
                     labelColor: Colors.white,
                     unselectedLabelColor: Colors.grey,
                     indicatorSize: TabBarIndicatorSize.tab,
+                    labelStyle: TextStyle(
+                      fontFamily: 'Samsung Sharp Sans',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14.sp,
+                    ),
+                    unselectedLabelStyle: TextStyle(
+                      fontFamily: 'Samsung Sharp Sans',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14.sp,
+                    ),
                     tabs: [
                       Tab(text: 'allEvents'.tr),
                       Tab(text: 'myEvents'.tr),
@@ -78,7 +91,10 @@ class EventsView extends GetView<EventsController> {
                   padding: EdgeInsets.all(32.w),
                   child: Text(
                     'noEventsFound'.tr,
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Samsung Sharp Sans',
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -174,7 +190,10 @@ class EventsView extends GetView<EventsController> {
                   padding: EdgeInsets.all(32.w),
                   child: Text(
                     'noMyEventsFound'.tr,
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Samsung Sharp Sans',
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ),

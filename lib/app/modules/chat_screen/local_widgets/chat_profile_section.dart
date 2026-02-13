@@ -68,6 +68,7 @@ class ChatProfileSection extends StatelessWidget {
                     color: isOnline
                         ? AppColors.activeIndicatorBorder
                         : AppColors.inactiveIndicatorBorder,
+                    fontFamily: 'Samsung Sharp Sans',
                   ),
                 ),
               ],
@@ -79,6 +80,7 @@ class ChatProfileSection extends StatelessWidget {
                 fontWeight: FontWeight.w700,
                 fontSize: 16.sp,
                 color: AppColors.white,
+                fontFamily: 'Samsung Sharp Sans',
               ),
             ),
             SizedBox(height: 8.h),

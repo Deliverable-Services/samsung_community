@@ -31,7 +31,10 @@ class EventerPaymentView extends GetView<EventerPaymentController> {
           ),
           title: Text(
             'event_registration'.tr,
-            style: const TextStyle(color: AppColors.white),
+            style: const TextStyle(
+              color: AppColors.white,
+              fontFamily: 'Samsung Sharp Sans',
+            ),
           ),
         ),
         body: Obx(
@@ -80,6 +83,7 @@ class EventerPaymentView extends GetView<EventerPaymentController> {
                 color: AppColors.white,
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
+                fontFamily: 'Samsung Sharp Sans',
               ),
             ),
             SizedBox(height: 8.h),
@@ -87,13 +91,20 @@ class EventerPaymentView extends GetView<EventerPaymentController> {
               controller.errorMessage.value.isNotEmpty
                   ? controller.errorMessage.value
                   : 'unknown_error'.tr,
-              style: TextStyle(color: AppColors.white, fontSize: 14.sp),
+              style: TextStyle(
+                color: AppColors.white,
+                fontSize: 14.sp,
+                fontFamily: 'Samsung Sharp Sans',
+              ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 24.h),
             ElevatedButton(
               onPressed: controller.reload,
-              child: Text('retry'.tr),
+              child: Text(
+                'retry'.tr,
+                style: const TextStyle(fontFamily: 'Samsung Sharp Sans'),
+              ),
             ),
           ],
         ),

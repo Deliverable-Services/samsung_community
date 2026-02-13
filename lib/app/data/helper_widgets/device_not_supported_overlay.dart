@@ -29,7 +29,7 @@ class _DeviceNotSupportedOverlayState extends State<DeviceNotSupportedOverlay> {
 
       // Try to open with Play Store app first (market:// scheme)
       final marketUrl = Uri.parse('market://search?q=$encodedQuery');
-      
+
       if (await canLaunchUrl(marketUrl)) {
         await launchUrl(marketUrl, mode: LaunchMode.externalApplication);
       } else if (await canLaunchUrl(playStoreUrl)) {
@@ -156,6 +156,7 @@ class _DeviceNotSupportedOverlayState extends State<DeviceNotSupportedOverlay> {
                             255,
                             1,
                           ), // background: #FFFFFF
+                          fontFamily: 'Samsung Sharp Sans',
                         ),
                       ),
                       SizedBox(height: 10.h),
@@ -168,6 +169,7 @@ class _DeviceNotSupportedOverlayState extends State<DeviceNotSupportedOverlay> {
                           height: 22 / 14,
                           letterSpacing: 0,
                           color: const Color(0xFFBDBDBD), // background: #BDBDBD
+                          fontFamily: 'Samsung Sharp Sans',
                         ),
                         textScaler: const TextScaler.linear(1.0),
                       ),

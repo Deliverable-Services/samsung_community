@@ -73,6 +73,7 @@ class VerificationCodeByLoginView
                                   letterSpacing: 0,
                                   color: AppColors.white,
                                   height: 40 / 26,
+                                  fontFamily: 'Samsung Sharp Sans',
                                 ),
                               ),
                               TextSpan(
@@ -83,6 +84,7 @@ class VerificationCodeByLoginView
                                   letterSpacing: 0,
                                   color: AppColors.white,
                                   height: 40 / 30,
+                                  fontFamily: 'Samsung Sharp Sans',
                                 ),
                               ),
                             ],
@@ -108,6 +110,7 @@ class VerificationCodeByLoginView
                             letterSpacing: 0,
                             color: AppColors.white,
                             height: 22 / 14,
+                            fontFamily: 'Samsung Sharp Sans',
                           ),
                           textScaler: const TextScaler.linear(1.0),
                           maxLines: 2,
@@ -171,6 +174,7 @@ class VerificationCodeByLoginView
                                           color: AppColors.white.withOpacity(
                                             0.7,
                                           ),
+                                          fontFamily: 'Samsung Sharp Sans',
                                         ),
                                       ),
                                       TextSpan(
@@ -182,6 +186,7 @@ class VerificationCodeByLoginView
                                           height: 22 / 14,
                                           letterSpacing: 0,
                                           color: AppColors.linkBlue,
+                                          fontFamily: 'Samsung Sharp Sans',
                                         ),
                                       ),
                                       TextSpan(
@@ -194,6 +199,7 @@ class VerificationCodeByLoginView
                                           color: AppColors.white.withOpacity(
                                             0.7,
                                           ),
+                                          fontFamily: 'Samsung Sharp Sans',
                                         ),
                                       ),
                                     ],
@@ -236,6 +242,7 @@ class VerificationCodeByLoginView
                                           height: 22 / 14,
                                           letterSpacing: 0,
                                           color: AppColors.linkBlue,
+                                          fontFamily: 'Samsung Sharp Sans',
                                         ),
                                         textScaler: const TextScaler.linear(
                                           1.0,
@@ -305,6 +312,7 @@ class VerificationCodeByLoginView
                                 letterSpacing: 0,
                                 color: baseColor,
                                 height: 24 / 16,
+                                fontFamily: 'Samsung Sharp Sans',
                               ),
                             ),
                             TextSpan(
@@ -315,6 +323,7 @@ class VerificationCodeByLoginView
                                 letterSpacing: 0,
                                 color: baseColor,
                                 height: 24 / 16,
+                                fontFamily: 'Samsung Sharp Sans',
                               ),
                               recognizer: disabled
                                   ? null

@@ -16,9 +16,9 @@ class CustomText extends StatelessWidget {
         style: TextStyle(
           fontWeight: FontWeight.w500,
           fontSize: 14.sp,
-          letterSpacing: 0,
           color: AppColors.white,
           height: 22 / 22,
+          fontFamily: 'Samsung Sharp Sans',
         ),
         textScaler: const TextScaler.linear(1.0),
       ),
