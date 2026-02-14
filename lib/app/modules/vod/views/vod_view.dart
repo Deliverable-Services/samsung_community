@@ -247,6 +247,7 @@ class _VodViewState extends State<VodView> {
                 style: TextStyle(
                   fontFamily: 'Samsung Sharp Sans',
                   fontSize: 14,
+                  color: AppColors.textWhiteSecondary,
                 ),
               ),
             ),

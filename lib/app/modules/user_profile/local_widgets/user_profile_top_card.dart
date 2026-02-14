@@ -167,6 +167,7 @@ class UserProfileTopCard extends GetView<UserProfileController> {
                 color: AppColors.white,
                 fontWeight: FontWeight.w700,
                 fontSize: 18.sp,
+                fontFamily: 'Samsung Sharp Sans',
               ),
             ),
             SizedBox(height: 6.h),
@@ -177,6 +178,7 @@ class UserProfileTopCard extends GetView<UserProfileController> {
                 textStyle: TextStyle(
                   color: AppColors.textWhiteOpacity70,
                   fontSize: 13.sp,
+                  fontFamily: 'Samsung Sharp Sans',
                 ),
               ),
             SizedBox(height: 28.h),

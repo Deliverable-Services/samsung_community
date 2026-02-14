@@ -49,7 +49,10 @@ class _StoreViewState extends State<StoreView> {
   Widget build(BuildContext context) {
     final authRepo = Get.find<AuthRepo>();
     return DefaultTextStyle(
-      style: const TextStyle(decoration: TextDecoration.none),
+      style: const TextStyle(
+        decoration: TextDecoration.none,
+        fontFamily: 'Samsung Sharp Sans',
+      ),
       child: Scaffold(
         backgroundColor: AppColors.primary,
         body: SafeArea(

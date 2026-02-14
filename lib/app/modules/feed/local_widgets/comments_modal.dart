@@ -114,16 +114,40 @@ class _CommentsModalState extends State<CommentsModal> {
   Future<void> _deleteComment(String commentId) async {
     final result = await Get.dialog<bool>(
       AlertDialog(
-        title: Text('delete'.tr),
-        content: Text('deleteCommentConfirmation'.tr),
+        title: Text(
+          'delete'.tr,
+          style: TextStyle(
+            fontFamily: 'Samsung Sharp Sans',
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        content: Text(
+          'deleteCommentConfirmation'.tr,
+          style: TextStyle(
+            fontFamily: 'Samsung Sharp Sans',
+            fontWeight: FontWeight.w400,
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false),
-            child: Text('cancel'.tr),
+            child: Text(
+              'cancel'.tr,
+              style: TextStyle(
+                fontFamily: 'Samsung Sharp Sans',
+                fontWeight: FontWeight.w400,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () => Get.back(result: true),
-            child: Text('delete'.tr, style: const TextStyle(color: Colors.red)),
+            child: Text(
+              'delete'.tr,
+              style: const TextStyle(
+                color: Colors.red,
+                fontFamily: 'Samsung Sharp Sans',
+              ),
+            ),
           ),
         ],
       ),
@@ -165,6 +189,7 @@ class _CommentsModalState extends State<CommentsModal> {
             fontSize: 18.sp,
             fontWeight: FontWeight.w700,
             color: AppColors.textWhite,
+            fontFamily: 'Samsung Sharp Sans',
           ),
         ),
         SizedBox(height: 16.h),
@@ -181,6 +206,7 @@ class _CommentsModalState extends State<CommentsModal> {
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: AppColors.textWhiteOpacity60,
+                    fontFamily: 'Samsung Sharp Sans',
                   ),
                 ),
               );
@@ -228,6 +254,7 @@ class _CommentsModalState extends State<CommentsModal> {
                                     fontSize: 14.sp,
                                     fontWeight: FontWeight.w700,
                                     color: AppColors.textWhite,
+                                    fontFamily: 'Samsung Sharp Sans',
                                   ),
                                 ),
                                 SizedBox(width: 8.w),
@@ -238,6 +265,7 @@ class _CommentsModalState extends State<CommentsModal> {
                                   style: TextStyle(
                                     fontSize: 12.sp,
                                     color: AppColors.textWhiteOpacity60,
+                                    fontFamily: 'Samsung Sharp Sans',
                                   ),
                                 ),
                               ],
@@ -248,6 +276,7 @@ class _CommentsModalState extends State<CommentsModal> {
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 color: AppColors.textWhiteOpacity70,
+                                fontFamily: 'Samsung Sharp Sans',
                               ),
                             ),
                           ],

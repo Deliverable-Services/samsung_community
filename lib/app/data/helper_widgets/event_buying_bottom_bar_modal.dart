@@ -62,6 +62,7 @@ class EventBuyingBottomBarModal extends StatelessWidget {
                               fontSize: 12.sp,
                               letterSpacing: 0,
                               color: AppColors.white,
+                              fontFamily: 'Samsung Sharp Sans',
                             ),
                           ),
                           extraPadding: EdgeInsets.symmetric(vertical: -2.5.w),
@@ -77,6 +78,7 @@ class EventBuyingBottomBarModal extends StatelessWidget {
                                 fontSize: 12.sp,
                                 letterSpacing: 0,
                                 color: AppColors.white,
+                                fontFamily: 'Samsung Sharp Sans',
                               ),
                             ),
                             extraPadding: EdgeInsets.symmetric(
@@ -125,6 +127,7 @@ class EventBuyingBottomBarModal extends StatelessWidget {
                                   fontSize: 12.sp,
                                   letterSpacing: 0,
                                   color: AppColors.white,
+                                  fontFamily: 'Samsung Sharp Sans',
                                 ),
                               ),
                             ],

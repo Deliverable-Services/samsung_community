@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../data/models/user_model.dart';
+import '../../../common/services/event_tracking_service.dart';
 import '../../../common/services/supabase_service.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../local_widgets/chat_options_modal.dart';
@@ -39,6 +40,13 @@ class ChatScreenController extends GetxController {
     super.onInit();
     final args = Get.arguments;
     debugPrint('Analytics: viewing the message screen.');
+    EventTrackingService.trackEvent(
+      eventType: 'chat_screen_view',
+      eventProperties: {
+        'conversation_id': args != null ? args['conversationId'] : '',
+        'target_user_id': args != null ? args['userId'] : '',
+      },
+    );
     if (args != null && args is Map) {
       conversationId.value = args['conversationId'] ?? '';
       final userId = args['userId'] as String?;

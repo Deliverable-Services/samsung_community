@@ -31,6 +31,7 @@ class EditProfilePicture extends GetView<EditProfileController> {
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
                 color: AppColors.linkBlue,
+                fontFamily: 'Samsung Sharp Sans',
               ),
             ),
           ),

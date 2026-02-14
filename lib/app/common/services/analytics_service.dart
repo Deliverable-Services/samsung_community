@@ -2,6 +2,8 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import 'event_tracking_service.dart';
+
 /// Service for logging Firebase Analytics events
 ///
 /// Based on Firebase Analytics documentation:
@@ -32,6 +34,14 @@ class AnalyticsService {
       await _analytics.logScreenView(
         screenName: screenName,
         screenClass: screenClass,
+      );
+
+      await EventTrackingService.trackEvent(
+        eventType: 'screen_view',
+        eventProperties: {
+          'screen_name': screenName,
+          'screen_class': screenClass,
+        },
       );
       if (kDebugMode) {
         debugPrint('Analytics: Screen view logged - $screenName');
@@ -101,6 +111,11 @@ class AnalyticsService {
 
       await _analytics.logEvent(name: event, parameters: parameters);
 
+      await EventTrackingService.trackEvent(
+        eventType: event,
+        eventProperties: Map<String, dynamic>.from(parameters),
+      );
+
       if (kDebugMode) {
         debugPrint(
           'Analytics: Button click logged - $event on $screenName: $buttonName',
@@ -138,6 +153,15 @@ class AnalyticsService {
         (key, value) => MapEntry(key, value as Object),
       );
       await _analytics.logEvent(name: eventName, parameters: convertedParams);
+      
+      if (parameters != null) {
+        await EventTrackingService.trackEvent(
+          eventType: eventName,
+          eventProperties: parameters,
+        );
+      } else {
+        await EventTrackingService.trackEvent(eventType: eventName);
+      }
       if (kDebugMode) {
         debugPrint('Analytics: Event logged - $eventName');
       }
@@ -165,6 +189,11 @@ class AnalyticsService {
   }) async {
     try {
       await _analytics.setUserProperty(name: name, value: value);
+
+      await EventTrackingService.trackEvent(
+        eventType: 'set_user_property',
+        userProperties: {name: value},
+      );
       if (kDebugMode) {
         debugPrint('Analytics: User property set - $name: $value');
       }
@@ -186,6 +215,11 @@ class AnalyticsService {
   static Future<void> setUserId({required String? userId}) async {
     try {
       await _analytics.setUserId(id: userId);
+
+      await EventTrackingService.trackEvent(
+        eventType: 'set_user_id',
+        userId: userId,
+      );
       if (kDebugMode) {
         debugPrint('Analytics: User ID set - $userId');
       }

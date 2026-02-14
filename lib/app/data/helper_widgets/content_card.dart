@@ -111,6 +111,7 @@ class ContentCard1 extends StatelessWidget {
                             fontSize: 12.sp,
                             letterSpacing: 0,
                             color: AppColors.white,
+                            fontFamily: 'Samsung Sharp Sans',
                           ),
                         ),
                       ],

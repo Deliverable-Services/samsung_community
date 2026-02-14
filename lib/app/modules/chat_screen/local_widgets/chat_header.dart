@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/helper_widgets/back_button.dart';
 import '../../../data/helper_widgets/custom_circle_button.dart';
+import '../../../common/services/event_tracking_service.dart';
 import '../controllers/chat_screen_controller.dart';
 
 class ChatHeader extends StatelessWidget {
@@ -22,6 +23,7 @@ class ChatHeader extends StatelessWidget {
           CustomCircleButton(
             onTap: () {
               debugPrint('Analytics: user clicked the chat options button');
+              EventTrackingService.trackEvent(eventType: 'chat_options_click');
               controller.showChatOptionsModal();
             },
             image: Icon(Icons.more_vert, color: AppColors.white, size: 20.sp),

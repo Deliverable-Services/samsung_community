@@ -28,6 +28,7 @@ class FeedCardLikedBy extends StatelessWidget {
           fontSize: 12.sp,
           color: AppColors.textWhiteOpacity60,
           fontWeight: FontWeight.w400,
+          fontFamily: 'Samsung Sharp Sans',
         ),
       );
     }
@@ -48,6 +49,7 @@ class FeedCardLikedBy extends StatelessWidget {
                     fontSize: 12.sp,
                     color: AppColors.textWhite,
                     fontWeight: FontWeight.w400,
+                    fontFamily: 'Samsung Sharp Sans',
                   ),
                 ),
                 if (usersToShow.isNotEmpty) ...[
@@ -57,6 +59,7 @@ class FeedCardLikedBy extends StatelessWidget {
                       fontSize: 12.sp,
                       color: AppColors.textWhite,
                       fontWeight: FontWeight.w700,
+                      fontFamily: 'Samsung Sharp Sans',
                     ),
                   ),
                   if (likesCount > 1) ...[
@@ -66,6 +69,7 @@ class FeedCardLikedBy extends StatelessWidget {
                         fontSize: 12.sp,
                         color: AppColors.textWhite,
                         fontWeight: FontWeight.w400,
+                        fontFamily: 'Samsung Sharp Sans',
                       ),
                     ),
                     TextSpan(
@@ -74,6 +78,7 @@ class FeedCardLikedBy extends StatelessWidget {
                         fontSize: 12.sp,
                         color: AppColors.textWhite,
                         fontWeight: FontWeight.w700,
+                        fontFamily: 'Samsung Sharp Sans',
                       ),
                     ),
                   ],
@@ -84,6 +89,7 @@ class FeedCardLikedBy extends StatelessWidget {
                       fontSize: 12.sp,
                       color: AppColors.textWhite,
                       fontWeight: FontWeight.w700,
+                      fontFamily: 'Samsung Sharp Sans',
                     ),
                   ),
                 ],

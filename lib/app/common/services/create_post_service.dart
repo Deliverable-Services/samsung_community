@@ -15,6 +15,7 @@ import '../../data/helper_widgets/bottom_sheet_modal.dart';
 import '../../data/helper_widgets/create_post_modal.dart';
 import '../../data/models/content_model.dart';
 import 'content_service.dart';
+import 'event_tracking_service.dart';
 import 'storage_service.dart';
 
 class CreatePostService {
@@ -101,6 +102,9 @@ class CreatePostService {
             if (result is Success<Map<String, dynamic>>) {
               debugPrint(
                 'Analytics: successfully finished creating and publishing a new post in the feed',
+              );
+              await EventTrackingService.trackEvent(
+                eventType: 'create_post_success',
               );
               shareToInstagram(
                 mediaPath: selectedMediaFile.value?.path ?? '',
@@ -194,7 +198,10 @@ class CreatePostService {
                 ),
                 title: const Text(
                   'Choose from Gallery',
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
                 onTap: () => Get.back(result: ImageSource.gallery),
               ),
@@ -202,7 +209,10 @@ class CreatePostService {
                 leading: const Icon(Icons.camera_alt, color: AppColors.white),
                 title: const Text(
                   'Take Photo/Video',
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
                 onTap: () => Get.back(result: ImageSource.camera),
               ),
@@ -210,7 +220,10 @@ class CreatePostService {
                 onPressed: () => Get.back(),
                 child: const Text(
                   'Cancel',
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
               ),
             ],
@@ -237,7 +250,10 @@ class CreatePostService {
                 leading: const Icon(Icons.image, color: AppColors.white),
                 title: const Text(
                   'Image',
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
                 onTap: () => Get.back(result: MediaType.image),
               ),
@@ -248,7 +264,10 @@ class CreatePostService {
                 ),
                 title: const Text(
                   'Video',
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
                 onTap: () => Get.back(result: MediaType.video),
               ),
@@ -256,7 +275,10 @@ class CreatePostService {
                 onPressed: () => Get.back(),
                 child: const Text(
                   'Cancel',
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
               ),
             ],

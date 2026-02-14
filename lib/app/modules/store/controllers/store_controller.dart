@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../common/services/event_tracking_service.dart';
 import '../../../common/services/supabase_service.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../data/helper_widgets/bottom_sheet_modal.dart';
@@ -274,6 +275,15 @@ class StoreController extends GetxController {
       debugPrint('Analytics: creating points transaction for store purchase');
       debugPrint(
         'Analytics: awarding points: ${product.costPoints} to user: $currentUserId',
+      );
+      await EventTrackingService.trackEvent(
+        eventType: 'store_purchase_points_transaction',
+        eventProperties: {
+          'product_id': product.id,
+          'product_name': product.name,
+          'points_paid': product.costPoints,
+          'user_id': currentUserId,
+        },
       );
 
       await SupabaseService.client.from('points_transactions').insert({

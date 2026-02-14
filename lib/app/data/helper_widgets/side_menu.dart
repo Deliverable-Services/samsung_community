@@ -13,6 +13,7 @@ import '../../repository/auth_repo/auth_repo.dart';
 import '../../common/controllers/unread_controller.dart';
 import 'bottom_sheet_modal.dart';
 import 'option_item.dart';
+import '../models/user_model.dart';
 
 class SideMenu extends StatelessWidget {
   const SideMenu({super.key});
@@ -43,6 +44,11 @@ class SideMenu extends StatelessWidget {
     }
   }
 
+  void _handleUserManagement(BuildContext context) {
+    Navigator.of(context, rootNavigator: true).pop();
+    Get.toNamed(Routes.USER_MANAGEMENT);
+  }
+
   void _handleProfile(BuildContext context) {
     Navigator.of(context, rootNavigator: true).pop();
     Get.toNamed(Routes.PROFILE);
@@ -70,6 +76,7 @@ class SideMenu extends StatelessWidget {
               color: AppColors.white,
               fontSize: 16.sp,
               fontWeight: FontWeight.w700,
+              fontFamily: 'Samsung Sharp Sans',
             ),
           ),
           content: Text(
@@ -78,6 +85,7 @@ class SideMenu extends StatelessWidget {
               color: AppColors.white,
               fontSize: 14.sp,
               fontWeight: FontWeight.w400,
+              fontFamily: 'Samsung Sharp Sans',
             ),
           ),
           actions: [
@@ -91,6 +99,7 @@ class SideMenu extends StatelessWidget {
                   color: AppColors.white,
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w400,
+                  fontFamily: 'Samsung Sharp Sans',
                 ),
               ),
             ),
@@ -105,6 +114,7 @@ class SideMenu extends StatelessWidget {
                   color: AppColors.white,
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
+                  fontFamily: 'Samsung Sharp Sans',
                 ),
               ),
             ),
@@ -197,6 +207,29 @@ class SideMenu extends StatelessWidget {
           onTap: () => _handleSamsungStore(context),
         ),
         SizedBox(height: 15.h),
+        Obx(() {
+          final authRepo = Get.find<AuthRepo>();
+          final currentUser = authRepo.currentUser.value;
+          if (currentUser?.role == UserRole.admin) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                OptionItem(
+                  text: 'userApproval'.tr,
+                  boxTextWidget: SvgPicture.asset(
+                    AppImages.addIcon,
+                    width: 14.w,
+                    height: 14.h,
+                    fit: BoxFit.contain,
+                  ),
+                  onTap: () => _handleUserManagement(context),
+                ),
+                SizedBox(height: 15.h),
+              ],
+            );
+          }
+          return const SizedBox.shrink();
+        }),
         OptionItem(
           text: 'profile'.tr,
           boxTextWidget: SvgPicture.asset(

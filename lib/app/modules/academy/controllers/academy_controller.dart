@@ -288,6 +288,14 @@ class AcademyController extends BaseController {
       final newBalance = currentUser.pointsBalance + points;
 
       debugPrint('Analytics: awarding points: $points to user: ${user.id}');
+      await EventTrackingService.trackEvent(
+        eventType: 'assignment_points_awarded',
+        eventProperties: {
+          'points': points,
+          'assignment_id': assignmentId,
+          'user_id': user.id,
+        },
+      );
 
       await SupabaseService.client.from('points_transactions').insert({
         'user_id': user.id,
@@ -1008,6 +1016,14 @@ class AcademyController extends BaseController {
       final registrationId = registrationResponse['id'] as String;
       debugPrint(
         'Analytics: creating points transaction for workshop registration',
+      );
+      await EventTrackingService.trackEvent(
+        eventType: 'workshop_registration_points_transaction',
+        eventProperties: {
+          'workshop_event_id': workshopEventId,
+          'cost': cost,
+          'user_id': user.id,
+        },
       );
       // 2. Create Points Transaction
       await SupabaseService.client.from('points_transactions').insert({

@@ -110,8 +110,7 @@ class _OptionItemState extends State<OptionItem> {
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
                                             colors: [
-                                              AppColors
-                                                  .optionTextGradientStart,
+                                              AppColors.optionTextGradientStart,
                                               AppColors.optionTextGradientEnd,
                                             ],
                                             stops: [0.0, 1.0],
@@ -124,6 +123,7 @@ class _OptionItemState extends State<OptionItem> {
                                           letterSpacing: 0,
                                           color: Colors.white,
                                           height: 1,
+                                          fontFamily: 'Samsung Sharp Sans',
                                         ),
                                       ),
                                     )
@@ -153,6 +153,7 @@ class _OptionItemState extends State<OptionItem> {
                                 fontSize: 8.sp,
                                 fontWeight: FontWeight.bold,
                                 height: 1,
+                                fontFamily: 'Samsung Sharp Sans',
                               ),
                             ),
                           ),
@@ -172,6 +173,7 @@ class _OptionItemState extends State<OptionItem> {
                           letterSpacing: 0,
                           color: AppColors.white,
                           height: 1,
+                          fontFamily: 'Samsung Sharp Sans',
                         ),
                         textScaler: const TextScaler.linear(1.0),
                       ),

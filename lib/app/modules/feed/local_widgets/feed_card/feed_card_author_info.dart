@@ -42,6 +42,7 @@ class FeedCardAuthorInfo extends StatelessWidget {
                   fontSize: 16.sp,
                   letterSpacing: 0,
                   color: AppColors.textWhite,
+                  fontFamily: 'Samsung Sharp Sans',
                 ),
               ),
             ],
@@ -60,4 +61,3 @@ class FeedCardAuthorInfo extends StatelessWidget {
     );
   }
 }
-

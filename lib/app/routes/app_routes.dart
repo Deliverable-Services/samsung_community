@@ -29,6 +29,7 @@ abstract class Routes {
   static const EVENTER_PAYMENT = _Paths.EVENTER_PAYMENT;
   static const NOTIFICATIONS = _Paths.NOTIFICATIONS;
   static const LOGIN_OPTIONS = _Paths.LOGIN_OPTIONS;
+  static const USER_MANAGEMENT = _Paths.USER_MANAGEMENT;
 }
 
 abstract class _Paths {
@@ -59,4 +60,5 @@ abstract class _Paths {
   static const EVENTER_PAYMENT = '/eventer-payment';
   static const NOTIFICATIONS = '/notifications';
   static const LOGIN_OPTIONS = '/login-options';
+  static const USER_MANAGEMENT = '/user-management';
 }

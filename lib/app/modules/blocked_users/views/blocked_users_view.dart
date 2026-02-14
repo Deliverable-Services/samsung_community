@@ -33,11 +33,12 @@ class BlockedUsersView extends GetView<BlockedUsersController> {
 
                 if (controller.filteredBlockedUsers.isEmpty) {
                   return Center(
-        child: Text(
+                    child: Text(
                       'noBlockedUsers'.tr,
                       style: TextStyle(
                         fontSize: 16.sp,
                         color: AppColors.textWhiteOpacity70,
+                        fontFamily: 'Samsung Sharp Sans',
                       ),
                     ),
                   );

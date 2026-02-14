@@ -51,6 +51,7 @@ class RequestSentView extends GetView<RequestSentController> {
                     fontSize: 24,
                     color: AppColors.white,
                     height: 1,
+                    fontFamily: 'Samsung Sharp Sans',
                   ),
                 ),
                 Text(
@@ -59,12 +60,17 @@ class RequestSentView extends GetView<RequestSentController> {
                     fontWeight: FontWeight.w700,
                     fontSize: 24,
                     color: AppColors.linkBlue,
+                    fontFamily: 'Samsung Sharp Sans',
                   ),
                 ),
                 SizedBox(height: 20),
                 Text(
                   "request_sent_message".tr,
-                  style: TextStyle(fontSize: 14, color: AppColors.white),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],

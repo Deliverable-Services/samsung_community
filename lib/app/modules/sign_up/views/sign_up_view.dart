@@ -78,6 +78,7 @@ class SignUpView extends GetView<SignUpController> {
                                     letterSpacing: 0,
                                     color: AppColors.white,
                                     height: 40 / 26,
+                                    fontFamily: 'Samsung Sharp Sans',
                                   ),
                                 ),
                                 TextSpan(
@@ -88,6 +89,7 @@ class SignUpView extends GetView<SignUpController> {
                                     letterSpacing: 0,
                                     color: AppColors.white,
                                     height: 40 / 30,
+                                    fontFamily: 'Samsung Sharp Sans',
                                   ),
                                 ),
                               ],
@@ -113,6 +115,7 @@ class SignUpView extends GetView<SignUpController> {
                               letterSpacing: 0,
                               color: AppColors.white,
                               height: 22 / 14,
+                              fontFamily: 'Samsung Sharp Sans',
                             ),
                             textScaler: const TextScaler.linear(1.0),
                             maxLines: 2,
@@ -211,6 +214,7 @@ class SignUpView extends GetView<SignUpController> {
                                   letterSpacing: 0,
                                   color: baseColor,
                                   height: 24 / 16,
+                                  fontFamily: 'Samsung Sharp Sans',
                                 ),
                               ),
                               TextSpan(
@@ -221,6 +225,7 @@ class SignUpView extends GetView<SignUpController> {
                                   letterSpacing: 0,
                                   color: baseColor,
                                   height: 24 / 16,
+                                  fontFamily: 'Samsung Sharp Sans',
                                 ),
                                 recognizer: disabled
                                     ? null

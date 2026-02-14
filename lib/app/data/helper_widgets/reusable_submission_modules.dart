@@ -53,6 +53,7 @@ class ReusableTextSubmitModule extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                     fontSize: 12.sp,
                     color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
                   ),
                 ),
               ],
@@ -185,6 +186,7 @@ class ReusableAudioSubmitModule extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                     fontSize: 12.sp,
                     color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
                   ),
                 ),
               ],
@@ -319,6 +321,7 @@ class _ReusableMcqSubmitModuleState extends State<ReusableMcqSubmitModule> {
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w700,
                     color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
                   ),
                 ),
               ],
@@ -333,6 +336,7 @@ class _ReusableMcqSubmitModuleState extends State<ReusableMcqSubmitModule> {
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w700,
                 color: AppColors.textWhite,
+                fontFamily: 'Samsung Sharp Sans',
               ),
             ),
 
@@ -345,6 +349,7 @@ class _ReusableMcqSubmitModuleState extends State<ReusableMcqSubmitModule> {
               textStyle: TextStyle(
                 fontSize: 14.sp,
                 color: AppColors.textWhiteSecondary,
+                fontFamily: 'Samsung Sharp Sans',
               ),
             ),
 
@@ -385,6 +390,7 @@ class _ReusableMcqSubmitModuleState extends State<ReusableMcqSubmitModule> {
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
+                            fontFamily: 'Samsung Sharp Sans',
                           ),
                         ),
                       ),

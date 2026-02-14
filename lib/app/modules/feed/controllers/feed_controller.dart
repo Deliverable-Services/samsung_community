@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../common/services/content_service.dart';
 import '../../../common/services/content_interaction_service.dart';
+import '../../../common/services/event_tracking_service.dart';
 import '../../../common/services/storage_service.dart';
 import '../../../common/services/supabase_service.dart';
 import '../../../data/constants/app_colors.dart';
@@ -62,6 +63,7 @@ class FeedController extends BaseController {
     loadContent();
 
     debugPrint('Analytics: viewing the community feed screen');
+    EventTrackingService.trackEvent(eventType: 'community_feed_view');
   }
 
   @override
@@ -447,6 +449,10 @@ class FeedController extends BaseController {
         },
         onShare: () {
           debugPrint('Analytics: user shared a post in the feed');
+          EventTrackingService.trackEvent(
+            eventType: 'feed_post_share',
+            eventProperties: {'content_id': id ?? ''},
+          );
           final shareContext = Get.context;
           if (shareContext != null &&
               Navigator.of(shareContext, rootNavigator: true).canPop()) {

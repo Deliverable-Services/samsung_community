@@ -270,6 +270,7 @@ class HebrewiLocalization {
     "remaining": "נותר",
     "profile": "פרופיל",
     "language": "שפה",
+    "userApproval": "ניהול משתמשים",
     // Service Error Messages
     "failedToCheckUser": "נכשל בבדיקת משתמש",
     "userNotFound": "משתמש לא נמצא במסד הנתונים",
@@ -289,6 +290,7 @@ class HebrewiLocalization {
     'male': 'זָכָר',
     'female': 'נקבה',
     'other': 'אחר',
+    "preferNotToSay": "מעדיף לא לומר",
     "blockedUsers": "משתמשים חסומים",
     "noBlockedUsers": "אין משתמשים חסומים",
     "unblock": "בטל חסימה",
@@ -369,5 +371,14 @@ class HebrewiLocalization {
     "invalid_mcq_data": "נתוני MCQ לא חוקיים",
     "weekly_riddle_correct_answer": "תשובה נכונה לחידה שבועית",
     "correct_assignment_answer": "תשובה נכונה למשימה",
+    "noPendingUsersFound": "לא נמצאו משתמשים ממתינים",
+    "dateOfBirth": "תאריך לידה",
+    "rejection": "דחייה",
+    "notAvailable": "לא זמין",
+    "failedToFetchUsers": "נכשל בטעינת משתמשים",
+    "failedToApproveUser": "נכשל באישור משתמש",
+    "userApprovedSuccessfully": "משתמש אושר בהצלחה",
+    "failedToRejectUser": "נכשל בדחיית משתמש",
+    "userRejectedSuccessfully": "משתמש נדחה בהצלחה",
   };
 }

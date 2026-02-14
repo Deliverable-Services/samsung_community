@@ -50,6 +50,7 @@ class NotificationListItem extends StatelessWidget {
                           fontWeight: FontWeight.w700,
                           fontSize: 15.sp,
                           color: AppColors.white,
+                          fontFamily: 'Samsung Sharp Sans',
                         ),
                       ),
                       SizedBox(height: 4.h),
@@ -60,6 +61,7 @@ class NotificationListItem extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 13.sp,
                           color: AppColors.textWhiteOpacity70,
+                          fontFamily: 'Samsung Sharp Sans',
                         ),
                       ),
                     ],

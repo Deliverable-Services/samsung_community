@@ -72,6 +72,7 @@ class LoginOptionsView extends GetView<VerificationCodeController> {
                               letterSpacing: 0,
                               color: AppColors.white,
                               height: 40 / 26,
+                              fontFamily: 'Samsung Sharp Sans',
                             ),
                           ),
                           TextSpan(
@@ -82,6 +83,7 @@ class LoginOptionsView extends GetView<VerificationCodeController> {
                               letterSpacing: 0,
                               color: AppColors.white,
                               height: 40 / 30,
+                              fontFamily: 'Samsung Sharp Sans',
                             ),
                           ),
                         ],
@@ -106,6 +108,7 @@ class LoginOptionsView extends GetView<VerificationCodeController> {
                         letterSpacing: 0,
                         color: AppColors.white,
                         height: 22 / 14,
+                        fontFamily: 'Samsung Sharp Sans',
                       ),
                       textScaler: const TextScaler.linear(1.0),
                       maxLines: 2,

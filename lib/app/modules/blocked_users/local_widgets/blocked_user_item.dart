@@ -60,7 +60,11 @@ class BlockedUserItem extends GetView<BlockedUsersController> {
           Expanded(
             child: Text(
               user.fullName ?? 'username'.tr,
-              style: TextStyle(fontSize: 14.sp, color: AppColors.white),
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: AppColors.white,
+                fontFamily: 'Samsung Sharp Sans',
+              ),
             ),
           ),
           SizedBox(width: 12.w),

@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
+import '../../common/services/event_tracking_service.dart';
 import '../../modules/notifications/controllers/notifications_controller.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_images.dart';
@@ -54,6 +55,7 @@ class Navbar extends StatelessWidget {
                   letterSpacing: 0,
                   color: AppColors.white,
                   height: 1,
+                  fontFamily: 'Samsung Sharp Sans',
                 ),
                 textScaler: const TextScaler.linear(1.0),
               ),
@@ -79,6 +81,7 @@ class Navbar extends StatelessWidget {
                       letterSpacing: 0,
                       color: AppColors.white,
                       height: 26.32 / 14,
+                      fontFamily: 'Samsung Sharp Sans',
                     ),
                     textScaler: const TextScaler.linear(1.0),
                   ),
@@ -113,7 +116,6 @@ class Navbar extends StatelessWidget {
                       height: 24.h,
                       fit: BoxFit.contain,
                     ),
-
                   ],
                 ),
               ),
@@ -146,6 +148,7 @@ class Navbar extends StatelessWidget {
           ),
           onTap: () {
             debugPrint('Analytics: user clicked the side menu button');
+            EventTrackingService.trackEvent(eventType: 'side_menu_click');
             SideMenu.show(context);
           },
         ),

@@ -23,7 +23,10 @@ class AcademyView extends GetView<AcademyController> {
   @override
   Widget build(BuildContext context) {
     return DefaultTextStyle(
-      style: const TextStyle(decoration: TextDecoration.none),
+      style: const TextStyle(
+        decoration: TextDecoration.none,
+        fontFamily: 'Samsung Sharp Sans',
+      ),
       child: RefreshIndicator(
         onRefresh: controller.loadContent,
         child: CustomScrollView(
@@ -233,7 +236,7 @@ class AcademyView extends GetView<AcademyController> {
                 'noContentAvailable'.tr,
                 style: TextStyle(
                   fontFamily: 'Samsung Sharp Sans',
-                  fontSize: 14,
+                  fontSize: 14.sp,
                 ),
               ),
             ),
@@ -361,6 +364,7 @@ class AcademyView extends GetView<AcademyController> {
                         fontSize: 12.sp,
                         letterSpacing: 0,
                         color: AppColors.white,
+                        fontFamily: 'Samsung Sharp Sans',
                       ),
                     ),
                   ],

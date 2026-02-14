@@ -85,6 +85,7 @@ class AssignmentCard extends StatelessWidget {
                           fontWeight: FontWeight.w700,
                           fontSize: 12.sp,
                           color: AppColors.white,
+                          fontFamily: 'Samsung Sharp Sans',
                         ),
                       ),
                     ],

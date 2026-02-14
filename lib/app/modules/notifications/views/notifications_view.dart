@@ -50,6 +50,7 @@ class NotificationsView extends GetView<NotificationsController> {
                       style: TextStyle(
                         fontSize: 14.sp,
                         color: AppColors.textWhiteOpacity70,
+                        fontFamily: 'Samsung Sharp Sans',
                       ),
                     ),
                   );
@@ -111,10 +112,17 @@ class NotificationsSearchBar extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller.searchController,
-              style: TextStyle(fontSize: 14.sp, color: AppColors.white),
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: AppColors.white,
+                fontFamily: 'Samsung Sharp Sans',
+              ),
               decoration: InputDecoration(
                 hintText: 'searchNotifications'.tr,
-                hintStyle: TextStyle(color: AppColors.white.withOpacity(0.4)),
+                hintStyle: TextStyle(
+                  color: AppColors.white.withOpacity(0.4),
+                  fontFamily: 'Samsung Sharp Sans',
+                ),
                 border: InputBorder.none,
                 isDense: true,
               ),
@@ -143,6 +151,7 @@ class NotificationsHeader extends StatelessWidget {
               fontSize: 12.sp,
               color: AppColors.linkBlue,
               fontWeight: FontWeight.w700,
+              fontFamily: 'Samsung Sharp Sans',
             ),
           ),
         ),

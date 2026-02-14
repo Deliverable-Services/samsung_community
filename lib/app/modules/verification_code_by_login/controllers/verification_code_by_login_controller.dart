@@ -98,10 +98,11 @@ class VerificationCodeByLoginController extends GetxController {
           ),
           callback: (payload) async {
             final newStatus = payload.newRecord['status'] as String?;
-            if (newStatus == null) return;
+            final role = payload.newRecord['role'] as String?;
+
+            if (newStatus == null || role == 'admin') return;
 
             _currentUserStatus = newStatus;
-            debugPrint('🔔 Status changed → $newStatus');
 
             // ✅ Approved
             if (newStatus == 'approved') {
@@ -210,9 +211,10 @@ class VerificationCodeByLoginController extends GetxController {
     }
 
     final status = userDetails['status'] as String?;
+    final role = userDetails['role'] as String?;
 
     // If user status is pending, show error
-    if (status == 'pending') {
+    if (status == 'pending' && role != 'admin') {
       otpError.value = 'wait_for_approval'.tr;
       formKey.currentState?.validate();
       return;

@@ -59,6 +59,7 @@ class PromotionCard extends StatelessWidget {
                       color: Colors.white,
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w700,
+                      fontFamily: 'Samsung Sharp Sans',
                     ),
                   ),
                   SizedBox(height: 6.h),
@@ -69,6 +70,7 @@ class PromotionCard extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.85),
                       fontSize: 14.sp,
+                      fontFamily: 'Samsung Sharp Sans',
                     ),
                   ),
                   // SizedBox(height: 10.h),

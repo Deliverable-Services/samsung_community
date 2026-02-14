@@ -375,7 +375,10 @@ class EditProfileController extends BaseController {
                 ),
                 title: const Text(
                   'Choose from Gallery',
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
                 onTap: () => Get.back(result: ImageSource.gallery),
               ),
@@ -383,7 +386,10 @@ class EditProfileController extends BaseController {
                 leading: const Icon(Icons.camera_alt, color: AppColors.white),
                 title: const Text(
                   'Take Photo',
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
                 onTap: () => Get.back(result: ImageSource.camera),
               ),
@@ -391,7 +397,10 @@ class EditProfileController extends BaseController {
                 onPressed: () => Get.back(),
                 child: const Text(
                   'Cancel',
-                  style: TextStyle(color: AppColors.white),
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
+                  ),
                 ),
               ),
             ],

@@ -56,7 +56,6 @@ class NotificationsController extends BaseController {
           .isFilter('deleted_at', null)
           .gt('created_at', latestTimestamp)
           .order('created_at', ascending: false);
-      debugPrint('response:123 $response');
 
       final latestItems = (response as List)
           .map((e) => NotificationItem.fromJson(e))

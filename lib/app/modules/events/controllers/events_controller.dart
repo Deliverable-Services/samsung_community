@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../common/services/event_service.dart';
+import '../../../common/services/event_tracking_service.dart';
 import '../../../common/services/supabase_service.dart';
 import '../../../data/core/base/base_controller.dart';
 import '../../../data/core/utils/common_snackbar.dart';
@@ -267,6 +268,15 @@ class EventsController extends BaseController {
         debugPrint(
           'Analytics: user does not have enough points to register for an internal event',
         );
+        await EventTrackingService.trackEvent(
+          eventType: 'event_registration_insufficient_points',
+          eventProperties: {
+            'event_id': event.id,
+            'event_title': event.title,
+            'cost_points': costPoints,
+            'current_points': currentPoints,
+          },
+        );
         CommonSnackbar.error('insufficientPoints'.tr);
         return false;
       }
@@ -303,8 +313,14 @@ class EventsController extends BaseController {
         debugPrint(
           'Analytics: creating points transaction for event registration',
         );
-        debugPrint(
-          'Analytics: awarding points: $costPoints to user: $currentUserId',
+        debugPrint('Analytics: awarding points: $costPoints to user: $currentUserId');
+        await EventTrackingService.trackEvent(
+          eventType: 'event_registration_points_transaction',
+          eventProperties: {
+            'amount': -costPoints,
+            'event_id': event.id,
+            'user_id': currentUserId,
+          },
         );
         await SupabaseService.client.from('points_transactions').insert({
           'user_id': currentUserId,
@@ -491,6 +507,10 @@ class EventsController extends BaseController {
                           debugPrint(
                             'Analytics: user clicked the confirm button to cancel an event registration',
                           );
+                          EventTrackingService.trackEvent(
+                            eventType: 'event_cancel_confirm_click',
+                            eventProperties: {'event_id': event.id},
+                          );
                           if (isCancelling.value) return;
                           cancelEventRegistration(event).then((didCancel) {
                             if (!didCancel) return;
@@ -528,6 +548,10 @@ class EventsController extends BaseController {
             : () {
                 debugPrint(
                   'Analytics: user clicked the register button for an internal event',
+                );
+                EventTrackingService.trackEvent(
+                  eventType: 'event_register_click',
+                  eventProperties: {'event_id': event.id},
                 );
                 if (isBusy) return;
                 Get.back();

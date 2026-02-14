@@ -59,6 +59,7 @@ class ChatMessagesList extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                       fontSize: 14.sp,
                       color: AppColors.textWhiteOpacity70,
+                      fontFamily: 'Samsung Sharp Sans',
                     ),
                   ),
                 ),

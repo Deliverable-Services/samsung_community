@@ -32,6 +32,7 @@ class EditProfileTabButton extends StatelessWidget {
                 fontSize: 16.sp,
                 fontWeight: isActive ? FontWeight.w700 : FontWeight.w400,
                 color: AppColors.white,
+                fontFamily: 'Samsung Sharp Sans',
               ),
             ),
             SizedBox(height: 4.h),

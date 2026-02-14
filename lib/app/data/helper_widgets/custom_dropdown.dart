@@ -110,12 +110,14 @@ class CustomDropDown<T> extends StatelessWidget {
                     color: Colors.grey.shade300,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
+                    fontFamily: 'Samsung Sharp Sans',
                   ),
                 ),
                 style: const TextStyle(
                   color: AppColors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
+                  fontFamily: 'Samsung Sharp Sans',
                 ),
                 selectedItemBuilder: (BuildContext context) {
                   return items.map<Widget>((DropdownMenuItem<T> item) {
@@ -132,6 +134,7 @@ class CustomDropDown<T> extends StatelessWidget {
                         color: AppColors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
+                        fontFamily: 'Samsung Sharp Sans',
                       ),
                     );
                   }).toList();

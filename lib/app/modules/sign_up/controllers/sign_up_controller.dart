@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:samsung_community_mobile/app/routes/app_pages.dart';
 
+import '../../../common/services/event_tracking_service.dart';
 import '../../../data/core/utils/common_snackbar.dart';
 import '../../../repository/auth_repo/auth_repo.dart';
 
@@ -20,7 +21,11 @@ class SignUpController extends GetxController {
     super.onInit();
 
     debugPrint('Analytics: phone number entry screen');
-    debugPrint('Analytics: started a new registration process (account creation).');
+    EventTrackingService.trackEvent(eventType: 'phone_number_entry_view');
+    debugPrint(
+      'Analytics: started a new registration process (account creation).',
+    );
+    EventTrackingService.trackEvent(eventType: 'registration_process_start');
   }
 
   bool get isFormValid {

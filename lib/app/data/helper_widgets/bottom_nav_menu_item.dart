@@ -101,6 +101,7 @@ class BottomNavMenuItem extends StatelessWidget {
                         color: isActive
                             ? AppColors.white
                             : AppColors.navTextInactive,
+                        fontFamily: 'Samsung Sharp Sans',
                       ),
                       textScaler: const TextScaler.linear(1.0),
                     ),

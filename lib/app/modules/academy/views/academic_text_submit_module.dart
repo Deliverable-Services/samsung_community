@@ -36,7 +36,11 @@ class AcademicTextSubmitModule extends StatelessWidget {
             /// Points
             Row(
               children: [
-                SvgPicture.asset(AppImages.pointsIcon, width: 18.w, height: 18.h),
+                SvgPicture.asset(
+                  AppImages.pointsIcon,
+                  width: 18.w,
+                  height: 18.h,
+                ),
                 SizedBox(width: 4.w),
                 Text(
                   "${pointsToEarn ?? 0}",
@@ -162,7 +166,11 @@ class _AcademicMcqSubmitModuleState extends State<AcademicMcqSubmitModule> {
             /// Points
             Row(
               children: [
-                SvgPicture.asset(AppImages.pointsIcon, width: 18.w, height: 18.h),
+                SvgPicture.asset(
+                  AppImages.pointsIcon,
+                  width: 18.w,
+                  height: 18.h,
+                ),
                 SizedBox(width: 4.w),
                 Text(
                   '+${widget.pointsToEarn ?? 0}',
@@ -170,6 +178,7 @@ class _AcademicMcqSubmitModuleState extends State<AcademicMcqSubmitModule> {
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w700,
                     color: AppColors.white,
+                    fontFamily: 'Samsung Sharp Sans',
                   ),
                 ),
               ],
@@ -184,6 +193,7 @@ class _AcademicMcqSubmitModuleState extends State<AcademicMcqSubmitModule> {
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w700,
                 color: AppColors.textWhite,
+                fontFamily: 'Samsung Sharp Sans',
               ),
             ),
 
@@ -195,6 +205,7 @@ class _AcademicMcqSubmitModuleState extends State<AcademicMcqSubmitModule> {
               style: TextStyle(
                 fontSize: 14.sp,
                 color: AppColors.textWhiteSecondary,
+                fontFamily: 'Samsung Sharp Sans',
               ),
             ),
 
@@ -203,14 +214,19 @@ class _AcademicMcqSubmitModuleState extends State<AcademicMcqSubmitModule> {
             /// MCQ Options
             ...List.generate(widget.options.length, (index) {
               final optionMap = widget.options[index];
-              final optionText = (optionMap as Map<String, dynamic>).values.first
+              final optionText = (optionMap as Map<String, dynamic>)
+                  .values
+                  .first
                   .toString();
 
               return GestureDetector(
                 onTap: () => selectedIndex.value = index,
                 child: Container(
                   margin: EdgeInsets.only(bottom: 12.h),
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 14.h,
+                  ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16.r),
                     gradient: LinearGradient(
@@ -230,6 +246,7 @@ class _AcademicMcqSubmitModuleState extends State<AcademicMcqSubmitModule> {
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
+                            fontFamily: 'Samsung Sharp Sans',
                           ),
                         ),
                       ),

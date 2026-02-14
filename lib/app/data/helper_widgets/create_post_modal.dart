@@ -176,6 +176,7 @@ class _MediaPreview extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: AppColors.textWhite,
+                      fontFamily: 'Samsung Sharp Sans',
                     ),
                   ),
                 ],
@@ -260,6 +261,7 @@ class _MediaPreview extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: AppColors.textWhiteOpacity70,
+                          fontFamily: 'Samsung Sharp Sans',
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,

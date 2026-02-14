@@ -54,10 +54,13 @@ class FollowersFollowingView extends GetView<FollowersFollowingController> {
                 if (users.isEmpty) {
                   return Center(
                     child: Text(
-                      isFollowersTab ? 'noFollowers'.tr : 'notFollowingAnyone'.tr,
+                      isFollowersTab
+                          ? 'noFollowers'.tr
+                          : 'notFollowingAnyone'.tr,
                       style: TextStyle(
                         fontSize: 16.sp,
                         color: AppColors.textWhiteOpacity70,
+                        fontFamily: 'Samsung Sharp Sans',
                       ),
                     ),
                   );

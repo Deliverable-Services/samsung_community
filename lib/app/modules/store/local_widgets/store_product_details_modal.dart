@@ -8,6 +8,7 @@ import '../../../data/constants/app_images.dart';
 import '../../../data/helper_widgets/alert_modal.dart';
 import '../../../data/models/store_product_model.dart';
 import '../../../repository/auth_repo/auth_repo.dart';
+import '../../../common/services/event_tracking_service.dart';
 import '../controllers/store_controller.dart';
 import 'product_detail.dart';
 import 'shipping_address_modal.dart';
@@ -25,12 +26,24 @@ class StoreProductDetailsModal extends StatelessWidget {
   void _handlePurchase(BuildContext context) {
     try {
       debugPrint('Analytics: user clicked the buy button for a store product');
+      EventTrackingService.trackEvent(
+        eventType: 'store_product_buy_click',
+        eventProperties: {'product_id': product.id},
+      );
       final authRepo = Get.find<AuthRepo>();
       final currentPoints = authRepo.currentUser.value?.pointsBalance ?? 0;
 
       if (currentPoints < product.costPoints) {
         debugPrint(
           'Analytics: user does not have enough points to buy a store product',
+        );
+        EventTrackingService.trackEvent(
+          eventType: 'store_product_insufficient_points',
+          eventProperties: {
+            'product_id': product.id,
+            'current_points': currentPoints,
+            'cost_points': product.costPoints,
+          },
         );
         AlertModal.show(
           context,
