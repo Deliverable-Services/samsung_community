@@ -8,6 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../constants/app_button.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_images.dart';
+import 'close_button.dart';
 import 'event_tablet.dart';
 import 'read_more_text.dart';
 import 'video_player/video_player_widget.dart';
@@ -23,6 +24,7 @@ class EventBuyingBottomBarModal extends StatelessWidget {
   final EdgeInsets? extraPaddingForButton;
   final String? mediaUrl;
   final bool isVideo;
+  final VoidCallback? onClose;
 
   const EventBuyingBottomBarModal({
     super.key,
@@ -36,6 +38,7 @@ class EventBuyingBottomBarModal extends StatelessWidget {
     this.extraPaddingForButton,
     this.mediaUrl,
     this.isVideo = false,
+    this.onClose,
   });
 
   @override
@@ -53,40 +56,48 @@ class EventBuyingBottomBarModal extends StatelessWidget {
                   children: [
                     SizedBox(height: 20),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        EventTablet(
-                          widget: Text(
-                            date ?? '',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12.sp,
-                              letterSpacing: 0,
-                              color: AppColors.white,
-                              fontFamily: 'Samsung Sharp Sans',
-                            ),
-                          ),
-                          extraPadding: EdgeInsets.symmetric(vertical: -2.5.w),
-                          onTap: () {},
-                        ),
-                        SizedBox(width: 8),
-                        if (timing != null && timing!.isNotEmpty) ...[
-                          EventTablet(
-                            widget: Text(
-                              timing ?? '',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12.sp,
-                                letterSpacing: 0,
-                                color: AppColors.white,
-                                fontFamily: 'Samsung Sharp Sans',
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            EventTablet(
+                              widget: Text(
+                                date ?? '',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12.sp,
+                                  letterSpacing: 0,
+                                  color: AppColors.white,
+                                  fontFamily: 'Samsung Sharp Sans',
+                                ),
                               ),
+                              extraPadding: EdgeInsets.symmetric(vertical: -2.5.w),
+                              onTap: () {},
                             ),
-                            extraPadding: EdgeInsets.symmetric(
-                              vertical: -2.5.w,
-                            ),
-                            onTap: () {},
-                          ),
-                        ],
+                            SizedBox(width: 8),
+                            if (timing != null && timing!.isNotEmpty) ...[
+                              EventTablet(
+                                widget: Text(
+                                  timing ?? '',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 12.sp,
+                                    letterSpacing: 0,
+                                    color: AppColors.white,
+                                    fontFamily: 'Samsung Sharp Sans',
+                                  ),
+                                ),
+                                extraPadding: EdgeInsets.symmetric(
+                                  vertical: -2.5.w,
+                                ),
+                                onTap: () {},
+                              ),
+                            ],
+                          ],
+                        ),
+                        if (onClose != null) CustomCloseButton(onTap: onClose!),
                       ],
                     ),
                     SizedBox(height: 20.h),

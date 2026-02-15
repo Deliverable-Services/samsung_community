@@ -106,11 +106,6 @@ class CreatePostService {
               await EventTrackingService.trackEvent(
                 eventType: 'create_post_success',
               );
-              shareToInstagram(
-                mediaPath: selectedMediaFile.value?.path ?? '',
-                caption:
-                    "${titleController.text}\n${descriptionController.text}",
-              );
               clearFields();
               CommonSnackbar.success('post_published_successfully'.tr);
               onSuccess();

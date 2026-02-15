@@ -87,6 +87,8 @@ class EventModel {
   final String? zoomStartTime;
   final String? zoomEndTime;
   final String? externalId;
+  /// DB column: 'active', 'inactive', or null.
+  final String? status;
 
   EventModel({
     required this.id,
@@ -112,7 +114,14 @@ class EventModel {
     this.zoomStartTime,
     this.zoomEndTime,
     this.externalId,
+    this.status,
   });
+
+  /// True when status is explicitly 'active'. Excludes 'inactive' and null.
+  bool get isActive => status?.toLowerCase() == 'active';
+
+  /// True when event should be shown: status is 'active' or null. Only 'inactive' is filtered out.
+  bool get isNotInactive => status?.toLowerCase() != 'inactive';
 
   Map<String, dynamic> toJson() {
     return {
@@ -138,6 +147,7 @@ class EventModel {
       'updated_at': updatedAt.toIso8601String(),
       'zoom_start_time': zoomStartTime,
       'zoom_end_time': zoomEndTime,
+      'status': status,
     };
   }
 
@@ -171,6 +181,7 @@ class EventModel {
       zoomStartTime: json['zoom_start_time'] as String?,
       zoomEndTime: json['zoom_end_time'] as String?,
       externalId: json['external_id'] as String?,
+      status: json['status'] as String?,
     );
   }
 
@@ -198,6 +209,7 @@ class EventModel {
     String? zoomStartTime,
     String? zoomEndTime,
     String? externalId,
+    String? status,
   }) {
     return EventModel(
       id: id ?? this.id,
@@ -223,6 +235,7 @@ class EventModel {
       zoomStartTime: zoomStartTime ?? this.zoomStartTime,
       zoomEndTime: zoomEndTime ?? this.zoomEndTime,
       externalId: externalId ?? this.externalId,
+      status: status ?? this.status,
     );
   }
 }

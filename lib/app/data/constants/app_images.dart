@@ -7,6 +7,7 @@ class AppImages {
       addIcon = '$baseUrl/addUser.svg',
       icFailed = '$baseUrl/icFailed.svg',
       icVerify = '$baseUrl/icVerify.svg',
+      academyIcon = '$baseUrl/cup.svg',
       imageCardBackground = '$baseUrl/imageCardBackground.png',
       icLiveVideoStartingSoon = '$baseUrl/icLiveVideoStartingSoon.svg',
       notificationIcon = '$baseUrl/notification_icon.png',

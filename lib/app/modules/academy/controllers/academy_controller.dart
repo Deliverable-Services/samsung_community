@@ -892,7 +892,7 @@ class AcademyController extends BaseController {
 
     BottomSheetModal.show(
       context,
-      buttonType: BottomSheetButtonType.close,
+      buttonType: BottomSheetButtonType.none,
       onClose: () {
         clearFields();
       },
@@ -909,6 +909,10 @@ class AcademyController extends BaseController {
         timing: timingString,
         mediaUrl: event?.imageUrl ?? content.mediaFileUrl,
         isVideo: false,
+        onClose: () {
+          Navigator.of(context, rootNavigator: true).pop();
+          clearFields();
+        },
         onButtonTap: () {
           if (isRegistered) {
             final link = event?.zoomLink ?? content.zoomLink ?? '';
@@ -1082,13 +1086,13 @@ class AcademyController extends BaseController {
       content: RegistrationSuccessModal(
         icon: AppImages.notEnoughPointsIcon,
         title: "youDoNotHaveEnoughPoints".tr,
-        text: "payByCreditCard".tr,
+        text: "close".tr,
         description: 'yourBalanceIsTooLowToCompleteThisAction'.tr,
         onButtonTap: () {
           // Close insufficient modal
           Get.back();
           // Mock credit card success for now as per instructions (or direct to success)
-          clickOnSuccess(content: content);
+          // clickOnSuccess(content: content);
         },
       ),
     );

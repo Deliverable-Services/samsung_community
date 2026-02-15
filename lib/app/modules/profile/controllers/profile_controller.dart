@@ -210,12 +210,13 @@ class ProfileController extends BaseController {
   void showCommentsModal(String contentId) {
     BottomSheetModal.show(
       Get.context!,
-      buttonType: BottomSheetButtonType.close,
+      buttonType: BottomSheetButtonType.none,
       content: CommentsModal(
         contentId: contentId,
         onAddComment: (String commentText) async {
           await loadUserPosts();
         },
+        onClose: () => Navigator.of(Get.context!, rootNavigator: true).pop(),
       ),
     );
   }

@@ -79,7 +79,9 @@ class EventsView extends GetView<EventsController> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (controller.allEventsList.isEmpty) {
+        final activeAllEvents =
+            controller.allEventsList.where((e) => e.isNotInactive).toList();
+        if (activeAllEvents.isEmpty) {
           return ListView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
@@ -110,7 +112,7 @@ class EventsView extends GetView<EventsController> {
           children: [
             _buildSearchBarForAllEvent(),
             SizedBox(height: 20.h),
-            ...controller.allEventsList.map((event) {
+            ...activeAllEvents.map((event) {
               final List<EventLabel> labels = [
                 EventLabel(text: controller.formatEventDate(event.eventDate)),
               ];
@@ -178,7 +180,9 @@ class EventsView extends GetView<EventsController> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (controller.myEventsList.isEmpty) {
+        final activeMyEvents =
+            controller.myEventsList.where((e) => e.isNotInactive).toList();
+        if (activeMyEvents.isEmpty) {
           return ListView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
@@ -209,7 +213,7 @@ class EventsView extends GetView<EventsController> {
           children: [
             _buildSearchBar(),
             SizedBox(height: 20.h),
-            ...controller.myEventsList.map((event) {
+            ...activeMyEvents.map((event) {
               final List<EventLabel> labels = [
                 EventLabel(text: controller.formatEventDate(event.eventDate)),
               ];

@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 import 'app/common/services/app_lifecycle_service.dart';
+import 'app/routes/app_pages.dart';
 import 'app/common/services/profile_service.dart';
 import 'app/common/services/supabase_service.dart';
 import 'app/data/constants/app_consts.dart';
@@ -19,7 +20,6 @@ import 'app/data/localization/language_controller.dart';
 import 'app/data/localization/local_string.dart';
 import 'app/modules/notifications/controllers/notifications_controller.dart';
 import 'app/repository/auth_repo/auth_repo.dart';
-import 'app/routes/app_pages.dart';
 
 /// ------------------------------------------------------------
 /// 🔔 LOCAL NOTIFICATION INSTANCE
@@ -50,6 +50,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 /// 🌍 NAVIGATOR KEY
 /// ------------------------------------------------------------
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+/// Set when app is launched from a notification tap (terminated state).
+RemoteMessage? initialNotificationMessage;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -106,7 +109,19 @@ Future<void> main() async {
     iOS: iosSettings,
   );
 
-  await flutterLocalNotificationsPlugin.initialize(initSettings);
+  await flutterLocalNotificationsPlugin.initialize(
+    initSettings,
+    onDidReceiveNotificationResponse: (NotificationResponse response) {
+      if (response.payload != null || response.id != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          navigatorKey.currentState?.pushNamedAndRemoveUntil(
+            Routes.BOTTOM_BAR,
+            (route) => false,
+          );
+        });
+      }
+    },
+  );
 
   /// ------------------------------------------------------------
   /// 🔔 CREATE ANDROID CHANNEL
@@ -159,13 +174,23 @@ Future<void> main() async {
   });
 
   /// ------------------------------------------------------------
-  /// 🔔 NOTIFICATION TAP HANDLER
+  /// 🔔 NOTIFICATION TAP HANDLER (app in background – tap opens app)
   /// ------------------------------------------------------------
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
     debugPrint('🔔 Notification Clicked');
-    // Example:
-    // navigatorKey.currentState?.pushNamed('/notifications');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        Routes.BOTTOM_BAR,
+        (route) => false,
+      );
+    });
   });
+
+  /// ------------------------------------------------------------
+  /// 🔔 APP LAUNCHED FROM NOTIFICATION TAP (app was terminated)
+  /// ------------------------------------------------------------
+  initialNotificationMessage =
+      await FirebaseMessaging.instance.getInitialMessage();
 
   /// ------------------------------------------------------------
   /// 🔔 GET FCM TOKEN

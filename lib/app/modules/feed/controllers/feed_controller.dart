@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../common/services/content_service.dart';
 import '../../../common/services/content_interaction_service.dart';
@@ -447,23 +448,24 @@ class FeedController extends BaseController {
           Get.back();
           deleteContent(id);
         },
-        onShare: () {
+        onShare: () async {
+          Get.back();
           debugPrint('Analytics: user shared a post in the feed');
           EventTrackingService.trackEvent(
             eventType: 'feed_post_share',
-            eventProperties: {'content_id': id ?? ''},
+            eventProperties: {'content_id': id},
           );
-          final shareContext = Get.context;
-          if (shareContext != null &&
-              Navigator.of(shareContext, rootNavigator: true).canPop()) {
-            Navigator.of(shareContext, rootNavigator: true).pop();
+          final shareTitle = content?.title?.trim();
+          final shareDesc = content?.description?.trim();
+          final parts = <String>[];
+          if (shareTitle != null && shareTitle.isNotEmpty) parts.add(shareTitle);
+          if (shareDesc != null && shareDesc.isNotEmpty) parts.add(shareDesc);
+          final shareText = parts.join('\n\n');
+          if (shareText.isNotEmpty) {
+            await Share.share(shareText);
+          } else {
+            await Share.share('Check out this post!');
           }
-          Future.delayed(const Duration(milliseconds: 600), () {
-            final context = Get.context;
-            if (context != null && !_isOpeningSocialModal) {
-              showSocialMediaModal(id);
-            }
-          });
         },
       ),
     );
@@ -681,10 +683,11 @@ class FeedController extends BaseController {
   void showCommentsModal(String contentId) {
     BottomSheetModal.show(
       Get.context!,
-      buttonType: BottomSheetButtonType.close,
+      buttonType: BottomSheetButtonType.none,
       content: CommentsModal(
         contentId: contentId,
         onAddComment: (commentText) => addComment(contentId, commentText),
+        onClose: () => Navigator.of(Get.context!, rootNavigator: true).pop(),
         onCommentsCountUpdated: (totalCount) {
           // Sync the commentsCount shown on the card with the actual total
           final contentIndex = contentList.indexWhere((c) => c.id == contentId);

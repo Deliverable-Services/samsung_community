@@ -96,7 +96,7 @@ class HebrewiLocalization {
     "welcomeToOur": "ברוכים הבאים ל\n",
     "sCommunity": "S Society",
     "welcomeDescription":
-        "לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אליט. סד דו איוסמוד טמפור....",
+        "המקום בו כל החוויות, הקשרים, ההתפחויות והכיף קורים בענק ",
     "logIn": "התחבר",
     "approval": "אישור",
     "dontHaveAccount": "אין לי חשבון ",
@@ -147,7 +147,7 @@ class HebrewiLocalization {
     "save": "שמור שינויים",
     "account_details": "פרטי חשבון",
     "social_media": "מדיה חברתית",
-    "profession": "מִקצוֹעַ",
+    "profession": "מקצוע",
     "bio": "ביו",
     "name_of_class": "שם הכיתה",
     "are_you_student": "האם אתה סטודנט?",
@@ -191,6 +191,8 @@ class HebrewiLocalization {
     "youDoNotHaveEnoughPoints": "אין לך מספיק נקודות.",
     "yourBalanceIsTooLowToCompleteThisAction":
         "היתרה שלך נמוכה מדי כדי להשלים פעולה זו.",
+    "copyZoomLink": "העתק קישור זום",
+    "zoomLinkInactive": "זה לא פעיל",
     "payByCreditCard": "שלם באמצעות כרטיס אשראי",
     "registrationSuccessful": "ההרשמה בוצעה בהצלחה",
     "theZoomLinkWillBeUpdatedPriorToTheLiveSession":
@@ -204,6 +206,7 @@ class HebrewiLocalization {
     // Home Screen
     "homeMoreDetails": "פרטים נוספים",
     "homePoints": "נקודות: -",
+    "free": "חינם",
     "points": "נקודות",
     // Filter Component
     "filterExploreLibrary": "חקור את הספרייה שלנו.....",
@@ -255,9 +258,11 @@ class HebrewiLocalization {
     "noMyEventsFound": "לא נמצאו אירועים עבורך",
     "details": "פרטים",
     "buying": "רכישה",
+    "noTicketsLeft": "לא נותרו כרטיסים.",
 
     // Side Menu
     "messages": "הודעות",
+    "tasks": "משימות",
     "store": "חנות",
     "samsungStore": "חנות סמסונג",
     "exploreStore": "חקור את החנות",

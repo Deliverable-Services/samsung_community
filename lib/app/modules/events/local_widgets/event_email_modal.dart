@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../data/core/utils/common_snackbar.dart';
+import '../../../repository/auth_repo/auth_repo.dart';
 import '../../../data/constants/app_button.dart';
 import '../../../data/constants/app_colors.dart';
 import 'event_registration_success_modal.dart';
@@ -33,8 +34,12 @@ class EventEmailModal extends StatelessWidget {
     VoidCallback? onNext,
     EventModel? eventModel,
   }) {
-    // Create and put controller
-    Get.put(EventEmailController());
+    final authRepo = Get.find<AuthRepo>();
+    final profileEmail = authRepo.currentUser.value?.email;
+    final userEmail = (profileEmail != null && profileEmail.trim().isNotEmpty)
+        ? profileEmail.trim()
+        : '';
+    Get.put(EventEmailController(initialEmail: userEmail));
     BottomSheetModal.show(
       context,
       content: EventEmailModal(

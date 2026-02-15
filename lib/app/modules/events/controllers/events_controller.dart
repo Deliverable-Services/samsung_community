@@ -226,6 +226,19 @@ class EventsController extends BaseController {
     return (event.maxTickets! - event.ticketsSold).clamp(0, event.maxTickets!);
   }
 
+  void _updateEventInLists(EventModel updated) {
+    final allIndex = allEventsList.indexWhere((e) => e.id == updated.id);
+    if (allIndex != -1) {
+      allEventsList[allIndex] = updated;
+      allEventsList.refresh();
+    }
+    final myIndex = myEventsList.indexWhere((e) => e.id == updated.id);
+    if (myIndex != -1) {
+      myEventsList[myIndex] = updated;
+      myEventsList.refresh();
+    }
+  }
+
   /// Show event details modal - reusable method
   Future<bool> registerEventWithPoints(
     EventModel event, {
@@ -308,12 +321,26 @@ class EventsController extends BaseController {
         debugPrint('Registration inserted. ID: ${registrationResponse['id']}');
         final registrationId = registrationResponse['id'] as String;
 
+        // 1b. Increment tickets_sold on the event
+        final eventRow = await SupabaseService.client
+            .from('events')
+            .select('tickets_sold')
+            .eq('id', event.id)
+            .single();
+        final currentTicketsSold = eventRow['tickets_sold'] as int? ?? 0;
+        await SupabaseService.client
+            .from('events')
+            .update({'tickets_sold': currentTicketsSold + 1})
+            .eq('id', event.id);
+
         // 2. Create Points Transaction
         debugPrint('Inserting points_transaction...');
         debugPrint(
           'Analytics: creating points transaction for event registration',
         );
-        debugPrint('Analytics: awarding points: $costPoints to user: $currentUserId');
+        debugPrint(
+          'Analytics: awarding points: $costPoints to user: $currentUserId',
+        );
         await EventTrackingService.trackEvent(
           eventType: 'event_registration_points_transaction',
           eventProperties: {
@@ -344,10 +371,11 @@ class EventsController extends BaseController {
         // 4. Refresh User Data
         await authRepo.loadCurrentUser();
 
-        // 5. Refresh Events List
+        // 5. Update event in lists so remaining shows X-1 immediately
+        _updateEventInLists(event.copyWith(ticketsSold: event.ticketsSold + 1));
+        registeredEventIds.add(event.id);
         loadAllEvents();
         loadMyEvents();
-        registeredEventIds.add(event.id);
 
         CommonSnackbar.success('Successfully registered for ${event.title}');
         return true;
@@ -381,7 +409,7 @@ class EventsController extends BaseController {
 
       final existingRegistration = await SupabaseService.client
           .from('event_registrations')
-          .select('id')
+          .select('id, points_paid')
           .eq('event_id', event.id)
           .eq('user_id', currentUserId)
           .maybeSingle();
@@ -391,10 +419,41 @@ class EventsController extends BaseController {
         return false;
       }
 
+      final registrationId = existingRegistration['id'] as String;
+      final pointsToRefund = existingRegistration['points_paid'] as int? ?? 0;
+
       await SupabaseService.client
           .from('event_registrations')
           .delete()
-          .eq('id', existingRegistration['id'] as String);
+          .eq('id', registrationId);
+
+      if (pointsToRefund > 0) {
+        final userRow = await SupabaseService.client
+            .from('users')
+            .select('points_balance')
+            .eq('id', currentUserId)
+            .single();
+        final currentBalance = userRow['points_balance'] as int? ?? 0;
+        final balanceAfter = currentBalance + pointsToRefund;
+
+        await SupabaseService.client.from('points_transactions').insert({
+          'user_id': currentUserId,
+          'transaction_type': 'refunded',
+          'amount': pointsToRefund,
+          'balance_after': balanceAfter,
+          'description': 'Event cancellation refund: ${event.title}',
+          'related_entity_type': 'event_registration',
+          'related_entity_id': registrationId,
+        });
+
+        await SupabaseService.client
+            .from('users')
+            .update({'points_balance': balanceAfter})
+            .eq('id', currentUserId);
+
+        final authRepo = Get.find<AuthRepo>();
+        await authRepo.loadCurrentUser();
+      }
 
       final eventRow = await SupabaseService.client
           .from('events')
@@ -413,6 +472,7 @@ class EventsController extends BaseController {
           .eq('id', event.id);
 
       registeredEventIds.remove(event.id);
+      _updateEventInLists(event.copyWith(ticketsSold: updatedTicketsSold));
       loadAllEvents();
       loadMyEvents();
       await fetchRegisteredUserEvents();
@@ -554,12 +614,19 @@ class EventsController extends BaseController {
                   eventProperties: {'event_id': event.id},
                 );
                 if (isBusy) return;
+                if (event.maxTickets != null &&
+                    getRemainingTickets(event) == 0) {
+                  CommonSnackbar.error('noTicketsLeft'.tr);
+                  return;
+                }
                 Get.back();
                 final currentContext = Get.context;
                 if (currentContext == null) return;
-                
+
                 // Check if user has enough points before showing email modal
-                if (isInternal && event.costPoints != null && event.costPoints! > 0) {
+                if (isInternal &&
+                    event.costPoints != null &&
+                    event.costPoints! > 0) {
                   final authRepo = Get.find<AuthRepo>();
                   final currentUser = authRepo.currentUser.value;
                   if (currentUser != null) {
@@ -570,7 +637,7 @@ class EventsController extends BaseController {
                     }
                   }
                 }
-                
+
                 EventEmailModal.show(
                   currentContext,
                   eventId: event.id,
