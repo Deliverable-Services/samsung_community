@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../data/constants/app_colors.dart';
+import '../../../data/helper_widgets/back_button.dart';
 import '../../../data/helper_widgets/bottom_nav_bar.dart';
 import '../controllers/messages_controller.dart';
 import '../local_widgets/messages_search_bar.dart';
@@ -24,24 +25,37 @@ class MessagesView extends GetView<MessagesController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'messages'.tr,
-                    style: TextStyle(
-                      fontFamily: 'Samsung Sharp Sans',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 20.sp,
-                      color: AppColors.white,
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
-                  Text(
-                    'messagesSubtitle'.tr,
-                    style: TextStyle(
-                      fontFamily: 'Samsung Sharp Sans',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14.sp,
-                      color: AppColors.textWhiteOpacity70,
-                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'messages'.tr,
+                              style: TextStyle(
+                                fontFamily: 'Samsung Sharp Sans',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 20.sp,
+                                color: AppColors.white,
+                              ),
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              'messagesSubtitle'.tr,
+                              style: TextStyle(
+                                fontFamily: 'Samsung Sharp Sans',
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14.sp,
+                                color: AppColors.textWhiteOpacity70,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      CustomBackButton(rotation: 0, onTap: () => Get.back()),
+                    ],
                   ),
                   SizedBox(height: 16.h),
                   MessagesSearchBar(controller: controller),
