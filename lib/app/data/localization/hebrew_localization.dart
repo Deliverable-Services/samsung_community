@@ -147,7 +147,7 @@ class HebrewiLocalization {
     "save": "שמור שינויים",
     "account_details": "פרטי חשבון",
     "social_media": "מדיה חברתית",
-    "profession": "מִקצוֹעַ",
+    "profession": "מקצוע",
     "bio": "ביו",
     "name_of_class": "שם הכיתה",
     "are_you_student": "האם אתה סטודנט?",

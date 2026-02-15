@@ -111,6 +111,7 @@ class UserModel {
   final DateTime? approvedAt;
   final String? approvedBy;
   final String? authUserId;
+  final String? email;
 
   UserModel({
     required this.id,
@@ -138,6 +139,7 @@ class UserModel {
     this.approvedAt,
     this.approvedBy,
     this.authUserId,
+    this.email,
   });
 
   Map<String, dynamic> toJson() {
@@ -167,6 +169,7 @@ class UserModel {
       'approved_at': approvedAt?.toIso8601String(),
       'approved_by': approvedBy,
       'auth_user_id': authUserId,
+      'email': email,
     };
   }
 
@@ -211,6 +214,7 @@ class UserModel {
           : null,
       approvedBy: json['approved_by'] as String?,
       authUserId: json['auth_user_id'] as String?,
+      email: json['email'] as String?,
     );
   }
 
@@ -240,6 +244,7 @@ class UserModel {
     DateTime? approvedAt,
     String? approvedBy,
     String? authUserId,
+    String? email,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -267,6 +272,7 @@ class UserModel {
       approvedAt: approvedAt ?? this.approvedAt,
       approvedBy: approvedBy ?? this.approvedBy,
       authUserId: authUserId ?? this.authUserId,
+      email: email ?? this.email,
     );
   }
 

@@ -26,7 +26,9 @@ class StoreHeader extends StatelessWidget {
         ),
         SizedBox(height: 5.h),
         Padding(
-          padding: EdgeInsets.only(right: 30.w),
+          padding: EdgeInsets.only(
+            right: Get.locale?.languageCode == 'he' ? 0 : 30.w,
+          ),
           child: Text(
             'storeDescription'.tr,
             style: TextStyle(

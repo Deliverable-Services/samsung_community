@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class EventEmailController extends GetxController {
-  final TextEditingController emailController = TextEditingController();
+  EventEmailController({String? initialEmail})
+      : emailController = TextEditingController(text: initialEmail ?? '');
+
+  final TextEditingController emailController;
   final RxString email = ''.obs;
   bool _isDisposed = false;
 
   @override
   void onInit() {
     super.onInit();
+    if (emailController.text.trim().isNotEmpty) {
+      email.value = emailController.text.trim();
+    }
     emailController.addListener(_onEmailChanged);
   }
 

@@ -94,13 +94,13 @@ class AccountDetailsForm extends StatelessWidget {
                   ? () => onFieldBlur!('bio', bioController.text)
                   : null,
             ),
-            FormFieldConfig(
-              key: 'isStudent',
-              type: FormFieldType.radio,
-              label: "are_you_student".tr,
-              radioNotifier: selectedStudent,
-              spacing: 20.h,
-            ),
+            // FormFieldConfig(
+            //   key: 'isStudent',
+            //   type: FormFieldType.radio,
+            //   label: "are_you_student".tr,
+            //   radioNotifier: selectedStudent,
+            //   spacing: 20.h,
+            // ),
             FormFieldConfig(
               key: 'college',
               type: FormFieldType.college,

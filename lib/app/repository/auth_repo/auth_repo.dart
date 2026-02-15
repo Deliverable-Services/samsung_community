@@ -145,19 +145,24 @@ class AuthRepo extends BaseController {
 
     if (otp != null) {
       try {
-        // final response = await http.post(
-        //   Uri.parse('${AppConst.supabaseUrl}/functions/v1/send-otp'),
-        //   headers: <String, String>{
-        //     // 'Authorization':
-        //     //     'Bearer ${SupabaseService.client.auth.currentSession?.accessToken}',
-        //     'Content-Type': 'application/json',
-        //   },
-        //   body: jsonEncode(<String, String>{'phone_number': phoneNumber}),
-        // );
+        final response = await http.post(
+          Uri.parse('${AppConst.supabaseUrl}/functions/v1/send-otp'),
+          headers: <String, String>{
+            // 'Authorization':
+            //     'Bearer ${SupabaseService.client.auth.currentSession?.accessToken}',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(<String, String>{'phone_number': phoneNumber}),
+        );
 
         debugPrint('otp: $otp');
 
-        CommonSnackbar.success('OTP: $otp');
+        if (response.statusCode == 200) {
+          CommonSnackbar.success('OTP sent successfully');
+        } else {
+          CommonSnackbar.error('Failed to send OTP');
+          return null;
+        }
 
         if (kDebugMode) {
           // debugPrint(
@@ -304,19 +309,40 @@ class AuthRepo extends BaseController {
 
     final result = await _authService.generateOTP(phoneNumber);
     final otp = result.dataOrNull;
-    if (otp != null) {
-      CommonSnackbar.success('${'otp_for_signup'.tr}: $otp');
-    }
-    setLoading(false);
 
-    if (result.isSuccess) {
-      return result.dataOrNull;
+    if (otp != null) {
+      try {
+        final response = await http.post(
+          Uri.parse('${AppConst.supabaseUrl}/functions/v1/send-otp'),
+          headers: <String, String>{
+            // 'Authorization':
+            //     'Bearer ${SupabaseService.client.auth.currentSession?.accessToken}',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(<String, String>{'phone_number': phoneNumber}),
+        );
+
+        if (response.statusCode == 200) {
+          CommonSnackbar.success('OTP sent successfully');
+        } else {
+          CommonSnackbar.error('Failed to send OTP');
+          return null;
+        }
+
+        if (kDebugMode) {
+          // debugPrint(
+          //   'send-otp response: ${response.statusCode} ${response.body}',
+          // );
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('Error calling send-otp function: $e');
+        }
+      }
+    }
+    if (otp != null) {
+      return otp;
     } else {
-      final error = result.errorOrNull ?? 'Failed to generate OTP';
-      debugPrint('Error in generateOTP: $error');
-      // Use setError instead of handleError to avoid showing snackbar here
-      // Controller will handle showing the error message
-      setError(error);
       return null;
     }
   }
