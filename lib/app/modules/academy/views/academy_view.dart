@@ -13,6 +13,7 @@ import '../../../data/helper_widgets/content_card.dart';
 import '../../../data/helper_widgets/event_launch_card.dart';
 import '../../../data/helper_widgets/filter_component.dart';
 import '../../../data/models/academy_content_model.dart';
+import '../../../data/models/event_model.dart';
 import '../../../data/models/weekly_riddle_model.dart';
 import '../controllers/academy_controller.dart';
 import 'assignment_card.dart';
@@ -292,6 +293,11 @@ class AcademyView extends GetView<AcademyController> {
         ? controller.workshopEvents[content.eventId]
         : null;
 
+    final bool isCopyZoomLinkEnabled = _isWithinCopyZoomLinkWindow(
+      event: event,
+      content: content,
+    );
+
     if (isZoomWorkshop) {
       return Padding(
         key: ValueKey('zoom_workshop_${content.academyContentId}'),
@@ -323,18 +329,31 @@ class AcademyView extends GetView<AcademyController> {
             imagePathNetwork: event?.imageUrl ?? content.mediaFileUrl,
             title: event?.title ?? content.title,
             description: event?.description ?? content.description ?? '',
-            text: isSubmitted ? 'copyZoomLink'.tr : 'homeMoreDetails'.tr,
+            text: isSubmitted
+                ? (isCopyZoomLinkEnabled
+                    ? 'copyZoomLink'.tr
+                    : 'zoomLinkInactive'.tr)
+                : 'homeMoreDetails'.tr,
             showButton: true,
             onButtonTap: isSubmitted
-                ? () {
-                    final link = event?.zoomLink ?? content.zoomLink ?? '';
-                    if (link.isNotEmpty) {
-                      Clipboard.setData(ClipboardData(text: link));
-                      CommonSnackbar.success('Zoom link copied to clipboard');
-                    } else {
-                      CommonSnackbar.error('Zoom link not available');
-                    }
-                  }
+                ? (isCopyZoomLinkEnabled
+                    ? () {
+                        final link =
+                            event?.zoomLink ?? content.zoomLink ?? '';
+                        if (link.isNotEmpty) {
+                          Clipboard.setData(
+                            ClipboardData(text: link),
+                          );
+                          CommonSnackbar.success(
+                            'Zoom link copied to clipboard',
+                          );
+                        } else {
+                          CommonSnackbar.error(
+                            'Zoom link not available',
+                          );
+                        }
+                      }
+                    : null)
                 : () {
                     debugPrint(
                       'Analytics: user clicked the more details button for a zoom workshop',
@@ -358,7 +377,7 @@ class AcademyView extends GetView<AcademyController> {
                     ),
                     SizedBox(width: 3.w),
                     Text(
-                      "${'homePoints'.tr} ${event?.costPoints ?? content.pointsToEarn}",
+                      "${'homePoints'.tr} ${_pointsDisplayValue(event?.costPoints ?? content.pointsToEarn)}",
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 12.sp,
@@ -423,5 +442,42 @@ class AcademyView extends GetView<AcademyController> {
         ),
       );
     }
+  }
+
+  /// Returns 'free'.tr when points is 0, otherwise the number as string.
+  String _pointsDisplayValue(int? points) {
+    if (points == null || points == 0) return 'free'.tr;
+    return '$points';
+  }
+
+  /// True when current time is within [zoomStart - 15min, zoomStart).
+  bool _isWithinCopyZoomLinkWindow({
+    EventModel? event,
+    required AcademyContentModel content,
+  }) {
+    final zoomStart = _getZoomStartDateTime(event: event, content: content);
+    if (zoomStart == null) return false;
+    final now = DateTime.now();
+    final windowStart = zoomStart.subtract(const Duration(minutes: 15));
+    return (now.isAfter(windowStart) || now.isAtSameMomentAs(windowStart)) &&
+        now.isBefore(zoomStart);
+  }
+
+  DateTime? _getZoomStartDateTime({
+    EventModel? event,
+    required AcademyContentModel content,
+  }) {
+    final baseDate = event?.eventDate ?? content.eventDate;
+    if (baseDate == null) return null;
+    final timeStr = event?.zoomStartTime?.trim();
+    if (timeStr == null || timeStr.isEmpty) {
+      return baseDate;
+    }
+    final parts = timeStr.split(':');
+    if (parts.isEmpty) return baseDate;
+    final h = int.tryParse(parts[0]) ?? 0;
+    final m = parts.length > 1 ? (int.tryParse(parts[1]) ?? 0) : 0;
+    final s = parts.length > 2 ? (int.tryParse(parts[2]) ?? 0) : 0;
+    return DateTime(baseDate.year, baseDate.month, baseDate.day, h, m, s);
   }
 }

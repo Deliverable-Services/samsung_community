@@ -53,8 +53,8 @@ class BottomNavItems {
         },
       ),
       BottomNavItem(
-        imagePath: AppImages.brainSvg,
-        label: 'academy'.tr,
+        imagePath: AppImages.academyIcon,
+        label: 'tasks'.tr,
         onTap: () {
           controller.changeTab(2, isBottomBar);
         },

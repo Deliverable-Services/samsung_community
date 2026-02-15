@@ -113,7 +113,7 @@ class EnLocalization {
     "welcomeToOur": "Welcome to our\n",
     "sCommunity": "S Society",
     "welcomeDescription":
-        "Loram dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor....",
+        "The place where all the experiences, connections, growth and fun happen in a big way.",
     "logIn": "Log in",
     "approval": "Approval",
     "dontHaveAccount": "I don't have an account ",
@@ -181,6 +181,7 @@ class EnLocalization {
         "We've passed your join request to the community manager. Approval usually takes 1–2 business days, and we'll text you as soon as your profile is active in the app.",
     // Navbar
     "totalPoints": "Total Points",
+    "tasks": "Tasks",
     // Device Not Supported Overlay
     "deviceNotSupported": "Your device is not supported!",
     "needSamsungDevice": "To continue, you need to use a Samsung device",
@@ -223,6 +224,7 @@ class EnLocalization {
     "liveVideoStartingSoon": "Live Video Starting Soon",
     "joinLive": "Join Live",
     "copyZoomLink": "Copy Zoom Link",
+    "zoomLinkInactive": "This is inactive",
 
     // Events Screen
     "communityEvents": "Community Events",
@@ -235,10 +237,12 @@ class EnLocalization {
     "noMyEventsFound": "No events found for you",
     "details": 'Details',
     "buying": 'Buying',
+    "noTicketsLeft": "There are no tickets left.",
 
     // Home Screen
     "homeMoreDetails": "More Details",
     "homePoints": "Points: -",
+    "free": "Free",
     "points": "Points",
     // Filter Component
     "filterExploreLibrary": "Explore our library.....",

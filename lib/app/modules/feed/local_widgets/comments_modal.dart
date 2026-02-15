@@ -12,18 +12,21 @@ import '../../../data/constants/app_images.dart';
 import '../../../data/core/utils/result.dart';
 import '../../../data/models/comment_model.dart';
 import '../../../data/core/utils/common_snackbar.dart';
+import '../../../data/helper_widgets/close_button.dart';
 import '../../../data/models/user_model copy.dart';
 
 class CommentsModal extends StatefulWidget {
   final String contentId;
   final Future<void> Function(String) onAddComment;
   final void Function(int totalCount)? onCommentsCountUpdated;
+  final VoidCallback? onClose;
 
   const CommentsModal({
     super.key,
     required this.contentId,
     required this.onAddComment,
     this.onCommentsCountUpdated,
+    this.onClose,
   });
 
   @override
@@ -183,14 +186,25 @@ class _CommentsModalState extends State<CommentsModal> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'viewAllComments'.tr,
-          style: TextStyle(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textWhite,
-            fontFamily: 'Samsung Sharp Sans',
-          ),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'viewAllComments'.tr,
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textWhite,
+                fontFamily: 'Samsung Sharp Sans',
+              ),
+            ),
+            if (widget.onClose != null) ...[
+              SizedBox(width: 16.w),
+              CustomCloseButton(onTap: widget.onClose!),
+            ],
+          ],
         ),
         SizedBox(height: 16.h),
         Expanded(

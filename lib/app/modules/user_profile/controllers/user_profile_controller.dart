@@ -466,10 +466,11 @@ class UserProfileController extends GetxController {
 
     BottomSheetModal.show(
       Get.context!,
-      buttonType: BottomSheetButtonType.close,
+      buttonType: BottomSheetButtonType.none,
       content: CommentsModal(
         contentId: contentId,
         onAddComment: (commentText) => addComment(contentId, commentText),
+        onClose: () => Navigator.of(Get.context!, rootNavigator: true).pop(),
       ),
     );
   }
