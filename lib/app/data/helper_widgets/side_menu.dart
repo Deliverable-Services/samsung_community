@@ -135,9 +135,10 @@ class SideMenu extends StatelessWidget {
   }
 
   void _showLanguageSelector(BuildContext context) {
+    final languageController = Get.find<LanguageController>();
+
     BottomSheetModal.show(
       context,
-      onClose: () => SideMenu.show(context),
       buttonType: BottomSheetButtonType.back,
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -145,7 +146,6 @@ class SideMenu extends StatelessWidget {
           final index = entry.key;
           final option = entry.value;
           final isLast = index == LanguageOptions.options.length - 1;
-          final languageController = Get.find<LanguageController>();
           final isSelected = languageController.currentLocale == option.locale;
 
           return Padding(
@@ -154,7 +154,8 @@ class SideMenu extends StatelessWidget {
               text: option.name,
               boxText: option.boxText,
               isSelected: isSelected,
-              onTap: () async {
+              onTap: () {
+                Get.back();
                 languageController.changeLanguage(option.id);
               },
             ),

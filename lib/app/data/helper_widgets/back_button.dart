@@ -1,7 +1,9 @@
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 import '../constants/app_colors.dart';
 import '../constants/app_images.dart';
@@ -18,6 +20,10 @@ class CustomBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isHebrew = Get.locale?.languageCode == 'he';
+    final effectiveRotation =
+        isHebrew ? rotation + math.pi : rotation;
+
     return AnimatedPress(
       onTap: onTap,
       scaleFactor: 0.95,
@@ -84,17 +90,20 @@ class CustomBackButton extends StatelessWidget {
               sigmaY: 7.036915302276611,
             ),
             child: Center(
-              child: Transform.rotate(
-                angle: rotation,
-                child: SizedBox(
-                  width: 8.999999046325717.w,
-                  height: 15.666663169860898.h,
-                  child: Image.asset(
-                    AppImages.backArrow,
+              child: Directionality(
+                textDirection: TextDirection.ltr,
+                child: Transform.rotate(
+                  angle: effectiveRotation,
+                  child: SizedBox(
                     width: 8.999999046325717.w,
                     height: 15.666663169860898.h,
-                    fit: BoxFit.contain,
-                    color: AppColors.white,
+                    child: Image.asset(
+                      AppImages.backArrow,
+                      width: 8.999999046325717.w,
+                      height: 15.666663169860898.h,
+                      fit: BoxFit.contain,
+                      color: AppColors.white,
+                    ),
                   ),
                 ),
               ),

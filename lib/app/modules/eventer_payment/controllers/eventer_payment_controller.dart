@@ -272,11 +272,7 @@ class EventerPaymentController extends GetxController {
     }
   }
 
-  void _showPaymentResult(
-    bool success,
-    Map<String, dynamic>? data, {
-    String? error,
-  }) {
+  void _showPaymentResult(bool success, Map<String, dynamic>? data) {
     final context = Get.context;
     if (context == null) return;
 

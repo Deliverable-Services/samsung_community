@@ -17,7 +17,7 @@ class CommonSnackbar {
       'Success'.tr,
       message,
       snackPosition: SnackPosition.TOP,
-      backgroundColor: Theme.of(Get.context!).colorScheme.primary,
+      backgroundColor: const Color(0xFF0076FF),
       colorText: Colors.white,
       duration: duration ?? const Duration(seconds: 3),
     );

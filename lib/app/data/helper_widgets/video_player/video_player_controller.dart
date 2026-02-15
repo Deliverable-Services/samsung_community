@@ -159,6 +159,10 @@ class VideoPlayerControllerGetX extends GetxController {
       VideoPlayerManager.clearCurrentPlayer(_controller!);
       onPause?.call();
     } else {
+      if (currentPosition.value >= totalDuration.value &&
+          totalDuration.value > Duration.zero) {
+        await _controller!.seekTo(Duration.zero);
+      }
       if (videoUrl != null) {
         VideoPlayerManager.setCurrentPlayer(_controller!, videoUrl!);
       }

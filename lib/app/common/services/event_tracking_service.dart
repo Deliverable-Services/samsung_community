@@ -20,8 +20,7 @@ import 'package:samsung_community_mobile/app/repository/auth_repo/auth_repo.dart
 class EventTrackingService {
   EventTrackingService._();
 
-  static String get _webhookUrl =>
-      dotenv.env['EVENTS_CAPTURE_URL'] ?? '';
+  static String get _webhookUrl => dotenv.env['EVENTS_CAPTURE_URL'] ?? '';
 
   static const String _storageKeyDeviceId = 'event_tracking_device_id';
   static const String _storageKeyFirstOpen = 'event_tracking_first_open';
@@ -204,14 +203,18 @@ class EventTrackingService {
     String? utmMedium,
     String? utmCampaign,
   }) async {
-    if (installSource != null)
+    if (installSource != null) {
       await _storage.write(_storageKeyInstallSource, installSource);
-    if (utmSource != null)
+    }
+    if (utmSource != null) {
       await _storage.write(_storageKeyUtmSource, utmSource);
-    if (utmMedium != null)
+    }
+    if (utmMedium != null) {
       await _storage.write(_storageKeyUtmMedium, utmMedium);
-    if (utmCampaign != null)
+    }
+    if (utmCampaign != null) {
       await _storage.write(_storageKeyUtmCampaign, utmCampaign);
+    }
     _cachedDeviceProperties = null;
   }
 

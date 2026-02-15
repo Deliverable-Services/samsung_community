@@ -14,12 +14,14 @@ class EventService {
     String? searchQuery,
   }) async {
     try {
+      final today = DateTime.now().toIso8601String().split('T')[0];
       var query = SupabaseService.client
           .from('events')
           .select()
           .isFilter('deleted_at', null)
           // Always fetch only live events
-          .eq('event_type', EventType.liveEvent.toJson());
+          .eq('event_type', EventType.liveEvent.toJson())
+          .gte('event_date', today);
 
       if (isPublished != null) {
         query = query.eq('is_published', isPublished);

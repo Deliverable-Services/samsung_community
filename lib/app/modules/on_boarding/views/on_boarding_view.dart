@@ -61,7 +61,8 @@ class OnBoardingView extends GetView<OnBoardingController> {
               bottom: true,
               child: Align(
                 alignment: const AlignmentDirectional(0, 0),
-                child: Column(
+                child: SingleChildScrollView(
+                  child: Column(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -89,7 +90,7 @@ class OnBoardingView extends GetView<OnBoardingController> {
                     SizedBox(height: 25.h),
                     AppButton(
                       onTap: () => controller.clickOnSignUpWithGoogleButton(),
-                      text: 'Sign up with google'.tr,
+                      text: 'signUpWithGoogle'.tr,
                       iconPath: AppImages.googleIcon,
                       iconSize: 20.w,
                     ),
@@ -143,6 +144,7 @@ class OnBoardingView extends GetView<OnBoardingController> {
                     ),
                     SizedBox(height: 20.h),
                   ],
+                ),
                 ),
               ),
             ),

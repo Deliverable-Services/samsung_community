@@ -94,6 +94,7 @@ class EventsController extends BaseController {
   }
 
   void _onAllEventsScroll() {
+    if (allEventsScrollController.positions.length != 1) return;
     if (allEventsScrollController.position.pixels >=
         allEventsScrollController.position.maxScrollExtent * 0.8) {
       if (!isLoadingAllEvents.value && hasMoreAllEvents.value) {
@@ -103,6 +104,7 @@ class EventsController extends BaseController {
   }
 
   void _onMyEventsScroll() {
+    if (myEventsScrollController.positions.length != 1) return;
     if (myEventsScrollController.position.pixels >=
         myEventsScrollController.position.maxScrollExtent * 0.8) {
       if (!isLoadingMyEvents.value && hasMoreMyEvents.value) {
@@ -142,14 +144,17 @@ class EventsController extends BaseController {
       );
 
       if (result is Success<List<EventModel>>) {
-        final events = result.data;
+        final events = result.data
+            .where((e) =>
+                e.maxTickets == null || e.ticketsSold < e.maxTickets!)
+            .toList();
         if (loadMore) {
           allEventsList.addAll(events);
         } else {
-          allEventsList.assignAll(events.toList());
+          allEventsList.assignAll(events);
         }
-        allEventsOffset += events.length;
-        hasMoreAllEvents.value = events.length >= pageSize;
+        allEventsOffset += result.data.length;
+        hasMoreAllEvents.value = result.data.length >= pageSize;
       } else if (result is Failure<List<EventModel>>) {
         CommonSnackbar.error(result.message);
       }
@@ -549,7 +554,7 @@ class EventsController extends BaseController {
 
         final double? buttonIconSize = isRegistered ? 14.h : null;
 
-        final VoidCallback? buttonOnTap = isRegistered
+        final VoidCallback buttonOnTap = isRegistered
             ? () {
                 if (isBusy) return;
                 Get.back();

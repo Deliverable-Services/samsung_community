@@ -81,6 +81,7 @@ class NotificationsController extends BaseController {
   }
 
   void _scrollListener() {
+    if (scrollController.positions.length != 1) return;
     if (scrollController.position.pixels >=
             scrollController.position.maxScrollExtent - 200 &&
         !isLoadingMore.value &&
@@ -157,8 +158,9 @@ class NotificationsController extends BaseController {
   Future<void> loadMoreNotifications() async {
     if (isLoadingMore.value ||
         !hasMoreData.value ||
-        currentUserId.value.isEmpty)
+        currentUserId.value.isEmpty) {
       return;
+    }
 
     try {
       isLoadingMore.value = true;

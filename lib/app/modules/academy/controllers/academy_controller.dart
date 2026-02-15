@@ -111,6 +111,7 @@ class AcademyController extends BaseController {
   }
 
   void _onScroll() {
+    if (scrollController.positions.length != 1) return;
     if (scrollController.position.pixels >=
         scrollController.position.maxScrollExtent * 0.8) {
       loadMoreContent();
@@ -466,6 +467,7 @@ class AcademyController extends BaseController {
     );
   }
 
+  /// Text assignment submission. Correctness is not checked; admin will review and update is_correct.
   void clickOnText({required AcademyContentModel content}) async {
     if (textController.text.trim().isEmpty) {
       CommonSnackbar.error('please_enter_text'.tr);
@@ -482,17 +484,12 @@ class AcademyController extends BaseController {
     if (user == null) return;
 
     final submittedAnswer = textController.text.trim();
-    final correctAnswer = content.answer?.trim() ?? '';
-
-    final isCorrect =
-        submittedAnswer.toLowerCase() == correctAnswer.toLowerCase();
 
     final data = {
       'solution': submittedAnswer,
       'assignment_id': content.assignmentId,
       'user_id': user.id,
-      'is_correct': isCorrect,
-      'total_points_to_win': isCorrect ? content.pointsToEarn : 0,
+      'total_points_to_win': 0,
     };
 
     final result = await AcademyService().assignmentSubmissions(content: data);
@@ -500,17 +497,7 @@ class AcademyController extends BaseController {
     if (result is Success) {
       clearFields();
       _updateSubmissionStatus(content.academyContentId, user.id);
-
-      if (isCorrect) {
-        await _awardAssignmentPoints(
-          points: content.pointsToEarn,
-          assignmentId: content.assignmentId!,
-        );
-        _showSuccessModal(content.pointsToEarn);
-      } else {
-        _showFailureModal();
-      }
-
+      _showSubmittedModal();
       loadContent();
     } else {
       CommonSnackbar.error('failed_to_submit_answer'.tr);

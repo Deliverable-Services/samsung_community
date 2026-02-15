@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 
 import '../../../data/constants/app_colors.dart';
 import '../../../data/helper_widgets/bottom_nav_bar.dart';
-import '../../../data/helper_widgets/device_not_supported_overlay.dart';
 import '../../../data/helper_widgets/navbar.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/bottom_bar_controller.dart';

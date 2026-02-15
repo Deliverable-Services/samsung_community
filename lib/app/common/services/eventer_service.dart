@@ -24,8 +24,8 @@ class EventerService {
 
       final body = {
         'isSuccess': isSuccess,
-        if (error != null) 'error': error,
-        if (confirmationKey != null) 'confirmationKey': confirmationKey,
+        'error': ?error,
+        'confirmationKey': ?confirmationKey,
       };
 
       final response = await http.post(

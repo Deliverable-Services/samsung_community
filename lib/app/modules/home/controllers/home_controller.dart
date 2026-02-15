@@ -96,9 +96,9 @@ class HomeController extends GetxController {
   }
 
   void _onScroll() {
-    if (scrollController != null &&
-        scrollController!.position.pixels >=
-            scrollController!.position.maxScrollExtent * 0.8) {
+    if (scrollController == null || scrollController!.positions.length != 1) return;
+    if (scrollController!.position.pixels >=
+        scrollController!.position.maxScrollExtent * 0.8) {
       loadMoreItems();
     }
   }
@@ -144,9 +144,11 @@ class HomeController extends GetxController {
   /// Load latest event
   Future<void> loadLatestEvent() async {
     try {
-      final result = await _eventService.getEvents(isPublished: true, limit: 1);
+      final result = await _eventService.getEvents(isPublished: true, limit: 5);
       if (result.isSuccess) {
-        final events = result.dataOrNull ?? [];
+        final events = (result.dataOrNull ?? [])
+            .where((e) => e.maxTickets == null || e.ticketsSold < e.maxTickets!)
+            .toList();
         latestEvent.value = events.isNotEmpty ? events.first : null;
       }
     } catch (e) {
@@ -188,7 +190,20 @@ class HomeController extends GetxController {
     }
   }
 
-  /// Load all items for infinite scroll (merged and sorted by createdAt)
+  /// Loads all items for the home feed infinite scroll.
+  ///
+  /// Items are fetched from 4 data sources and displayed in a repeating
+  /// round-robin cycle to ensure content variety:
+  ///   Events → Tasks → Zoom Live Workshops → Videos → (repeat)
+  ///
+  /// Each bucket is sorted by newest first (createdAt descending).
+  /// Items already displayed in the "latest" section at the top of the
+  /// home page are excluded to avoid duplicates.
+  ///
+  /// Supports client-side pagination via [_pageSize] chunks.
+  /// Set [loadMore] to true for infinite scroll page loads.
+  ///
+  /// @author Brian
   Future<void> loadAllItems({bool loadMore = false}) async {
     if (loadMore) {
       if (isLoadingMore.value || !hasMoreData.value) return;
@@ -200,70 +215,85 @@ class HomeController extends GetxController {
     }
 
     try {
-      // Fetch from all tables in parallel (excluding store products)
+      // Fetch all 4 data sources in parallel for performance
       final results = await Future.wait([
-        _eventService.getEvents(isPublished: true, limit: 100),
-        _fetchAllRiddles(),
-        _contentService.getContent(
+        _eventService.getEvents(isPublished: true, limit: 100),    // [0] Live events
+        _fetchAllRiddles(),                                         // [1] Tasks (weekly riddles)
+        _fetchZoomWorkshops(),                                      // [2] Zoom live workshops
+        _contentService.getContent(                                 // [3] Videos (VOD)
           contentType: ContentType.vod,
-          isPublished: true,
-          limit: 100,
-        ),
-        _contentService.getContent(
-          contentType: ContentType.podcast,
           isPublished: true,
           limit: 100,
         ),
       ]);
 
-      // Combine all items
-      final List<HomeItem> combinedItems = [];
+      // Build separate buckets for each content type
+      final List<HomeItem> events = [];
+      final List<HomeItem> tasks = [];
+      final List<HomeItem> zoomWorkshops = [];
+      final List<HomeItem> videos = [];
 
-      // Add events
       if (results[0].isSuccess) {
-        final events = (results[0] as Success<List<EventModel>>).data;
-        combinedItems.addAll(events.map((e) => HomeItem.fromEvent(e)));
+        final data = (results[0] as Success<List<EventModel>>).data
+            .where((e) => e.maxTickets == null || e.ticketsSold < e.maxTickets!)
+            .toList();
+        events.addAll(data.map((e) => HomeItem.fromEvent(e)));
       }
-
-      // Add weekly riddles
       if (results[1].isSuccess) {
-        final riddles = (results[1] as Success<List<WeeklyRiddleModel>>).data;
-        combinedItems.addAll(riddles.map((r) => HomeItem.fromRiddle(r)));
+        final data = (results[1] as Success<List<WeeklyRiddleModel>>).data;
+        tasks.addAll(data.map((r) => HomeItem.fromRiddle(r)));
       }
-
-      // Add VODs
       if (results[2].isSuccess) {
-        final vods = (results[2] as Success<List<ContentModel>>).data;
-        combinedItems.addAll(vods.map((v) => HomeItem.fromVod(v)));
+        final data = (results[2] as Success<List<EventModel>>).data
+            .where((e) => e.maxTickets == null || e.ticketsSold < e.maxTickets!)
+            .toList();
+        zoomWorkshops.addAll(data.map((e) => HomeItem.fromEvent(e)));
       }
-
-      // Add podcasts
       if (results[3].isSuccess) {
-        final podcasts = (results[3] as Success<List<ContentModel>>).data;
-        combinedItems.addAll(podcasts.map((p) => HomeItem.fromPodcast(p)));
+        final data = (results[3] as Success<List<ContentModel>>).data;
+        videos.addAll(data.map((v) => HomeItem.fromVod(v)));
       }
 
-      // Sort by createdAt descending
-      combinedItems.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      // Sort each bucket by newest first
+      events.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      tasks.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      zoomWorkshops.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      videos.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
-      // Exclude the 4 latest items that are shown at the top
+      // Exclude items already shown in the "latest" header section
       final latestIds = <String>{};
       if (latestEvent.value != null) latestIds.add(latestEvent.value!.id);
       if (weeklyRiddle.value != null) latestIds.add(weeklyRiddle.value!.id);
       if (latestVod.value != null) latestIds.add(latestVod.value!.id);
       if (latestPodcast.value != null) latestIds.add(latestPodcast.value!.id);
 
-      final filteredItems = combinedItems
-          .where((item) => !latestIds.contains(item.id))
-          .toList();
+      events.removeWhere((item) => latestIds.contains(item.id));
+      tasks.removeWhere((item) => latestIds.contains(item.id));
+      zoomWorkshops.removeWhere((item) => latestIds.contains(item.id));
+      videos.removeWhere((item) => latestIds.contains(item.id));
 
-      // Apply pagination
+      // Round-robin interleave: Events → Tasks → Zoom workshops → Videos
+      // Example with 3 events, 2 tasks, 1 workshop, 2 videos:
+      //   E1, T1, Z1, V1, E2, T2, V2, E3
+      final buckets = [events, tasks, zoomWorkshops, videos];
+      final List<HomeItem> orderedItems = [];
+      int maxLen = buckets.map((b) => b.length).fold(0, (a, b) => a > b ? a : b);
+
+      for (int i = 0; i < maxLen; i++) {
+        for (final bucket in buckets) {
+          if (i < bucket.length) {
+            orderedItems.add(bucket[i]);
+          }
+        }
+      }
+
+      // Client-side pagination — serve items in _pageSize chunks
       final startIndex = _itemsLoaded;
       final endIndex = startIndex + _pageSize;
-      final pageItems = startIndex < filteredItems.length
-          ? (endIndex <= filteredItems.length
-                ? filteredItems.sublist(startIndex, endIndex)
-                : filteredItems.sublist(startIndex))
+      final pageItems = startIndex < orderedItems.length
+          ? (endIndex <= orderedItems.length
+                ? orderedItems.sublist(startIndex, endIndex)
+                : orderedItems.sublist(startIndex))
           : <HomeItem>[];
 
       if (loadMore) {
@@ -273,11 +303,44 @@ class HomeController extends GetxController {
       }
 
       _itemsLoaded += pageItems.length;
-      hasMoreData.value = _itemsLoaded < filteredItems.length;
+      hasMoreData.value = _itemsLoaded < orderedItems.length;
     } catch (e) {
       debugPrint('Error loading all items: $e');
     } finally {
       isLoadingMore.value = false;
+    }
+  }
+
+  /// Fetches zoom workshop events directly from the Supabase 'events' table.
+  ///
+  /// This is separate from [EventService.getEvents] which only fetches
+  /// live_event types. Zoom workshops (event_type = 'zoom_workshop') need
+  /// their own query to appear in the home feed round-robin cycle.
+  ///
+  /// Returns published, non-deleted zoom workshops sorted by newest first.
+  ///
+  /// @author Brian
+  Future<Result<List<EventModel>>> _fetchZoomWorkshops() async {
+    try {
+      final today = DateTime.now().toIso8601String().split('T')[0];
+      final response = await SupabaseService.client
+          .from('events')
+          .select()
+          .eq('event_type', EventType.zoomWorkshop.toJson())
+          .eq('is_published', true)
+          .isFilter('deleted_at', null)
+          .gte('event_date', today)
+          .order('created_at', ascending: false)
+          .limit(100);
+
+      final workshops = (response as List)
+          .map((json) => EventModel.fromJson(json as Map<String, dynamic>))
+          .toList();
+
+      return Success(workshops);
+    } catch (e) {
+      debugPrint('Error fetching zoom workshops: $e');
+      return Failure(e.toString());
     }
   }
 
@@ -570,7 +633,7 @@ class HomeController extends GetxController {
     );
   }
 
-  /// Submit text solution
+  /// Submit text solution. Correctness is not checked here; admin will review and update is_correct.
   Future<void> submitTextSolution(WeeklyRiddleModel riddle) async {
     if (!(textController.text.trim().isNotEmpty)) {
       CommonSnackbar.error('pleaseEnterText'.tr);
@@ -590,18 +653,12 @@ class HomeController extends GetxController {
     }
 
     final submittedAnswer = textController.text.trim();
-    final correctAnswer = riddle.answer?.trim() ?? '';
-
-    // Compare answers (case-insensitive)
-    final isCorrect =
-        submittedAnswer.toLowerCase() == correctAnswer.toLowerCase();
 
     final data = {
       'solution': submittedAnswer,
       'riddle_id': riddle.id,
       'user_id': user.id,
-      'is_correct': isCorrect,
-      'points_earned': isCorrect ? riddle.pointsToEarn : 0,
+      'points_earned': 0,
     };
 
     final result = await _weeklyRiddleService.submitRiddleSolution(
@@ -610,36 +667,12 @@ class HomeController extends GetxController {
 
     if (result.isSuccess) {
       clearFields();
-      // Show success or failure modal based on correctness
-      if (isCorrect) {
-        // Create points transaction and update balance
-        debugPrint(
-          'Analytics: completed the weekly puzzle and answered correctly',
-        );
-        await _awardPoints(
-          points: riddle.pointsToEarn,
-          riddleId: riddle.id,
-          description: 'Weekly riddle correct answer',
-        );
-        EventTrackingService.trackEvent(
-          eventType: 'riddle_correct_answer',
-          eventProperties: {
-            'riddle_id': riddle.id,
-            'points_earned': riddle.pointsToEarn,
-          },
-        );
-        _showSuccessModal(riddle.pointsToEarn);
-      } else {
-        debugPrint(
-          'Analytics: completed the weekly puzzle and answered incorrectly',
-        );
-        EventTrackingService.trackEvent(
-          eventType: 'riddle_incorrect_answer',
-          eventProperties: {'riddle_id': riddle.id},
-        );
-        _showFailureModal();
-      }
-      loadWeeklyRiddle(); // Refresh to update submission status
+      CommonSnackbar.success('solutionSubmittedForReview'.tr);
+      EventTrackingService.trackEvent(
+        eventType: 'riddle_solution_submitted',
+        eventProperties: {'riddle_id': riddle.id},
+      );
+      loadWeeklyRiddle();
     } else {
       CommonSnackbar.error('failedToSubmitSolution'.tr);
     }

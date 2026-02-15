@@ -129,6 +129,9 @@ class AudioPlayerController {
         await audioPlayer.pause();
         AudioPlayerManager.clearCurrentPlayer(audioPlayer);
       } else {
+        if (audioPlayer.processingState == ProcessingState.completed) {
+          await audioPlayer.seek(Duration.zero);
+        }
         AudioPlayerManager.setCurrentPlayer(audioPlayer, audioUrl!);
         await audioPlayer.play();
       }
