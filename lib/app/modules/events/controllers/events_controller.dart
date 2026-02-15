@@ -382,7 +382,7 @@ class EventsController extends BaseController {
         loadAllEvents();
         loadMyEvents();
 
-        CommonSnackbar.success('Successfully registered for ${event.title}');
+        CommonSnackbar.success('subscribedSuccessfullyToTheEvent'.tr);
         return true;
       } catch (insertError) {
         debugPrint('Error during Supabase operation: $insertError');

@@ -344,6 +344,7 @@ class HebrewiLocalization {
     "solutionSubmittedForReview": "הפתרון נשלח. יבדק על ידי המנהל.",
     "pleaseEnableCheckbox": "אנא הפעל את תיבת הסימון",
     "failedToSubmitSolution": "נכשל בשליחת הפתרון",
+    "subscribedSuccessfullyToTheEvent": "נרשמת בהצלחה לאירוע",
     "pleaseSelectAudioFile": "אנא בחר קובץ שמע",
     "pleaseSelectVideoFile": "אנא בחר קובץ וידאו",
     "failedToSelectFile": "נכשל בבחירת קובץ",
