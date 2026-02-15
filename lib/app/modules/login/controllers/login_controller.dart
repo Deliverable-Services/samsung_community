@@ -52,14 +52,19 @@ class LoginController extends BaseController {
 
     final phoneNumber = mobileController.text.trim();
     final normalizedPhone = phoneNumber.replaceAll(RegExp(r'\D'), '');
-    final userExists = await _authRepo.checkUserExists(normalizedPhone);
-    if (!userExists) {
-      isValidating.value = false;
-      CommonSnackbar.error('user_not_found'.tr);
-      return;
-    }
 
-    final otpCode = await _authRepo.generateOTPForLogin(normalizedPhone);
+
+    final otpCode = await AuthRepo().callLoginApi(phoneNumber: normalizedPhone);
+
+
+    // final userExists = await _authRepo.checkUserExists(normalizedPhone);
+    // if (!userExists) {
+    //   isValidating.value = false;
+    //   CommonSnackbar.error('user_not_found'.tr);
+    //   return;
+    // }
+    //
+    // final otpCode = await _authRepo.generateOTPForLogin(normalizedPhone);
 
     isValidating.value = false;
 

@@ -1200,6 +1200,7 @@ class PromotionPopup extends StatelessWidget {
       insetPadding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 48.h),
       child: Stack(
         clipBehavior: Clip.none,
+        alignment: AlignmentGeometry.topRight,
         children: [
           PromotionCard(
             title: promotion.title,
@@ -1209,20 +1210,16 @@ class PromotionPopup extends StatelessWidget {
           ),
 
           /// Floating close button
-          Positioned(
-            top: -14,
-            right: -14,
-            child: IconButton(
-              onPressed: onClose,
-              icon: Container(
-                height: 36,
-                width: 36,
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.7),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.close, color: Colors.white, size: 20),
+          IconButton(
+            onPressed: onClose,
+            icon: Container(
+              height: 36,
+              width: 36,
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.7),
+                shape: BoxShape.circle,
               ),
+              child: const Icon(Icons.close, color: Colors.white, size: 20),
             ),
           ),
         ],

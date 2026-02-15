@@ -55,7 +55,8 @@ class VerificationCodeByLoginController extends GetxController {
 
     isResending.value = true;
 
-    final otpCode = await authRepo.generateOTPForLogin(phoneNumber.value);
+    // final otpCode = await authRepo.generateOTPForLogin(phoneNumber.value);
+    final otpCode = await AuthRepo().callLoginApi(phoneNumber: phoneNumber.value);
 
     isResending.value = false;
     // Clear error message when OTP is successfully sent

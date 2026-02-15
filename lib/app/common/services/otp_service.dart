@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../data/core/exceptions/app_exception.dart';
 import '../../data/core/utils/result.dart';
 import '../../data/models/user_model.dart';
+import '../../repository/auth_repo/auth_repo.dart';
 import 'supabase_service.dart';
 import 'user_service.dart';
 import 'email_confirmation_service.dart';
@@ -159,14 +160,29 @@ class OtpService {
     required String otpCode,
   }) async {
     try {
-      final verifyResult = await verifyOTP(
-        phoneNumber: phoneNumber,
-        otpCode: otpCode,
+      // final verifyResult = await verifyOTP(
+      //   phoneNumber: phoneNumber,
+      //   otpCode: otpCode,
+      // );
+      //
+      // if (verifyResult.isFailure) {
+      //   return Failure(verifyResult.errorOrNull ?? 'otpVerificationFailed'.tr);
+      // }
+
+      // final verifyResult = await verifyOTP(
+      //   phoneNumber: phoneNumber,
+      //   otpCode: otpCode,
+      // );
+
+      final verifyResult = await AuthRepo().callVerifyOtpApi(
+        phoneNumber: phoneNumber.trim(),
+        otp: otpCode.trim(),
       );
 
-      if (verifyResult.isFailure) {
-        return Failure(verifyResult.errorOrNull ?? 'otpVerificationFailed'.tr);
+      if (verifyResult == null) {
+        return Failure('otpVerificationFailed'.tr);
       }
+
 
       final normalizedPhone = phoneNumber.replaceAll(RegExp(r'\D'), '');
       final authEmail = 'temp_$normalizedPhone@temp.com';
