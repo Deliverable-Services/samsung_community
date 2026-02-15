@@ -39,10 +39,13 @@ class MediaSlider extends StatelessWidget {
         ),
         overlayShape: RoundSliderOverlayShape(overlayRadius: 0),
       ),
-      child: Slider(
-        value: value.clamp(0.0, 1.0),
-        onChanged: isEnabled ? onChanged : null,
-        onChangeEnd: onChangeEnd != null ? (_) => onChangeEnd!() : null,
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Slider(
+          value: value.clamp(0.0, 1.0),
+          onChanged: isEnabled ? onChanged : null,
+          onChangeEnd: onChangeEnd != null ? (_) => onChangeEnd!() : null,
+        ),
       ),
     );
   }

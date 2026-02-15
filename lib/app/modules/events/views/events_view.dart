@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
@@ -79,8 +78,12 @@ class EventsView extends GetView<EventsController> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final activeAllEvents =
-            controller.allEventsList.where((e) => e.isNotInactive).toList();
+        final activeAllEvents = controller.allEventsList
+            .where((e) =>
+                e.isNotInactive &&
+                (e.maxTickets == null ||
+                    controller.getRemainingTickets(e) > 0))
+            .toList();
         if (activeAllEvents.isEmpty) {
           return ListView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -180,8 +183,12 @@ class EventsView extends GetView<EventsController> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final activeMyEvents =
-            controller.myEventsList.where((e) => e.isNotInactive).toList();
+        final activeMyEvents = controller.myEventsList
+            .where((e) =>
+                e.isNotInactive &&
+                (e.maxTickets == null ||
+                    controller.getRemainingTickets(e) > 0))
+            .toList();
         if (activeMyEvents.isEmpty) {
           return ListView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -282,7 +289,7 @@ class EventsView extends GetView<EventsController> {
         ),
         SizedBox(height: 5.h),
         Padding(
-          padding: EdgeInsets.only(right: 30.w),
+          padding: EdgeInsetsDirectional.only(end: 30.w),
           child: Text(
             'uniqueExperiences'.tr,
             style: const TextStyle(

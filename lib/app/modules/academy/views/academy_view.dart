@@ -377,7 +377,7 @@ class AcademyView extends GetView<AcademyController> {
                     ),
                     SizedBox(width: 3.w),
                     Text(
-                      "${'homePoints'.tr} ${_pointsDisplayValue(event?.costPoints ?? content.pointsToEarn)}",
+                      _pointsDisplayValue(event?.costPoints ?? content.pointsToEarn),
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 12.sp,
@@ -444,10 +444,15 @@ class AcademyView extends GetView<AcademyController> {
     }
   }
 
-  /// Returns 'free'.tr when points is 0, otherwise the number as string.
+  /// Returns the full points label for event cards.
+  /// Free events show "Points: Free" (no dash).
+  /// Paid events show "Points: - 50" (with dash from homePoints key).
+  /// @author Brian
   String _pointsDisplayValue(int? points) {
-    if (points == null || points == 0) return 'free'.tr;
-    return '$points';
+    if (points == null || points == 0) {
+      return '${'points'.tr}: ${'free'.tr}';
+    }
+    return '${'homePoints'.tr} $points';
   }
 
   /// True when current time is within [zoomStart - 15min, zoomStart).

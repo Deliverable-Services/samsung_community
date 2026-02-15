@@ -34,7 +34,7 @@ class ReadMoreText extends StatefulWidget {
 }
 
 class _ReadMoreTextState extends State<ReadMoreText> {
-  bool _isExpanded = false;
+  final bool _isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,11 @@ class _ReadMoreTextState extends State<ReadMoreText> {
 
         if (!needsTruncation) {
           // Text is short enough, no need for read more
-          return Text(widget.text, style: textStyle, textAlign: widget.textAlign);
+          return Text(
+            widget.text,
+            style: textStyle,
+            textAlign: widget.textAlign,
+          );
         }
 
         return Column(
@@ -71,21 +75,23 @@ class _ReadMoreTextState extends State<ReadMoreText> {
               widget.text,
               style: textStyle,
               maxLines: _isExpanded ? null : widget.maxLines,
-              overflow:
-                  _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+              overflow: _isExpanded
+                  ? TextOverflow.visible
+                  : TextOverflow.ellipsis,
               textAlign: widget.textAlign,
             ),
             SizedBox(height: 4.h),
             GestureDetector(
               onTap: () {
-                 BottomSheetModal.show(
+                BottomSheetModal.show(
                   context,
                   buttonType: BottomSheetButtonType.close,
                   content: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (widget.title != null && widget.title!.isNotEmpty) ...[
+                        if (widget.title != null &&
+                            widget.title!.isNotEmpty) ...[
                           Text(
                             widget.title!,
                             style: TextStyle(

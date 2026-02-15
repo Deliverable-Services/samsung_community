@@ -130,6 +130,9 @@ class AudioPlayerControllerGetX extends GetxController {
 
         if (state.processingState == ProcessingState.completed) {
           isPlaying.value = false;
+          _audioPlayer.stop();
+          _audioPlayer.seek(Duration.zero);
+          currentPosition.value = Duration.zero;
           AudioPlayerManager.clearCurrentPlayer(_audioPlayer);
         }
 

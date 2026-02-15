@@ -31,6 +31,7 @@ class _FeedViewState extends State<FeedView> {
   }
 
   void _onScroll() {
+    if (_scrollController.positions.length != 1) return;
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent * 0.8) {
       _controller.loadMoreContent();

@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:flutter/material.dart';
 import '../../../repository/user_repo/user_repo.dart';
 import '../../../data/models/user_model.dart';
 import '../../../data/core/utils/common_snackbar.dart';

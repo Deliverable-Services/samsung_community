@@ -1,4 +1,5 @@
-import 'package:flutter/gestures.dart';
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +11,7 @@ import '../../../data/constants/app_button.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
 import '../../../data/helper_widgets/back_button.dart';
+import '../../../data/localization/language_controller.dart';
 import '../../../data/helper_widgets/custom_text_field.dart';
 import '../controllers/sign_up_controller.dart';
 
@@ -201,62 +203,48 @@ class SignUpView extends GetView<SignUpController> {
                         final baseColor = AppColors.linkBlue.withOpacity(
                           disabled ? 0.6 : 1.0,
                         );
-                        return RichText(
-                          textScaler: const TextScaler.linear(1.0),
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'alreadyHaveAccount'.tr,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 16.sp,
-                                  letterSpacing: 0,
-                                  color: baseColor,
-                                  height: 24 / 16,
-                                  fontFamily: 'Samsung Sharp Sans',
-                                ),
-                              ),
-                              TextSpan(
-                                text: 'logIn'.tr,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16.sp,
-                                  letterSpacing: 0,
-                                  color: baseColor,
-                                  height: 24 / 16,
-                                  fontFamily: 'Samsung Sharp Sans',
-                                ),
-                                recognizer: disabled
-                                    ? null
-                                    : (TapGestureRecognizer()
-                                        ..onTap = () {
-                                          AnalyticsService.logButtonClick(
-                                            screenName:
-                                                'sign screen enter phone',
-                                            buttonName: 'login',
-                                            eventName:
-                                                'signup_enter_phone_click',
-                                          );
-                                          Get.toNamed(Routes.LOGIN);
-                                        }),
-                              ),
-                            ],
+                        return GestureDetector(
+                          onTap: disabled
+                              ? null
+                              : () {
+                                  AnalyticsService.logButtonClick(
+                                    screenName: 'sign screen enter phone',
+                                    buttonName: 'login',
+                                    eventName: 'signup_enter_phone_click',
+                                  );
+                                  Get.toNamed(Routes.LOGIN);
+                                },
+                          child: Text(
+                            '${'alreadyHaveAccount'.tr}${'logIn'.tr}',
+                            textScaler: const TextScaler.linear(1.0),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16.sp,
+                              letterSpacing: 0,
+                              color: baseColor,
+                              height: 24 / 16,
+                              fontFamily: 'Samsung Sharp Sans',
+                            ),
                           ),
                         );
                       }),
                     ),
                   ),
                 ),
-                // Positioned back button
+                // Positioned back button (rotated 180° in Hebrew)
                 Positioned(
                   top: 0,
                   left: 20.w,
-                  child: CustomBackButton(
-                    onTap: () {
-                      Get.back();
-                    },
-                  ),
+                  child: GetBuilder<LanguageController>(builder: (lang) {
+                    final isHebrew = lang.currentLocale == 'he';
+                    return CustomBackButton(
+                      rotation: isHebrew ? -math.pi : math.pi,
+                      onTap: () {
+                        Get.back();
+                      },
+                    );
+                  }),
                 ),
               ],
             ),

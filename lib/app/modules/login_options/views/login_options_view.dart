@@ -9,11 +9,9 @@ import '../../../common/services/analytics_service.dart';
 import '../../../data/constants/app_button.dart';
 import '../../../data/constants/app_colors.dart';
 import '../../../data/constants/app_images.dart';
-import '../../../data/helper_widgets/custom_text_field.dart';
 import '../../../data/helper_widgets/title_app_bar.dart';
 import '../../on_boarding/controllers/on_boarding_controller.dart';
 import '../../verification_code/controllers/verification_code_controller.dart';
-import '../controllers/login_options_controller.dart';
 
 class LoginOptionsView extends GetView<VerificationCodeController> {
   const LoginOptionsView({super.key});
@@ -123,7 +121,7 @@ class LoginOptionsView extends GetView<VerificationCodeController> {
                       : () {
                           controller.clickOnSignUpWithGoogleButton();
                         },
-                  text: 'Sign up with google'.tr,
+                  text: 'signUpWithGoogle'.tr,
                   width: 350.w,
                   height: 48.h,
                   isEnabled: !controller.isLoading.value,

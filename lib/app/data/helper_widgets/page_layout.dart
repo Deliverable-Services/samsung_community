@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../constants/app_colors.dart';
 import 'bottom_nav_bar.dart';
-import 'device_not_supported_overlay.dart';
 import 'device_service.dart';
 import 'navbar.dart';
 

@@ -82,13 +82,21 @@ class BottomSheetModal extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisSize: MainAxisSize.min,
+            child: Stack(
               children: [
-                buttonType == BottomSheetButtonType.none
-                    ? const SizedBox.shrink()
-                    : buttonType == BottomSheetButtonType.close
+                // Content fills the available space
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(child: content),
+                  ],
+                ),
+                // Button overlaid at the top-end corner (right in LTR, left in RTL)
+                if (buttonType != BottomSheetButtonType.none)
+                  PositionedDirectional(
+                    top: 0,
+                    end: 0,
+                    child: buttonType == BottomSheetButtonType.close
                         ? CustomCloseButton(
                             onTap: () {
                               Navigator.of(context, rootNavigator: true).pop();
@@ -100,12 +108,11 @@ class BottomSheetModal extends StatelessWidget {
                               Navigator.of(context, rootNavigator: true).pop();
                               onClose?.call();
                             },
-                            rotation: 0,
+                            rotation: Directionality.of(context) == TextDirection.rtl
+                                ? 3.14159
+                                : 0,
                           ),
-                const SizedBox(height: 10),
-                Flexible(
-                  child: content,
-                ),
+                  ),
               ],
             ),
           ),

@@ -16,15 +16,6 @@ class VideoPlayerThumbnailController extends GetxController {
   final RxnString generatedThumbnailPath = RxnString();
   final RxBool isGenerating = false.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // Lazy generation handled by UI or on demand to save resources
-    // if (_shouldGenerateThumbnail()) {
-    //   _generateThumbnail();
-    // }
-  }
-
   bool shouldGenerateThumbnail() {
     return (thumbnailUrl == null && thumbnailImage == null) &&
         videoUrl != null &&
@@ -55,4 +46,3 @@ class VideoPlayerThumbnailController extends GetxController {
     }
   }
 }
-

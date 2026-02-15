@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../data/constants/app_colors.dart';
-
 class PromotionCard extends StatelessWidget {
   final String title;
   final String description;

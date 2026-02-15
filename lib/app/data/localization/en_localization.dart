@@ -20,6 +20,7 @@ class EnLocalization {
     "female": "Female",
     "other": "Other",
     "preferNotToSay": "Prefer not to say",
+    "signUpWithGoogle": "Sign up with Google",
 
     //Notification and channel
     "notifications": "Notifications",
@@ -157,6 +158,7 @@ class EnLocalization {
     "alreadyHaveAccount": "I already have an account ",
     // Personal Details Screen
     "addProfilePicture": "Add a profile picture",
+    "subscribedSuccessfullyToTheEvent": "Subscribed successfully to the event",
     "fullName": "Full Name",
     "birthday": "Birthday",
     "selectDate": "Select date",
@@ -364,6 +366,8 @@ class EnLocalization {
     "mcqMissingOptions": "MCQ riddle is missing question options",
     "invalidQuestionFormat": "Invalid question format",
     "pleaseEnterText": "Please enter text",
+    "solutionSubmittedForReview":
+        "Solution submitted. It will be reviewed by admin.",
     "pleaseEnableCheckbox": "Please enable check box",
     "failedToSubmitSolution": "Failed to submit solution",
     "pleaseSelectAudioFile": "Please select audio file",

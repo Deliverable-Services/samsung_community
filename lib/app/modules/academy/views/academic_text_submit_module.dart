@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -154,6 +156,21 @@ class AcademicMcqSubmitModule extends StatefulWidget {
 
 class _AcademicMcqSubmitModuleState extends State<AcademicMcqSubmitModule> {
   final RxnInt selectedIndex = RxnInt();
+  late final List<MapEntry<int, String>> _displayOptions;
+
+  @override
+  void initState() {
+    super.initState();
+    final list = <MapEntry<int, String>>[];
+    for (var i = 0; i < widget.options.length; i++) {
+      final m = widget.options[i];
+      if (m is Map<String, dynamic> && m.containsKey('option')) {
+        list.add(MapEntry(i, (m['option'] as Object?).toString().trim()));
+      }
+    }
+    list.shuffle(Random());
+    _displayOptions = list;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -211,13 +228,9 @@ class _AcademicMcqSubmitModuleState extends State<AcademicMcqSubmitModule> {
 
             SizedBox(height: 20.h),
 
-            /// MCQ Options
-            ...List.generate(widget.options.length, (index) {
-              final optionMap = widget.options[index];
-              final optionText = (optionMap as Map<String, dynamic>)
-                  .values
-                  .first
-                  .toString();
+            /// MCQ Options (correct_answer excluded; options shown in random order)
+            ...List.generate(_displayOptions.length, (index) {
+              final optionText = _displayOptions[index].value;
 
               return GestureDetector(
                 onTap: () => selectedIndex.value = index,
@@ -266,7 +279,8 @@ class _AcademicMcqSubmitModuleState extends State<AcademicMcqSubmitModule> {
                 width: double.infinity,
                 height: 48.h,
                 onTap: selectedIndex.value != null
-                    ? () => widget.onSubmit(selectedIndex.value!)
+                    ? () => widget
+                        .onSubmit(_displayOptions[selectedIndex.value!].key)
                     : null,
               ),
             ),

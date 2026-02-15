@@ -2,8 +2,8 @@ class HebrewiLocalization {
   static Map<String, String> hebrewLang = {
     "logout": "התנתק",
     "wantLogout": "האם אתה בטוח שאתה רוצה להתנתק?",
-    "yes": "כֵּן",
-    "no": "לֹא", "text": "טקסט",
+    "yes": "כן",
+    "no": "לא", "text": "טקסט",
     "cancelEvent": "ביטול אירוע",
     "buying": "רכישה",
     "register": "הרשמה",
@@ -16,6 +16,7 @@ class HebrewiLocalization {
     "yourEventRegistration": "הרישום שלך לאירוע בוטל.",
     "noContentAvailable": "אין תוכן זמין",
     "markAllAsRead": "סמן הכל כנקרא",
+    "signUpWithGoogle": "התחברות עם גוגל",
 
     //Notification and channel
     "notifications": "התראות",
@@ -176,7 +177,7 @@ class HebrewiLocalization {
         "לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אליט. סד דו איוסמוד טמפור....",
 
     // Academy Screen
-    "academyTitle": "החודשית",
+    "academyTitle": "משימות",
     "academyDescription":
         "סרטונים בלעדיים, שידורים חיים ומאמרים, הכל במקום אחד מעורר השראה.",
     "academyAll": "הכול",
@@ -292,7 +293,7 @@ class HebrewiLocalization {
     "signInSuccessful": "התחברות הצליחה",
     "noPostsYet": "אין פוסטים עדיין",
     "changeProfilePhoto": "שנה תמונת פרופיל",
-    'male': 'זָכָר',
+    'male': 'זכר',
     'female': 'נקבה',
     'other': 'אחר',
     "preferNotToSay": "מעדיף לא לומר",
@@ -340,8 +341,10 @@ class HebrewiLocalization {
     "mcqMissingOptions": "חידת MCQ חסרה אפשרויות שאלה",
     "invalidQuestionFormat": "פורמט שאלה לא תקין",
     "pleaseEnterText": "אנא הזן טקסט",
+    "solutionSubmittedForReview": "הפתרון נשלח. יבדק על ידי המנהל.",
     "pleaseEnableCheckbox": "אנא הפעל את תיבת הסימון",
     "failedToSubmitSolution": "נכשל בשליחת הפתרון",
+    "subscribedSuccessfullyToTheEvent": "נרשמת בהצלחה לאירוע",
     "pleaseSelectAudioFile": "אנא בחר קובץ שמע",
     "pleaseSelectVideoFile": "אנא בחר קובץ וידאו",
     "failedToSelectFile": "נכשל בבחירת קובץ",

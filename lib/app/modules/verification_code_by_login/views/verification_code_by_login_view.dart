@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -299,47 +298,31 @@ class VerificationCodeByLoginView
                       final baseColor = AppColors.linkBlue.withOpacity(
                         disabled ? 0.6 : 1.0,
                       );
-                      return RichText(
-                        textScaler: const TextScaler.linear(1.0),
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: 'dontHaveAccount'.tr,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 16.sp,
-                                letterSpacing: 0,
-                                color: baseColor,
-                                height: 24 / 16,
-                                fontFamily: 'Samsung Sharp Sans',
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'signUp'.tr,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16.sp,
-                                letterSpacing: 0,
-                                color: baseColor,
-                                height: 24 / 16,
-                                fontFamily: 'Samsung Sharp Sans',
-                              ),
-                              recognizer: disabled
-                                  ? null
-                                  : (TapGestureRecognizer()
-                                      ..onTap = () {
-                                        AnalyticsService.logButtonClick(
-                                          screenName:
-                                              'Login screen verification code',
-                                          buttonName: 'signup',
-                                          eventName:
-                                              'login_verification_code_click',
-                                        );
-                                        Get.toNamed(Routes.SIGN_UP);
-                                      }),
-                            ),
-                          ],
+                      return GestureDetector(
+                        onTap: disabled
+                            ? null
+                            : () {
+                                AnalyticsService.logButtonClick(
+                                  screenName:
+                                      'Login screen verification code',
+                                  buttonName: 'signup',
+                                  eventName:
+                                      'login_verification_code_click',
+                                );
+                                Get.toNamed(Routes.SIGN_UP);
+                              },
+                        child: Text(
+                          '${'dontHaveAccount'.tr}${'signUp'.tr}',
+                          textScaler: const TextScaler.linear(1.0),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16.sp,
+                            letterSpacing: 0,
+                            color: baseColor,
+                            height: 24 / 16,
+                            fontFamily: 'Samsung Sharp Sans',
+                          ),
                         ),
                       );
                     }),

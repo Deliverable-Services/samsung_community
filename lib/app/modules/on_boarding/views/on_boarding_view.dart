@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -61,7 +60,8 @@ class OnBoardingView extends GetView<OnBoardingController> {
               bottom: true,
               child: Align(
                 alignment: const AlignmentDirectional(0, 0),
-                child: Column(
+                child: SingleChildScrollView(
+                  child: Column(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -89,7 +89,7 @@ class OnBoardingView extends GetView<OnBoardingController> {
                     SizedBox(height: 25.h),
                     AppButton(
                       onTap: () => controller.clickOnSignUpWithGoogleButton(),
-                      text: 'Sign up with google'.tr,
+                      text: 'signUpWithGoogle'.tr,
                       iconPath: AppImages.googleIcon,
                       iconSize: 20.w,
                     ),
@@ -106,43 +106,29 @@ class OnBoardingView extends GetView<OnBoardingController> {
                       text: 'logIn'.tr,
                     ),
                     SizedBox(height: 20.h),
-                    RichText(
-                      textScaler: const TextScaler.linear(1.0),
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'dontHaveAccount'.tr,
-                            style: TextStyle(
-                              color: AppColors.linkBlue,
-                              letterSpacing: 0,
-                              fontSize: 16.sp,
-                              fontFamily: 'Samsung Sharp Sans',
-                            ),
-                          ),
-                          TextSpan(
-                            text: 'signUp'.tr,
-                            style: TextStyle(
-                              color: AppColors.linkBlue,
-                              fontSize: 16.sp,
-                              letterSpacing: 0,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Samsung Sharp Sans',
-                            ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                AnalyticsService.logButtonClick(
-                                  screenName: 'Main screen',
-                                  buttonName: 'signup',
-                                  eventName: 'main_screen_click',
-                                );
-                                Get.toNamed(Routes.SIGN_UP);
-                              },
-                          ),
-                        ],
+                    GestureDetector(
+                      onTap: () {
+                        AnalyticsService.logButtonClick(
+                          screenName: 'Main screen',
+                          buttonName: 'signup',
+                          eventName: 'main_screen_click',
+                        );
+                        Get.toNamed(Routes.SIGN_UP);
+                      },
+                      child: Text(
+                        '${'dontHaveAccount'.tr}${'signUp'.tr}',
+                        textScaler: const TextScaler.linear(1.0),
+                        style: TextStyle(
+                          color: AppColors.linkBlue,
+                          letterSpacing: 0,
+                          fontSize: 16.sp,
+                          fontFamily: 'Samsung Sharp Sans',
+                        ),
                       ),
                     ),
                     SizedBox(height: 20.h),
                   ],
+                ),
                 ),
               ),
             ),
